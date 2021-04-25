@@ -10,5 +10,7 @@ I believe everyone in the world should be able to express their opinions, it's a
 <img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS000: Engineering Free Speech](https://www.youtube.com/watch?v=UahyWHh5F3U)
 <br />
 <img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS001: Introduction to Taarafo](https://www.youtube.com/watch?v=8JBJQqoJTe0)
+<br />
+<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS002: Initializing ASP.NET Core API](https://www.youtube.com/watch?v=ZGov4vuGj8A)
 
 
