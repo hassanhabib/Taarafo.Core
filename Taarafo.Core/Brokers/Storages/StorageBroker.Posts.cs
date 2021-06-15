@@ -19,6 +19,7 @@ namespace Taarafo.Core.Brokers.Storages
         public async ValueTask<Post> InsertPostAsync(Post post)
         {
             EntityEntry<Post> postEntityEntry = await this.Posts.AddAsync(post);
+            await this.SaveChangesAsync();
 
             return postEntityEntry.Entity;
         }
