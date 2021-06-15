@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public class StorageBroker : EFxceptionsContext, IStorageBroker
+    public partial class StorageBroker : EFxceptionsContext, IStorageBroker
     {
         private readonly IConfiguration configuration;
 

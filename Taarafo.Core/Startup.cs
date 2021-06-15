@@ -15,7 +15,7 @@ namespace Taarafo.Core
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration) => 
+        public Startup(IConfiguration configuration) =>
             Configuration = configuration;
 
         public IConfiguration Configuration { get; }
@@ -29,13 +29,13 @@ namespace Taarafo.Core
             services.AddSwaggerGen(options =>
             {
                 var openApiInfo = new OpenApiInfo
-                { 
-                    Title = "Taarafo.Core", 
-                    Version = "v1" 
+                {
+                    Title = "Taarafo.Core",
+                    Version = "v1"
                 };
 
                 options.SwaggerDoc(
-                    name: "v1", 
+                    name: "v1",
                     info: openApiInfo);
             });
         }
@@ -46,7 +46,7 @@ namespace Taarafo.Core
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                
+
                 app.UseSwaggerUI(options =>
                 {
                     options.SwaggerEndpoint(
