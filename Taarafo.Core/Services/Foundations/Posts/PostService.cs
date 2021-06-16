@@ -41,7 +41,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
 
         public IQueryable<Post> RetrieveAllPosts()
         {
-            throw new NotImplementedException();
+            return this.storageBroker.SelectAllPosts();
         }
     }
 }
