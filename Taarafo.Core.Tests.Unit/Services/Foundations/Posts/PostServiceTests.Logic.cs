@@ -60,7 +60,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     .ReturnsAsync(storagePost);
 
             //when
-            Post actualPost = 
+            Post actualPost =
                 await this.postService.RetrievePostByIdAsync(inputPostId);
 
             //then

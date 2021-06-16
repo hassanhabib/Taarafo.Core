@@ -20,8 +20,8 @@ namespace Taarafo.Core.Services.Foundations.Posts
         private readonly ILoggingBroker loggingBroker;
 
         public PostService(
-            IStorageBroker storageBroker, 
-            IDateTimeBroker dateTimeBroker, 
+            IStorageBroker storageBroker,
+            IDateTimeBroker dateTimeBroker,
             ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
