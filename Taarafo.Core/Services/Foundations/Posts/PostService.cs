@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -36,6 +37,11 @@ namespace Taarafo.Core.Services.Foundations.Posts
         public async ValueTask<Post> RetrievePostByIdAsync(Guid postId)
         {
             return await this.storageBroker.SelectPostByIdAsync(postId);
+        }
+
+        public IQueryable<Post> RetrieveAllPosts()
+        {
+            throw new NotImplementedException();
         }
     }
 }

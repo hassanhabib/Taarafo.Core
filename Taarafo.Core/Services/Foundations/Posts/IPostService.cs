@@ -4,6 +4,8 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Posts;
 
@@ -13,5 +15,6 @@ namespace Taarafo.Core.Services.Foundations.Posts
     {
         ValueTask<Post> AddPostAsync(Post post);
         ValueTask<Post> RetrievePostByIdAsync(Guid postId);
+        IQueryable<Post> RetrieveAllPosts();
     }
 }

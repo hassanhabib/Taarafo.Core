@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -36,8 +37,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         private static Post CreateRandomPost() =>
             CreatePostFiller().Create();
 
+        private static IQueryable<Post> CreateRandomPosts() =>
+            CreatePostFiller().Create(GetRandomNumber()).AsQueryable();
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static int GetRandomNumber() => new IntRange(min: 2, max: 10).GetValue();
 
         private static Filler<Post> CreatePostFiller()
         {
