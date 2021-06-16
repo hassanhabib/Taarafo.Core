@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.Posts;
 using Xunit;
@@ -94,6 +95,46 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllPosts(),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldModifyPostAsync()
+        {
+            //given
+            DateTimeOffset randomDate = GetRandomDateTimeOffset();
+            Post randomPost = CreateRandomPost();
+            Post inputPost = randomPost;
+            Post afterUpdateStoragePost = inputPost;
+            Post expectedPost = afterUpdateStoragePost;
+            Post beforeUpdateStoragePost = randomPost.DeepClone();
+            inputPost.UpdatedDate = randomDate;
+            Guid postId = inputPost.Id;
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostByIdAsync(postId))
+                    .ReturnsAsync(beforeUpdateStoragePost);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.UpdatePostAsync(inputPost))
+                    .ReturnsAsync(afterUpdateStoragePost);
+
+            //when
+            Post actualPost = await this.postService.ModifyPostAsync(inputPost);
+
+            //then
+            actualPost.Should().BeEquivalentTo(expectedPost);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(postId),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdatePostAsync(inputPost),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();

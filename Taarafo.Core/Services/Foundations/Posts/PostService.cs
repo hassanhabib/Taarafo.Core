@@ -43,5 +43,10 @@ namespace Taarafo.Core.Services.Foundations.Posts
         {
             return this.storageBroker.SelectAllPosts();
         }
+
+        public ValueTask<Post> ModifyPostAsync(Post post)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
