@@ -113,27 +113,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             Post expectedPost = afterUpdateStoragePost;
             Post beforeUpdateStoragePost = randomPost.DeepClone();
             inputPost.UpdatedDate = randomDate;
-            Guid postId = inputPost.Id;
-
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostByIdAsync(postId))
-                    .ReturnsAsync(beforeUpdateStoragePost);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.UpdatePostAsync(inputPost))
                     .ReturnsAsync(afterUpdateStoragePost);
 
             //when
-            Post originalPost = await this.postService.RetrievePostByIdAsync(postId);
-            Post modifiedPost = await this.postService.ModifyPostAsync(inputPost);
+            Post actualPost = await this.postService.ModifyPostAsync(inputPost);
 
             //then
-            originalPost.Should().BeEquivalentTo(beforeUpdateStoragePost);
-            modifiedPost.Should().BeEquivalentTo(expectedPost);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostByIdAsync(postId),
-                    Times.Once);
+            actualPost.Should().BeEquivalentTo(expectedPost);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdatePostAsync(inputPost),
