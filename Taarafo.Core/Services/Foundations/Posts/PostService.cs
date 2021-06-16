@@ -51,9 +51,9 @@ namespace Taarafo.Core.Services.Foundations.Posts
 
         public async ValueTask<Post> RemovePostByIdAsync(Guid postId)
         {
-            //Post post = await this.storageBroker.SelectPostByIdAsync(postId);
-            throw new NotImplementedException();
-            //return await this.storageBroker.DeletePostAsync(post);
+            Post post = await this.storageBroker.SelectPostByIdAsync(postId);
+
+            return await this.storageBroker.DeletePostAsync(post);
         }
     }
 }
