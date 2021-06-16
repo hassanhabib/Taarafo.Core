@@ -33,9 +33,9 @@ namespace Taarafo.Core.Services.Foundations.Posts
             return await this.storageBroker.InsertPostAsync(post);
         }
 
-        public ValueTask<Post> RetrievePostByIdAsync(Guid postId)
+        public async ValueTask<Post> RetrievePostByIdAsync(Guid postId)
         {
-            throw new NotImplementedException();
+            return await this.storageBroker.SelectPostByIdAsync(postId);
         }
     }
 }
