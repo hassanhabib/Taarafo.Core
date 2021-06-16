@@ -143,5 +143,41 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldRemovePostByIdAsync()
+        {
+            //given
+            Post randomPost = CreateRandomPost();
+            Post storagePost = randomPost;
+            Post expectedPost = storagePost;
+            Guid postId = randomPost.Id;
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostByIdAsync(postId))
+                    .ReturnsAsync(storagePost);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.DeletePostAsync(storagePost))
+                    .ReturnsAsync(expectedPost);
+
+            //when
+            Post actualPost = await this.postService.RemovePostByIdAsync(postId);
+
+            //then
+            actualPost.Should().BeEquivalentTo(expectedPost);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(postId),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeletePostAsync(storagePost),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }

@@ -5,7 +5,6 @@
 
 using System;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Posts;
 
@@ -17,5 +16,6 @@ namespace Taarafo.Core.Services.Foundations.Posts
         ValueTask<Post> RetrievePostByIdAsync(Guid postId);
         IQueryable<Post> RetrieveAllPosts();
         ValueTask<Post> ModifyPostAsync(Post post);
+        ValueTask<Post> RemovePostByIdAsync(Guid postId);
     }
 }
