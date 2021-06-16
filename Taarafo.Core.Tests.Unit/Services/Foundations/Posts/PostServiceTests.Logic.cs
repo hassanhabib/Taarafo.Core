@@ -124,10 +124,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     .ReturnsAsync(afterUpdateStoragePost);
 
             //when
-            Post actualPost = await this.postService.ModifyPostAsync(inputPost);
+            Post originalPost = await this.postService.RetrievePostByIdAsync(postId);
+            Post modifiedPost = await this.postService.ModifyPostAsync(inputPost);
 
             //then
-            actualPost.Should().BeEquivalentTo(expectedPost);
+            originalPost.Should().BeEquivalentTo(beforeUpdateStoragePost);
+            modifiedPost.Should().BeEquivalentTo(expectedPost);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(postId),
