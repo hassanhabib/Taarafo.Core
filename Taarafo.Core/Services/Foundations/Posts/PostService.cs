@@ -10,7 +10,7 @@ using Taarafo.Core.Models.Posts;
 
 namespace Taarafo.Core.Services.Foundations.Posts
 {
-    public class PostService : IPostService
+    public partial class PostService : IPostService
     {
         private readonly IStorageBroker storageBroker;
         private readonly ILoggingBroker loggingBroker;
@@ -23,11 +23,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
             this.loggingBroker = loggingBroker;
         }
 
-        public IQueryable<Post> RetrieveAllPosts()
-        {
-            IQueryable<Post> storagePosts = this.storageBroker.SelectAllPosts();
-
-            return storagePosts;
-        }
+        public IQueryable<Post> RetrieveAllPosts() =>
+        TryCatch(() => this.storageBroker.SelectAllPosts());
     }
 }
