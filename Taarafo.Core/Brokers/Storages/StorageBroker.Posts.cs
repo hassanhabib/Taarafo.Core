@@ -9,7 +9,7 @@ using Taarafo.Core.Models.Posts;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial class StorageBroker : IStorageBroker
+    public partial class StorageBroker
     {
         public DbSet<Post> Posts { get; set; }
 
