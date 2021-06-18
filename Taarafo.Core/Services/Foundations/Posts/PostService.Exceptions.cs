@@ -25,6 +25,10 @@ namespace Taarafo.Core.Services.Foundations.Posts
             {
                 throw CreateAndLogCriticalDependencyException(sqlException);
             }
+            catch (Exception exception)
+            {
+                throw CreateAndLogServiceException(exception);
+            }
         }
 
         private PostDependencyException CreateAndLogCriticalDependencyException(
@@ -34,6 +38,15 @@ namespace Taarafo.Core.Services.Foundations.Posts
             this.loggingBroker.LogCritical(postDependencyException);
 
             return postDependencyException;
+        }
+
+        private PostServiceException CreateAndLogServiceException(
+            Exception exception)
+        {
+            var postServiceException = new PostServiceException(exception);
+            this.loggingBroker.LogError(postServiceException);
+
+            return postServiceException;
         }
     }
 }
