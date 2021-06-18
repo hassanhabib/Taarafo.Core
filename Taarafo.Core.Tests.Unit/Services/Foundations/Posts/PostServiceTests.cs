@@ -5,6 +5,9 @@
 
 using System;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.Serialization;
+using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
@@ -32,6 +35,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
         private static IQueryable<Post> CreateRandomPosts() =>
             CreatePostFiller().Create(count: GetRandomNumber()).AsQueryable();
+
+        private static SqlException GetSqlException() =>
+            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+
+        private static Expression<Func<Exception, bool>> SameExceptionAs(Exception expectedException)
+        {
+            return actualException =>
+                expectedException.Message == actualException.Message
+                && expectedException.InnerException.Message == actualException.InnerException.Message;
+        }
 
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
