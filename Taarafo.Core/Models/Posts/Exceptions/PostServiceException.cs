@@ -7,10 +7,9 @@ using System;
 
 namespace Taarafo.Core.Models.Posts.Exceptions
 {
-    public class PostDependencyException : Exception
+    public class PostServiceException : Exception
     {
-        public PostDependencyException(Exception innerException) :
-            base("Post dependency error occured, contact support.", innerException)
-        { }
+        public PostServiceException(Exception innerException)
+            : base("Post service error occurred, contact support.", innerException) { }
     }
 }

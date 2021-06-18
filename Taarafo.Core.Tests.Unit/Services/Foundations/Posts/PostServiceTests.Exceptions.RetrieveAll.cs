@@ -46,5 +46,40 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            string exceptionMessage = GetRandomMessage();
+            var serviceException = new Exception(exceptionMessage);
+
+            var expectedPostServiceException =
+                new PostServiceException(serviceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAllPosts())
+                    .Throws(serviceException);
+
+            // when
+            Action retrieveAllPostsAction = () =>
+                this.postService.RetrieveAllPosts();
+
+            // then
+            Assert.Throws<PostServiceException>(
+                retrieveAllPostsAction);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllPosts(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
