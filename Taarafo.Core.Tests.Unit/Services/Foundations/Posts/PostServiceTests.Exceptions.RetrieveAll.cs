@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// ---------------------------------------------------------------
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
+// ---------------------------------------------------------------
+
+using System;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Posts.Exceptions;
@@ -17,7 +18,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         {
             // given
             SqlException sqlException = GetSqlException();
-            var expectedPostDependencyException = new PostDependencyException(sqlException);
+
+            var expectedPostDependencyException =
+                new PostDependencyException(sqlException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllPosts())
@@ -28,15 +31,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 this.postService.RetrieveAllPosts();
 
             // then
-            Assert.Throws<PostDependencyException>(retrieveAllPostsAction);
+            Assert.Throws<PostDependencyException>(
+                retrieveAllPostsAction);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllPosts(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(expectedPostDependencyException))),
-                    Times.Once);
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedPostDependencyException))),
+                        Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
