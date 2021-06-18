@@ -24,4 +24,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Taarafo.Core\Taarafo.Core.csproj" />
+  </ItemGroup>
+
 </Project>
