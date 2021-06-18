@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Posts\Exceptions\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
