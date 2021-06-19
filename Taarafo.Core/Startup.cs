@@ -9,7 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
+using Taarafo.Core.Services.Foundations.Posts;
 
 namespace Taarafo.Core
 {
@@ -22,9 +24,12 @@ namespace Taarafo.Core
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging();
             services.AddControllers();
             services.AddDbContext<StorageBroker>();
             services.AddTransient<IStorageBroker, StorageBroker>();
+            services.AddTransient<ILoggingBroker, LoggingBroker>();
+            services.AddTransient<IPostService, PostService>();
 
             services.AddSwaggerGen(options =>
             {
