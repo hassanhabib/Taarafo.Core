@@ -32,6 +32,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 storageBroker: this.storageBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
+        private static Post CreateRandomPost() =>
+            CreatePostFiller().Create();
 
         private static IQueryable<Post> CreateRandomPosts() =>
             CreatePostFiller().Create(count: GetRandomNumber()).AsQueryable();
@@ -60,6 +62,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             var filler = new Filler<Post>();
 
             filler.Setup()
+                .OnProperty(post => post.Content).Use(new MnemonicString(20))
                 .OnType<DateTimeOffset>().Use(GetRadnomDateTimeOffset());
 
             return filler;
