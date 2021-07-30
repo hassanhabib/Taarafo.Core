@@ -3,7 +3,9 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 using Taarafo.Core.Models.Posts;
@@ -20,6 +22,22 @@ namespace Taarafo.Core.Controllers
 
         public PostsController(IPostService postService) =>
             this.postService = postService;
+
+        [HttpPost]
+        public async ValueTask<ActionResult<Post>> PostPostAsync(Post post)
+        {
+            try
+            {
+                Post AddedPost = 
+                    await this.postService.AddPostAsync(post);
+
+                return Created(AddedPost);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message); 
+            }
+        }
 
         [HttpGet]
         public ActionResult<IQueryable<Post>> GetAllPosts()
