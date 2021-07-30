@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using FluentAssertions;
 using Moq;
@@ -39,5 +40,32 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+        [Fact] 
+        public async void ShouldAddNewPost()
+        {
+            // Given 
+            Post randomPost = CreateRandomPost();
+            Post inputPost = randomPost;
+            Post storagePost = randomPost;
+            Post expectedPost = storagePost;
+
+            this.storageBrokerMock.Setup(broker => 
+                broker.InsertPostAsync(inputPost))
+                .ReturnsAsync(storagePost);
+
+            // When 
+            Post actualPost = 
+                await this.postService.AddPostAsync(inputPost);
+
+            // Then 
+            actualPost.Should().BeEquivalentTo(expectedPost);
+
+            this.storageBrokerMock.Verify(broker => 
+            broker.InsertPostAsync(inputPost),
+                Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
     }
 }

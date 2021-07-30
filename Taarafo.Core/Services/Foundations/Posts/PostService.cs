@@ -3,7 +3,9 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Posts;
@@ -23,6 +25,9 @@ namespace Taarafo.Core.Services.Foundations.Posts
             this.loggingBroker = loggingBroker;
         }
 
+        public ValueTask<Post> AddPostAsync(Post post) =>
+          this.storageBroker.InsertPostAsync(post);
+        
         public IQueryable<Post> RetrieveAllPosts() =>
         TryCatch(() => this.storageBroker.SelectAllPosts());
     }

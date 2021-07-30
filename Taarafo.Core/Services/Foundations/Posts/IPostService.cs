@@ -4,12 +4,14 @@
 // ---------------------------------------------------------------
 
 using System.Linq;
+using System.Threading.Tasks;
 using Taarafo.Core.Models.Posts;
 
 namespace Taarafo.Core.Services.Foundations.Posts
 {
     public interface IPostService
     {
+        ValueTask<Post> AddPostAsync(Post post);
         IQueryable<Post> RetrieveAllPosts();
     }
 }
