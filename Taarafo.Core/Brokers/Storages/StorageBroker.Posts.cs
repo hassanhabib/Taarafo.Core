@@ -4,7 +4,9 @@
 // ---------------------------------------------------------------
 
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Taarafo.Core.Models.Posts;
 
 namespace Taarafo.Core.Brokers.Storages
@@ -12,6 +14,14 @@ namespace Taarafo.Core.Brokers.Storages
     public partial class StorageBroker
     {
         public DbSet<Post> Posts { get; set; }
+
+        public async ValueTask<Post> InsertPostAsync(Post post)
+        {
+            EntityEntry<Post> postEntityEntry = await this.Posts.AddAsync(post);
+            await this.SaveChangesAsync();
+
+            return postEntityEntry.Entity;
+        }
 
         public IQueryable<Post> SelectAllPosts() => this.Posts;
     }
