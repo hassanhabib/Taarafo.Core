@@ -5,15 +5,30 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Models.Posts.Exceptions;
+using Xeptions;
 
 namespace Taarafo.Core.Services.Foundations.Posts
 {
     public partial class PostService
     {
         private delegate IQueryable<Post> ReturningPostsFunction();
+        private delegate ValueTask<Post> ReturningPostFunction();
+
+        private async ValueTask<Post> TryCatch(ReturningPostFunction returningPostFunction)
+        {
+            try
+            {
+                return await returningPostFunction();
+            }
+            catch (NullPostException nullPostException)
+            {
+                throw CreateAndLogValidationException(nullPostException);
+            }
+        }
 
         private IQueryable<Post> TryCatch(ReturningPostsFunction returningPostsFunction)
         {
@@ -29,6 +44,17 @@ namespace Taarafo.Core.Services.Foundations.Posts
             {
                 throw CreateAndLogServiceException(exception);
             }
+        }
+
+        private PostValidationException CreateAndLogValidationException(
+            Xeption exception)
+        {
+            var postValidationException =
+                new PostValidationException(exception);
+
+            this.loggingBroker.LogError(postValidationException);
+
+            return postValidationException;
         }
 
         private PostDependencyException CreateAndLogCriticalDependencyException(
