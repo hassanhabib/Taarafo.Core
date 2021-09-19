@@ -28,6 +28,10 @@ namespace Taarafo.Core.Services.Foundations.Posts
             {
                 throw CreateAndLogValidationException(nullPostException);
             }
+            catch (InvalidPostException invalidPostException)
+            {
+                throw CreateAndLogValidationException(invalidPostException);
+            }
         }
 
         private IQueryable<Post> TryCatch(ReturningPostsFunction returningPostsFunction)
