@@ -4,10 +4,6 @@
 // ---------------------------------------------------------------
 
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Taarafo.Core.Brokers.Loggings;
-using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Models.Posts.Exceptions;
 
@@ -24,7 +20,14 @@ namespace Taarafo.Core.Services.Foundations.Posts
                 (Rule: IsInvalid(post.Content), Parameter: nameof(Post.Content)),
                 (Rule: IsInvalid(post.Author), Parameter: nameof(Post.Author)),
                 (Rule: IsInvalid(post.CreatedDate), Parameter: nameof(Post.CreatedDate)),
-                (Rule: IsInvalid(post.UpdatedDate), Parameter: nameof(Post.UpdatedDate)));
+                (Rule: IsInvalid(post.UpdatedDate), Parameter: nameof(Post.UpdatedDate)),
+
+                (Rule: IsNotSame(
+                    firstDate: post.UpdatedDate,
+                    secondDate: post.CreatedDate,
+                    secondDateName: nameof(Post.CreatedDate)),
+                Parameter: nameof(Post.UpdatedDate))
+            );
         }
 
         private static void ValidatePostIsNotNull(Post post)
@@ -46,6 +49,15 @@ namespace Taarafo.Core.Services.Foundations.Posts
             Condition = date == default,
             Message = "Date is required"
         };
+
+        private static dynamic IsNotSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
+            };
 
         private static dynamic IsInvalid(string text) => new
         {
