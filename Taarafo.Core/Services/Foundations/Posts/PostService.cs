@@ -3,7 +3,9 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Posts;
@@ -21,6 +23,11 @@ namespace Taarafo.Core.Services.Foundations.Posts
         {
             this.storageBroker = storageBroker;
             this.loggingBroker = loggingBroker;
+        }
+
+        public ValueTask<Post> AddPostAsync(Post post)
+        {
+            throw new NotImplementedException();
         }
 
         public IQueryable<Post> RetrieveAllPosts() =>

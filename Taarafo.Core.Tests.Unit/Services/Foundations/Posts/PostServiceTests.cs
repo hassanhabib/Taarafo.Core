@@ -36,6 +36,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         private static IQueryable<Post> CreateRandomPosts() =>
             CreatePostFiller().Create(count: GetRandomNumber()).AsQueryable();
 
+        private static Post CreateRandomPost() =>
+            CreatePostFiller().Create();
+
         private static SqlException GetSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
