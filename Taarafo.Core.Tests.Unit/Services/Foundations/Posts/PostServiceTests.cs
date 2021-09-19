@@ -14,6 +14,7 @@ using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Services.Foundations.Posts;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
@@ -48,8 +49,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         private static Expression<Func<Exception, bool>> SameExceptionAs(Exception expectedException)
         {
             return actualException =>
-                expectedException.Message == actualException.Message
-                && expectedException.InnerException.Message == actualException.InnerException.Message;
+                actualException.Message == expectedException.Message
+                && actualException.InnerException.Message == expectedException.InnerException.Message;
+        }
+
+        private static Expression<Func<Exception, bool>> SameValidationExceptionAs(Exception expectedException)
+        {
+            return actualException =>
+                actualException.Message == expectedException.Message
+                && actualException.InnerException.Message == expectedException.InnerException.Message
+                && (actualException.InnerException as Xeption).DataEquals(expectedException.InnerException.Data);
         }
 
         private static int GetRandomNumber() =>
