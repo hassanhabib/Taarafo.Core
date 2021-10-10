@@ -1,4 +1,5 @@
 [![.NET](https://github.com/hassanhabib/Taarafo.Core/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hassanhabib/Taarafo.Core/actions/workflows/dotnet.yml)
+[![The Standard - COMPLIANT](https://img.shields.io/badge/The_Standard-COMPLIANT-2ea44f)](https://github.com/hassanhabib/The-Standard)
 
 # Taarafo.Core
 This API attempts to De-productize humanity by decentralizing social networks.
