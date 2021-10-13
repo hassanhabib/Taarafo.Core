@@ -1,3 +1,6 @@
+[![.NET](https://github.com/hassanhabib/Taarafo.Core/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hassanhabib/Taarafo.Core/actions/workflows/dotnet.yml)
+[![The Standard - COMPLIANT](https://img.shields.io/badge/The_Standard-COMPLIANT-2ea44f)](https://github.com/hassanhabib/The-Standard)
+
 # Taarafo.Core
 This API attempts to De-productize humanity by decentralizing social networks.
 
@@ -14,5 +17,3 @@ I believe everyone in the world should be able to express their opinions, it's a
 <img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS002: Initializing ASP.NET Core API](https://www.youtube.com/watch?v=ZGov4vuGj8A)
 <br />
 <img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS003: Initializing ASP.NET Core Unit Tests](https://www.youtube.com/watch?v=jWIPkpl6Yr0)
-
-
