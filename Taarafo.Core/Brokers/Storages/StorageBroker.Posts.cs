@@ -17,9 +17,9 @@ namespace Taarafo.Core.Brokers.Storages
 
         public async ValueTask<Post> InsertPostAsync(Post post)
         {
-            using var broker = 
+            using var broker =
                 new StorageBroker(this.configuration);
-            
+
             EntityEntry<Post> postEntityEntry =
                 await broker.Posts.AddAsync(post);
 
@@ -30,7 +30,7 @@ namespace Taarafo.Core.Brokers.Storages
 
         public IQueryable<Post> SelectAllPosts()
         {
-            using var broker = 
+            using var broker =
                 new StorageBroker(this.configuration);
 
             return broker.Posts;

@@ -4,8 +4,6 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
-using FluentAssertions;
-using Force.DeepCloner;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Posts;

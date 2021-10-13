@@ -3,10 +3,6 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Moq;
 using Taarafo.Core.Models.Posts;
@@ -113,8 +109,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             int randomNumber = GetRandomNumber();
             Post randomPost = CreateRandomPost();
             Post invalidPost = randomPost;
-            
-            invalidPost.UpdatedDate = 
+
+            invalidPost.UpdatedDate =
                 invalidPost.CreatedDate.AddDays(randomNumber);
 
             var invalidPostException =

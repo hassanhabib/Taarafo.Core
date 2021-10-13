@@ -12,7 +12,7 @@ namespace Taarafo.Core.Models.Posts.Exceptions
     public class FailedPostStorageException : Xeption
     {
         public FailedPostStorageException(Exception innerException)
-            : base ("Failed post storage error occurred, contact support.", innerException)
-        {}
+            : base("Failed post storage error occurred, contact support.", innerException)
+        { }
     }
 }
