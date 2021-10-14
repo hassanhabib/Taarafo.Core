@@ -57,7 +57,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldThrowDependencyValidationExceptionOnAddIfPostAlreadyExistsAndLogItAsync()
         {
             // given
-            var somePost = CreateRandomPost();
+            Post somePost = CreateRandomPost();
             string randomMessage = GetRandomMessage();
 
             var duplicateKeyException = 
