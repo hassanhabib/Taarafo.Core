@@ -57,17 +57,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldThrowDependencyValidationExceptionOnAddIfPostAlreadyExistsAndLogItAsync()
         {
             // given
-            Post somePost = CreateRandomPost();
+            Post randomPost = CreateRandomPost();
+            Post alreadyExistsPost = randomPost;
             string randomMessage = GetRandomMessage();
 
             var duplicateKeyException = 
                 new DuplicateKeyException(randomMessage);
 
-            var alreadyExistPost = 
+            var alreadyExistsPostException = 
                 new AlreadyExsitPostException(duplicateKeyException);
 
             var expectedPostDependencyValidationException = 
-                new PostDependencyValidationException(alreadyExistPost);
+                new PostDependencyValidationException(alreadyExistsPostException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertPostAsync(It.IsAny<Post>()))
@@ -75,7 +76,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             // when
             ValueTask<Post> addPostTask =
-                this.postService.AddPostAsync(somePost);
+                this.postService.AddPostAsync(alreadyExistsPost);
 
             // then
             await Assert.ThrowsAsync<PostDependencyValidationException>(() => 
