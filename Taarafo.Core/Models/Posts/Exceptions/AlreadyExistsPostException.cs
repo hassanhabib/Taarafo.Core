@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Posts.Exceptions
 {
-    public class AlreadyExsitPostException : Xeption
+    public class AlreadyExistsPostException : Xeption
     {
-        public AlreadyExsitPostException(Exception message) 
-            :base("Post with the same id already exists.", message)
+        public AlreadyExistsPostException(Exception innerException) 
+            :base(message:"Post with the same id already exists.", innerException)
         { }
     }
 }

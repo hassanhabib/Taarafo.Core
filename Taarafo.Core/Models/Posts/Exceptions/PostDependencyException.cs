@@ -9,8 +9,8 @@ namespace Taarafo.Core.Models.Posts.Exceptions
 {
     public class PostDependencyException : Exception
     {
-        public PostDependencyException(Exception message) :
-            base("Post dependency error occured, contact support.", message)
+        public PostDependencyException(Exception innerException) :
+            base(message:"Post dependency error occured, contact support.", innerException)
         { }
     }
 }

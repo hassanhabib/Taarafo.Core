@@ -60,17 +60,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         {
             // given
             Post randomPost = CreateRandomPost();
-            Post alreadyExsitsPost = randomPost;
+            Post alreadyExistsPost = randomPost;
             string randomMessage = GetRandomMessage();
 
             var duplicateKeyException =
                 new DuplicateKeyException(randomMessage);
 
-            var alreadyExsitsPostException =
-                new AlreadyExsitPostException(duplicateKeyException);
+            var alreadyExistsPostException =
+                new AlreadyExistsPostException(duplicateKeyException);
 
             var expectedPostDependencyValidationException =
-                new PostDependencyValidationException(alreadyExsitsPostException);
+                new PostDependencyValidationException(alreadyExistsPostException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertPostAsync(It.IsAny<Post>()))
@@ -78,7 +78,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             // when
             ValueTask<Post> addPostTask =
-                this.postService.AddPostAsync(alreadyExsitsPost);
+                this.postService.AddPostAsync(alreadyExistsPost);
 
             // then
             await Assert.ThrowsAsync<PostDependencyValidationException>(() =>

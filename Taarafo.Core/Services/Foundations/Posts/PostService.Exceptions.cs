@@ -44,7 +44,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsPostException =
-                    new AlreadyExsitPostException(duplicateKeyException);
+                    new AlreadyExistsPostException(duplicateKeyException);
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsPostException);
             }
