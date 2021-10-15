@@ -53,6 +53,13 @@ namespace Taarafo.Core.Services.Foundations.Posts
 
                 throw CreateAndLogDependecyException(failedPostStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedPostServiceException =
+                    new FailedPostServiceException(exception);
+
+                throw CreateAndLogServiceException(failedPostServiceException);
+            }
         }
 
         private IQueryable<Post> TryCatch(ReturningPostsFunction returningPostsFunction)
