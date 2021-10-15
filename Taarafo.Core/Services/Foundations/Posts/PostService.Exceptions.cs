@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Models.Posts.Exceptions;
 using Xeptions;
@@ -33,7 +34,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
             {
                 throw CreateAndLogValidationException(invalidPostException);
             }
-            catch(SqlException sqlException)
+            catch (SqlException sqlException)
             {
                 var failedPostStorageException = new FailedPostStorageException(sqlException);
                 throw CreateAndLogCriticalDependencyException(failedPostStorageException);
@@ -44,6 +45,13 @@ namespace Taarafo.Core.Services.Foundations.Posts
                     new AlreadyExsitPostException(duplicateKeyException);
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsPostException);
+            }
+            catch (DbUpdateException databaseUpdateException)
+            {
+                var failedPostStorageException =
+                    new FailedPostStorageException(databaseUpdateException);
+
+                throw CreateAndLogDependecyException(failedPostStorageException);
             }
         }
 
@@ -101,6 +109,14 @@ namespace Taarafo.Core.Services.Foundations.Posts
             this.loggingBroker.LogError(postServiceException);
 
             return postServiceException;
+        }
+
+        private PostDependencyException CreateAndLogDependecyException(Exception exception)
+        {
+            var postDependencyException = new PostDependencyException(exception);
+            this.loggingBroker.LogError(postDependencyException);
+
+            return postDependencyException;
         }
     }
 }
