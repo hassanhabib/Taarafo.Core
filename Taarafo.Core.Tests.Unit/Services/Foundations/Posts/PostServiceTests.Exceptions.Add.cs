@@ -10,6 +10,7 @@ using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Models.Posts.Exceptions;
 using Xunit;
 using EFxceptions.Models.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
@@ -88,6 +89,46 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameValidationExceptionAs(
                     expectedPostDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            Post somePost = CreateRandomPost();
+
+            var databaseUpdateException =
+                new DbUpdateException();
+
+            var failedPostStorageException =
+                new FailedPostStorageException(databaseUpdateException);
+
+            var expectedPostDependencyException =
+                new PostDependencyException(failedPostStorageException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertPostAsync(It.IsAny<Post>()))
+                    .ThrowsAsync(databaseUpdateException);
+
+            // when
+            ValueTask<Post> addPostTask =
+                this.postService.AddPostAsync(somePost);
+
+            // then
+            await Assert.ThrowsAsync<PostDependencyException>(() =>
+               addPostTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertPostAsync(It.IsAny<Post>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostDependencyException))),
                         Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
