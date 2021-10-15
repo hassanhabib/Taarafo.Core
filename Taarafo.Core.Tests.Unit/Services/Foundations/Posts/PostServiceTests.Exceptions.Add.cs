@@ -11,6 +11,7 @@ using Taarafo.Core.Models.Posts.Exceptions;
 using Xunit;
 using EFxceptions.Models.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
@@ -134,5 +135,43 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            Post somePost = CreateRandomPost();
+            var serviceException = new Exception();
+
+            var failedPostServiceException =
+                new FailedPostServiceException(serviceException);
+
+            var expectedPostServiceException =
+                new PostServiceException(failedPostServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertPostAsync(It.IsAny<Post>()))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Post> addPostTask =
+                this.postService.AddPostAsync(somePost);
+
+            // then
+            await Assert.ThrowsAsync<PostServiceException>(() =>
+                addPostTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertPostAsync(It.IsAny<Post>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }    
     }
 }
