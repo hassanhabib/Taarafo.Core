@@ -3,15 +3,15 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Models.Posts.Exceptions;
 using Xunit;
-using EFxceptions.Models.Exceptions;
-using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
@@ -63,13 +63,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             Post alreadyExistsPost = randomPost;
             string randomMessage = GetRandomMessage();
 
-            var duplicateKeyException = 
+            var duplicateKeyException =
                 new DuplicateKeyException(randomMessage);
 
-            var alreadyExistsPostException = 
+            var alreadyExistsPostException =
                 new AlreadyExsitPostException(duplicateKeyException);
 
-            var expectedPostDependencyValidationException = 
+            var expectedPostDependencyValidationException =
                 new PostDependencyValidationException(alreadyExistsPostException);
 
             this.storageBrokerMock.Setup(broker =>
@@ -81,7 +81,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 this.postService.AddPostAsync(alreadyExistsPost);
 
             // then
-            await Assert.ThrowsAsync<PostDependencyValidationException>(() => 
+            await Assert.ThrowsAsync<PostDependencyValidationException>(() =>
                 addPostTask.AsTask());
 
             this.storageBrokerMock.Verify(broker =>
@@ -172,6 +172,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-        }    
+        }
     }
 }

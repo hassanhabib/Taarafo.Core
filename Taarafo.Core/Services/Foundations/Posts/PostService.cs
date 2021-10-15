@@ -29,7 +29,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
         {
             ValidatePost(post);
 
-            return await this.storageBroker.InsertPostAsync(post); 
+            return await this.storageBroker.InsertPostAsync(post);
         });
 
         public IQueryable<Post> RetrieveAllPosts() =>
