@@ -10,8 +10,8 @@ namespace Taarafo.Core.Models.Posts.Exceptions
 {
     public class FailedPostServiceException : Xeption
     {
-        public FailedPostServiceException(Exception innerException)
-            : base("Failed post service occured, please contact support", innerException)
+        public FailedPostServiceException(Exception message)
+            : base("Failed post service occurred, please contact support", message)
         {}
     }
 }

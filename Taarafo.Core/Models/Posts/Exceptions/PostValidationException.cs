@@ -9,9 +9,9 @@ namespace Taarafo.Core.Models.Posts.Exceptions
 {
     public class PostValidationException : Xeption
     {
-        public PostValidationException(Xeption innerException)
+        public PostValidationException(Xeption message)
             : base(message: "Post validation errors occurred, please try again.",
-                  innerException)
+                  message)
         { }
     }
 }

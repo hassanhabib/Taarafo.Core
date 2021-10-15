@@ -9,7 +9,7 @@ namespace Taarafo.Core.Models.Posts.Exceptions
 {
     public class PostServiceException : Exception
     {
-        public PostServiceException(Exception innerException)
-            : base("Post service error occurred, contact support.", innerException) { }
+        public PostServiceException(Exception message)
+            : base("Post service error occurred, contact support.", message) { }
     }
 }
