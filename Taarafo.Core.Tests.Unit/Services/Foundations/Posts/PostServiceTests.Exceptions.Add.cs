@@ -18,7 +18,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
     public partial class PostServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDepdnencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
+        public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
         {
             // given
             Post somePost = CreateRandomPost();
@@ -56,7 +56,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnAddIfPostAlreadyExistsAndLogItAsync()
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfPostAlreadyExsitsAndLogItAsync()
         {
             // given
             Post randomPost = CreateRandomPost();
@@ -85,7 +85,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 addPostTask.AsTask());
 
             this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostAsync(It.IsAny<Post>()), Times.Once);
+                broker.InsertPostAsync(It.IsAny<Post>()),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameValidationExceptionAs(
