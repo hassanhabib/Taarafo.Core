@@ -151,16 +151,53 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             int minutesBeforeOrAfter)
         {
             // given
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            Post randomPost = CreateRandomPost();
+            DateTimeOffset randomDateTime = 
+                GetRandomDateTimeOffset();
+            
+            DateTimeOffset invalidDateTime = 
+                randomDateTime.AddMinutes(minutesBeforeOrAfter);
+            
+            Post randomPost = CreateRandomPost(invalidDateTime);
             Post invalidPost = randomPost;
-            invalidPost.
 
+            var invalidPostException = 
+                new InvalidPostException();
 
-            this.mock
+            invalidPostException.AddData(
+                key: nameof(Post.CreatedDate),
+                values: "Date is not recent");
+
+            var expectedPostValidationException =
+                new PostValidationException(invalidPostException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
+
             // when
+            ValueTask<Post> addPostTask =
+                this.postService.AddPostAsync(invalidPost);
 
             // then
+            await Assert.ThrowsAsync<PostValidationException>(() =>
+               addPostTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameValidationExceptionAs(
+                    expectedPostValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertPostAsync(It.IsAny<Post>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

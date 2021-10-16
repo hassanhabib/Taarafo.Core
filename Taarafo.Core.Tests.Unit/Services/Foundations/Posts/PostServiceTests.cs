@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Brokers.Loggings;
+using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Services.Foundations.Posts;
@@ -22,16 +23,19 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
     public partial class PostServiceTests
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
+        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly IPostService postService;
 
         public PostServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.postService = new PostService(
                 storageBroker: this.storageBrokerMock.Object,
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
@@ -47,11 +51,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             };
         }
 
-        private static IQueryable<Post> CreateRandomPosts() =>
-            CreatePostFiller().Create(count: GetRandomNumber()).AsQueryable();
+        private static IQueryable<Post> CreateRandomPosts()
+        {
+            return CreatePostFiller(dates: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber())
+                    .AsQueryable();
+        }
 
         private static Post CreateRandomPost() =>
-            CreatePostFiller().Create();
+            CreatePostFiller(dates: GetRandomDateTimeOffset()).Create();
+
+        private static Post CreateRandomPost(DateTimeOffset dates) =>
+            CreatePostFiller(dates).Create();
 
         private static SqlException GetSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
@@ -86,12 +97,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         private static DateTimeOffset GetRadnomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static Filler<Post> CreatePostFiller()
+        private static Filler<Post> CreatePostFiller(DateTimeOffset dates)
         {
             var filler = new Filler<Post>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(GetRadnomDateTimeOffset());
+                .OnType<DateTimeOffset>().Use(dates);
 
             return filler;
         }
