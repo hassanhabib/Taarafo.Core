@@ -84,6 +84,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             await Assert.ThrowsAsync<PostDependencyValidationException>(() =>
                 addPostTask.AsTask());
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertPostAsync(It.IsAny<Post>()),
                     Times.Never);
@@ -93,7 +97,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     expectedPostDependencyValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
