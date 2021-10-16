@@ -72,9 +72,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             var expectedPostDependencyValidationException =
                 new PostDependencyValidationException(alreadyExistsPostException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.InsertPostAsync(It.IsAny<Post>()))
-                    .ThrowsAsync(duplicateKeyException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(duplicateKeyException);
 
             // when
             ValueTask<Post> addPostTask =
@@ -86,13 +86,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertPostAsync(It.IsAny<Post>()),
-                    Times.Once);
+                    Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameValidationExceptionAs(
                     expectedPostDependencyValidationException))),
                         Times.Once);
 
+            this.storageBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
@@ -126,7 +127,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertPostAsync(It.IsAny<Post>()),
-                    Times.Once);
+                    Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
