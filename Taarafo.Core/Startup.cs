@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Services.Foundations.Posts;
@@ -29,6 +30,7 @@ namespace Taarafo.Core
             services.AddDbContext<StorageBroker>();
             services.AddTransient<IStorageBroker, StorageBroker>();
             services.AddTransient<ILoggingBroker, LoggingBroker>();
+            services.AddTransient<IDateTimeBroker, DateTimeBroker>();
             services.AddTransient<IPostService, PostService>();
 
             services.AddSwaggerGen(options =>
