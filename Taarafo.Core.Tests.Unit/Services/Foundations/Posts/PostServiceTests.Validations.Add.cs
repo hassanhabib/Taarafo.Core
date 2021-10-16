@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using Moq;
 using Taarafo.Core.Models.Posts;
@@ -142,6 +143,24 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [MemberData(nameof(MinutesBeforeOrAfter))]
+        public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotRecentAndLogItAsync(
+            int minutesBeforeOrAfter)
+        {
+            // given
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Post randomPost = CreateRandomPost();
+            Post invalidPost = randomPost;
+            invalidPost.
+
+
+            this.mock
+            // when
+
+            // then
         }
     }
 }

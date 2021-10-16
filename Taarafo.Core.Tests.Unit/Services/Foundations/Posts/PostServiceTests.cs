@@ -15,6 +15,7 @@ using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Services.Foundations.Posts;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
@@ -34,6 +35,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
+        public static TheoryData MinutesBeforeOrAfter()
+        {
+            int randomNumber = GetRandomNumber();
+            int randomNegativeNumber = GetRandomNegativeNumber();
+
+            return new TheoryData<int>
+            {
+                randomNumber,
+                randomNegativeNumber
+            };
+        }
+
         private static IQueryable<Post> CreateRandomPosts() =>
             CreatePostFiller().Create(count: GetRandomNumber()).AsQueryable();
 
@@ -45,6 +58,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
         private static string GetRandomMessage() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
+
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
         private static Expression<Func<Exception, bool>> SameExceptionAs(Exception expectedException)
         {
@@ -63,6 +79,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
+
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
 
         private static DateTimeOffset GetRadnomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
