@@ -11,7 +11,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
 {
     public partial class PostService
     {
-        private static void ValidatePost(Post post)
+        private void ValidatePost(Post post)
         {
             ValidatePostIsNotNull(post);
 
@@ -26,8 +26,9 @@ namespace Taarafo.Core.Services.Foundations.Posts
                     firstDate: post.UpdatedDate,
                     secondDate: post.CreatedDate,
                     secondDateName: nameof(Post.CreatedDate)),
-                Parameter: nameof(Post.UpdatedDate))
-            );
+                Parameter: nameof(Post.UpdatedDate)),
+                
+                (Rule: IsNotRecent(post.CreatedDate), Parameter: nameof(Post.CreatedDate)));
         }
 
         private static void ValidatePostIsNotNull(Post post)
@@ -64,6 +65,23 @@ namespace Taarafo.Core.Services.Foundations.Posts
             Condition = String.IsNullOrWhiteSpace(text),
             Message = "Text is required"
         };
+
+        private dynamic IsNotRecent(DateTimeOffset date) => new
+        {
+            Condition = IsDateNotRecent(date),
+            Message = "Date is not recent"
+        };
+
+        private bool IsDateNotRecent(DateTimeOffset date)
+        {
+            DateTimeOffset currentDateTime =
+                this.dateTimeBroker.GetCurrentDateTimeOffset();
+
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+            TimeSpan oneMinute = TimeSpan.FromMinutes(1);
+
+            return timeDifference.Duration() > oneMinute;
+        }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
