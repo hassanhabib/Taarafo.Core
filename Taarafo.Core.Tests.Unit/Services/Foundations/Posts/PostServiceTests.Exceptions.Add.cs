@@ -122,9 +122,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             var expectedPostDependencyException =
                 new PostDependencyException(failedPostStorageException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.InsertPostAsync(It.IsAny<Post>()))
-                    .ThrowsAsync(databaseUpdateException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(databaseUpdateException);
 
             // when
             ValueTask<Post> addPostTask =
@@ -134,6 +134,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             await Assert.ThrowsAsync<PostDependencyException>(() =>
                addPostTask.AsTask());
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+           
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertPostAsync(It.IsAny<Post>()),
                     Times.Never);
@@ -143,6 +147,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     expectedPostDependencyException))),
                         Times.Once);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
