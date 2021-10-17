@@ -4,12 +4,14 @@
 // ---------------------------------------------------------------
 
 using System;
+using Xeptions;
 
 namespace Taarafo.Core.Models.Posts.Exceptions
 {
-    public class PostServiceException : Exception
+    public class AlreadyExistsPostException : Xeption
     {
-        public PostServiceException(Exception innerException)
-            : base(message:"Post service error occurred, contact support.", innerException) { }
+        public AlreadyExistsPostException(Exception innerException) 
+            :base(message:"Post with the same id already exists.", innerException)
+        { }
     }
 }
