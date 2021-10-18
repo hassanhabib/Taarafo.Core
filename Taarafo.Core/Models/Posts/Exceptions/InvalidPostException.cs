@@ -3,13 +3,14 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
+using Xeptions;
 
 namespace Taarafo.Core.Models.Posts.Exceptions
 {
-    public class PostServiceException : Exception
+    public class InvalidPostException : Xeption
     {
-        public PostServiceException(Exception innerException)
-            : base(message:"Post service error occurred, contact support.", innerException) { }
+        public InvalidPostException()
+            : base(message: "Invalid post. Please correct the errors and try again.")
+        { }
     }
 }

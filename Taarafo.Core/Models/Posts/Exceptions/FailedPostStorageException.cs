@@ -4,12 +4,14 @@
 // ---------------------------------------------------------------
 
 using System;
+using Xeptions;
 
 namespace Taarafo.Core.Models.Posts.Exceptions
 {
-    public class PostServiceException : Exception
+    public class FailedPostStorageException : Xeption
     {
-        public PostServiceException(Exception innerException)
-            : base(message:"Post service error occurred, contact support.", innerException) { }
+        public FailedPostStorageException(Exception innerException)
+            : base(message:"Failed post storage error occurred, contact support.", innerException)
+        { }
     }
 }
