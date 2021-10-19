@@ -45,18 +45,6 @@ namespace Taarafo.Core
             });
         }
 
-        private static void AddServices(IServiceCollection services)
-        {
-            services.AddTransient<IPostService, PostService>();
-        }
-
-        private static void AddBrokers(IServiceCollection services)
-        {
-            services.AddTransient<IStorageBroker, StorageBroker>();
-            services.AddTransient<ILoggingBroker, LoggingBroker>();
-            services.AddTransient<IDateTimeBroker, DateTimeBroker>();
-        }
-
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -77,5 +65,17 @@ namespace Taarafo.Core
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
+
+        private static void AddServices(IServiceCollection services) =>
+            services.AddTransient<IPostService, PostService>();
+
+
+        private static void AddBrokers(IServiceCollection services)
+        {
+            services.AddTransient<IStorageBroker, StorageBroker>();
+            services.AddTransient<ILoggingBroker, LoggingBroker>();
+            services.AddTransient<IDateTimeBroker, DateTimeBroker>();
+        }
+
     }
 }
