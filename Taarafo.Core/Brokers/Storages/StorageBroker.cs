@@ -28,6 +28,5 @@ namespace Taarafo.Core.Brokers.Storages
         }
 
         public override void Dispose() { }
-        
     }
 }

@@ -36,7 +36,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
             }
             catch (SqlException sqlException)
             {
-                var failedPostStorageException = 
+                var failedPostStorageException =
                     new FailedPostStorageException(sqlException);
 
                 throw CreateAndLogCriticalDependencyException(failedPostStorageException);

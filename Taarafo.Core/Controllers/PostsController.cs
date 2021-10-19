@@ -31,7 +31,6 @@ namespace Taarafo.Core.Controllers
                     await this.postService.AddPostAsync(post);
 
                 return Created(addedPost);
-
             }
             catch (PostValidationException postValidationException)
             {
@@ -45,7 +44,6 @@ namespace Taarafo.Core.Controllers
             catch (PostDependencyException postDependencyException)
             {
                 return InternalServerError(postDependencyException);
-
             }
             catch (PostServiceException postServiceException)
             {
