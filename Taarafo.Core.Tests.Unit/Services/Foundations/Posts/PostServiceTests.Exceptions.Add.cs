@@ -137,7 +137,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
-           
+
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertPostAsync(It.IsAny<Post>()),
                     Times.Never);

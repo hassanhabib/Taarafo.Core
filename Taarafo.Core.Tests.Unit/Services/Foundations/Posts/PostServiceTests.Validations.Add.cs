@@ -151,16 +151,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             int minutesBeforeOrAfter)
         {
             // given
-            DateTimeOffset randomDateTime = 
+            DateTimeOffset randomDateTime =
                 GetRandomDateTimeOffset();
-            
-            DateTimeOffset invalidDateTime = 
+
+            DateTimeOffset invalidDateTime =
                 randomDateTime.AddMinutes(minutesBeforeOrAfter);
-            
+
             Post randomPost = CreateRandomPost(invalidDateTime);
             Post invalidPost = randomPost;
 
-            var invalidPostException = 
+            var invalidPostException =
                 new InvalidPostException();
 
             invalidPostException.AddData(

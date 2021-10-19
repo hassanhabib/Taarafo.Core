@@ -27,7 +27,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
                     secondDate: post.CreatedDate,
                     secondDateName: nameof(Post.CreatedDate)),
                 Parameter: nameof(Post.UpdatedDate)),
-                
+
                 (Rule: IsNotRecent(post.CreatedDate), Parameter: nameof(Post.CreatedDate)));
         }
 
