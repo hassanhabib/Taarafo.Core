@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 using Taarafo.Core.Models.Posts;
@@ -20,6 +21,37 @@ namespace Taarafo.Core.Controllers
 
         public PostsController(IPostService postService) =>
             this.postService = postService;
+
+        [HttpPost]
+        public async ValueTask<ActionResult<Post>> PostPostAsync(Post post)
+        {
+            try
+            {
+                Post addedPost =
+                    await this.postService.AddPostAsync(post);
+
+                return Created(addedPost);
+
+            }
+            catch (PostValidationException postValidationException)
+            {
+                return BadRequest(postValidationException.InnerException);
+            }
+            catch (PostDependencyValidationException postDependencyValidationException)
+               when (postDependencyValidationException.InnerException is AlreadyExistsPostException)
+            {
+                return Conflict(postDependencyValidationException.InnerException);
+            }
+            catch (PostDependencyException postDependencyException)
+            {
+                return InternalServerError(postDependencyException);
+
+            }
+            catch (PostServiceException postServiceException)
+            {
+                return InternalServerError(postServiceException);
+            }
+        }
 
         [HttpGet]
         public ActionResult<IQueryable<Post>> GetAllPosts()
