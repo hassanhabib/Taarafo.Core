@@ -69,13 +69,11 @@ namespace Taarafo.Core
         private static void AddServices(IServiceCollection services) =>
             services.AddTransient<IPostService, PostService>();
 
-
         private static void AddBrokers(IServiceCollection services)
         {
             services.AddTransient<IStorageBroker, StorageBroker>();
             services.AddTransient<ILoggingBroker, LoggingBroker>();
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
         }
-
     }
 }
