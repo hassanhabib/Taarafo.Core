@@ -28,10 +28,8 @@ namespace Taarafo.Core
             services.AddLogging();
             services.AddControllers();
             services.AddDbContext<StorageBroker>();
-            services.AddTransient<IStorageBroker, StorageBroker>();
-            services.AddTransient<ILoggingBroker, LoggingBroker>();
-            services.AddTransient<IDateTimeBroker, DateTimeBroker>();
-            services.AddTransient<IPostService, PostService>();
+            AddBrokers(services);
+            AddServices(services);
 
             services.AddSwaggerGen(options =>
             {
@@ -45,6 +43,18 @@ namespace Taarafo.Core
                     name: "v1",
                     info: openApiInfo);
             });
+        }
+
+        private static void AddServices(IServiceCollection services)
+        {
+            services.AddTransient<IPostService, PostService>();
+        }
+
+        private static void AddBrokers(IServiceCollection services)
+        {
+            services.AddTransient<IStorageBroker, StorageBroker>();
+            services.AddTransient<ILoggingBroker, LoggingBroker>();
+            services.AddTransient<IDateTimeBroker, DateTimeBroker>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
