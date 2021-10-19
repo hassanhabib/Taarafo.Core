@@ -63,11 +63,11 @@ namespace Taarafo.Core.Controllers
             }
             catch (PostDependencyException postDependencyException)
             {
-                return Problem(postDependencyException.Message);
+                return InternalServerError(postDependencyException);
             }
             catch (PostServiceException postServiceException)
             {
-                return Problem(postServiceException.Message);
+                return InternalServerError(postServiceException);
             }
         }
     }
