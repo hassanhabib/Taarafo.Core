@@ -40,7 +40,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
         public IQueryable<Post> RetrieveAllPosts() =>
         TryCatch(() => this.storageBroker.SelectAllPosts());
 
-        public ValueTask<Post> RetrievePostById(Guid postId)
+        public ValueTask<Post> RetrievePostByIdAsync(Guid postId)
         {
             throw new NotImplementedException();
         }

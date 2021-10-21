@@ -17,7 +17,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
     public partial class PostServiceTests
     {
         [Fact]
-        public void ShouldRetrievePostById()
+        public async Task ShouldRetrievePostByIdAsync()
         {
             // given
             Post randomPosts = CreateRandomPost();
@@ -30,16 +30,19 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     .ReturnsAsync(storagePosts);
 
             // when
-            ValueTask<Post> actualPosts =
-                this.postService.RetrievePostById (inputPostId);
+            Post actualPosts =
+                await this.postService.RetrievePostByIdAsync(inputPostId);
 
             // then
             actualPosts.Should().BeEquivalentTo(expectedPosts);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllPosts(),
                     Times.Once);
-
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
