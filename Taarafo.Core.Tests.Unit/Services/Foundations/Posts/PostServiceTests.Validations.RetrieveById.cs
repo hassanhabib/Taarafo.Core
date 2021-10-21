@@ -4,10 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
-using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Models.Posts.Exceptions;
@@ -18,25 +15,25 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
     public partial class PostServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfPostIsNullAndLogItAsync()
+        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfPostIsNotFoundAndLogItAsync()
         {
             //given
-            Guid postId = Guid.NewGuid();
-            Post invalidPost = null;
+            Guid someId = Guid.NewGuid();
+            Post emptyPost = null;
 
             var notFoundPostException =
-                new NotFoundPostException(postId);
+                new NotFoundPostException(someId);
 
             var expectedPostValidationException =
                 new PostValidationException(notFoundPostException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostByIdAsync(postId))
-                    .ReturnsAsync(invalidPost);
+                broker.SelectPostByIdAsync(someId))
+                    .ReturnsAsync(emptyPost);
 
             //when
             ValueTask<Post> retrievePostTask =
-                this.postService.RetrievePostByIdAsync(postId);
+                this.postService.RetrievePostByIdAsync(someId);
 
             //then
             await Assert.ThrowsAsync<PostValidationException>(() =>
@@ -44,15 +41,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostValidationException))), 
+                    expectedPostValidationException))),
                         Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), 
+                broker.GetCurrentDateTimeOffset(),
                     Times.Never);
 
-            this.storageBrokerMock.Verify(broker => 
-            broker.SelectPostByIdAsync(postId), 
+            this.storageBrokerMock.Verify(broker =>
+            broker.SelectPostByIdAsync(someId),
                 Times.Once());
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
