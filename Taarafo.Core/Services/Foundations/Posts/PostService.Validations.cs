@@ -31,7 +31,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
                 (Rule: IsNotRecent(post.CreatedDate), Parameter: nameof(Post.CreatedDate)));
         }
         public void ValidatePostById(Guid postId) =>
-            Validate((Rule: IsInvalid(postId), Parameter:nameof(Post.Id)));
+            Validate((Rule: IsInvalid(postId), Parameter: nameof(Post.Id)));
 
         private static void ValidatePostIsNotNull(Post post)
         {
@@ -43,12 +43,12 @@ namespace Taarafo.Core.Services.Foundations.Posts
 
         public void ValiateStoragePost(Guid postId, Post maybePost)
         {
-            if(maybePost is null)
+            if (maybePost is null)
             {
                 throw new NotFoundPostException(postId);
             }
         }
-        
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,

@@ -45,7 +45,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
             {
                 ValidatePostById(postId);
                 Post storagePost = await this.storageBroker.SelectPostByIdAsync(postId);
-                ValiateStoragePost(postId,storagePost);
+                ValiateStoragePost(postId, storagePost);
 
                 return storagePost;
             });
