@@ -34,6 +34,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             // then
             actualPosts.Should().BeEquivalentTo(expectedPosts);
+
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Never);

@@ -3,13 +3,13 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using Xeptions;
+using System;
 
 namespace Taarafo.Core.Models.Posts.Exceptions
 {
-    public class PostValidationException : Xeption
+    public class PostValidationException : Exception
     {
-        public PostValidationException(Xeption innerException)
+        public PostValidationException(Exception innerException)
             : base(message: "Post validation errors occurred, please try again.",
                   innerException)
         { }

@@ -28,7 +28,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 new PostValidationException(notFoundPostException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostByIdAsync(someId))
+                broker.SelectPostByIdAsync(It.IsAny<Guid>()))
                     .ReturnsAsync(emptyPost);
 
             //when
@@ -49,7 +49,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
-            broker.SelectPostByIdAsync(someId),
+            broker.SelectPostByIdAsync(It.IsAny<Guid>()),
                 Times.Once());
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
