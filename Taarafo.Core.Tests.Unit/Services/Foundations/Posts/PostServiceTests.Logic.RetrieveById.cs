@@ -40,8 +40,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllPosts(),
+                broker.SelectPostByIdAsync(inputPostId),
                     Times.Once);
+
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
