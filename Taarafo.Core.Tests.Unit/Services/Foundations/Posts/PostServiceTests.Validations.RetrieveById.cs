@@ -53,6 +53,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 Times.Once());
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
