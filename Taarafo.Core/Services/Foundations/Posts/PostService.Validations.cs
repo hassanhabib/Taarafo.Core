@@ -41,7 +41,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
             }
         }
 
-        public void ValiateStoragePost(Post maybePost,Guid postId)
+        public void ValiateStoragePost(Post maybePost, Guid postId)
         {
             if (maybePost is null)
             {

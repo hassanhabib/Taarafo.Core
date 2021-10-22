@@ -31,7 +31,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 PostValidationException(invalidPostException);
 
             // when
-            ValueTask<Post> removePostByIdTask = 
+            ValueTask<Post> removePostByIdTask =
                 this.postService.RemovePostByIdAsync(invalidPostId);
 
             // then
@@ -42,7 +42,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostValidationException))),
                         Times.Once);
-                
+
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()),
                     Times.Never);
@@ -65,7 +65,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             var notFoundPostException =
                 new NotFoundPostException(randomPostId);
 
-            var expectedPostValidatinException = 
+            var expectedPostValidatinException =
                 new PostValidationException(notFoundPostException);
 
             this.storageBrokerMock.Setup(broker =>
@@ -82,11 +82,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostValidatinException))), 
+                    expectedPostValidatinException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostByIdAsync(It.IsAny<Guid>()),   
+                broker.SelectPostByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
@@ -39,15 +36,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             actualPost.Should().BeEquivalentTo(expectedPost);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostByIdAsync(inputPostId), 
+                broker.SelectPostByIdAsync(inputPostId),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker => 
+            this.storageBrokerMock.Verify(broker =>
                 broker.DeletePostAsync(inputPost),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();               
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
