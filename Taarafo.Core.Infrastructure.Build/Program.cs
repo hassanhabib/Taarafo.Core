@@ -34,38 +34,38 @@ var githubPipeline = new GithubPipeline
             RunsOn = BuildMachines.Windows2019,
 
             Steps = new List<GithubTask>
-            {
-                new CheckoutTaskV2
-                {
-                    Name = "Check Out"
-                },
+                        {
+                            new CheckoutTaskV2
+                            {
+                                Name = "Check Out"
+                            },
 
-                new SetupDotNetTaskV1
-                {
-                    Name = "Setup Dot Net Version",
+                            new SetupDotNetTaskV1
+                            {
+                                Name = "Setup Dot Net Version",
 
-                    TargetDotNetVersion = new TargetDotNetVersion
-                    {
-                        DotNetVersion = "6.0.100-rc.2.21505.57",
-                        IncludePrerelease = true
-                    }
-                },
+                                TargetDotNetVersion = new TargetDotNetVersion
+                                {
+                                    DotNetVersion = "6.0.100-rc.2.21505.57",
+                                    IncludePrerelease = true
+                                }
+                            },
 
-                new RestoreTask
-                {
-                    Name = "Restore"
-                },
+                            new RestoreTask
+                            {
+                                Name = "Restore"
+                            },
 
-                new DotNetBuildTask
-                {
-                    Name = "Build"
-                },
+                            new DotNetBuildTask
+                            {
+                                Name = "Build"
+                            },
 
-                new TestTask
-                {
-                    Name = "Test"
-                }
-            }
+                            new TestTask
+                            {
+                                Name = "Test"
+                            }
+                        }
         }
     }
 };
