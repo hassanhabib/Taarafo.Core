@@ -54,5 +54,14 @@ namespace Taarafo.Core.Services.Foundations.Posts
 
         public IQueryable<Post> RetrieveAllPosts() =>
         TryCatch(() => this.storageBroker.SelectAllPosts());
+
+        public async ValueTask<Post> RemovePostByIdAsync(Guid postId)
+        {
+            Post maybePost = await this.storageBroker
+                .SelectPostByIdAsync(postId);
+
+            return await this.storageBroker
+                .DeletePostAsync(maybePost);
+        }
     }
 }
