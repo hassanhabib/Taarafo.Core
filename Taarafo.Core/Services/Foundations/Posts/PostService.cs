@@ -47,11 +47,6 @@ namespace Taarafo.Core.Services.Foundations.Posts
                 return storagePost;
             });
 
-        public ValueTask<Post> RemovePostByIdAsync(Guid postId)
-        {
-            throw new NotImplementedException();
-        }
-
         public IQueryable<Post> RetrieveAllPosts() =>
         TryCatch(() => this.storageBroker.SelectAllPosts());
 
