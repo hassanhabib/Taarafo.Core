@@ -31,7 +31,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 PostValidationException(invalidPostException);
 
             // when
-            ValueTask<Post> retrievePostByIdTask = 
+            ValueTask<Post> retrievePostByIdTask =
                 this.postService.RetrievePostByIdAsync(invalidPostId);
 
             // then
@@ -42,56 +42,53 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostValidationException))),
                         Times.Once);
-                
+
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfPostIsNotFoundAndLogItAsync()
         {
             //given
-            Guid someId = Guid.NewGuid();
-            Post emptyPost = null;
+            Guid somePostId = Guid.NewGuid();
+            Post noPost = null;
 
             var notFoundPostException =
-                new NotFoundPostException(someId);
+                new NotFoundPostException(somePostId);
 
             var expectedPostValidationException =
                 new PostValidationException(notFoundPostException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()))
-                    .ReturnsAsync(emptyPost);
+                    .ReturnsAsync(noPost);
 
             //when
-            ValueTask<Post> retrievePostTask =
-                this.postService.RetrievePostByIdAsync(someId);
+            ValueTask<Post> retrievePostByIdTask =
+                this.postService.RetrievePostByIdAsync(somePostId);
 
             //then
             await Assert.ThrowsAsync<PostValidationException>(() =>
-               retrievePostTask.AsTask());
+               retrievePostByIdTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(It.IsAny<Guid>()),
+                    Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostValidationException))),
                         Times.Once);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Never);
-
-            this.storageBrokerMock.Verify(broker =>
-            broker.SelectPostByIdAsync(It.IsAny<Guid>()),
-                Times.Once());
-
+            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

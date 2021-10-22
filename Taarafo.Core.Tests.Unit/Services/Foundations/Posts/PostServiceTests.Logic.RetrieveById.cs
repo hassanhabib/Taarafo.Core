@@ -19,33 +19,30 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldRetrievePostByIdAsync()
         {
             // given
-            Post randomPosts = CreateRandomPost();
-            Guid inputPostId = Guid.NewGuid();
-            Post storagePosts = randomPosts;
-            Post expectedPosts = storagePosts.DeepClone();
+            Guid randomPostId = Guid.NewGuid();
+            Guid inputPostId = randomPostId;
+            Post randomPost = CreateRandomPost();
+            Post storagePost = randomPost;
+            Post expectedPost = storagePost.DeepClone();
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostByIdAsync(inputPostId))
-                    .ReturnsAsync(storagePosts);
+                    .ReturnsAsync(storagePost);
 
             // when
-            Post actualPosts =
+            Post actualPost =
                 await this.postService.RetrievePostByIdAsync(inputPostId);
 
             // then
-            actualPosts.Should().BeEquivalentTo(expectedPosts);
-
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Never);
+            actualPost.Should().BeEquivalentTo(expectedPost);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(inputPostId),
                     Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

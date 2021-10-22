@@ -83,12 +83,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
-            this.loggingBrokerMock.Verify( broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostServiceException))),
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogError(It.Is(SameExceptionAs(
+                   expectedPostServiceException))),
                         Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();        
+            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }

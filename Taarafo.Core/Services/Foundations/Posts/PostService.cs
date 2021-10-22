@@ -41,13 +41,15 @@ namespace Taarafo.Core.Services.Foundations.Posts
         TryCatch(() => this.storageBroker.SelectAllPosts());
 
         public ValueTask<Post> RetrievePostByIdAsync(Guid postId) =>
-            TryCatch(async () =>
-            {
-                ValidatePostById(postId);
-                Post storagePost = await this.storageBroker.SelectPostByIdAsync(postId);
-                ValiateStoragePost(postId, storagePost);
+        TryCatch(async () =>
+        {
+            ValidatePostById(postId);
+            Post maybePost = await this.storageBroker
+                .SelectPostByIdAsync(postId);
 
-                return storagePost;
-            });
+            ValiateStoragePost(maybePost, postId);
+
+            return maybePost;
+        });
     }
 }
