@@ -80,6 +80,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             await Assert.ThrowsAsync<PostValidationException>(() =>
                 removePostByIdTask.AsTask());
 
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostValidatinException))), 
+                        Times.Once);
+
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()),   
                     Times.Once);
@@ -88,8 +93,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 broker.DeletePostAsync(It.IsAny<Post>()),
                     Times.Never);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
