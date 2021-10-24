@@ -42,6 +42,14 @@ namespace Taarafo.Core.Services.Foundations.Posts
             }
         }
 
+        public void ValiateStoragePost(Post maybePost, Guid postId)
+        {
+            if (maybePost is null)
+            {
+                throw new NotFoundPostException(postId);
+            }
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
