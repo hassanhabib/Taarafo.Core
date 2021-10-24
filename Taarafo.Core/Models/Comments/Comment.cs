@@ -4,19 +4,16 @@
 // ---------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using Taarafo.Core.Models.Comments;
+using Taarafo.Core.Models.Posts;
 
-namespace Taarafo.Core.Models.Posts
+namespace Taarafo.Core.Models.Comments
 {
-    public class Post
+    public class Comment
     {
         public Guid Id { get; set; }
         public string Content { get; set; }
-        public Guid Author { get; set; }
-        public DateTimeOffset CreatedDate { get; set; }
-        public DateTimeOffset UpdatedDate { get; set; }
 
-        public IEnumerable<Comment> Comments { get; set; }
+        public Guid PostId { get; set; }
+        public Post Post { get; set; }
     }
 }
