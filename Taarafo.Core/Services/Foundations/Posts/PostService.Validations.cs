@@ -31,6 +31,9 @@ namespace Taarafo.Core.Services.Foundations.Posts
                 (Rule: IsNotRecent(post.CreatedDate), Parameter: nameof(Post.CreatedDate)));
         }
 
+        public void ValidatePostById(Guid postId) =>
+           Validate((Rule: IsInvalid(postId), Parameter: nameof(Post.Id)));
+
         private static void ValidatePostIsNotNull(Post post)
         {
             if (post is null)
