@@ -44,6 +44,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
         TryCatch(async () =>
         {
             ValidatePostById(postId);
+
             Post maybePost = await this.storageBroker
                 .SelectPostByIdAsync(postId);
 
