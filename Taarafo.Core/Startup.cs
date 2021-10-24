@@ -3,15 +3,18 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
+using Taarafo.Core.Models.Configurations;
 using Taarafo.Core.Services.Foundations.Posts;
 
 namespace Taarafo.Core
@@ -25,38 +28,32 @@ namespace Taarafo.Core
 
         public void ConfigureServices(IServiceCollection services)
         {
+            LocalConfigurations localConfigurations = Configuration.Get<LocalConfigurations>();
+            services.AddScoped<LocalConfigurations>(sp => localConfigurations);
+
             services.AddLogging();
             services.AddControllers();
             services.AddDbContext<StorageBroker>();
             AddBrokers(services);
             AddServices(services);
-
-            services.AddSwaggerGen(options =>
-            {
-                var openApiInfo = new OpenApiInfo
-                {
-                    Title = "Taarafo.Core",
-                    Version = "v1"
-                };
-
-                options.SwaggerDoc(
-                    name: "v1",
-                    info: openApiInfo);
-            });
+            ConfigureOpenAPIDocument(services, localConfigurations);
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            LocalConfigurations localConfigurations)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-
+                OpenAPIConfiguration openAPIConfiguration = localConfigurations.OpenAPI;
                 app.UseSwaggerUI(options =>
                 {
                     options.SwaggerEndpoint(
-                        url: "/swagger/v1/swagger.json",
-                        name: "Taarafo.Core v1");
+                        url: openAPIConfiguration.OpenAPIEndpoint.Url,
+                        name: openAPIConfiguration.OpenAPIEndpoint.Name);
                 });
             }
 
@@ -74,6 +71,39 @@ namespace Taarafo.Core
             services.AddTransient<IStorageBroker, StorageBroker>();
             services.AddTransient<ILoggingBroker, LoggingBroker>();
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
+        }
+
+        private static void ConfigureOpenAPIDocument(
+            IServiceCollection services,
+            LocalConfigurations localConfigurations)
+        {
+            OpenAPIDocumentConfiguration openAPIDocumentConfiguration = localConfigurations.OpenAPI.Document;
+
+            services.AddSwaggerGen(options =>
+            {
+                OpenApiInfo openApiInfo = new OpenApiInfo
+                {
+                    Title = openAPIDocumentConfiguration.Title,
+                    Version = openAPIDocumentConfiguration.Version,
+                    Description = openAPIDocumentConfiguration.Description,
+                    TermsOfService = new Uri(openAPIDocumentConfiguration.TermsOfService),
+                    Contact = new OpenApiContact
+                    {
+                        Name = openAPIDocumentConfiguration.ContactName,
+                        Email = openAPIDocumentConfiguration.ContactEmail,
+                        Url = new Uri(openAPIDocumentConfiguration.ContactUrl),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = openAPIDocumentConfiguration.LicenseName,
+                        Url = new Uri(openAPIDocumentConfiguration.LicenseUrl),
+                    }
+                };
+
+                options.SwaggerDoc(name: openAPIDocumentConfiguration.Version, info: openApiInfo);
+
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+            });
         }
     }
 }
