@@ -34,6 +34,10 @@ namespace Taarafo.Core.Services.Foundations.Posts
             {
                 throw CreateAndLogValidationException(invalidPostException);
             }
+            catch (NotFoundPostException notFoundPostException)
+            {
+                throw CreateAndLogValidationException(notFoundPostException);
+            }
             catch (SqlException sqlException)
             {
                 var failedPostStorageException =
