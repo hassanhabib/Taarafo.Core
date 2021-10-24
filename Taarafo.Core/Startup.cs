@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -48,12 +49,16 @@ namespace Taarafo.Core
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                OpenAPIConfiguration openAPIConfiguration = localConfigurations.OpenAPI;
+                IEnumerable<OpenAPIConfiguration> openAPIConfigurations = localConfigurations.OpenAPIs;
+
                 app.UseSwaggerUI(options =>
                 {
-                    options.SwaggerEndpoint(
-                        url: openAPIConfiguration.OpenAPIEndpoint.Url,
-                        name: openAPIConfiguration.OpenAPIEndpoint.Name);
+                    foreach (var openAPIConfiguration in openAPIConfigurations)
+                    {
+                        options.SwaggerEndpoint(
+                            url: openAPIConfiguration.OpenAPIEndpoint.Url,
+                            name: openAPIConfiguration.OpenAPIEndpoint.Name);
+                    }
                 });
             }
 
@@ -77,33 +82,38 @@ namespace Taarafo.Core
             IServiceCollection services,
             LocalConfigurations localConfigurations)
         {
-            OpenAPIDocumentConfiguration openAPIDocumentConfiguration = localConfigurations.OpenAPI.Document;
+            IEnumerable<OpenAPIConfiguration> openAPIConfigurations = localConfigurations.OpenAPIs;
 
-            services.AddSwaggerGen(options =>
+            foreach (OpenAPIConfiguration openAPIConfiguration in openAPIConfigurations)
             {
-                OpenApiInfo openApiInfo = new OpenApiInfo
+                string version = openAPIConfiguration.Version;
+                OpenAPIDocumentConfiguration document = openAPIConfiguration.Document;
+                services.AddSwaggerGen(options =>
                 {
-                    Title = openAPIDocumentConfiguration.Title,
-                    Version = openAPIDocumentConfiguration.Version,
-                    Description = openAPIDocumentConfiguration.Description,
-                    TermsOfService = new Uri(openAPIDocumentConfiguration.TermsOfService),
-                    Contact = new OpenApiContact
+                    OpenApiInfo openApiInfo = new OpenApiInfo
                     {
-                        Name = openAPIDocumentConfiguration.ContactName,
-                        Email = openAPIDocumentConfiguration.ContactEmail,
-                        Url = new Uri(openAPIDocumentConfiguration.ContactUrl),
-                    },
-                    License = new OpenApiLicense
-                    {
-                        Name = openAPIDocumentConfiguration.LicenseName,
-                        Url = new Uri(openAPIDocumentConfiguration.LicenseUrl),
-                    }
-                };
+                        Title = document.Title,
+                        Version = version,
+                        Description = document.Description,
+                        TermsOfService = new Uri(document.TermsOfService),
+                        Contact = new OpenApiContact
+                        {
+                            Name = document.ContactName,
+                            Email = document.ContactEmail,
+                            Url = new Uri(document.ContactUrl),
+                        },
+                        License = new OpenApiLicense
+                        {
+                            Name = document.LicenseName,
+                            Url = new Uri(document.LicenseUrl),
+                        }
+                    };
 
-                options.SwaggerDoc(name: openAPIDocumentConfiguration.Version, info: openApiInfo);
+                    options.SwaggerDoc(name: version, info: openApiInfo);
 
-                options.OperationFilter<SecurityRequirementsOperationFilter>();
-            });
+                    options.OperationFilter<SecurityRequirementsOperationFilter>();
+                });
+            }
         }
     }
 }

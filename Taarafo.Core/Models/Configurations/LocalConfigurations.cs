@@ -3,10 +3,12 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Taarafo.Core.Models.Configurations
 {
     public class LocalConfigurations
     {
-        public OpenAPIConfiguration OpenAPI { get; set; }
+        public OpenAPIConfiguration[] OpenAPIs { get; set; }
     }
 }
