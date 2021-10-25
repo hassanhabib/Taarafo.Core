@@ -1,8 +1,10 @@
-﻿using System;
+﻿// ---------------------------------------------------------------
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
+// ---------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Taarafo.Core.Tests.Acceptance.Brokers;
 using Taarafo.Core.Tests.Acceptance.Models.Posts;
 using Tynamix.ObjectFiller;
@@ -14,6 +16,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Posts
     public partial class PostApiTests
     {
         private readonly ApiBroker apiBroker;
+
         public PostApiTests(ApiBroker apiBroker)
         {
             this.apiBroker = apiBroker;
@@ -24,7 +27,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Posts
         private static IEnumerable<Post> CreateRandomPosts()
         {
             return CreatePostFiller(dates: GetRandomDateTimeOffset())
-                .Create(count: GetRandomNumber());                 
+                .Create(count: GetRandomNumber());
         }
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
@@ -36,9 +39,8 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Posts
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dates);
-            
-            return filler;
 
+            return filler;
         }
     }
 }
