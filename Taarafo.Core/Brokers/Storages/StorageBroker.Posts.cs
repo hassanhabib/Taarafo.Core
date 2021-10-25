@@ -22,7 +22,7 @@ namespace Taarafo.Core.Brokers.Storages
                 new StorageBroker(this.configuration);
 
             EntityEntry<Post> postEntityEntry =
-                await broker.Posts.AddAsync(entity:post);
+                await broker.Posts.AddAsync(post);
 
             await broker.SaveChangesAsync();
 
@@ -51,7 +51,7 @@ namespace Taarafo.Core.Brokers.Storages
                 new StorageBroker(this.configuration);
 
             EntityEntry<Post> postEntityEntry =
-                broker.Posts.Update(entity:post);
+                broker.Posts.Update(post);
 
             await broker.SaveChangesAsync();
 
@@ -64,7 +64,7 @@ namespace Taarafo.Core.Brokers.Storages
                 new StorageBroker(this.configuration);
 
             EntityEntry<Post> postEntityEntry =
-                broker.Posts.Remove(entity:post);
+                broker.Posts.Remove(post);
 
             await broker.SaveChangesAsync();
 
