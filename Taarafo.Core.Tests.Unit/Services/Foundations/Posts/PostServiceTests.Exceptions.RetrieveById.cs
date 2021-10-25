@@ -1,4 +1,9 @@
-﻿using System;
+﻿// ---------------------------------------------------------------
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
+// ---------------------------------------------------------------
+
+using System;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -11,17 +16,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
     public partial class PostServiceTests
     {
         [Fact]
-        public void ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
+        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
         {
             // given
             Guid someId = Guid.NewGuid();
             SqlException sqlException = GetSqlException();
 
-            var failedpostStorageException =
+            var failedPostStorageException =
                 new FailedPostStorageException(sqlException);
 
             var expectedPostDependencyException =
-                new PostDependencyException(failedpostStorageException);
+                new PostDependencyException(failedPostStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()))
@@ -32,8 +37,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 this.postService.RetrievePostByIdAsync(someId);
 
             // then
-            Assert.ThrowsAsync<PostDependencyException>(
-                retrievePostByIdTask.AsTask);
+            await Assert.ThrowsAsync<PostDependencyException>(() =>
+                retrievePostByIdTask.AsTask());
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()),
@@ -48,7 +53,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
-
+        
         [Fact]
         public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfDatabaseUpdateErrorOccursAndLogItAsync()
         {
