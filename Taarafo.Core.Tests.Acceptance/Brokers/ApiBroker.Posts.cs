@@ -11,6 +11,12 @@ namespace Taarafo.Core.Tests.Acceptance.Brokers
     {
         private const string PostRelativeUrl = "api/posts";
 
+        public async ValueTask<Post> PostPostAsync(Post post) =>
+               await this.apiFactoryClient.PostContentAsync(
+                   PostRelativeUrl,post);
+        public async ValueTask<Post> DeletePostByIdAsync(Guid PostId) =>
+                await this.apiFactoryClient.DeleteContentAsync<Post>(
+                    $"{PostRelativeUrl}/{PostId}");
         public async ValueTask<List<Post>> GetAllPostsAsync() =>
             await this.apiFactoryClient.GetContentAsync<List<Post>>($"{PostRelativeUrl}/");
     }
