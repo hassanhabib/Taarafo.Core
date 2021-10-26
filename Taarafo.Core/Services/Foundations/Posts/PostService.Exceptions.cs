@@ -33,17 +33,17 @@ namespace Taarafo.Core.Services.Foundations.Posts
             catch (InvalidPostException invalidPostException)
             {
                 throw CreateAndLogValidationException(invalidPostException);
-            }
-            catch (NotFoundPostException notFoundPostException)
-            {
-                throw CreateAndLogValidationException(notFoundPostException);
-            }
+            }           
             catch (SqlException sqlException)
             {
                 var failedPostStorageException =
                     new FailedPostStorageException(sqlException);
 
                 throw CreateAndLogCriticalDependencyException(failedPostStorageException);
+            }
+            catch (NotFoundPostException notFoundPostException)
+            {
+                throw CreateAndLogValidationException(notFoundPostException);
             }
             catch (DuplicateKeyException duplicateKeyException)
             {
