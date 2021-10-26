@@ -38,5 +38,10 @@ namespace Taarafo.Core.Services.Foundations.Posts
 
         public IQueryable<Post> RetrieveAllPosts() =>
         TryCatch(() => this.storageBroker.SelectAllPosts());
+
+        public ValueTask<Post> ModifyPostAsync(Post post)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

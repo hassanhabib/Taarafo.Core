@@ -13,5 +13,6 @@ namespace Taarafo.Core.Services.Foundations.Posts
     {
         ValueTask<Post> AddPostAsync(Post post);
         IQueryable<Post> RetrieveAllPosts();
+        ValueTask<Post> ModifyPostAsync(Post post);
     }
 }
