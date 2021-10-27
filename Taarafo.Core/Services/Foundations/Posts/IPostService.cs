@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Posts;
@@ -13,6 +14,6 @@ namespace Taarafo.Core.Services.Foundations.Posts
     {
         ValueTask<Post> AddPostAsync(Post post);
         IQueryable<Post> RetrieveAllPosts();
-        ValueTask<Post> ModifyPostAsync(Post post);
+        ValueTask<Post> RetrievePostByIdAsync(Guid postId);
     }
 }
