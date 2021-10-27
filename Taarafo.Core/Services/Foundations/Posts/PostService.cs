@@ -32,7 +32,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
         public ValueTask<Post> AddPostAsync(Post post) =>
         TryCatch(async () =>
         {
-            ValidatePost(post);
+            ValidatePostOnAdd(post);
 
             return await this.storageBroker.InsertPostAsync(post);
         });
@@ -53,12 +53,15 @@ namespace Taarafo.Core.Services.Foundations.Posts
         public IQueryable<Post> RetrieveAllPosts() =>
         TryCatch(() => this.storageBroker.SelectAllPosts());
 
-        public async ValueTask<Post> ModifyPostAsync(Post post)
+        public ValueTask<Post> ModifyPostAsync(Post post) =>
+        TryCatch(async () =>
         {
-            Post maybePost = 
+            ValidatePostOnModify(post);
+            Post maybePost =
                 await this.storageBroker.SelectPostByIdAsync(post.Id);
 
             return await this.storageBroker.UpdatePostAsync(post);
-        }
-    }
+
+        });   
+    } 
 }

@@ -11,7 +11,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
 {
     public partial class PostService
     {
-        private void ValidatePost(Post post)
+        private void ValidatePostOnAdd(Post post)
         {
             ValidatePostIsNotNull(post);
 
@@ -29,6 +29,11 @@ namespace Taarafo.Core.Services.Foundations.Posts
                 Parameter: nameof(Post.UpdatedDate)),
 
                 (Rule: IsNotRecent(post.CreatedDate), Parameter: nameof(Post.CreatedDate)));
+        }
+
+        private void ValidatePostOnModify(Post post)
+        {
+            ValidatePostIsNotNull(post);
         }
 
         public void ValidatePostById(Guid postId) =>
