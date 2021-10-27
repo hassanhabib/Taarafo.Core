@@ -42,6 +42,9 @@ namespace Taarafo.Core.Brokers.Storages
             using var broker =
                 new StorageBroker(this.configuration);
 
+            broker.ChangeTracker.QueryTrackingBehavior = 
+                QueryTrackingBehavior.NoTracking;
+
             return await broker.Posts.FindAsync(postId);
         }
 
