@@ -46,7 +46,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        [InlineData("  ")]
+        [InlineData(" ")]
         public async Task ShouldThrowValidationExceptionOnModifyIfPostIsInvalidAndLogItAsync(string invalidText)
         {
             // given 
@@ -67,7 +67,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             invalidPostException.AddData(
                 key:nameof(Post.Author),
-                values:"Author is required");
+                values:"Id is required");
 
             invalidPostException.AddData(
                 key: nameof(Post.CreatedDate),
@@ -99,7 +99,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
     }

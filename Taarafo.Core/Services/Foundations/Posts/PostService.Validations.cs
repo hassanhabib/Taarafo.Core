@@ -34,6 +34,15 @@ namespace Taarafo.Core.Services.Foundations.Posts
         private void ValidatePostOnModify(Post post)
         {
             ValidatePostIsNotNull(post);
+
+            Validate
+            (
+                (Rule: IsInvalid(post.Id), Parameter: nameof(post.Id)),
+                (Rule: IsInvalid(post.Content), Parameter: nameof(post.Content)),
+                (Rule: IsInvalid(post.Author), Parameter: nameof(post.Author)),
+                (Rule: IsInvalid(post.CreatedDate), Parameter: nameof(post.CreatedDate)),
+                (Rule: IsInvalid(post.UpdatedDate), Parameter: nameof(post.UpdatedDate))
+            );
         }
 
         public void ValidatePostById(Guid postId) =>
