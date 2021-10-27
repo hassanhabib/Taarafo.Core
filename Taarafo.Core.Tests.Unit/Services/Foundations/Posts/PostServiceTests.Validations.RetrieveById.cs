@@ -23,7 +23,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             invalidPostException.AddData(
                 key: nameof(Post.Id),
-                values: "Id is invalid");
+                values: "Id is required");
 
             var expectedPostValidationException =
                 new PostValidationException(invalidPostException);
