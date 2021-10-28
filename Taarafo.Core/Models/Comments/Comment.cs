@@ -12,6 +12,7 @@ namespace Taarafo.Core.Models.Comments
     {
         public Guid Id { get; set; }
         public string Content { get; set; }
+        public Guid Author { get; set; }
 
         public Guid PostId { get; set; }
         public Post Post { get; set; }
