@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Models.Posts.Exceptions;
@@ -15,6 +16,49 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
     public partial class PostServiceTests
     {
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnDeleteIfDatabaseUpdateconcurrencyErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid randomPostId = Guid.NewGuid();
+            Guid inputPostId = randomPostId;
+            var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
+            var lockedPostException = new LockedPostException(databaseUpdateConcurrencyException);
+
+            var expectedPostDependencyException =
+                new PostDependencyException(lockedPostException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostByIdAsync(inputPostId))
+                    .ThrowsAsync(databaseUpdateConcurrencyException);
+
+            // when
+            ValueTask<Post> deletePostTask =
+                this.postService.RemovePostByIdAsync(inputPostId);
+
+            // then
+            await Assert.ThrowsAsync<PostDependencyException>(() =>
+                deletePostTask.AsTask());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(expectedPostDependencyException))),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(inputPostId),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeletePostAsync(It.IsAny<Post>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+
+
+        }
+
         [Fact]
         public async Task ShouldThrowServiceExceptionOnDeleteWhenExceptionOccursAndLogItAsync()
         {
