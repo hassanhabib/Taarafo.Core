@@ -117,6 +117,11 @@ namespace Taarafo.Core.Services.Foundations.Posts
                     throw new InvalidPostException(
                         parameterName: nameof(inputPost.CreatedDate),
                         parameterValue: inputPost.CreatedDate);
+
+                case { } when inputPost.UpdatedDate == storagePost.UpdatedDate:
+                    throw new InvalidPostException(
+                        parameterName: nameof(inputPost.UpdatedDate),
+                        parameterValue:inputPost.UpdatedDate);
             }
         }
 
