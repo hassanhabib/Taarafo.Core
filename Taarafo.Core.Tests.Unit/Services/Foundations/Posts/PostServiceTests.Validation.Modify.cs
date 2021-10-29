@@ -131,7 +131,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedPostValidationException))),
                         Times.Once);
 
