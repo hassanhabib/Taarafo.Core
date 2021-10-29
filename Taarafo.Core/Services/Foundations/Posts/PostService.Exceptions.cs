@@ -41,6 +41,10 @@ namespace Taarafo.Core.Services.Foundations.Posts
 
                 throw CreateAndLogCriticalDependencyException(failedPostStorageException);
             }
+            catch (NotFoundPostException notFoundPostException)
+            {
+                throw CreateAndLogValidationException(notFoundPostException);
+            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsPostException =
