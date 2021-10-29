@@ -298,5 +298,60 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageUpdatedDateSameAsUpdatedDateAndLogItAsync()
+        {
+            // given
+            int randomNegativeNumber = GetRandomNegativeNumber();
+            int minutesInPast = randomNegativeNumber;
+            DateTimeOffset randomDate = GetRadnomDateTimeOffset();
+            Post randomPost  = CreateRandomPost(randomDate);
+            randomPost.CreatedDate = randomPost.CreatedDate.AddMinutes(minutesInPast);
+            Post invalidPost = randomPost;
+            invalidPost.UpdatedDate = randomDate;
+            Post storagePost = randomPost.DeepClone();
+            Guid postId = invalidPost.Id;
+
+            var invalidPostException = new InvalidPostException(
+                parameterName: nameof(Post.UpdatedDate),
+                parameterValue: invalidPost.UpdatedDate);
+
+            var expectedPostValidationException =
+                new PostValidationException(invalidPostException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostByIdAsync(postId))
+                .ReturnsAsync(storagePost);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                .Returns(randomDate);
+
+            // when
+            ValueTask<Post> modifyPostTask =
+                this.postService.ModifyPostAsync(invalidPost);
+
+            // then
+            await Assert.ThrowsAsync<PostValidationException>(() =>
+                modifyPostTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(postId),
+                Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostValidationException))),
+                        Times.Once); 
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
