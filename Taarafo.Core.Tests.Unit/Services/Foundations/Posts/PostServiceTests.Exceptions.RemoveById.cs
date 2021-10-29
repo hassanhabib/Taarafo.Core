@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Models.Posts.Exceptions;
@@ -14,6 +15,46 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
     public partial class PostServiceTests
     {
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnDeleteWhenSqlExceptionOccursAndLogItAsync()
+        {
+
+            // given
+            Guid somePostId = Guid.NewGuid();
+            SqlException sqlException = GetSqlException();
+
+            var failedPostStorageException =
+                new FailedPostStorageException(sqlException);
+
+            var expectedPostDependencyException =
+                new PostDependencyException(failedPostStorageException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(sqlException);
+            // when
+            ValueTask<Post> deletePostTask =
+                this.postService.RemovePostByIdAsync(somePostId);
+
+            // then
+            await Assert.ThrowsAsync<PostDependencyException>(() =>
+                deletePostTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedPostDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+
+        }
+
         [Fact]
         public async Task ShouldThrowNotFoundExceptionIfPostIsNotFoundAndLogItAsync()
         {
