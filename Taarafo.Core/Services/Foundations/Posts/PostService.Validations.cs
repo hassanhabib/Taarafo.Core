@@ -109,6 +109,21 @@ namespace Taarafo.Core.Services.Foundations.Posts
 
             return timeDifference.Duration() > oneMinute;
         }
+        private static void ValidateAginstStoragePostOnModify(Post inputPost,Post storagePost)
+        {
+            switch (inputPost)
+            {
+                case { } when inputPost.CreatedDate != storagePost.CreatedDate:
+                    throw new InvalidPostException(
+                        parameterName: nameof(inputPost.CreatedDate),
+                        parameterValue: inputPost.CreatedDate);
+
+                case { } when inputPost.UpdatedDate != storagePost.UpdatedDate:
+                    throw new InvalidPostException(
+                        parameterName: nameof(inputPost.UpdatedDate),
+                        parameterValue:inputPost.UpdatedDate);
+            }
+        }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {

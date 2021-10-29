@@ -60,6 +60,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
             Post maybePost =
                 await this.storageBroker.SelectPostByIdAsync(post.Id);
             ValiateStoragePost(maybePost,post.Id);
+            ValidateAginstStoragePostOnModify(inputPost: post, storagePost: maybePost);
 
             return await this.storageBroker.UpdatePostAsync(post);
 
