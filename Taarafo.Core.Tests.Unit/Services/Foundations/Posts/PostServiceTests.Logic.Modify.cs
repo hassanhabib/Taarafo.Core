@@ -20,7 +20,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             Post updatedStoragePost = inputPost.DeepClone();
             Post expectedPost = updatedStoragePost;
             Post storagePost = randomPost.DeepClone();
+            inputPost.UpdatedDate = randomDate;
             Guid postId = inputPost.Id;
+
+            this.dateTimeBrokerMock.Setup(broker =>
+              broker.GetCurrentDateTimeOffset())
+                  .Returns(randomDate);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostByIdAsync(postId))
@@ -36,16 +41,20 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             // then
             actualPost.Should().BeEquivalentTo(expectedPost);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), 
+                    Times.Once);
+
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostByIdAsync(postId), 
+                broker.SelectPostByIdAsync(postId),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdatePostAsync(inputPost),
                     Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }

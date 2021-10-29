@@ -101,5 +101,48 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameToCreatedDateAndLogItAsync()
+        {
+            // given
+            DateTimeOffset dateTime = GetRadnomDateTimeOffset();
+            Post randomPost = CreateRandomPost(dateTime);
+            Post invalidPost = randomPost;
+            var invalidPostException =
+                new InvalidPostException();
+
+            invalidPostException.AddData(
+                key: nameof(Post.UpdatedDate),
+                values: $"UpdatedDate is same as {nameof(Post.CreatedDate)}");
+
+            var expectedPostValidationException = 
+                new PostValidationException(invalidPostException);
+            
+            // when
+            ValueTask<Post> modifyPostTask = 
+                this.postService.ModifyPostAsync(invalidPost);
+
+            // then
+            await Assert.ThrowsAsync<PostValidationException>(() =>
+                modifyPostTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameValidationExceptionAs(
+                    expectedPostValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(invalidPost.Id),
+                    Times.Never);
+            
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
     }
 }
