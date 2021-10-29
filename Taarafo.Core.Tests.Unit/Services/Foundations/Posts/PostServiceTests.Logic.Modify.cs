@@ -15,7 +15,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         {
             // given
             DateTimeOffset randomDate = GetRadnomDateTimeOffset();
-            Post randomPost = CreateRandomPost();
+            Post randomPost = CreateRandomPost(randomDate);
             Post inputPost = randomPost;
             Post updatedStoragePost = inputPost.DeepClone();
             Post expectedPost = updatedStoragePost;
