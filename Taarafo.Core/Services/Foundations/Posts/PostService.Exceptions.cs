@@ -76,7 +76,9 @@ namespace Taarafo.Core.Services.Foundations.Posts
             }
             catch (SqlException sqlException)
             {
-                throw CreateAndLogCriticalDependencyException(sqlException);
+                var failedPostStorageException =
+                    new FailedPostStorageException(sqlException);
+                throw CreateAndLogCriticalDependencyException(failedPostStorageException);
             }
             catch (Exception exception)
             {
@@ -96,7 +98,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
         }
 
         private PostDependencyException CreateAndLogCriticalDependencyException(
-            Exception exception)
+            Xeption exception)
         {
             var postDependencyException = new PostDependencyException(exception);
             this.loggingBroker.LogCritical(postDependencyException);
@@ -124,7 +126,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
             return postServiceException;
         }
 
-        private PostDependencyException CreateAndLogDependecyException(Exception exception)
+        private PostDependencyException CreateAndLogDependecyException(Xeption exception)
         {
             var postDependencyException = new PostDependencyException(exception);
             this.loggingBroker.LogError(postDependencyException);
