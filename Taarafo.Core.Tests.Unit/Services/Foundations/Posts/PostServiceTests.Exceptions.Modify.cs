@@ -45,7 +45,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             // when
             ValueTask<Post> addPostTask =
-                this.postService.AddPostAsync(somePost);
+                this.postService.ModifyPostAsync(somePost);
 
             // then
             await Assert.ThrowsAsync<PostDependencyException>(() =>
