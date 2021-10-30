@@ -74,7 +74,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateErrorOccursAndLogItAsync()
+        public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
         {
             // given
             int minutesInPast = GetRandomNegativeNumber();
@@ -140,7 +140,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             var lockedPostException = 
                 new LockedPostException(databaseUpdateConcurrencyException);
 
-            var expectedTeacherDependencyException =
+            var expectedPostDependencyException =
                 new PostDependencyException(lockedPostException);
 
             this.storageBrokerMock.Setup(broker =>
@@ -169,7 +169,58 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedTeacherDependencyException))),
+                    expectedPostDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnModifyIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            int minuteInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+           Post randomPost = CreateRandomPost(randomDateTime);
+           Post somePost = randomPost;
+            somePost.CreatedDate = randomDateTime.AddMinutes(minuteInPast);
+            var serviceException = new Exception();
+
+            var failedPostException =
+                new FailedPostServiceException(serviceException);
+
+            var expectedPostServiceException =
+                new PostServiceException(failedPostException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostByIdAsync(somePost.Id))
+                    .ThrowsAsync(serviceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
+
+            // when
+            ValueTask<Post> modifyPostTask =
+                this.postService.ModifyPostAsync(somePost);
+
+            // then
+            await Assert.ThrowsAsync<PostServiceException>(() =>
+                modifyPostTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(somePost.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostServiceException))),
                         Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
