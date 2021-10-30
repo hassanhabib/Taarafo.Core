@@ -52,12 +52,18 @@ namespace Taarafo.Core.Services.Foundations.Posts
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsPostException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedPostException = new LockedPostException(dbUpdateConcurrencyException);
+
+                throw CreateAndLogDependencyException(lockedPostException);
+            }
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedPostStorageException =
                     new FailedPostStorageException(databaseUpdateException);
 
-                throw CreateAndLogDependecyException(failedPostStorageException);
+                throw CreateAndLogDependencyException(failedPostStorageException);
             }
             catch (Exception exception)
             {
@@ -126,7 +132,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
             return postServiceException;
         }
 
-        private PostDependencyException CreateAndLogDependecyException(Xeption exception)
+        private PostDependencyException CreateAndLogDependencyException(Xeption exception)
         {
             var postDependencyException = new PostDependencyException(exception);
             this.loggingBroker.LogError(postDependencyException);
