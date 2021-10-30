@@ -41,9 +41,9 @@ namespace Taarafo.Core.Services.Foundations.Posts
                 (Rule: IsInvalid(post.Content), Parameter: nameof(post.Content)),
                 (Rule: IsInvalid(post.Author), Parameter: nameof(post.Author)),
                 (Rule: IsInvalid(post.CreatedDate), Parameter: nameof(post.CreatedDate)),
-                (Rule: IsInvalid(post.UpdatedDate), Parameter: nameof(post.UpdatedDate)),                
+                (Rule: IsInvalid(post.UpdatedDate), Parameter: nameof(post.UpdatedDate)),
                 (Rule: IsNotRecent(post.UpdatedDate), Parameter: nameof(post.UpdatedDate))
-                    
+
             );
         }
 
@@ -109,7 +109,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
 
             return timeDifference.Duration() > oneMinute;
         }
-        private static void ValidateAginstStoragePostOnModify(Post inputPost,Post storagePost)
+        private static void ValidateAginstStoragePostOnModify(Post inputPost, Post storagePost)
         {
             switch (inputPost)
             {
@@ -121,7 +121,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
                 case { } when inputPost.UpdatedDate == storagePost.UpdatedDate:
                     throw new InvalidPostException(
                         parameterName: nameof(inputPost.UpdatedDate),
-                        parameterValue:inputPost.UpdatedDate);
+                        parameterValue: inputPost.UpdatedDate);
             }
         }
 

@@ -5,7 +5,6 @@
 
 using System;
 using System.Threading.Tasks;
-using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -108,7 +107,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 modifyPostTask.AsTask());
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostByIdAsync(postId), 
+                broker.SelectPostByIdAsync(postId),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -137,7 +136,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             Guid postId = somePost.Id;
             var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
 
-            var lockedPostException = 
+            var lockedPostException =
                 new LockedPostException(databaseUpdateConcurrencyException);
 
             var expectedPostDependencyException =
@@ -183,8 +182,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             // given
             int minuteInPast = GetRandomNegativeNumber();
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-           Post randomPost = CreateRandomPost(randomDateTime);
-           Post somePost = randomPost;
+            Post randomPost = CreateRandomPost(randomDateTime);
+            Post somePost = randomPost;
             somePost.CreatedDate = randomDateTime.AddMinutes(minuteInPast);
             var serviceException = new Exception();
 

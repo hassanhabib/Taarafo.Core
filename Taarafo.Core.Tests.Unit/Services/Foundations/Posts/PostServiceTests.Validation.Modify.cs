@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.Posts;
@@ -66,8 +65,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 values: "Text is required");
 
             invalidPostException.AddData(
-                key:nameof(Post.Author),
-                values:"Id is required");
+                key: nameof(Post.Author),
+                values: "Id is required");
 
             invalidPostException.AddData(
                 key: nameof(Post.CreatedDate),
@@ -115,11 +114,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 key: nameof(Post.UpdatedDate),
                 values: $"UpdatedDate is same as {nameof(Post.CreatedDate)}");
 
-            var expectedPostValidationException = 
+            var expectedPostValidationException =
                 new PostValidationException(invalidPostException);
-            
+
             // when
-            ValueTask<Post> modifyPostTask = 
+            ValueTask<Post> modifyPostTask =
                 this.postService.ModifyPostAsync(invalidPost);
 
             // then
@@ -138,12 +137,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(invalidPost.Id),
                     Times.Never);
-            
+
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
-        
+
         [Theory]
         [MemberData(nameof(InvalidMinuteCases))]
         public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotRecentAndLogItAsync(int minutes)
@@ -153,12 +152,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             Post randomPost = CreateRandomPost(dateTime);
             Post inputPost = randomPost;
             inputPost.UpdatedDate = dateTime.AddMinutes(minutes);
-            var invalidPostException = 
+            var invalidPostException =
                 new InvalidPostException();
 
             invalidPostException.AddData(
-                key:nameof(Post.UpdatedDate),
-                values:"Date is not recent");
+                key: nameof(Post.UpdatedDate),
+                values: "Date is not recent");
 
             var expectedPostValidatonException =
                 new PostValidationException(invalidPostException);
@@ -176,7 +175,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 modifyPostTask.AsTask());
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), 
+                broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -227,7 +226,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 modifyPostTask.AsTask());
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostByIdAsync(nonExistPost.Id), 
+                broker.SelectPostByIdAsync(nonExistPost.Id),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -306,7 +305,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             int randomNegativeNumber = GetRandomNegativeNumber();
             int minutesInPast = randomNegativeNumber;
             DateTimeOffset randomDate = GetRadnomDateTimeOffset();
-            Post randomPost  = CreateRandomPost(randomDate);
+            Post randomPost = CreateRandomPost(randomDate);
             randomPost.CreatedDate = randomPost.CreatedDate.AddMinutes(minutesInPast);
             Post invalidPost = randomPost;
             invalidPost.UpdatedDate = randomDate;
@@ -347,7 +346,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostValidationException))),
-                        Times.Once); 
+                        Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
