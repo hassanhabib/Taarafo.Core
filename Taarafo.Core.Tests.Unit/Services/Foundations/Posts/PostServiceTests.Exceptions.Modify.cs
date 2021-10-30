@@ -72,5 +72,57 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            int minutesInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTime = GetRadnomDateTimeOffset();
+            Post randomPost = CreateRandomPost(randomDateTime);
+            Post SomePost = randomPost;
+            Guid postId = SomePost.Id;
+            SomePost.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
+            var databaseUpdateException = new DbUpdateException();
+
+            var failedPostException =
+                new FailedPostStorageException(databaseUpdateException);
+
+            var expectedPostDependencyException =
+                new PostDependencyException(failedPostException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostByIdAsync(postId))
+                    .ThrowsAsync(databaseUpdateException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
+
+            // when
+            ValueTask<Post> modifyPostTask =
+                this.postService.ModifyPostAsync(SomePost);
+
+            // then
+            await Assert.ThrowsAsync<PostDependencyException>(() =>
+                modifyPostTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(postId), 
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
