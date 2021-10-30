@@ -124,5 +124,57 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        {
+            // given
+            int minutesInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Post randomPost = CreateRandomPost(randomDateTime);
+            Post somePost = randomPost;
+            somePost.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
+            Guid postId = somePost.Id;
+            var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
+
+            var lockedPostException = 
+                new LockedPostException(databaseUpdateConcurrencyException);
+
+            var expectedTeacherDependencyException =
+                new PostDependencyException(lockedPostException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostByIdAsync(postId))
+                    .ThrowsAsync(databaseUpdateConcurrencyException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
+
+            // when
+            ValueTask<Post> modifyPostTask =
+                this.postService.ModifyPostAsync(somePost);
+
+            // then
+            await Assert.ThrowsAsync<PostDependencyException>(() =>
+                modifyPostTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(postId),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameValidationExceptionAs(
+                    expectedTeacherDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
