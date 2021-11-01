@@ -20,11 +20,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldThrowCriticalDependencyExceptionOnModifyIfSqlErrorOccursAndLogItAsync()
         {
             // given
-            int minutesInPast = GetRandomNegativeNumber();
             DateTimeOffset someDateTime = GetRadnomDateTimeOffset();
             Post randomPost = CreateRandomPost(someDateTime);
             Post somePost = randomPost;
-            somePost.CreatedDate = someDateTime.AddMinutes(minutesInPast);
             Guid postId = somePost.Id;
             SqlException sqlException = GetSqlException();
 
@@ -34,13 +32,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             var expectedPostDependencyException =
                 new PostDependencyException(failedPostStorageException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostByIdAsync(postId))
-                    .ThrowsAsync(sqlException);
-
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Returns(someDateTime);
+                this.dateTimeBrokerMock.Setup(broker =>
+                    broker.GetCurrentDateTimeOffset())
+                    .Throws(sqlException);
 
             // when
             ValueTask<Post> addPostTask =
@@ -56,7 +50,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(postId),
-                    Times.Once);
+                    Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
