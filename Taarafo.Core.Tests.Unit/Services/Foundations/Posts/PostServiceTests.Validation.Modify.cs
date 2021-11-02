@@ -261,10 +261,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             Post storagePost = randomPost.DeepClone();
             Guid postId = invalidPost.Id;
             invalidPost.CreatedDate = storagePost.CreatedDate.AddMinutes(randomMinutes);
+            var invalidPostException = new InvalidPostException();
 
-            var invalidPostException = new InvalidPostException(
-                parameterName: nameof(Post.CreatedDate),
-                parameterValue: invalidPost.CreatedDate);
+            invalidPostException.AddData(
+                key: nameof(Post.CreatedDate),
+                values: $"Id is not the same as {nameof(Post.CreatedDate)}");
 
             var expectedPostValidationException =
                 new PostValidationException(invalidPostException);
@@ -319,9 +320,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             Guid postId = invalidPost.Id;
             var invalidPostException = new InvalidPostException();
 
-            //invalidPostException.AddData()
+            invalidPostException.AddData(
+                key: nameof(Post.UpdatedDate),
+                values: $"Date is the same as {nameof(Post.UpdatedDate)}");
 
- 
             var expectedPostValidationException =
                 new PostValidationException(invalidPostException);
 

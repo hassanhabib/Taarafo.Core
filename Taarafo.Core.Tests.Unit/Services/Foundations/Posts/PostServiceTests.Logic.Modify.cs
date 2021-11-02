@@ -19,6 +19,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldModifyPostAsync()
         {
             // given
+            int randomNumber = GetRandomNumber();
+            int randomDays = randomNumber;
             DateTimeOffset randomDate = GetRadnomDateTimeOffset();
             DateTimeOffset randomInputDate = GetRadnomDateTimeOffset();
             Post randomPost = CreateRandomPost(randomInputDate);
@@ -42,7 +44,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     .ReturnsAsync(updatedStoragePost);
 
             // when
-            Post actualPost = await this.postService.ModifyPostAsync(inputPost);
+            Post actualPost = 
+                await this.postService.ModifyPostAsync(inputPost);
 
             // then
             actualPost.Should().BeEquivalentTo(expectedPost);

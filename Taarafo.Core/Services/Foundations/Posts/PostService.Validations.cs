@@ -111,18 +111,18 @@ namespace Taarafo.Core.Services.Foundations.Posts
         }
         private static void ValidateAginstStoragePostOnModify(Post inputPost, Post storagePost)
         {
-            switch (inputPost)
-            {
-                case { } when inputPost.CreatedDate != storagePost.CreatedDate:
-                    throw new InvalidPostException(
-                        parameterName: nameof(inputPost.CreatedDate),
-                        parameterValue: inputPost.CreatedDate);
+            Validate(
+                (Rule: IsNotSame(
+                    firstDate: inputPost.CreatedDate,
+                    secondDate: storagePost.CreatedDate,
+                    secondDateName: nameof(Post.CreatedDate)),
+                Parameter: nameof(Post.CreatedDate)),
 
-                case { } when inputPost.UpdatedDate == storagePost.UpdatedDate:
-                    throw new InvalidPostException(
-                        parameterName: nameof(inputPost.UpdatedDate),
-                        parameterValue: inputPost.UpdatedDate);
-            }
+                (Rule: IsNotSame(
+                    firstDate: inputPost.UpdatedDate,
+                    secondDate: storagePost.UpdatedDate,
+                    secondDateName: nameof(Post.UpdatedDate)),
+                Parameter:nameof(Post.UpdatedDate)));
         }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
