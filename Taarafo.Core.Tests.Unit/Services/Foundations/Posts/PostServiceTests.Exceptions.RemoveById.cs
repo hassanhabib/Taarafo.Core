@@ -21,8 +21,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         {
             // given
             Guid somePostId = Guid.NewGuid();
-            var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
-            var lockedPostException = new LockedPostException(databaseUpdateConcurrencyException);
+            
+            var databaseUpdateConcurrencyException =
+                new DbUpdateConcurrencyException();
+            
+            var lockedPostException = 
+                new LockedPostException(databaseUpdateConcurrencyException);
 
             var expectedPostDependencyValidationException =
                 new PostDependencyValidationException(lockedPostException);
