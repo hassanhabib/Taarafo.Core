@@ -45,6 +45,19 @@ namespace Taarafo.Core.Brokers.Storages
             return await broker.Posts.FindAsync(postId);
         }
 
+        public async ValueTask<Post> UpdatePostAsync(Post post)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            EntityEntry<Post> postEntityEntry =
+                broker.Posts.Update(post);
+
+            await broker.SaveChangesAsync();
+
+            return postEntityEntry.Entity;
+        }
+
         public async ValueTask<Post> DeletePostAsync(Post post)
         {
             using var broker =

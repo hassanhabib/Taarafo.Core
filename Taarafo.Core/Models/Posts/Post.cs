@@ -4,6 +4,8 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using Taarafo.Core.Models.Comments;
 
 namespace Taarafo.Core.Models.Posts
 {
@@ -14,5 +16,7 @@ namespace Taarafo.Core.Models.Posts
         public Guid Author { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public DateTimeOffset UpdatedDate { get; set; }
+
+        public IEnumerable<Comment> Comments { get; set; }
     }
 }

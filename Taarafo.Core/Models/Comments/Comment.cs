@@ -4,14 +4,16 @@
 // ---------------------------------------------------------------
 
 using System;
-using Xeptions;
+using Taarafo.Core.Models.Posts;
 
-namespace Taarafo.Core.Models.Posts.Exceptions
+namespace Taarafo.Core.Models.Comments
 {
-    public class NotFoundPostException : Xeption
+    public class Comment
     {
-        public NotFoundPostException(Guid postId)
-            : base(message: $"Couldn't find post with id: {postId}.")
-        { }
+        public Guid Id { get; set; }
+        public string Content { get; set; }
+
+        public Guid PostId { get; set; }
+        public Post Post { get; set; }
     }
 }
