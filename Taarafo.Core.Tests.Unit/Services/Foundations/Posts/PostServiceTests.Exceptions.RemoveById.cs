@@ -21,11 +21,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         {
             // given
             Guid somePostId = Guid.NewGuid();
-            
+
             var databaseUpdateConcurrencyException =
                 new DbUpdateConcurrencyException();
-            
-            var lockedPostException = 
+
+            var lockedPostException =
                 new LockedPostException(databaseUpdateConcurrencyException);
 
             var expectedPostDependencyValidationException =
@@ -55,44 +55,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.storageBrokerMock.Verify(broker =>
                 broker.DeletePostAsync(It.IsAny<Post>()),
                     Times.Never);
-
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async Task ShouldThrowServiceExceptionOnDeleteWhenExceptionOccursAndLogItAsync()
-        {
-            // given
-            Guid somePostId = Guid.NewGuid();
-            var serviceException = new Exception();
-
-            var failedPostServiceException =
-                    new FailedPostServiceException(serviceException);
-
-            var expectedPostServiceException =
-                new PostServiceException(failedPostServiceException);
-
-            this.storageBrokerMock.Setup(broker =>
-                    broker.SelectPostByIdAsync(It.IsAny<Guid>()))
-                        .ThrowsAsync(serviceException);
-            // when
-            ValueTask<Post> deletePostTask =
-                this.postService.RemovePostByIdAsync(somePostId);
-
-            // then
-            await Assert.ThrowsAsync<PostServiceException>(() =>
-                deletePostTask.AsTask());
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostByIdAsync(It.IsAny<Guid>()),
-                        Times.Once());
-
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostServiceException))),
-                        Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -140,44 +102,38 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         }
 
         [Fact]
-        public async Task ShouldThrowNotFoundExceptionIfPostIsNotFoundAndLogItAsync()
+        public async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
         {
             // given
-            Guid randomPostId = Guid.NewGuid();
-            Guid inputPostId = randomPostId;
-            Post noPost = null;
+            Guid somePostId = Guid.NewGuid();
+            var serviceException = new Exception();
 
-            var notFoundPostException =
-                new NotFoundPostException(inputPostId);
+            var failedPostServiceException =
+                new FailedPostServiceException(serviceException);
 
-            var expectedPostValidationException =
-                new PostValidationException(
-                    notFoundPostException);
+            var expectedPostServiceException =
+                new PostServiceException(failedPostServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()))
-                    .ReturnsAsync(noPost);
+                    .ThrowsAsync(serviceException);
 
             // when
             ValueTask<Post> removePostByIdTask =
-                this.postService.RemovePostByIdAsync(inputPostId);
+                this.postService.RemovePostByIdAsync(somePostId);
 
             // then
-            await Assert.ThrowsAsync<PostValidationException>(() =>
-               removePostByIdTask.AsTask());
+            await Assert.ThrowsAsync<PostServiceException>(() =>
+                removePostByIdTask.AsTask());
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()),
-                    Times.Once);
+                        Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
-                    expectedPostValidationException))),
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostServiceException))),
                         Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.DeletePostAsync(It.IsAny<Post>()),
-                    Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
