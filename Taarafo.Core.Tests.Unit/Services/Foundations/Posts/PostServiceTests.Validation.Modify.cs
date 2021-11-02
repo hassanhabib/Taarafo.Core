@@ -311,16 +311,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             int minutesInPast = randomNegativeNumber;
             DateTimeOffset randomDate = GetRadnomDateTimeOffset();
             Post randomPost = CreateRandomPost(randomDate);
-            randomPost.CreatedDate = randomPost.CreatedDate.AddMinutes(minutesInPast);
+            randomPost.CreatedDate = GetRadnomDateTimeOffset();
+            randomPost.UpdatedDate = randomPost.CreatedDate.AddMinutes(minutesInPast);
             Post invalidPost = randomPost;
             invalidPost.UpdatedDate = randomDate;
             Post storagePost = randomPost.DeepClone();
             Guid postId = invalidPost.Id;
+            var invalidPostException = new InvalidPostException();
 
-            var invalidPostException = new InvalidPostException(
-                parameterName: nameof(Post.UpdatedDate),
-                parameterValue: invalidPost.UpdatedDate);
+            //invalidPostException.AddData()
 
+ 
             var expectedPostValidationException =
                 new PostValidationException(invalidPostException);
 
