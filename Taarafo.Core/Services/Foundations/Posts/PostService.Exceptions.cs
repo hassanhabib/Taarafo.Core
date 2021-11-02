@@ -52,6 +52,13 @@ namespace Taarafo.Core.Services.Foundations.Posts
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsPostException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedPostException =
+                    new LockedPostException(dbUpdateConcurrencyException);
+
+                throw CreateAndLogDependencyValidationException(lockedPostException);
+            }
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedPostStorageException =
