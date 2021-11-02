@@ -43,6 +43,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
                 (Rule: IsInvalid(post.CreatedDate), Parameter: nameof(post.CreatedDate)),
                 (Rule: IsInvalid(post.UpdatedDate), Parameter: nameof(post.UpdatedDate)),
                 (Rule: IsNotRecent(post.UpdatedDate), Parameter: nameof(post.UpdatedDate))
+
             );
         }
 
