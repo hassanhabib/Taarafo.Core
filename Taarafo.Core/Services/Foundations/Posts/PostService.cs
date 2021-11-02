@@ -63,7 +63,6 @@ namespace Taarafo.Core.Services.Foundations.Posts
             ValidateAginstStoragePostOnModify(inputPost: post, storagePost: maybePost);
 
             return await this.storageBroker.UpdatePostAsync(post);
-
         });
 
         public ValueTask<Post> RemovePostByIdAsync(Guid postId) =>

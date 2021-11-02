@@ -32,8 +32,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             var expectedPostDependencyException =
                 new PostDependencyException(failedPostStorageException);
 
-                this.dateTimeBrokerMock.Setup(broker =>
-                    broker.GetCurrentDateTimeOffset())
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
                     .Throws(sqlException);
 
             // when
