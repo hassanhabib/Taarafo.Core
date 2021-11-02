@@ -119,7 +119,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        public async Task ShouldThrowDependencyValidationExceptionOnModifyIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
         {
             // given
             int minutesInPast = GetRandomNegativeNumber();
@@ -133,8 +133,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             var lockedPostException =
                 new LockedPostException(databaseUpdateConcurrencyException);
 
-            var expectedPostDependencyException =
-                new PostDependencyException(lockedPostException);
+            var expectedPostDependencyValidationException =
+                new PostDependencyValidationException(lockedPostException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostByIdAsync(postId))
@@ -149,7 +149,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 this.postService.ModifyPostAsync(somePost);
 
             // then
-            await Assert.ThrowsAsync<PostDependencyException>(() =>
+            await Assert.ThrowsAsync<PostDependencyValidationException>(() =>
                 modifyPostTask.AsTask());
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -162,7 +162,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostDependencyException))),
+                    expectedPostDependencyValidationException))),
                         Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
