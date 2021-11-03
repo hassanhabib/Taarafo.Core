@@ -19,29 +19,25 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldModifyPostAsync()
         {
             // given
-            int randomNumber = GetRandomNumber();
-            int randomDays = randomNumber;
             DateTimeOffset randomDate = GetRadnomDateTimeOffset();
-            DateTimeOffset randomInputDate = GetRadnomDateTimeOffset();
-            Post randomPost = CreateRandomPost(randomInputDate);
+            Post randomPost = CreateRandomModifyPost(randomDate);
             Post inputPost = randomPost;
-            Post updatedStoragePost = inputPost.DeepClone();
-            Post expectedPost = updatedStoragePost;
-            Post storagePost = randomPost.DeepClone();
-            inputPost.UpdatedDate = randomDate;
+            Post storagePost = inputPost;
+            Post updatedPost = inputPost;
+            Post expectedPost = updatedPost.DeepClone();
             Guid postId = inputPost.Id;
 
             this.dateTimeBrokerMock.Setup(broker =>
-              broker.GetCurrentDateTimeOffset())
-                  .Returns(randomDate);
-
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDate);
+            
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostByIdAsync(postId))
                     .ReturnsAsync(storagePost);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.UpdatePostAsync(inputPost))
-                    .ReturnsAsync(updatedStoragePost);
+                    .ReturnsAsync(updatedPost);
 
             // when
             Post actualPost = 

@@ -62,6 +62,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         private static Post CreateRandomPost() =>
             CreatePostFiller(dates: GetRandomDateTimeOffset()).Create();
 
+        private static Post CreateRandomModifyPost(DateTimeOffset dates)
+        {
+            int randomDaysInPast = GetRandomNegativeNumber();
+            Post randomPost = CreateRandomPost(dates);
+
+            randomPost.CreatedDate = 
+                randomPost.CreatedDate.AddDays(randomDaysInPast);
+
+            return randomPost;
+        }
+
         private static Post CreateRandomPost(DateTimeOffset dates) =>
             CreatePostFiller(dates).Create();
 
