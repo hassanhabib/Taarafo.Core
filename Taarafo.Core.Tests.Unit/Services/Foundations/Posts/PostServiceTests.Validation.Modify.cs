@@ -79,7 +79,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             invalidPostException.AddData(
                 key: nameof(Post.UpdatedDate),
-                values: "Date is required");
+                "Date is required",
+                $"Date is the same as {nameof(Post.CreatedDate)}");
 
             var expectedPostValidationException =
                 new PostValidationException(invalidPostException);
