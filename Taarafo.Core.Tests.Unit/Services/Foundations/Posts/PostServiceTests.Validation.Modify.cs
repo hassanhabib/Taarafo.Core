@@ -114,18 +114,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
         {
             // given
-            DateTimeOffset dateTime = GetRadnomDateTimeOffset();
-            Post randomPost = CreateRandomPost(dateTime);
+            DateTimeOffset randomDateTime = GetRadnomDateTimeOffset();
+            Post randomPost = CreateRandomPost(randomDateTime);
             Post invalidPost = randomPost;
-            var invalidPostException =
-                new InvalidPostException();
+            var invalidPostException = new InvalidPostException();
 
             invalidPostException.AddData(
                 key: nameof(Post.UpdatedDate),
-                values: $"Date is same as {nameof(Post.CreatedDate)}");
+                values: $"Date is the same as {nameof(Post.CreatedDate)}");
 
             var expectedPostValidationException =
                 new PostValidationException(invalidPostException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
 
             // when
             ValueTask<Post> modifyPostTask =

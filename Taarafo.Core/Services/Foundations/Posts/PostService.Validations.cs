@@ -42,7 +42,14 @@ namespace Taarafo.Core.Services.Foundations.Posts
                 (Rule: IsInvalid(post.Author), Parameter: nameof(post.Author)),
                 (Rule: IsInvalid(post.CreatedDate), Parameter: nameof(post.CreatedDate)),
                 (Rule: IsInvalid(post.UpdatedDate), Parameter: nameof(post.UpdatedDate)),
-                (Rule: IsNotRecent(post.UpdatedDate), Parameter: nameof(post.UpdatedDate))
+                (Rule: IsNotRecent(post.UpdatedDate), Parameter: nameof(post.UpdatedDate)),
+
+                (Rule: IsSame(
+                    firstDate: post.UpdatedDate,
+                    secondDate: post.CreatedDate,
+                    secondDateName: nameof(Post.CreatedDate)),
+
+                Parameter: nameof(Post.UpdatedDate))
             );
         }
 
@@ -85,6 +92,15 @@ namespace Taarafo.Core.Services.Foundations.Posts
                 Condition = firstDate != secondDate,
                 Message = $"Date is not the same as {secondDateName}"
             };
+
+        private static dynamic IsSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+        {
+            Condition = firstDate == secondDate,
+            Message = $"Date is the same as {secondDateName}"
+        };
 
         private static dynamic IsInvalid(string text) => new
         {
