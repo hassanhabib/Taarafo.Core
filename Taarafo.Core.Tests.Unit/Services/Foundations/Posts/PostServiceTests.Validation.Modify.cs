@@ -122,7 +122,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             invalidPostException.AddData(
                 key: nameof(Post.UpdatedDate),
-                values: $"UpdatedDate is same as {nameof(Post.CreatedDate)}");
+                values: $"Date is same as {nameof(Post.CreatedDate)}");
 
             var expectedPostValidationException =
                 new PostValidationException(invalidPostException);
@@ -140,7 +140,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogError(It.Is(SameValidationExceptionAs(
                     expectedPostValidationException))),
                         Times.Once);
 
