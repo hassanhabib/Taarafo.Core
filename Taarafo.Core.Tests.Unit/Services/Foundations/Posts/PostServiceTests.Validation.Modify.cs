@@ -308,12 +308,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldThrowValidationExceptionOnModifyIfStorageUpdatedDateSameAsUpdatedDateAndLogItAsync()
         {
             // given
-            int randomNegativeNumber = GetRandomNegativeNumber();
-            int minutesInPast = randomNegativeNumber;
-            DateTimeOffset randomDate = GetRadnomDateTimeOffset();
+            int randomNegativeMinutes = GetRandomNegativeNumber();
+            int minutesInThePast = randomNegativeMinutes;
+            DateTimeOffset randomDate = GetRandomDateTimeOffset();
             Post randomPost = CreateRandomPost(randomDate);
-            randomPost.CreatedDate = GetRadnomDateTimeOffset();
-            randomPost.UpdatedDate = randomPost.CreatedDate.AddMinutes(minutesInPast);
+            randomPost.UpdatedDate = GetRandomDateTimeOffset();
+            randomPost.CreatedDate = randomPost.CreatedDate.AddMinutes(minutesInThePast);
             Post invalidPost = randomPost;
             invalidPost.UpdatedDate = randomDate;
             Post storagePost = randomPost.DeepClone();
@@ -329,11 +329,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostByIdAsync(postId))
-                .ReturnsAsync(storagePost);
+                    .ReturnsAsync(storagePost);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                .Returns(randomDate);
+                    .Returns(randomPost.UpdatedDate);
 
             // when
             ValueTask<Post> modifyPostTask =
@@ -344,8 +344,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 modifyPostTask.AsTask());
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostByIdAsync(postId),
-                Times.Once);
+                broker.SelectPostByIdAsync(invalidPost.Id),
+                    Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),

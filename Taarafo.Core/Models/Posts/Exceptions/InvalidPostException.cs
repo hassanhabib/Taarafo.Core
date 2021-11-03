@@ -9,12 +9,6 @@ namespace Taarafo.Core.Models.Posts.Exceptions
 {
     public class InvalidPostException : Xeption
     {
-        public InvalidPostException(string parameterName, object parameterValue)
-            : base(message: $"Invalid post," +
-                  $"parameter name: { parameterName}" +
-                  $"parameter value: {parameterValue}.")
-        { }
-
         public InvalidPostException()
             : base(message: "Invalid post. Please correct the errors and try again.")
         { }
