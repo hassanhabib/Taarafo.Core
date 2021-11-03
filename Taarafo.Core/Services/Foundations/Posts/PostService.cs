@@ -57,8 +57,10 @@ namespace Taarafo.Core.Services.Foundations.Posts
         TryCatch(async () =>
         {
             ValidatePostOnModify(post);
+
             Post maybePost =
                 await this.storageBroker.SelectPostByIdAsync(post.Id);
+            
             ValidateStoragePost(maybePost, post.Id);
             ValidateAginstStoragePostOnModify(inputPost: post, storagePost: maybePost);
 

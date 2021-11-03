@@ -34,8 +34,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 modifyPostTask.AsTask());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(
-                    SameValidationExceptionAs(expectedPostValidationException))),
+                broker.LogError(It.Is(SameValidationExceptionAs(
+                    expectedPostValidationException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -43,8 +43,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -92,6 +92,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             await Assert.ThrowsAsync<PostValidationException>(() =>
                 modifyPostTask.AsTask());
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameValidationExceptionAs(
                     expectedPostValidationException))),
@@ -102,11 +106,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameToCreatedDateAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
         {
             // given
             DateTimeOffset dateTime = GetRadnomDateTimeOffset();
