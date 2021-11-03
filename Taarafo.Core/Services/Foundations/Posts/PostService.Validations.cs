@@ -97,10 +97,10 @@ namespace Taarafo.Core.Services.Foundations.Posts
             DateTimeOffset firstDate,
             DateTimeOffset secondDate,
             string secondDateName) => new
-        {
-            Condition = firstDate == secondDate,
-            Message = $"Date is the same as {secondDateName}"
-        };
+            {
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
+            };
 
         private static dynamic IsInvalid(string text) => new
         {
@@ -137,7 +137,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
                     firstDate: inputPost.UpdatedDate,
                     secondDate: storagePost.UpdatedDate,
                     secondDateName: nameof(Post.UpdatedDate)),
-                Parameter:nameof(Post.UpdatedDate)));
+                Parameter: nameof(Post.UpdatedDate)));
         }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)

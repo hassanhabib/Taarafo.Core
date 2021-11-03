@@ -67,7 +67,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             int randomDaysInPast = GetRandomNegativeNumber();
             Post randomPost = CreateRandomPost(dates);
 
-            randomPost.CreatedDate = 
+            randomPost.CreatedDate =
                 randomPost.CreatedDate.AddDays(randomDaysInPast);
 
             return randomPost;

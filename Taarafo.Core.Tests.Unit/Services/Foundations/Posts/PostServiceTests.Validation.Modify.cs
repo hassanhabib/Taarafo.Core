@@ -193,7 +193,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogError(It.Is(SameValidationExceptionAs(
                     expectedPostValidatonException))),
                         Times.Once);
 
@@ -248,7 +248,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogError(It.Is(SameValidationExceptionAs(
                     expectedPostValidationException))),
                         Times.Once);
 
@@ -274,7 +274,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             invalidPostException.AddData(
                 key: nameof(Post.CreatedDate),
-                values: $"Id is not the same as {nameof(Post.CreatedDate)}");
+                values: $"Date is not the same as {nameof(Post.CreatedDate)}");
 
             var expectedPostValidationException =
                 new PostValidationException(invalidPostException);
@@ -304,7 +304,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-               broker.LogError(It.Is(SameExceptionAs(
+               broker.LogError(It.Is(SameValidationExceptionAs(
                    expectedPostValidationException))),
                        Times.Once);
 
@@ -317,15 +317,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldThrowValidationExceptionOnModifyIfStorageUpdatedDateSameAsUpdatedDateAndLogItAsync()
         {
             // given
-            int randomNegativeMinutes = GetRandomNegativeNumber();
-            int minutesInThePast = randomNegativeMinutes;
-            DateTimeOffset randomDate = GetRandomDateTimeOffset();
-            Post randomPost = CreateRandomPost(randomDate);
-            randomPost.UpdatedDate = GetRandomDateTimeOffset();
-            randomPost.CreatedDate = randomPost.CreatedDate.AddMinutes(minutesInThePast);
+            DateTimeOffset randomDateTime = GetRadnomDateTimeOffset();
+            Post randomPost = CreateRandomModifyPost(randomDateTime);
             Post invalidPost = randomPost;
-            invalidPost.UpdatedDate = randomDate;
             Post storagePost = randomPost.DeepClone();
+            invalidPost.UpdatedDate = storagePost.UpdatedDate;
             Guid postId = invalidPost.Id;
             var invalidPostException = new InvalidPostException();
 
@@ -342,7 +338,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                    .Returns(randomPost.UpdatedDate);
+                    .Returns(randomDateTime);
 
             // when
             ValueTask<Post> modifyPostTask =
@@ -353,7 +349,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 modifyPostTask.AsTask());
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostByIdAsync(invalidPost.Id),
+                broker.SelectPostByIdAsync(postId),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -361,7 +357,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogError(It.Is(SameValidationExceptionAs(
                     expectedPostValidationException))),
                         Times.Once);
 

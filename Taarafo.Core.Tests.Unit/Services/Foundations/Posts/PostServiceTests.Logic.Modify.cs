@@ -30,7 +30,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
                     .Returns(randomDate);
-            
+
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostByIdAsync(postId))
                     .ReturnsAsync(storagePost);
@@ -40,7 +40,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     .ReturnsAsync(updatedPost);
 
             // when
-            Post actualPost = 
+            Post actualPost =
                 await this.postService.ModifyPostAsync(inputPost);
 
             // then
