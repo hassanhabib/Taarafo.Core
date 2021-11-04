@@ -320,6 +320,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             DateTimeOffset randomDateTime = GetRadnomDateTimeOffset();
             Post randomPost = CreateRandomModifyPost(randomDateTime);
             Post invalidPost = randomPost;
+            invalidPost.CreatedDate = randomDateTime;
             Post storagePost = randomPost.DeepClone();
             invalidPost.UpdatedDate = storagePost.UpdatedDate;
             Guid postId = invalidPost.Id;
@@ -331,10 +332,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             var expectedPostValidationException =
                 new PostValidationException(invalidPostException);
-
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostByIdAsync(postId))
-                    .ReturnsAsync(storagePost);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -348,18 +345,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             await Assert.ThrowsAsync<PostValidationException>(() =>
                 modifyPostTask.AsTask());
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostByIdAsync(postId),
-                    Times.Once);
-
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedPostValidationException))),
                         Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(postId),
+                    Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
