@@ -3,9 +3,13 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Linq;
+using Taarafo.Core.Models.Comments;
+
 namespace Taarafo.Core.Brokers.Storages
 {
     public partial interface IStorageBroker
     {
+        IQueryable<Comment> SelectAllComments();
     }
 }

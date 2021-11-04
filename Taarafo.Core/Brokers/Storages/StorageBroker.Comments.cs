@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using Taarafo.Core.Models.Comments;
 
 namespace Taarafo.Core.Brokers.Storages
@@ -11,5 +12,13 @@ namespace Taarafo.Core.Brokers.Storages
     public partial class StorageBroker
     {
         public DbSet<Comment> Comments { get; set; }
+
+        public IQueryable<Comment> SelectAllComments()
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            return broker.Comments;
+        }
     }
 }
