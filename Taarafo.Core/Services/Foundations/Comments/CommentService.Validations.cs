@@ -20,7 +20,13 @@ namespace Taarafo.Core.Services.Foundations.Comments
                 (Rule: IsInvalid(comment.Content), Parameter: nameof(Comment.Content)),
                 (Rule: IsInvalid(comment.CreatedDate), Parameter: nameof(Comment.CreatedDate)),
                 (Rule: IsInvalid(comment.UpdatedDate), Parameter: nameof(Comment.UpdatedDate)),
-                (Rule: IsInvalid(comment.PostId), Parameter: nameof(Comment.PostId)));
+                (Rule: IsInvalid(comment.PostId), Parameter: nameof(Comment.PostId)),
+
+                (Rule: IsNotSame(
+                    firstDate: comment.UpdatedDate,
+                    secondDate: comment.CreatedDate,
+                    secondDateName: nameof(Comment.CreatedDate)),
+                Parameter: nameof(Comment.UpdatedDate)));
         }
 
         private static void ValidateCommentIsNotNull(Comment comment)
@@ -42,6 +48,15 @@ namespace Taarafo.Core.Services.Foundations.Comments
             Condition = String.IsNullOrWhiteSpace(text),
             Message = "Text is required"
         };
+
+        private static dynamic IsNotSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
+            };
 
         private static dynamic IsInvalid(DateTimeOffset date) => new
         {
