@@ -8,6 +8,7 @@ using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Services.Foundations.Comments;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 {
@@ -41,8 +42,26 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
+        public static TheoryData MinutesBeforeOrAfter()
+        {
+            int randomNumber = GetRandomNumber();
+            int randomNegativeNumber = GetRandomNegativeNumber();
+
+            return new TheoryData<int>
+            {
+                randomNumber,
+                randomNegativeNumber
+            };
+        }
+
         private static Comment CreateRandomComment() =>
             CreateCommentFiller(date: GetRandomDateTimeOffset()).Create();
+
+        private static Comment CreateRandomComment(DateTimeOffset date) =>
+            CreateCommentFiller(date).Create();
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
