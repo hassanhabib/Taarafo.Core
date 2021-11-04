@@ -27,9 +27,7 @@ namespace Taarafo.Core.Services.Foundations.Comments
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Comment> AddCommentAsync(Comment comment)
-        {
-            throw new System.NotImplementedException();
-        }
+        public async ValueTask<Comment> AddCommentAsync(Comment comment) =>
+            await this.storageBroker.InsertCommentAsync(comment);
     }
 }
