@@ -26,7 +26,9 @@ namespace Taarafo.Core.Services.Foundations.Comments
                     firstDate: comment.UpdatedDate,
                     secondDate: comment.CreatedDate,
                     secondDateName: nameof(Comment.CreatedDate)),
-                Parameter: nameof(Comment.UpdatedDate)));
+                Parameter: nameof(Comment.UpdatedDate)),
+
+                (Rule: IsNotRecent(comment.CreatedDate), Parameter: nameof(Comment.CreatedDate)));
         }
 
         private static void ValidateCommentIsNotNull(Comment comment)
@@ -57,6 +59,23 @@ namespace Taarafo.Core.Services.Foundations.Comments
                 Condition = firstDate != secondDate,
                 Message = $"Date is not the same as {secondDateName}"
             };
+
+        private dynamic IsNotRecent(DateTimeOffset date) => new
+        {
+            Condition = IsDateNotRecent(date),
+            Message = "Date is not recent"
+        };
+
+        private bool IsDateNotRecent(DateTimeOffset date)
+        {
+            DateTimeOffset currentDateTime =
+                this.dateTimeBroker.GetCurrentDateTimeOffset();
+
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+            TimeSpan oneMinute = TimeSpan.FromMinutes(1);
+
+            return timeDifference.Duration() > oneMinute;
+        }
 
         private static dynamic IsInvalid(DateTimeOffset date) => new
         {
