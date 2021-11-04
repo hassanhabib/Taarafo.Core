@@ -1,11 +1,13 @@
 ﻿using Moq;
 using System;
+using System.Linq.Expressions;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Services.Foundations.Comments;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 {
@@ -26,6 +28,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 storageBroker: this.storageBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
+        }
+
+        private static Expression<Func<Exception, bool>> SameValidationExceptionAs(Exception expectedException)
+        {
+            return actualException =>
+                actualException.Message == expectedException.Message
+                && actualException.InnerException.Message == expectedException.InnerException.Message
+                && (actualException.InnerException as Xeption).DataEquals(expectedException.InnerException.Data);
         }
 
         private static Comment CreateRandomComment() =>

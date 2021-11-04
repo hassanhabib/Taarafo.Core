@@ -11,7 +11,7 @@ using Taarafo.Core.Models.Comments;
 
 namespace Taarafo.Core.Services.Foundations.Comments
 {
-    public class CommentService : ICommentService
+    public partial class CommentService : ICommentService
     {
         private readonly IStorageBroker storageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
@@ -27,7 +27,12 @@ namespace Taarafo.Core.Services.Foundations.Comments
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Comment> AddCommentAsync(Comment comment) =>
-            await this.storageBroker.InsertCommentAsync(comment);
+        public ValueTask<Comment> AddCommentAsync(Comment comment) =>
+        TryCatch(async () =>
+        {
+            ValidateComment(comment);
+
+            return await this.storageBroker.InsertCommentAsync(comment);
+        });
     }
 }
