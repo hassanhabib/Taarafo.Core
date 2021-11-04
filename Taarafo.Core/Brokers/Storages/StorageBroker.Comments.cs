@@ -4,6 +4,8 @@
 // ---------------------------------------------------------------
 
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 using Taarafo.Core.Models.Comments;
 
 namespace Taarafo.Core.Brokers.Storages
@@ -11,5 +13,13 @@ namespace Taarafo.Core.Brokers.Storages
     public partial class StorageBroker
     {
         public DbSet<Comment> Comments { get; set; }
+
+        public async ValueTask<Comment> SelectCommentByIdAsync(Guid commentId)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            return await broker.Comments.FindAsync(commentId);
+        }
     }
 }
