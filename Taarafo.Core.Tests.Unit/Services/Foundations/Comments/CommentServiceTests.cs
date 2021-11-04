@@ -38,6 +38,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 && (actualException.InnerException as Xeption).DataEquals(expectedException.InnerException.Data);
         }
 
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
         private static Comment CreateRandomComment() =>
             CreateCommentFiller(date: GetRandomDateTimeOffset()).Create();
 

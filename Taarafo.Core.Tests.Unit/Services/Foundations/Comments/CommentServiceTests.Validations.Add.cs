@@ -98,5 +98,47 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfCreateAndUpdateDatesIsNotSameAndLogItAsync()
+        {
+            // given
+            int randomNumber = GetRandomNumber();
+            Comment randomComment = CreateRandomComment();
+            Comment invalidComment = randomComment;
+
+            invalidComment.UpdatedDate =
+                invalidComment.CreatedDate.AddDays(randomNumber);
+
+            var invalidCommentException =
+                new InvalidCommentException();
+
+            invalidCommentException.AddData(
+                key: nameof(Comment.UpdatedDate),
+                values: $"Date is not the same as {nameof(Comment.CreatedDate)}");
+
+            var expectedCommentValidationException =
+                new CommentValidationException(invalidCommentException);
+
+            // when
+            ValueTask<Comment> addCommentTask =
+                this.commentService.AddCommentAsync(invalidComment);
+
+            // then
+            await Assert.ThrowsAsync<CommentValidationException>(() =>
+               addCommentTask.AsTask());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameValidationExceptionAs(
+                    expectedCommentValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertCommentAsync(It.IsAny<Comment>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
