@@ -71,6 +71,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 key: nameof(Comment.UpdatedDate),
                 values: "Date is required");
 
+            invalidCommentException.AddData(
+                key: nameof(Comment.PostId),
+                values: "Id is required");
+
             var expectedCommentValidationException =
                 new CommentValidationException(invalidCommentException);
 
