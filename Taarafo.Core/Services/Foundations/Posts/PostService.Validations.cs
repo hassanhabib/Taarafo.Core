@@ -11,7 +11,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
 {
     public partial class PostService
     {
-        private void ValidatePost(Post post)
+        private void ValidatePostOnAdd(Post post)
         {
             ValidatePostIsNotNull(post);
 
@@ -31,11 +31,30 @@ namespace Taarafo.Core.Services.Foundations.Posts
                 (Rule: IsNotRecent(post.CreatedDate), Parameter: nameof(Post.CreatedDate)));
         }
 
-        private static void ValidatePostId(Guid postId)
+        private void ValidatePostOnModify(Post post)
         {
-            Validate(
-               (Rule: IsInvalid(postId), Parameter: nameof(Post.Id)));
+            ValidatePostIsNotNull(post);
+
+            Validate
+            (
+                (Rule: IsInvalid(post.Id), Parameter: nameof(post.Id)),
+                (Rule: IsInvalid(post.Content), Parameter: nameof(post.Content)),
+                (Rule: IsInvalid(post.Author), Parameter: nameof(post.Author)),
+                (Rule: IsInvalid(post.CreatedDate), Parameter: nameof(post.CreatedDate)),
+                (Rule: IsInvalid(post.UpdatedDate), Parameter: nameof(post.UpdatedDate)),
+                (Rule: IsNotRecent(post.UpdatedDate), Parameter: nameof(post.UpdatedDate)),
+
+                (Rule: IsSame(
+                    firstDate: post.UpdatedDate,
+                    secondDate: post.CreatedDate,
+                    secondDateName: nameof(Post.CreatedDate)),
+
+                Parameter: nameof(Post.UpdatedDate))
+            );
         }
+
+        public void ValidatePostId(Guid postId) =>
+           Validate((Rule: IsInvalid(postId), Parameter: nameof(Post.Id)));
 
         private static void ValidatePostIsNotNull(Post post)
         {
@@ -74,6 +93,15 @@ namespace Taarafo.Core.Services.Foundations.Posts
                 Message = $"Date is not the same as {secondDateName}"
             };
 
+        private static dynamic IsSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
+            };
+
         private static dynamic IsInvalid(string text) => new
         {
             Condition = String.IsNullOrWhiteSpace(text),
@@ -95,6 +123,21 @@ namespace Taarafo.Core.Services.Foundations.Posts
             TimeSpan oneMinute = TimeSpan.FromMinutes(1);
 
             return timeDifference.Duration() > oneMinute;
+        }
+        private static void ValidateAginstStoragePostOnModify(Post inputPost, Post storagePost)
+        {
+            Validate(
+                (Rule: IsNotSame(
+                    firstDate: inputPost.CreatedDate,
+                    secondDate: storagePost.CreatedDate,
+                    secondDateName: nameof(Post.CreatedDate)),
+                Parameter: nameof(Post.CreatedDate)),
+
+                (Rule: IsNotSame(
+                    firstDate: inputPost.UpdatedDate,
+                    secondDate: storagePost.UpdatedDate,
+                    secondDateName: nameof(Post.UpdatedDate)),
+                Parameter: nameof(Post.UpdatedDate)));
         }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)

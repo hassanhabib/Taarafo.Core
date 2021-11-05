@@ -19,8 +19,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             // given
             SqlException sqlException = GetSqlException();
 
+            var failedStorageException =
+                new FailedPostStorageException(sqlException);
+
             var expectedPostDependencyException =
-                new PostDependencyException(sqlException);
+                new PostDependencyException(failedStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllPosts())
