@@ -5,6 +5,7 @@
 
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Comments.Exceptions;
@@ -44,6 +45,13 @@ namespace Taarafo.Core.Services.Foundations.Comments
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsCommentException);
             }
+            catch (DbUpdateException databaseUpdateException)
+            {
+                var failedCommentStorageException =
+                    new FailedCommentStorageException(databaseUpdateException);
+
+                throw CreateAndLogDependecyException(failedCommentStorageException);
+            }
         }
 
         private CommentValidationException CreateAndLogValidationException(
@@ -57,6 +65,15 @@ namespace Taarafo.Core.Services.Foundations.Comments
             return commentValidationException;
         }
 
+        private CommentDependencyException CreateAndLogCriticalDependencyException(
+            Xeption exception)
+        {
+            var commentDependencyException = new CommentDependencyException(exception);
+            this.loggingBroker.LogCritical(commentDependencyException);
+
+            return commentDependencyException;
+        }
+
         private CommentDependencyValidationException CreateAndLogDependencyValidationException(
         Xeption exception)
         {
@@ -68,11 +85,11 @@ namespace Taarafo.Core.Services.Foundations.Comments
             return commentDependencyValidationException;
         }
 
-        private CommentDependencyException CreateAndLogCriticalDependencyException(
+        private CommentDependencyException CreateAndLogDependecyException(
             Xeption exception)
         {
             var commentDependencyException = new CommentDependencyException(exception);
-            this.loggingBroker.LogCritical(commentDependencyException);
+            this.loggingBroker.LogError(commentDependencyException);
 
             return commentDependencyException;
         }
