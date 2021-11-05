@@ -5,6 +5,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Comments;
 
@@ -25,6 +26,14 @@ namespace Taarafo.Core.Brokers.Storages
             await broker.SaveChangesAsync();
 
             return commentEntityEntry.Entity;
+        }
+
+        public IQueryable<Comment> SelectAllComments()
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            return broker.Comments;
         }
     }
 }
