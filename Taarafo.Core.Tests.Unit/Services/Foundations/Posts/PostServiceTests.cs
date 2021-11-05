@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
@@ -61,6 +62,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         private static Post CreateRandomPost() =>
             CreatePostFiller(dates: GetRandomDateTimeOffset()).Create();
 
+        private static Post CreateRandomModifyPost(DateTimeOffset dates)
+        {
+            int randomDaysInPast = GetRandomNegativeNumber();
+            Post randomPost = CreateRandomPost(dates);
+
+            randomPost.CreatedDate =
+                randomPost.CreatedDate.AddDays(randomDaysInPast);
+
+            return randomPost;
+        }
+
         private static Post CreateRandomPost(DateTimeOffset dates) =>
             CreatePostFiller(dates).Create();
 
@@ -96,6 +108,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
         private static DateTimeOffset GetRadnomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        public static IEnumerable<object[]> InvalidMinuteCases()
+        {
+            int randomMoreThanMinuteFromNow = GetRandomNumber();
+            int randomMoreThanMinuteBeforeNow = GetRandomNegativeNumber();
+
+            return new List<object[]>
+            {
+                new object[] { randomMoreThanMinuteFromNow },
+                new object[] { randomMoreThanMinuteBeforeNow }
+            };
+        }
 
         private static Filler<Post> CreatePostFiller(DateTimeOffset dates)
         {
