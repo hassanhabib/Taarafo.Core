@@ -5,8 +5,8 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 using Taarafo.Core.Models.Comments;
 
 namespace Taarafo.Core.Brokers.Storages
