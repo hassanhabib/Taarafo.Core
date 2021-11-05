@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Comments.Exceptions;
@@ -28,6 +29,13 @@ namespace Taarafo.Core.Services.Foundations.Comments
             {
                 throw CreateAndLogValidationException(invalidCommentException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedPostStorageException =
+                    new FailedCommentStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedPostStorageException);
+            }
         }
 
         private CommentValidationException CreateAndLogValidationException(
@@ -39,6 +47,15 @@ namespace Taarafo.Core.Services.Foundations.Comments
             this.loggingBroker.LogError(commentValidationException);
 
             return commentValidationException;
+        }
+
+        private CommentDependencyException CreateAndLogCriticalDependencyException(
+            Xeption exception)
+        {
+            var postDependencyException = new CommentDependencyException(exception);
+            this.loggingBroker.LogCritical(postDependencyException);
+
+            return postDependencyException;
         }
     }
 }
