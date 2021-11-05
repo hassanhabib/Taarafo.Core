@@ -6,6 +6,7 @@
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Comments.Exceptions;
@@ -52,6 +53,13 @@ namespace Taarafo.Core.Services.Foundations.Comments
 
                 throw CreateAndLogDependecyException(failedCommentStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedCommentServiceException =
+                    new FailedCommentServiceException(exception);
+
+                throw CreateAndLogServiceException(failedCommentServiceException);
+            }
         }
 
         private CommentValidationException CreateAndLogValidationException(
@@ -92,6 +100,15 @@ namespace Taarafo.Core.Services.Foundations.Comments
             this.loggingBroker.LogError(commentDependencyException);
 
             return commentDependencyException;
+        }
+
+        private CommentServiceException CreateAndLogServiceException(
+            Xeption exception)
+        {
+            var commentServiceException = new CommentServiceException(exception);
+            this.loggingBroker.LogError(commentServiceException);
+
+            return commentServiceException;
         }
     }
 }
