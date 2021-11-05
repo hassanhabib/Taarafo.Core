@@ -1,5 +1,8 @@
-﻿using FluentAssertions;
-using Force.DeepCloner;
+﻿// ---------------------------------------------------------------
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
+// ---------------------------------------------------------------
+
 using Moq;
 using System;
 using System.Threading.Tasks;

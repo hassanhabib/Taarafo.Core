@@ -1,4 +1,9 @@
-﻿using FluentAssertions;
+﻿// ---------------------------------------------------------------
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
+// ---------------------------------------------------------------
+
+using FluentAssertions;
 using Force.DeepCloner;
 using Moq;
 using System;

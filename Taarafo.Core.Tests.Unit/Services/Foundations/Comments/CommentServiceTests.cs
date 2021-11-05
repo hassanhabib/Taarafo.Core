@@ -1,4 +1,9 @@
-﻿using Microsoft.Data.SqlClient;
+﻿// ---------------------------------------------------------------
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
+// ---------------------------------------------------------------
+
+using Microsoft.Data.SqlClient;
 using Moq;
 using System;
 using System.Linq.Expressions;
