@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Comments;
@@ -31,10 +32,17 @@ namespace Taarafo.Core.Services.Foundations.Comments
             }
             catch (SqlException sqlException)
             {
-                var failedPostStorageException =
+                var failedCommentStorageException =
                     new FailedCommentStorageException(sqlException);
 
-                throw CreateAndLogCriticalDependencyException(failedPostStorageException);
+                throw CreateAndLogCriticalDependencyException(failedCommentStorageException);
+            }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsCommentException =
+                    new AlreadyExistsCommentException(duplicateKeyException);
+
+                throw CreateAndLogDependencyValidationException(alreadyExistsCommentException);
             }
         }
 
@@ -49,13 +57,24 @@ namespace Taarafo.Core.Services.Foundations.Comments
             return commentValidationException;
         }
 
+        private CommentDependencyValidationException CreateAndLogDependencyValidationException(
+        Xeption exception)
+        {
+            var commentDependencyValidationException =
+                new CommentDependencyValidationException(exception);
+
+            this.loggingBroker.LogError(commentDependencyValidationException);
+
+            return commentDependencyValidationException;
+        }
+
         private CommentDependencyException CreateAndLogCriticalDependencyException(
             Xeption exception)
         {
-            var postDependencyException = new CommentDependencyException(exception);
-            this.loggingBroker.LogCritical(postDependencyException);
+            var commentDependencyException = new CommentDependencyException(exception);
+            this.loggingBroker.LogCritical(commentDependencyException);
 
-            return postDependencyException;
+            return commentDependencyException;
         }
     }
 }

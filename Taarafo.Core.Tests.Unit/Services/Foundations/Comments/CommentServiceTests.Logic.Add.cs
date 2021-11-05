@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Force.DeepCloner;
 using Moq;
+using System;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Comments;
 using Xunit;
@@ -13,10 +14,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         public async Task ShouldAddCommentAsync()
         {
             // given
-            Comment randomComment = CreateRandomComment();
+            DateTimeOffset randomDateTime =
+                GetRandomDateTimeOffset();
+
+            Comment randomComment = CreateRandomComment(randomDateTime);
             Comment inputComment = randomComment;
             Comment storageComment = inputComment;
             Comment expectedComment = storageComment.DeepClone();
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertCommentAsync(inputComment))
@@ -29,10 +37,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             // then
             actualComment.Should().BeEquivalentTo(expectedComment);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
+
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertCommentAsync(inputComment),
                     Times.Once);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
