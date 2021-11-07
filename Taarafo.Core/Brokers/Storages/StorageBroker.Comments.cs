@@ -57,5 +57,18 @@ namespace Taarafo.Core.Brokers.Storages
 
             return commentEntityEntry.Entity;
         }
+
+        public async ValueTask<Comment> DeleteCommentAsync(Comment comment)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            EntityEntry<Comment> commentEntityEntry =
+                broker.Comments.Remove(comment);
+
+            await broker.SaveChangesAsync();
+
+            return commentEntityEntry.Entity;
+        }
     }
 }

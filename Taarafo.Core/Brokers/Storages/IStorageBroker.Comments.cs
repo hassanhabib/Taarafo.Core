@@ -16,5 +16,6 @@ namespace Taarafo.Core.Brokers.Storages
         IQueryable<Comment> SelectAllComments();
         ValueTask<Comment> SelectCommentByIdAsync(Guid commentId);
         ValueTask<Comment> UpdateCommentAsync(Comment comment);
+        ValueTask<Comment> DeleteCommentAsync(Comment comment);
     }
 }
