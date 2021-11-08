@@ -72,6 +72,37 @@ namespace Taarafo.Core.Controllers
             }
         }
 
+        [HttpGet("{postId}")]
+        public async ValueTask<ActionResult<Post>> GetPostByIdAsync(Guid postId)
+        {
+            try
+            {
+                Post post = await this.postService.RetrievePostByIdAsync(postId);
+
+                return Ok(post); 
+            }
+            catch(PostValidationException postValidationException)
+                when(postValidationException.InnerException is NotFoundPostException )
+            {
+                string innerMessage = GetInnerMessage(postValidationException);
+
+                return NotFound(innerMessage);
+            }
+            catch(PostValidationException postValidationException)
+            {
+                string innerMessage = GetInnerMessage(postValidationException);
+                return BadRequest(innerMessage);
+            }
+            catch (PostDependencyException postDependencyException)
+            {
+                return Problem(postDependencyException.Message);
+            }
+            catch (PostServiceException postServiceException)
+            {
+                return Problem(postServiceException.Message);
+            }
+        }
+
         [HttpDelete("{postId}")]
         public async ValueTask<ActionResult<Post>> DeletePostByIdAsync(Guid postId)
         {
@@ -109,5 +140,8 @@ namespace Taarafo.Core.Controllers
                 return InternalServerError(postServiceException);
             }
         }
+        
+        private static string GetInnerMessage(Exception exception) =>
+            exception.InnerException.Message;
     }
 }
