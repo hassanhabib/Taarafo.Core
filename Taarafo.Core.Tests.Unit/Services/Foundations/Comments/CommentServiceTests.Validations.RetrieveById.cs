@@ -27,8 +27,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 key: nameof(Comment.Id),
                 values: "Id is required");
 
-            var expectedCommentValidationException = new
-                CommentValidationException(invalidCommentException);
+            var expectedCommentValidationException = 
+                new CommentValidationException(invalidCommentException);
 
             // when
             ValueTask<Comment> retrieveCommentByIdTask =
