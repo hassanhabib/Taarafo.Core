@@ -39,6 +39,10 @@ namespace Taarafo.Core.Services.Foundations.Comments
 
                 throw CreateAndLogCriticalDependencyException(failedCommentStorageException);
             }
+            catch (NotFoundCommentException notFoundCommentException)
+            {
+                throw CreateAndLogValidationException(notFoundCommentException);
+            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsCommentException =

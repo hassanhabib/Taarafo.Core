@@ -44,6 +44,8 @@ namespace Taarafo.Core.Services.Foundations.Comments
             Comment maybeComment = await this.storageBroker
                 .SelectCommentByIdAsync(commentId);
 
+            ValidateStorageComment(maybeComment, commentId);
+
             return maybeComment;
         });
     }

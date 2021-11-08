@@ -34,6 +34,14 @@ namespace Taarafo.Core.Services.Foundations.Comments
         public void ValidateCommentId(Guid commentId) =>
             Validate((Rule: IsInvalid(commentId), Parameter: nameof(Comment.Id)));
 
+        private static void ValidateStorageComment(Comment maybeComment, Guid commentId)
+        {
+            if (maybeComment is null)
+            {
+                throw new NotFoundCommentException(commentId);
+            }
+        }
+
         private static void ValidateCommentIsNotNull(Comment comment)
         {
             if (comment is null)
