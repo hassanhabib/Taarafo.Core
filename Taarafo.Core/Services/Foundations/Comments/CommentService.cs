@@ -50,6 +50,6 @@ namespace Taarafo.Core.Services.Foundations.Comments
             return maybeComment;
         });
 
-        public IQueryable<Comment> RetrieveAllComments() => throw new NotImplementedException();
+        public IQueryable<Comment> RetrieveAllComments() => this.storageBroker.SelectAllComments();
     }
 }
