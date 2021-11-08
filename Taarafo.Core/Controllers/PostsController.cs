@@ -84,22 +84,19 @@ namespace Taarafo.Core.Controllers
             catch(PostValidationException postValidationException)
                 when(postValidationException.InnerException is NotFoundPostException )
             {
-                string innerMessage = GetInnerMessage(postValidationException);
-
-                return NotFound(innerMessage);
+                return NotFound(postValidationException.InnerException);
             }
             catch(PostValidationException postValidationException)
             {
-                string innerMessage = GetInnerMessage(postValidationException);
-                return BadRequest(innerMessage);
+                return BadRequest(postValidationException.InnerException);
             }
             catch (PostDependencyException postDependencyException)
             {
-                return Problem(postDependencyException.Message);
+                return InternalServerError(postDependencyException);
             }
             catch (PostServiceException postServiceException)
             {
-                return Problem(postServiceException.Message);
+                return InternalServerError(postServiceException);
             }
         }
 
@@ -139,9 +136,6 @@ namespace Taarafo.Core.Controllers
             {
                 return InternalServerError(postServiceException);
             }
-        }
-        
-        private static string GetInnerMessage(Exception exception) =>
-            exception.InnerException.Message;
+        }        
     }
 }
