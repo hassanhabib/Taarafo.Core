@@ -48,6 +48,43 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            string exceptionMessage = GetRandomMessage();
+            var serviceException = new Exception(exceptionMessage);
+
+            var expectedCommentServiceException =
+                new CommentServiceException(serviceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAllComments())
+                    .Throws(serviceException);
+
+            // when
+            Action retrieveAllCommentsAction = () =>
+                this.commentService.RetrieveAllComments();
+
+            // then
+            Assert.Throws<CommentServiceException>(
+                retrieveAllCommentsAction);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllComments(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedCommentServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
