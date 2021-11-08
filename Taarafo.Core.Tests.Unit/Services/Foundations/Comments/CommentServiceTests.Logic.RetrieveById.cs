@@ -20,8 +20,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         {
             // given
             Guid randomCommentId = Guid.NewGuid();
-            Guid inputCommentId = randomCommentId;
             Comment randomComment = CreateRandomComment();
+            randomComment.Id = randomCommentId;
+            Guid inputCommentId = randomComment.Id;
             Comment storageComment = randomComment;
             Comment expectedComment = storageComment.DeepClone();
 
@@ -41,8 +42,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

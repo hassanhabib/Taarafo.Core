@@ -57,7 +57,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfDatabaseUpdateErrorOccursAndLogItAsync()
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
         {
             // given
             Guid someId = Guid.NewGuid();
