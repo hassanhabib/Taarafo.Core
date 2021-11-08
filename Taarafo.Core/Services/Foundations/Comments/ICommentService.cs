@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Comments;
 
@@ -13,5 +14,6 @@ namespace Taarafo.Core.Services.Foundations.Comments
     {
         ValueTask<Comment> AddCommentAsync(Comment comment);
         ValueTask<Comment> RetrieveCommentByIdAsync(Guid commentId);
+        IQueryable<Comment> RetrieveAllComments();
     }
 }

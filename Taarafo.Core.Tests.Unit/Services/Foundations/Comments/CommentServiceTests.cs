@@ -6,6 +6,7 @@
 using Microsoft.Data.SqlClient;
 using Moq;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Taarafo.Core.Brokers.DateTimes;
@@ -52,6 +53,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 actualException.Message == expectedException.Message
                 && actualException.InnerException.Message == expectedException.InnerException.Message
                 && (actualException.InnerException as Xeption).DataEquals(expectedException.InnerException.Data);
+        }
+
+        private static IQueryable<Comment> CreateRandomComments()
+        {
+            return CreateCommentFiller(date: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber())
+                    .AsQueryable();
         }
 
         private static string GetRandomMessage() =>
