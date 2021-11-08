@@ -80,6 +80,10 @@ namespace Taarafo.Core.Services.Foundations.Comments
                     new FailedCommentStorageException(sqlException);
                 throw CreateAndLogCriticalDependencyException(failedCommentStorageException);
             }
+            catch (Exception exception)
+            {
+                throw CreateAndLogServiceException(exception);
+            }
         }
 
         private CommentValidationException CreateAndLogValidationException(
@@ -124,6 +128,15 @@ namespace Taarafo.Core.Services.Foundations.Comments
 
         private CommentServiceException CreateAndLogServiceException(
             Xeption exception)
+        {
+            var commentServiceException = new CommentServiceException(exception);
+            this.loggingBroker.LogError(commentServiceException);
+
+            return commentServiceException;
+        }
+
+        private CommentServiceException CreateAndLogServiceException(
+            Exception exception)
         {
             var commentServiceException = new CommentServiceException(exception);
             this.loggingBroker.LogError(commentServiceException);

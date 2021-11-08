@@ -43,8 +43,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         {
             return actualException =>
                 actualException.Message == expectedException.Message
-                && actualException.InnerException.Message == expectedException.InnerException.Message
-                && (actualException.InnerException as Xeption).DataEquals(expectedException.InnerException.Data);
+                && actualException.InnerException.Message == expectedException.InnerException.Message;
         }
 
         private static Expression<Func<Exception, bool>> SameValidationExceptionAs(Exception expectedException)
