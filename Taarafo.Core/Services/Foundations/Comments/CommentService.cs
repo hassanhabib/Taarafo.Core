@@ -52,5 +52,7 @@ namespace Taarafo.Core.Services.Foundations.Comments
 
         public IQueryable<Comment> RetrieveAllComments() =>
         TryCatch(() => this.storageBroker.SelectAllComments());
+
+        public ValueTask<Comment> ModifyCommentAsync(Comment comment) => throw new NotImplementedException();
     }
 }

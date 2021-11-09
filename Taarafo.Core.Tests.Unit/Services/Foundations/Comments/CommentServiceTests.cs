@@ -61,6 +61,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     .AsQueryable();
         }
 
+        private static Comment CreateRandomModifyComment(DateTimeOffset dates)
+        {
+            int randomDaysInPast = GetRandomNegativeNumber();
+            Comment randomComment = CreateRandomComment(dates);
+
+            randomComment.CreatedDate =
+                randomComment.CreatedDate.AddDays(randomDaysInPast);
+
+            return randomComment;
+        }
+
         private static string GetRandomMessage() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
