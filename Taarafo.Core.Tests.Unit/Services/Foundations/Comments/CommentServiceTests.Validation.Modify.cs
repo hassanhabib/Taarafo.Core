@@ -207,5 +207,56 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfCommentDoesNotExistAndLogItAsync()
+        {
+            // given
+            int randomNegativeMinutes = GetRandomNegativeNumber();
+            DateTimeOffset dateTime = GetRandomDateTimeOffset();
+            Comment randomComment = CreateRandomComment(dateTime);
+            Comment nonExistComment = randomComment;
+            nonExistComment.CreatedDate = dateTime.AddMinutes(randomNegativeMinutes);
+            Comment nullComment = null;
+
+            var notFoundCommentException =
+                new NotFoundCommentException(nonExistComment.Id);
+
+            var expectedCommentValidationException =
+                new CommentValidationException(notFoundCommentException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectCommentByIdAsync(nonExistComment.Id))
+                .ReturnsAsync(nullComment);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                .Returns(dateTime);
+
+            // when 
+            ValueTask<Comment> modifyCommentTask =
+                this.commentService.ModifyCommentAsync(nonExistComment);
+
+            // then
+            await Assert.ThrowsAsync<CommentValidationException>(() =>
+                modifyCommentTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectCommentByIdAsync(nonExistComment.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameValidationExceptionAs(
+                    expectedCommentValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
