@@ -19,26 +19,23 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         public async Task ShouldRetrieveCommentByIdAsync()
         {
             // given
-            Guid randomCommentId = Guid.NewGuid();
             Comment randomComment = CreateRandomComment();
-            randomComment.Id = randomCommentId;
-            Guid inputCommentId = randomComment.Id;
             Comment storageComment = randomComment;
             Comment expectedComment = storageComment.DeepClone();
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectCommentByIdAsync(inputCommentId))
+                broker.SelectCommentByIdAsync(randomComment.Id))
                     .ReturnsAsync(storageComment);
 
             // when
             Comment actualComment =
-                await this.commentService.RetrieveCommentByIdAsync(inputCommentId);
+                await this.commentService.RetrieveCommentByIdAsync(randomComment.Id);
 
             // then
             actualComment.Should().BeEquivalentTo(expectedComment);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectCommentByIdAsync(inputCommentId),
+                broker.SelectCommentByIdAsync(randomComment.Id),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
