@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
@@ -42,8 +43,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         {
             return actualException =>
                 actualException.Message == expectedException.Message
-                && actualException.InnerException.Message == expectedException.InnerException.Message
-                && (actualException.InnerException as Xeption).DataEquals(expectedException.InnerException.Data);
+                && actualException.InnerException.Message == expectedException.InnerException.Message;
         }
 
         private static Expression<Func<Exception, bool>> SameValidationExceptionAs(Exception expectedException)
@@ -52,6 +52,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 actualException.Message == expectedException.Message
                 && actualException.InnerException.Message == expectedException.InnerException.Message
                 && (actualException.InnerException as Xeption).DataEquals(expectedException.InnerException.Data);
+        }
+
+        private static IQueryable<Comment> CreateRandomComments()
+        {
+            return CreateCommentFiller(date: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber())
+                    .AsQueryable();
         }
 
         private static string GetRandomMessage() =>

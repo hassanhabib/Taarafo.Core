@@ -3,11 +3,12 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
-using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Comments.Exceptions;
 using Xeptions;
@@ -17,6 +18,7 @@ namespace Taarafo.Core.Services.Foundations.Comments
     public partial class CommentService
     {
         private delegate ValueTask<Comment> ReturningCommentFunction();
+        private delegate IQueryable<Comment> ReturningCommentsFunction();
 
         private async ValueTask<Comment> TryCatch(ReturningCommentFunction returningCommentFunction)
         {
@@ -66,6 +68,24 @@ namespace Taarafo.Core.Services.Foundations.Comments
             }
         }
 
+        private IQueryable<Comment> TryCatch(ReturningCommentsFunction returningCommentsFunction)
+        {
+            try
+            {
+                return returningCommentsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedCommentStorageException =
+                    new FailedCommentStorageException(sqlException);
+                throw CreateAndLogCriticalDependencyException(failedCommentStorageException);
+            }
+            catch (Exception exception)
+            {
+                throw CreateAndLogServiceException(exception);
+            }
+        }
+
         private CommentValidationException CreateAndLogValidationException(
             Xeption exception)
         {
@@ -108,6 +128,15 @@ namespace Taarafo.Core.Services.Foundations.Comments
 
         private CommentServiceException CreateAndLogServiceException(
             Xeption exception)
+        {
+            var commentServiceException = new CommentServiceException(exception);
+            this.loggingBroker.LogError(commentServiceException);
+
+            return commentServiceException;
+        }
+
+        private CommentServiceException CreateAndLogServiceException(
+            Exception exception)
         {
             var commentServiceException = new CommentServiceException(exception);
             this.loggingBroker.LogError(commentServiceException);
