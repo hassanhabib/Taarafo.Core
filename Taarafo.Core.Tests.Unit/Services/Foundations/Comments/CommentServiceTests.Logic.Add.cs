@@ -3,11 +3,11 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using Moq;
-using System;
-using System.Threading.Tasks;
 using Taarafo.Core.Models.Comments;
 using Xunit;
 
