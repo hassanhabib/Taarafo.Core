@@ -79,14 +79,14 @@ namespace Taarafo.Core.Controllers
             {
                 Post post = await this.postService.RetrievePostByIdAsync(postId);
 
-                return Ok(post); 
+                return Ok(post);
             }
-            catch(PostValidationException postValidationException)
-                when(postValidationException.InnerException is NotFoundPostException )
+            catch (PostValidationException postValidationException)
+                when (postValidationException.InnerException is NotFoundPostException)
             {
                 return NotFound(postValidationException.InnerException);
             }
-            catch(PostValidationException postValidationException)
+            catch (PostValidationException postValidationException)
             {
                 return BadRequest(postValidationException.InnerException);
             }
@@ -136,6 +136,6 @@ namespace Taarafo.Core.Controllers
             {
                 return InternalServerError(postServiceException);
             }
-        }        
+        }
     }
 }
