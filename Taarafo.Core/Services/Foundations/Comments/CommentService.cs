@@ -32,7 +32,7 @@ namespace Taarafo.Core.Services.Foundations.Comments
         public ValueTask<Comment> AddCommentAsync(Comment comment) =>
         TryCatch(async () =>
         {
-            ValidateComment(comment);
+            ValidateCommentOnAdd(comment);
 
             return await this.storageBroker.InsertCommentAsync(comment);
         });
@@ -53,6 +53,16 @@ namespace Taarafo.Core.Services.Foundations.Comments
         public IQueryable<Comment> RetrieveAllComments() =>
         TryCatch(() => this.storageBroker.SelectAllComments());
 
-        public ValueTask<Comment> ModifyCommentAsync(Comment comment) => throw new NotImplementedException();
+        public ValueTask<Comment> ModifyCommentAsync(Comment comment) =>
+        TryCatch(async () =>
+        {
+            ValidateCommentOnModify(comment);
+
+            Comment maybeComment =
+                await this.storageBroker.SelectCommentByIdAsync(comment.Id);
+
+            ValidateStorageComment(maybeComment, comment.Id);
+            return await this.storageBroker.UpdateCommentAsync(comment);
+        });
     }
 }
