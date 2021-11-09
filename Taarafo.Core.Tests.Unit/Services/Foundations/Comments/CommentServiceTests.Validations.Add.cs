@@ -3,9 +3,9 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using Moq;
 using System;
 using System.Threading.Tasks;
+using Moq;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Comments.Exceptions;
 using Xunit;
