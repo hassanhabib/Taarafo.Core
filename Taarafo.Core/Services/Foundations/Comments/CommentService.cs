@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -33,6 +34,19 @@ namespace Taarafo.Core.Services.Foundations.Comments
             ValidateComment(comment);
 
             return await this.storageBroker.InsertCommentAsync(comment);
+        });
+
+        public ValueTask<Comment> RetrieveCommentByIdAsync(Guid commentId) =>
+        TryCatch(async () =>
+        {
+            ValidateCommentId(commentId);
+
+            Comment maybeComment = await this.storageBroker
+                .SelectCommentByIdAsync(commentId);
+
+            ValidateStorageComment(maybeComment, commentId);
+
+            return maybeComment;
         });
     }
 }
