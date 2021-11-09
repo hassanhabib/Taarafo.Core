@@ -123,6 +123,22 @@ namespace Taarafo.Core.Services.Foundations.Comments
             Message = "Date is required"
         };
 
+        private static void ValidateAginstStorageCommentOnModify(Comment inputComment, Comment storageComment)
+        {
+            Validate(
+                (Rule: IsNotSame(
+                    firstDate: inputComment.CreatedDate,
+                    secondDate: storageComment.CreatedDate,
+                    secondDateName: nameof(Comment.CreatedDate)),
+                Parameter: nameof(Comment.CreatedDate)),
+
+                (Rule: IsNotSame(
+                    firstDate: inputComment.UpdatedDate,
+                    secondDate: storageComment.UpdatedDate,
+                    secondDateName: nameof(Comment.UpdatedDate)),
+                Parameter: nameof(Comment.UpdatedDate)));
+        }
+
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidCommentException = new InvalidCommentException();
