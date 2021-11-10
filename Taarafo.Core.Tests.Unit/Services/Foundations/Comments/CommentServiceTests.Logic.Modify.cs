@@ -19,20 +19,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         public async Task ShouldModifyCommentAsync()
         {
             // given
+            int minuteInPast = GetRandomNegativeNumber();
             DateTimeOffset randomDate = GetRandomDateTimeOffset();
-            Comment randomComment = CreateRandomModifyComment(randomDate);
-            Comment inputComment = randomComment;
-            Comment storageComment = inputComment;
+            Comment randomComment = CreateRandomModifyComment(randomDate.AddMinutes(minuteInPast));
+            Comment inputComment = randomComment.DeepClone();
+            inputComment.UpdatedDate = randomDate;
+            Comment storageComment = randomComment;
             Comment updatedComment = inputComment;
             Comment expectedComment = updatedComment.DeepClone();
-            Guid commentId = inputComment.Id;
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
                     .Returns(randomDate);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectCommentByIdAsync(commentId))
+                broker.SelectCommentByIdAsync(inputComment.Id))
                     .ReturnsAsync(storageComment);
 
             this.storageBrokerMock.Setup(broker =>
@@ -51,7 +52,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectCommentByIdAsync(commentId),
+                broker.SelectCommentByIdAsync(inputComment.Id),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
