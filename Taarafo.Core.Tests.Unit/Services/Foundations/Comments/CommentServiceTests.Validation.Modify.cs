@@ -315,5 +315,59 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageUpdatedDateSameAsUpdatedDateAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Comment randomComment = CreateRandomModifyComment(randomDateTime);
+            Comment invalidComment = randomComment;
+
+            Comment storageComment = randomComment.DeepClone();
+            invalidComment.UpdatedDate = storageComment.UpdatedDate;
+            
+            var invalidCommentException = new InvalidCommentException();
+
+            invalidCommentException.AddData(
+                key: nameof(Comment.UpdatedDate),
+                values: $"Date is the same as {nameof(Comment.UpdatedDate)}");
+
+            var expectedCommentValidationException =
+                new CommentValidationException(invalidCommentException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectCommentByIdAsync(invalidComment.Id))
+                .ReturnsAsync(storageComment);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
+
+            // when
+            ValueTask<Comment> modifyCommentTask =
+                this.commentService.ModifyCommentAsync(invalidComment);
+
+            // then
+            await Assert.ThrowsAsync<CommentValidationException>(() =>
+                modifyCommentTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedCommentValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectCommentByIdAsync(invalidComment.Id),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }

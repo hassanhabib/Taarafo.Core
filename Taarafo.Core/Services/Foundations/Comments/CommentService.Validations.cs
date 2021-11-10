@@ -132,7 +132,7 @@ namespace Taarafo.Core.Services.Foundations.Comments
                     secondDateName: nameof(Comment.CreatedDate)),
                 Parameter: nameof(Comment.CreatedDate)),
 
-                (Rule: IsNotSame(
+                (Rule: IsSame(
                     firstDate: inputComment.UpdatedDate,
                     secondDate: storageComment.UpdatedDate,
                     secondDateName: nameof(Comment.UpdatedDate)),
