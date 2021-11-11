@@ -247,7 +247,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 this.commentService.ModifyCommentAsync(inputComment);
 
             // then
-            await Assert.ThrowsAsync<CommentValidationException>(() =>
+            await Assert.ThrowsAsync<CommentDependencyValidationException>(() =>
                 modifyCommentTask.AsTask());
 
             this.dateTimeBrokerMock.Verify(broker =>
