@@ -5,6 +5,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
+using System;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Comments.Exceptions;
@@ -32,6 +33,13 @@ namespace Taarafo.Core.Controllers
                 return Created(addedComment);
             }
             catch (CommentValidationException commentValidationException)
+                when (commentValidationException.InnerException is InvalidCommentReferenceException)
+            {
+                string innerMessage = GetInnerMessage(commentValidationException);
+
+                return FailedDependency(innerMessage);
+            }
+            catch (CommentValidationException commentValidationException)
             {
                 return BadRequest(commentValidationException.InnerException);
             }
@@ -49,5 +57,8 @@ namespace Taarafo.Core.Controllers
                 return InternalServerError(commentServiceException);
             }
         }
+
+        private static string GetInnerMessage(Exception exception) =>
+            exception.InnerException.Message;
     }
 }
