@@ -5,7 +5,6 @@
 
 using System;
 using System.Threading.Tasks;
-using EFxceptions.Models.Exceptions;
 using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.Comments;
