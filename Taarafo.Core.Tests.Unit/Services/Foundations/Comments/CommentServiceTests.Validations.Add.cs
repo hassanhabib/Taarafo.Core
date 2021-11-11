@@ -213,7 +213,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         }
 
         [Fact]
-        public async void ShouldThrowValidationExceptionOnAddWhenReferneceExceptionAndLogItAsync()
+        public async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
         {
             // given
             DateTimeOffset randomDateTime =
@@ -233,11 +233,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDateTime);
-
-            this.storageBrokerMock.Setup(broker =>
-                broker.InsertCommentAsync(someComment))
-                    .ThrowsAsync(foreignKeyConstraintConflictException);
+                .Throws(foreignKeyConstraintConflictException);
 
             // when
             ValueTask<Comment> addCommentTask =
@@ -250,10 +246,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once());
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertCommentAsync(It.IsAny<Comment>()),
-                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogError(It.Is(SameExceptionAs(expectedCommentValidationException))),

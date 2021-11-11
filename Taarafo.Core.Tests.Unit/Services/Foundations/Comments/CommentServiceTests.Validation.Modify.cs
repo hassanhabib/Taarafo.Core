@@ -372,7 +372,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         }
 
         [Fact]
-        public async void ShouldThrowValidationExceptionOnModifyWhenReferneceExceptionAndLogItAsync()
+        public async void ShouldThrowValidationExceptionOnModifyIfReferenceErrorOccursAndLogItAsync()
         {
             // given
             int minuteInPast = GetRandomNegativeNumber();
@@ -383,7 +383,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             Comment storageComment = randomComment;
             string randomMessage = GetRandomMessage();
             string exceptionMessage = randomMessage;
-            var foreignKeyConstraintConflictException = new ForeignKeyConstraintConflictException(exceptionMessage);
+            
+            var foreignKeyConstraintConflictException = 
+                new ForeignKeyConstraintConflictException(exceptionMessage);
 
             var invalidCommentReferenceException =
                 new InvalidCommentReferenceException(foreignKeyConstraintConflictException);
@@ -393,15 +395,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDate);
-
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectCommentByIdAsync(inputComment.Id))
-                    .ReturnsAsync(storageComment);
-
-            this.storageBrokerMock.Setup(broker =>
-                broker.UpdateCommentAsync(inputComment))
-                    .ThrowsAsync(foreignKeyConstraintConflictException);
+                    .Throws(foreignKeyConstraintConflictException);
 
             // when
             ValueTask<Comment> modifyCommentTask =
@@ -415,14 +409,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectCommentByIdAsync(inputComment.Id),
-                    Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateCommentAsync(inputComment),
-                    Times.Once);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(expectedCommentValidationException))),
                     Times.Once);
@@ -431,6 +417,5 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
-
     }
 }
