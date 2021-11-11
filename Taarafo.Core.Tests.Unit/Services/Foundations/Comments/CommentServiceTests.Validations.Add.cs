@@ -216,7 +216,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         public async void ShouldThrowValidationExceptionOnAddWhenReferneceExceptionAndLogItAsync()
         {
             // given
-            Comment randomComment = CreateRandomComment();
+            DateTimeOffset randomDateTime =
+                GetRandomDateTimeOffset();
+
+            Comment randomComment = CreateRandomComment(randomDateTime);
             Comment someComment = randomComment;
             string randomMessage = GetRandomMessage();
             string exceptionMessage = randomMessage;
@@ -227,6 +230,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 
             var expectedCommentValidationException =
                 new CommentValidationException(invalidCommentReferenceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertCommentAsync(someComment))
@@ -239,6 +246,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             // then
             await Assert.ThrowsAsync<CommentValidationException>(() =>
                 addCommentTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertCommentAsync(It.IsAny<Comment>()),

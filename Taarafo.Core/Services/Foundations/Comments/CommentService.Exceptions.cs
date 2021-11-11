@@ -52,6 +52,13 @@ namespace Taarafo.Core.Services.Foundations.Comments
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsCommentException);
             }
+            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            {
+                var invalidCourseAttachmentReferenceException =
+                    new InvalidCommentReferenceException(foreignKeyConstraintConflictException);
+
+                throw CreateAndLogValidationException(invalidCourseAttachmentReferenceException);
+            }
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedCommentStorageException =
