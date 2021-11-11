@@ -11,7 +11,7 @@ namespace Taarafo.Core.Services.Foundations.Comments
 {
     public partial class CommentService
     {
-        private void ValidateComment(Comment comment)
+        private void ValidateCommentOnAdd(Comment comment)
         {
             ValidateCommentIsNotNull(comment);
 
@@ -29,6 +29,26 @@ namespace Taarafo.Core.Services.Foundations.Comments
                 Parameter: nameof(Comment.UpdatedDate)),
 
                 (Rule: IsNotRecent(comment.CreatedDate), Parameter: nameof(Comment.CreatedDate)));
+        }
+
+        private void ValidateCommentOnModify(Comment comment)
+        {
+            ValidateCommentIsNotNull(comment);
+
+            Validate(
+                (Rule: IsInvalid(comment.Id), Parameter: nameof(Comment.Id)),
+                (Rule: IsInvalid(comment.Content), Parameter: nameof(Comment.Content)),
+                (Rule: IsInvalid(comment.CreatedDate), Parameter: nameof(Comment.CreatedDate)),
+                (Rule: IsInvalid(comment.UpdatedDate), Parameter: nameof(Comment.UpdatedDate)),
+                (Rule: IsInvalid(comment.PostId), Parameter: nameof(Comment.PostId)),
+
+                (Rule: IsSame(
+                    firstDate: comment.UpdatedDate,
+                    secondDate: comment.CreatedDate,
+                    secondDateName: nameof(Comment.CreatedDate)),
+                Parameter: nameof(Comment.UpdatedDate)),
+
+                (Rule: IsNotRecent(comment.UpdatedDate), Parameter: nameof(comment.UpdatedDate)));
         }
 
         public void ValidateCommentId(Guid commentId) =>
@@ -71,6 +91,15 @@ namespace Taarafo.Core.Services.Foundations.Comments
                 Message = $"Date is not the same as {secondDateName}"
             };
 
+        private static dynamic IsSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
+            };
+
         private dynamic IsNotRecent(DateTimeOffset date) => new
         {
             Condition = IsDateNotRecent(date),
@@ -93,6 +122,22 @@ namespace Taarafo.Core.Services.Foundations.Comments
             Condition = date == default,
             Message = "Date is required"
         };
+
+        private static void ValidateAginstStorageCommentOnModify(Comment inputComment, Comment storageComment)
+        {
+            Validate(
+                (Rule: IsNotSame(
+                    firstDate: inputComment.CreatedDate,
+                    secondDate: storageComment.CreatedDate,
+                    secondDateName: nameof(Comment.CreatedDate)),
+                Parameter: nameof(Comment.CreatedDate)),
+
+                (Rule: IsSame(
+                    firstDate: inputComment.UpdatedDate,
+                    secondDate: storageComment.UpdatedDate,
+                    secondDateName: nameof(Comment.UpdatedDate)),
+                Parameter: nameof(Comment.UpdatedDate)));
+        }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {

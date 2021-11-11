@@ -3,12 +3,13 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using Microsoft.Data.SqlClient;
+using Moq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
-using Microsoft.Data.SqlClient;
-using Moq;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
@@ -61,6 +62,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     .AsQueryable();
         }
 
+        private static Comment CreateRandomModifyComment(DateTimeOffset dates)
+        {
+            int randomDaysInPast = GetRandomNegativeNumber();
+            Comment randomComment = CreateRandomComment(dates);
+
+            randomComment.CreatedDate =
+                randomComment.CreatedDate.AddDays(randomDaysInPast);
+
+            return randomComment;
+        }
+
         private static string GetRandomMessage() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
@@ -94,6 +106,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
+        public static IEnumerable<object[]> InvalidMinuteCases()
+        {
+            int randomMoreThanMinuteFromNow = GetRandomNumber();
+            int randomMoreThanMinuteBeforeNow = GetRandomNegativeNumber();
+
+            return new List<object[]>
+            {
+                new object[] { randomMoreThanMinuteFromNow },
+                new object[] { randomMoreThanMinuteBeforeNow }
+            };
+        }
         private static Filler<Comment> CreateCommentFiller(DateTimeOffset date)
         {
             var filler = new Filler<Comment>();
