@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using Moq;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Comments.Exceptions;
@@ -209,6 +210,47 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async void ShouldThrowValidationExceptionOnAddWhenReferneceExceptionAndLogItAsync()
+        {
+            // given
+            Comment randomComment = CreateRandomComment();
+            Comment someComment = randomComment;
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
+            var foreignKeyConstraintConflictException = new ForeignKeyConstraintConflictException(exceptionMessage);
+
+            var invalidCommentReferenceException =
+                new InvalidCommentReferenceException(foreignKeyConstraintConflictException);
+
+            var expectedCommentValidationException =
+                new CommentValidationException(invalidCommentReferenceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertCommentAsync(someComment))
+                    .ThrowsAsync(foreignKeyConstraintConflictException);
+
+            // when
+            ValueTask<Comment> addCommentTask =
+                this.commentService.AddCommentAsync(someComment);
+
+            // then
+            await Assert.ThrowsAsync<CommentValidationException>(() =>
+                addCommentTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertCommentAsync(It.IsAny<Comment>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogError(It.Is(SameExceptionAs(expectedCommentValidationException))),
+                    Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
     }
