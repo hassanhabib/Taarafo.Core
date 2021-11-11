@@ -33,15 +33,15 @@ namespace Taarafo.Core.Controllers
                 return Created(addedComment);
             }
             catch (CommentValidationException commentValidationException)
+            {
+                return BadRequest(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyValidationException commentValidationException)
                 when (commentValidationException.InnerException is InvalidCommentReferenceException)
             {
                 string innerMessage = GetInnerMessage(commentValidationException);
 
                 return FailedDependency(innerMessage);
-            }
-            catch (CommentValidationException commentValidationException)
-            {
-                return BadRequest(commentValidationException.InnerException);
             }
             catch (CommentDependencyValidationException commentDependencyValidationException)
                when (commentDependencyValidationException.InnerException is AlreadyExistsCommentException)
