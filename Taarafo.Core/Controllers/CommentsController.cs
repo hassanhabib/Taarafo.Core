@@ -23,7 +23,7 @@ namespace Taarafo.Core.Controllers
             this.commentService = commentService;
 
         [HttpPost]
-        public async ValueTask<ActionResult<Comment>> CommentCommentAsync(Comment comment)
+        public async ValueTask<ActionResult<Comment>> PostCommentAsync(Comment comment)
         {
             try
             {
