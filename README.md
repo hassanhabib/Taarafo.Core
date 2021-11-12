@@ -17,3 +17,25 @@ I believe everyone in the world should be able to express their opinions, it's a
 <img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS002: Initializing ASP.NET Core API](https://www.youtube.com/watch?v=ZGov4vuGj8A)
 <br />
 <img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS003: Initializing ASP.NET Core Unit Tests](https://www.youtube.com/watch?v=jWIPkpl6Yr0)
+<br>
+<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS004: Initializing ASP.NET End-to-End Tests](https://www.youtube.com/watch?v=NcGybsFRLO8)
+<br>
+<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS005: Handling SQL Exceptions](https://www.youtube.com/watch?v=bqKRak3x7Xs)
+<br>
+<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS006: Exceptions Localization & Categorization](https://www.youtube.com/watch?v=PhOdcYnutoA)
+<br>
+<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS007: Handling Dependency & Service Exceptions](https://www.youtube.com/watch?v=tOB9KE34zoQ)
+<br>
+<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS008: Date Validations in ASP.NET Core](https://www.youtube.com/watch?v=0vEIY1kzduw)
+<br>
+<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS009: Implementing RESTFul API Controllers in ASP.NET Core](https://www.youtube.com/watch?v=FsML8WgJTKU)
+<br>
+<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS010: Deep Cloning in TDD in C#](https://www.youtube.com/watch?v=5vq5eHt8dkw)
+<br>
+<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS011: Implementing Storage Brokers (Select & Delete)](https://www.youtube.com/watch?v=7oyxEZfMnwg)
+<br>
+<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS012: Implementing API Brokers](https://www.youtube.com/watch?v=68Uv8Vx0cX8)
+<br>
+<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS013: Test Driving Happy Path for Post Remove Scenario](https://www.youtube.com/watch?v=XveZj091O1Q)
+<br>
+<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS016: Detecting and Handling Not Found Entity Exceptions in ASP.NET Core](https://www.youtube.com/watch?v=9wZmOpg15Lg)
