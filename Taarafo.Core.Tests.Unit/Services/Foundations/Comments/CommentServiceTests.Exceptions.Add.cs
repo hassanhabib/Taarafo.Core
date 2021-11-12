@@ -206,7 +206,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             Comment someComment = randomComment;
             string randomMessage = GetRandomMessage();
             string exceptionMessage = randomMessage;
-            var foreignKeyConstraintConflictException = new ForeignKeyConstraintConflictException(exceptionMessage);
+            var foreignKeyConstraintConflictException = 
+                new ForeignKeyConstraintConflictException(exceptionMessage);
 
             var invalidCommentReferenceException =
                 new InvalidCommentReferenceException(foreignKeyConstraintConflictException);
