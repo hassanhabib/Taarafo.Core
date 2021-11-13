@@ -38,4 +38,6 @@ I believe everyone in the world should be able to express their opinions, it's a
 <br>
 <img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS013: Test Driving Happy Path for Post Remove Scenario](https://www.youtube.com/watch?v=XveZj091O1Q)
 <br>
+<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS014: Quick Guide to Structural Validations in ASP.NET Core](https://www.youtube.com/watch?v=nKuCVEtDf7U)
+<br>
 <img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS016: Detecting and Handling Not Found Entity Exceptions in ASP.NET Core](https://www.youtube.com/watch?v=9wZmOpg15Lg)
