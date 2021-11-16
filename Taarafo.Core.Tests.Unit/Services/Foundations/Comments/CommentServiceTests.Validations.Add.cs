@@ -95,7 +95,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once());
 
-            var validationSummaryMessage = SameValidationExceptionAsMessage(actualCommentValidationException, expectedCommentValidationException);
+            var validationSummaryMessage = SameValidationExceptionAsMessage(
+                actualCommentValidationException,
+                expectedCommentValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameValidationExceptionAs(
