@@ -206,6 +206,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             Comment someComment = randomComment;
             string randomMessage = GetRandomMessage();
             string exceptionMessage = randomMessage;
+
             var foreignKeyConstraintConflictException =
                 new ForeignKeyConstraintConflictException(exceptionMessage);
 
@@ -217,7 +218,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                .Throws(foreignKeyConstraintConflictException);
+                    .Throws(foreignKeyConstraintConflictException);
 
             // when
             ValueTask<Comment> addCommentTask =
@@ -232,7 +233,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
-               broker.LogError(It.Is(SameExceptionAs(expectedCommentValidationException))),
+               broker.LogError(It.Is(SameExceptionAs(
+                   expectedCommentValidationException))),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
