@@ -88,17 +88,20 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 this.commentService.AddCommentAsync(invalidComment);
 
             // then
-            await Assert.ThrowsAsync<CommentValidationException>(() =>
+            var actualCommentValidationException = await Assert.ThrowsAsync<CommentValidationException>(() =>
                addCommentTask.AsTask());
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once());
 
+            var validationSummaryMessage = SameValidationExceptionAsMessage(actualCommentValidationException, expectedCommentValidationException);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameValidationExceptionAs(
                     expectedCommentValidationException))),
-                        Times.Once);
+                        Times.Once,
+                        validationSummaryMessage);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertCommentAsync(It.IsAny<Comment>()),

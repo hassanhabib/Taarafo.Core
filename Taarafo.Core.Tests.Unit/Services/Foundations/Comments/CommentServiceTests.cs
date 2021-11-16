@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
+using System.Text;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
@@ -53,6 +55,39 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 actualException.Message == expectedException.Message
                 && actualException.InnerException.Message == expectedException.InnerException.Message
                 && (actualException.InnerException as Xeption).DataEquals(expectedException.InnerException.Data);
+        }
+
+        private static string SameValidationExceptionAsMessage(Exception expectedException, Exception actualException)
+        {
+            var message = new StringBuilder();
+
+            if (actualException.Message != expectedException.Message)
+            {
+                message.AppendLine($"Actual exception message does not match expected exception message.");
+                message.AppendLine($"Expected: {expectedException.Message}");
+                message.AppendLine($"Actual:   {actualException.Message}");
+            }
+
+            if (actualException.InnerException.Message != expectedException.InnerException.Message)
+            {
+                message.AppendLine($"Actual exception message does not match expected exception message.");
+                message.AppendLine($"Expected: {expectedException.Message}");
+                message.AppendLine($"Actual:   {actualException.Message}");
+            }
+
+            foreach (string key in expectedException.InnerException.Data.Keys)
+            {
+                try
+                {
+                    (actualException.InnerException as Xeption).Data[key].Should().BeEquivalentTo(expectedException.InnerException.Data[key]);
+                }
+                catch (Exception ex)
+                {
+                    message.AppendLine($"Validation error on '{key}' - {ex.Message}");
+                }
+            }
+
+            return message.ToString();
         }
 
         private static IQueryable<Comment> CreateRandomComments()
