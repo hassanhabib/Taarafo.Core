@@ -3,10 +3,10 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using Force.DeepCloner;
-using Moq;
 using System;
 using System.Threading.Tasks;
+using Force.DeepCloner;
+using Moq;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Comments.Exceptions;
 using Xunit;
@@ -326,7 +326,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 
             Comment storageComment = randomComment.DeepClone();
             invalidComment.UpdatedDate = storageComment.UpdatedDate;
-            
+
             var invalidCommentException = new InvalidCommentException();
 
             invalidCommentException.AddData(
