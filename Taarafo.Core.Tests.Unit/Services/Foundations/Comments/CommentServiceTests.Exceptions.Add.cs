@@ -238,8 +238,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                         Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
