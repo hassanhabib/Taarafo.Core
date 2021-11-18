@@ -229,8 +229,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
-               broker.LogError(It.Is(SameExceptionAs(
-                   expectedCommentValidationException))),
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedCommentValidationException))),
                         Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
