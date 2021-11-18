@@ -199,11 +199,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         public async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
         {
             // given
-            DateTimeOffset randomDateTime =
-                GetRandomDateTimeOffset();
-
-            Comment randomComment = CreateRandomComment(randomDateTime);
-            Comment someComment = randomComment;
+            Comment someComment = CreateRandomComment();
             string randomMessage = GetRandomMessage();
             string exceptionMessage = randomMessage;
 
