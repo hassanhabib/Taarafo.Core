@@ -11,13 +11,15 @@ namespace Taarafo.Core.Tests.Acceptance.Brokers
 {
     public partial class ApiBroker
     {
-        public ValueTask<Post> PostPostAsync(Post post) =>
-            throw new NotImplementedException();
+        private const string PostsRelativeUrl = "api/posts";
+
+        public async ValueTask<Post> PostPostAsync(Post post) =>
+            await this.apiFactoryClient.PostContentAsync(PostsRelativeUrl, post);
 
         public async ValueTask<Post> GetPostByIdAsync(Guid postId) =>
-            throw new NotImplementedException();
+            await this.apiFactoryClient.GetContentAsync<Post>($"{PostsRelativeUrl}/{postId}");
 
         public async ValueTask<Post> DeletePostByIdAsync(Guid postId) =>
-            throw new NotImplementedException();
+            await this.apiFactoryClient.DeleteContentAsync<Post>($"{PostsRelativeUrl}/{postId}");
     }
 }
