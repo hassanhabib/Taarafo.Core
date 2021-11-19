@@ -6,7 +6,6 @@
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
-using Force.DeepCloner;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -22,8 +21,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         public async Task ShouldThrowCriticalDependencyExceptionOnModifyIfSqlErrorOccursAndLogItAsync()
         {
             // given
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            Comment randomComment = CreateRandomComment(randomDateTime);
+            Comment randomComment = CreateRandomComment();
             SqlException sqlException = GetSqlException();
 
             var failedCommentStorageException =
@@ -67,13 +65,52 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         }
 
         [Fact]
+        public async void ShouldThrowValidationExceptionOnModifyIfReferenceErrorOccursAndLogItAsync()
+        {
+            // given
+            Comment randomComment = CreateRandomComment();
+            Comment storageComment = randomComment;
+            string exceptionMessage = GetRandomMessage();
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(exceptionMessage);
+
+            var invalidCommentReferenceException =
+                new InvalidCommentReferenceException(foreignKeyConstraintConflictException);
+
+            var expectedCommentValidationException =
+                new CommentDependencyValidationException(invalidCommentReferenceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(foreignKeyConstraintConflictException);
+
+            // when
+            ValueTask<Comment> modifyCommentTask =
+                this.commentService.ModifyCommentAsync(randomComment);
+
+            // then
+            await Assert.ThrowsAsync<CommentDependencyValidationException>(() =>
+                modifyCommentTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(expectedCommentValidationException))),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
         public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
         {
             // given
-            int minutesInPast = GetRandomNegativeNumber();
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            Comment randomComment = CreateRandomComment(randomDateTime);
-            randomComment.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
+            Comment randomComment = CreateRandomComment();
             var databaseUpdateException = new DbUpdateException();
 
             var failedCommentException =
@@ -82,13 +119,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             var expectedCommentDependencyException =
                 new CommentDependencyException(failedCommentException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectCommentByIdAsync(randomComment.Id))
-                    .ThrowsAsync(databaseUpdateException);
-
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDateTime);
+                    .Throws(databaseUpdateException);
 
             // when
             ValueTask<Comment> modifyCommentTask =
@@ -97,10 +130,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             // then
             await Assert.ThrowsAsync<CommentDependencyException>(() =>
                 modifyCommentTask.AsTask());
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectCommentByIdAsync(randomComment.Id),
-                    Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -120,10 +149,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         public async Task ShouldThrowDependencyValidationExceptionOnModifyIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
         {
             // given
-            int minutesInPast = GetRandomNegativeNumber();
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            Comment randomComment = CreateRandomComment(randomDateTime);
-            randomComment.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
+            Comment randomComment = CreateRandomComment();
             var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
 
             var lockedCommentException =
@@ -132,13 +158,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             var expectedCommentDependencyValidationException =
                 new CommentDependencyValidationException(lockedCommentException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectCommentByIdAsync(randomComment.Id))
-                    .ThrowsAsync(databaseUpdateConcurrencyException);
-
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDateTime);
+                    .Throws(databaseUpdateConcurrencyException);
 
             // when
             ValueTask<Comment> modifyCommentTask =
@@ -150,10 +172,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectCommentByIdAsync(randomComment.Id),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -170,10 +188,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         public async Task ShouldThrowServiceExceptionOnModifyIfServiceErrorOccursAndLogItAsync()
         {
             // given
-            int minuteInPast = GetRandomNegativeNumber();
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            Comment randomComment = CreateRandomComment(randomDateTime);
-            randomComment.CreatedDate = randomDateTime.AddMinutes(minuteInPast);
+            Comment randomComment = CreateRandomComment();
             var serviceException = new Exception();
 
             var failedCommentException =
@@ -182,13 +197,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             var expectedCommentServiceException =
                 new CommentServiceException(failedCommentException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectCommentByIdAsync(randomComment.Id))
-                    .ThrowsAsync(serviceException);
-
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDateTime);
+                    .Throws(serviceException);
 
             // when
             ValueTask<Comment> modifyCommentTask =
@@ -202,61 +213,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectCommentByIdAsync(randomComment.Id),
-                    Times.Once);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentServiceException))),
                         Times.Once);
-
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async void ShouldThrowValidationExceptionOnModifyIfReferenceErrorOccursAndLogItAsync()
-        {
-            // given
-            int minuteInPast = GetRandomNegativeNumber();
-            DateTimeOffset randomDate = GetRandomDateTimeOffset();
-            Comment randomComment = CreateRandomModifyComment(randomDate.AddMinutes(minuteInPast));
-            Comment inputComment = randomComment.DeepClone();
-            inputComment.UpdatedDate = randomDate;
-            Comment storageComment = randomComment;
-            string randomMessage = GetRandomMessage();
-            string exceptionMessage = randomMessage;
-
-            var foreignKeyConstraintConflictException =
-                new ForeignKeyConstraintConflictException(exceptionMessage);
-
-            var invalidCommentReferenceException =
-                new InvalidCommentReferenceException(foreignKeyConstraintConflictException);
-
-            var expectedCommentValidationException =
-                new CommentDependencyValidationException(invalidCommentReferenceException);
-
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(foreignKeyConstraintConflictException);
-
-            // when
-            ValueTask<Comment> modifyCommentTask =
-                this.commentService.ModifyCommentAsync(inputComment);
-
-            // then
-            await Assert.ThrowsAsync<CommentDependencyValidationException>(() =>
-                modifyCommentTask.AsTask());
-
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
-
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(expectedCommentValidationException))),
-                    Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
