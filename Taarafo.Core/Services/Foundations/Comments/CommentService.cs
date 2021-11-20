@@ -32,7 +32,8 @@ namespace Taarafo.Core.Services.Foundations.Comments
         public ValueTask<Comment> AddCommentAsync(Comment comment) =>
         TryCatch(async () =>
         {
-            ValidateCommentOnAdd(comment);
+            // ValidateCommentOnAdd(comment);
+            ValidateComment(comment, OperationsEnum.Add);
 
             return await this.storageBroker.InsertCommentAsync(comment);
         });
@@ -56,7 +57,8 @@ namespace Taarafo.Core.Services.Foundations.Comments
         public ValueTask<Comment> ModifyCommentAsync(Comment comment) =>
         TryCatch(async () =>
         {
-            ValidateCommentOnModify(comment);
+            // ValidateCommentOnModify(comment);
+            ValidateComment(comment, OperationsEnum.Modify);
 
             Comment maybeComment =
                 await this.storageBroker.SelectCommentByIdAsync(comment.Id);

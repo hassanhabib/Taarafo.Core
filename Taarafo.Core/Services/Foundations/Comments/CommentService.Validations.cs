@@ -11,7 +11,7 @@ namespace Taarafo.Core.Services.Foundations.Comments
 {
     public partial class CommentService
     {
-        private void ValidateCommentOnAdd(Comment comment)
+        private void ValidateComment(Comment comment, OperationsEnum operation)
         {
             ValidateCommentIsNotNull(comment);
 
@@ -22,34 +22,72 @@ namespace Taarafo.Core.Services.Foundations.Comments
                 (Rule: IsInvalid(comment.UpdatedDate), Parameter: nameof(Comment.UpdatedDate)),
                 (Rule: IsInvalid(comment.PostId), Parameter: nameof(Comment.PostId)),
 
+                // Specific rules for ADD
                 (Rule: IsNotSame(
                     firstDate: comment.UpdatedDate,
                     secondDate: comment.CreatedDate,
-                    secondDateName: nameof(Comment.CreatedDate)),
+                    secondDateName: nameof(Comment.CreatedDate),
+                    applyRule: operation == OperationsEnum.Add),
                 Parameter: nameof(Comment.UpdatedDate)),
 
-                (Rule: IsNotRecent(comment.CreatedDate), Parameter: nameof(Comment.CreatedDate)));
-        }
+                (Rule: IsNotRecent(
+                    date: comment.CreatedDate,
+                    applyRule: operation == OperationsEnum.Add),
+                Parameter: nameof(Comment.CreatedDate)),
 
-        private void ValidateCommentOnModify(Comment comment)
-        {
-            ValidateCommentIsNotNull(comment);
-
-            Validate(
-                (Rule: IsInvalid(comment.Id), Parameter: nameof(Comment.Id)),
-                (Rule: IsInvalid(comment.Content), Parameter: nameof(Comment.Content)),
-                (Rule: IsInvalid(comment.CreatedDate), Parameter: nameof(Comment.CreatedDate)),
-                (Rule: IsInvalid(comment.UpdatedDate), Parameter: nameof(Comment.UpdatedDate)),
-                (Rule: IsInvalid(comment.PostId), Parameter: nameof(Comment.PostId)),
-
+                // Specific rules for MODIFY
                 (Rule: IsSame(
                     firstDate: comment.UpdatedDate,
                     secondDate: comment.CreatedDate,
-                    secondDateName: nameof(Comment.CreatedDate)),
+                    secondDateName: nameof(Comment.CreatedDate),
+                    applyRule: operation == OperationsEnum.Modify),
                 Parameter: nameof(Comment.UpdatedDate)),
 
-                (Rule: IsNotRecent(comment.UpdatedDate), Parameter: nameof(comment.UpdatedDate)));
+                (Rule: IsNotRecent(
+                    date: comment.UpdatedDate,
+                    applyRule: operation == OperationsEnum.Modify),
+                Parameter: nameof(comment.UpdatedDate)));
         }
+
+        //private void ValidateCommentOnAdd(Comment comment)
+        //{
+        //    ValidateCommentIsNotNull(comment);
+
+        //    Validate(
+        //        (Rule: IsInvalid(comment.Id), Parameter: nameof(Comment.Id)),
+        //        (Rule: IsInvalid(comment.Content), Parameter: nameof(Comment.Content)),
+        //        (Rule: IsInvalid(comment.CreatedDate), Parameter: nameof(Comment.CreatedDate)),
+        //        (Rule: IsInvalid(comment.UpdatedDate), Parameter: nameof(Comment.UpdatedDate)),
+        //        (Rule: IsInvalid(comment.PostId), Parameter: nameof(Comment.PostId)),
+
+        //        (Rule: IsNotSame(
+        //            firstDate: comment.UpdatedDate,
+        //            secondDate: comment.CreatedDate,
+        //            secondDateName: nameof(Comment.CreatedDate)),
+        //        Parameter: nameof(Comment.UpdatedDate)),
+
+        //        (Rule: IsNotRecent(comment.CreatedDate), Parameter: nameof(Comment.CreatedDate)));
+        //}
+
+        //private void ValidateCommentOnModify(Comment comment)
+        //{
+        //    ValidateCommentIsNotNull(comment);
+
+        //    Validate(
+        //        (Rule: IsInvalid(comment.Id), Parameter: nameof(Comment.Id)),
+        //        (Rule: IsInvalid(comment.Content), Parameter: nameof(Comment.Content)),
+        //        (Rule: IsInvalid(comment.CreatedDate), Parameter: nameof(Comment.CreatedDate)),
+        //        (Rule: IsInvalid(comment.UpdatedDate), Parameter: nameof(Comment.UpdatedDate)),
+        //        (Rule: IsInvalid(comment.PostId), Parameter: nameof(Comment.PostId)),
+
+        //        (Rule: IsSame(
+        //            firstDate: comment.UpdatedDate,
+        //            secondDate: comment.CreatedDate,
+        //            secondDateName: nameof(Comment.CreatedDate)),
+        //        Parameter: nameof(Comment.UpdatedDate)),
+
+        //        (Rule: IsNotRecent(comment.UpdatedDate), Parameter: nameof(comment.UpdatedDate)));
+        //}
 
         public void ValidateCommentId(Guid commentId) =>
             Validate((Rule: IsInvalid(commentId), Parameter: nameof(Comment.Id)));
@@ -85,26 +123,30 @@ namespace Taarafo.Core.Services.Foundations.Comments
         private static dynamic IsNotSame(
             DateTimeOffset firstDate,
             DateTimeOffset secondDate,
-            string secondDateName) => new
+            string secondDateName,
+            bool applyRule = true) => new
             {
-                Condition = firstDate != secondDate,
+                Condition = applyRule && firstDate != secondDate,
                 Message = $"Date is not the same as {secondDateName}"
             };
 
         private static dynamic IsSame(
             DateTimeOffset firstDate,
             DateTimeOffset secondDate,
-            string secondDateName) => new
+            string secondDateName,
+            bool applyRule = true) => new
             {
-                Condition = firstDate == secondDate,
+                Condition = applyRule && firstDate == secondDate,
                 Message = $"Date is the same as {secondDateName}"
             };
 
-        private dynamic IsNotRecent(DateTimeOffset date) => new
-        {
-            Condition = IsDateNotRecent(date),
-            Message = "Date is not recent"
-        };
+        private dynamic IsNotRecent(
+            DateTimeOffset date,
+            bool applyRule = true) => new
+            {
+                Condition = applyRule && IsDateNotRecent(date),
+                Message = "Date is not recent"
+            };
 
         private bool IsDateNotRecent(DateTimeOffset date)
         {
