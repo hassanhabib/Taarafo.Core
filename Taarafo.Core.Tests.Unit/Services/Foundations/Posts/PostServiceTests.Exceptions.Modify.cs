@@ -20,7 +20,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldThrowCriticalDependencyExceptionOnModifyIfSqlErrorOccursAndLogItAsync()
         {
             // given
-            DateTimeOffset someDateTime = GetRadnomDateTimeOffset();
+            DateTimeOffset someDateTime = GetRandomDateTimeOffset();
             Post randomPost = CreateRandomPost(someDateTime);
             Post somePost = randomPost;
             Guid postId = somePost.Id;
@@ -71,7 +71,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         {
             // given
             int minutesInPast = GetRandomNegativeNumber();
-            DateTimeOffset randomDateTime = GetRadnomDateTimeOffset();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             Post randomPost = CreateRandomPost(randomDateTime);
             Post SomePost = randomPost;
             Guid postId = SomePost.Id;

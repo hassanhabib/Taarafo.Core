@@ -48,9 +48,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
                     firstDate: post.UpdatedDate,
                     secondDate: post.CreatedDate,
                     secondDateName: nameof(Post.CreatedDate)),
-
-                Parameter: nameof(Post.UpdatedDate))
-            );
+                Parameter: nameof(Post.UpdatedDate)));
         }
 
         public void ValidatePostId(Guid postId) =>
