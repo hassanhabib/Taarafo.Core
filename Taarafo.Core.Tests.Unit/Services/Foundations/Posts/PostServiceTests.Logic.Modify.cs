@@ -19,7 +19,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldModifyPostAsync()
         {
             // given
-            DateTimeOffset randomDate = GetRadnomDateTimeOffset();
+            DateTimeOffset randomDate = GetRandomDateTimeOffset();
             Post randomPost = CreateRandomModifyPost(randomDate);
             Post inputPost = randomPost;
             Post storagePost = inputPost;

@@ -115,7 +115,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
         {
             // given
-            DateTimeOffset randomDateTime = GetRadnomDateTimeOffset();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             Post randomPost = CreateRandomPost(randomDateTime);
             Post invalidPost = randomPost;
             var invalidPostException = new InvalidPostException();
@@ -162,7 +162,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotRecentAndLogItAsync(int minutes)
         {
             // given
-            DateTimeOffset dateTime = GetRadnomDateTimeOffset();
+            DateTimeOffset dateTime = GetRandomDateTimeOffset();
             Post randomPost = CreateRandomPost(dateTime);
             Post inputPost = randomPost;
             inputPost.UpdatedDate = dateTime.AddMinutes(minutes);
@@ -317,7 +317,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldThrowValidationExceptionOnModifyIfStorageUpdatedDateSameAsUpdatedDateAndLogItAsync()
         {
             // given
-            DateTimeOffset randomDateTime = GetRadnomDateTimeOffset();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             Post randomPost = CreateRandomModifyPost(randomDateTime);
             Post invalidPost = randomPost;
             invalidPost.CreatedDate = randomDateTime;

@@ -106,9 +106,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         private static int GetRandomNegativeNumber() =>
             -1 * new IntRange(min: 2, max: 10).GetValue();
 
-        private static DateTimeOffset GetRadnomDateTimeOffset() =>
-            new DateTimeRange(earliestDate: new DateTime()).GetValue();
-
         public static IEnumerable<object[]> InvalidMinuteCases()
         {
             int randomMoreThanMinuteFromNow = GetRandomNumber();
