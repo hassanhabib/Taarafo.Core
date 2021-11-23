@@ -99,5 +99,44 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
+        {
+            // given
+            Guid someCommentId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedCommentServiceException =
+                new FailedCommentServiceException(serviceException);
+
+            var expectedCommentServiceException =
+                new CommentServiceException(failedCommentServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectCommentByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Comment> removeCommentByIdTask =
+                this.commentService.RemoveCommentByIdAsync(someCommentId);
+
+            // then
+            await Assert.ThrowsAsync<CommentServiceException>(() =>
+                removeCommentByIdTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
+                        Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedCommentServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
