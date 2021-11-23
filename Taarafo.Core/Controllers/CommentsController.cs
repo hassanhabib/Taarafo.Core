@@ -79,6 +79,34 @@ namespace Taarafo.Core.Controllers
             }
         }
 
+        [HttpGet("{commentId}")]
+        public async ValueTask<ActionResult<Comment>> GetCommentByIdAsync(Guid commentId)
+        {
+            try
+            {
+                Comment comment = await this.commentService.RetrieveCommentByIdAsync(commentId);
+
+                return Ok(comment);
+            }
+            catch (CommentValidationException commentValidationException)
+                when (commentValidationException.InnerException is NotFoundCommentException)
+            {
+                return NotFound(commentValidationException.InnerException);
+            }
+            catch (CommentValidationException commentValidationException)
+            {
+                return BadRequest(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyException commentDependencyException)
+            {
+                return InternalServerError(commentDependencyException);
+            }
+            catch (CommentServiceException commentServiceException)
+            {
+                return InternalServerError(commentServiceException);
+            }
+        }
+
         private static string GetInnerMessage(Exception exception) =>
             exception.InnerException.Message;
     }
