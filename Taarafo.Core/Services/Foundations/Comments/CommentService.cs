@@ -68,6 +68,17 @@ namespace Taarafo.Core.Services.Foundations.Comments
         });
 
         public ValueTask<Comment> RemoveCommentByIdAsync(Guid commentId) =>
-            throw new NotImplementedException();
+            TryCatch(async () =>
+            {
+                ValidateCommentId(commentId);
+
+                Comment maybeComment = await this.storageBroker
+                    .SelectCommentByIdAsync(commentId);
+
+                ValidateStorageComment(maybeComment, commentId);
+
+                return await this.storageBroker
+                    .DeleteCommentAsync(maybeComment);
+            });
     }
 }
