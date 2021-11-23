@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -47,6 +48,26 @@ namespace Taarafo.Core.Controllers
                when (commentDependencyValidationException.InnerException is AlreadyExistsCommentException)
             {
                 return Conflict(commentDependencyValidationException.InnerException);
+            }
+            catch (CommentDependencyException commentDependencyException)
+            {
+                return InternalServerError(commentDependencyException);
+            }
+            catch (CommentServiceException commentServiceException)
+            {
+                return InternalServerError(commentServiceException);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<IQueryable<Comment>> GetAllComments()
+        {
+            try
+            {
+                IQueryable<Comment> retrievedComments =
+                    this.commentService.RetrieveAllComments();
+
+                return Ok(retrievedComments);
             }
             catch (CommentDependencyException commentDependencyException)
             {
