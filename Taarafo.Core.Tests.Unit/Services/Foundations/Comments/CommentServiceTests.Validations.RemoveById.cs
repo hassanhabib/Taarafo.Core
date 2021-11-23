@@ -51,5 +51,48 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRemoveIfCommentIsNotFoundAndLogItAsync()
+        {
+            // given
+            Guid inputCommentId = Guid.NewGuid();
+            Comment noComment = null;
+
+            var notFoundCommentException =
+                new NotFoundCommentException(inputCommentId);
+
+            var expectedCommentValidationException =
+                new CommentValidationException(notFoundCommentException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectCommentByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noComment);
+
+            // when
+            ValueTask<Comment> removeCommentByIdTask =
+                this.commentService.RemoveCommentByIdAsync(inputCommentId);
+
+            // then
+            await Assert.ThrowsAsync<CommentValidationException>(() =>
+               removeCommentByIdTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameValidationExceptionAs(
+                    expectedCommentValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeleteCommentAsync(It.IsAny<Comment>()),
+                    Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
