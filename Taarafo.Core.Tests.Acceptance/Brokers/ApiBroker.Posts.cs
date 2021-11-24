@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Taarafo.Core.Tests.Acceptance.Models.Posts;
 
@@ -18,6 +19,9 @@ namespace Taarafo.Core.Tests.Acceptance.Brokers
 
         public async ValueTask<Post> GetPostByIdAsync(Guid postId) =>
             await this.apiFactoryClient.GetContentAsync<Post>($"{PostsRelativeUrl}/{postId}");
+
+        public async ValueTask<List<Post>> GetAllPostsAsync() =>
+          await this.apiFactoryClient.GetContentAsync<List<Post>>($"{PostsRelativeUrl}/");
 
         public async ValueTask<Post> DeletePostByIdAsync(Guid postId) =>
             await this.apiFactoryClient.DeleteContentAsync<Post>($"{PostsRelativeUrl}/{postId}");
