@@ -3,7 +3,6 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -39,9 +38,7 @@ namespace Taarafo.Core.Controllers
             catch (CommentDependencyValidationException commentValidationException)
                 when (commentValidationException.InnerException is InvalidCommentReferenceException)
             {
-                string innerMessage = GetInnerMessage(commentValidationException);
-
-                return FailedDependency(innerMessage);
+                return FailedDependency(commentValidationException);
             }
             catch (CommentDependencyValidationException commentDependencyValidationException)
                when (commentDependencyValidationException.InnerException is AlreadyExistsCommentException)
@@ -57,8 +54,5 @@ namespace Taarafo.Core.Controllers
                 return InternalServerError(commentServiceException);
             }
         }
-
-        private static string GetInnerMessage(Exception exception) =>
-            exception.InnerException.Message;
     }
 }
