@@ -3,15 +3,12 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
+using Taarafo.Core.Infrastructure.Provision.Models.Configurations;
 
-namespace Taarafo.Core.Infrastructure.Provision
+namespace Taarafo.Core.Infrastructure.Provision.Brokers.Configurations
 {
-    internal class Program
+    public interface IConfigurationBroker
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello World!");
-        }
+        CloudManagementConfiguration GetConfigurations();
     }
 }

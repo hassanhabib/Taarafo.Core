@@ -3,15 +3,12 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
+using System.Collections.Generic;
 
-namespace Taarafo.Core.Infrastructure.Provision
+namespace Taarafo.Core.Infrastructure.Provision.Models.Configurations
 {
-    internal class Program
+    public class CloudAction
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello World!");
-        }
+        public List<string> Environments { get; set; }
     }
 }
