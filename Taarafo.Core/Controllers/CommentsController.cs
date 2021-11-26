@@ -40,9 +40,7 @@ namespace Taarafo.Core.Controllers
             catch (CommentDependencyValidationException commentValidationException)
                 when (commentValidationException.InnerException is InvalidCommentReferenceException)
             {
-                string innerMessage = GetInnerMessage(commentValidationException);
-
-                return FailedDependency(innerMessage);
+                return FailedDependency(commentValidationException);
             }
             catch (CommentDependencyValidationException commentDependencyValidationException)
                when (commentDependencyValidationException.InnerException is AlreadyExistsCommentException)

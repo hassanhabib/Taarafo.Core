@@ -22,7 +22,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             DateTimeOffset randomDate = GetRandomDateTimeOffset();
             Post randomPost = CreateRandomModifyPost(randomDate);
             Post inputPost = randomPost;
-            Post storagePost = inputPost;
+            Post storagePost = inputPost.DeepClone();
+            storagePost.UpdatedDate = randomPost.CreatedDate;
             Post updatedPost = inputPost;
             Post expectedPost = updatedPost.DeepClone();
             Guid postId = inputPost.Id;
