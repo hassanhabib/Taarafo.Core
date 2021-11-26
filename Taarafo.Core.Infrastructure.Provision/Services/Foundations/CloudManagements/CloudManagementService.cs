@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
+using Microsoft.Azure.Management.AppService.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Taarafo.Core.Infrastructure.Provision.Brokers.Clouds;
 using Taarafo.Core.Infrastructure.Provision.Brokers.Loggings;
@@ -37,6 +38,22 @@ namespace Taarafo.Core.Infrastructure.Provision.Services.Foundations.CloudManage
             this.loggingBroker.LogActivity(message: $"{resourceGroupName} Provisioned.");
 
             return resourceGroup;
+        }
+
+        public async ValueTask<IAppServicePlan> ProvisionPlanAsync(
+            string projectName,
+            string environment,
+            IResourceGroup resourceGroup)
+        {
+            string planName = $"{projectName}-PLAN-{environment}".ToUpper();
+            this.loggingBroker.LogActivity(message: $"Provisioning {planName}...");
+
+            IAppServicePlan plan =
+                await this.cloudBroker.CreatePlanAsync(planName, resourceGroup);
+
+            this.loggingBroker.LogActivity(message: $"{plan} Provisioned");
+
+            return plan;
         }
     }
 }
