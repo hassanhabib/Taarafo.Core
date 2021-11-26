@@ -6,6 +6,7 @@
 using System.Threading.Tasks;
 using Microsoft.Azure.Management.AppService.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
+using Microsoft.Azure.Management.Sql.Fluent;
 using Taarafo.Core.Infrastructure.Provision.Brokers.Clouds;
 using Taarafo.Core.Infrastructure.Provision.Brokers.Loggings;
 
@@ -54,6 +55,24 @@ namespace Taarafo.Core.Infrastructure.Provision.Services.Foundations.CloudManage
             this.loggingBroker.LogActivity(message: $"{plan} Provisioned");
 
             return plan;
+        }
+
+        public async ValueTask<ISqlServer> ProvisionSqlServerAsync(
+            string projectName,
+            string environment,
+            IResourceGroup resourceGroup)
+        {
+            string sqlServerName = $"{projectName}-dbserver-{environment}".ToLower();
+            this.loggingBroker.LogActivity(message: $"Provisioning {sqlServerName}...");
+
+            ISqlServer sqlServer =
+                await this.cloudBroker.CreateSqlServerAsync(
+                    sqlServerName,
+                    resourceGroup);
+
+            this.loggingBroker.LogActivity(message: $"{sqlServer} Provisioned");
+
+            return sqlServer;
         }
     }
 }
