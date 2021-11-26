@@ -31,5 +31,12 @@ namespace Taarafo.Core.Infrastructure.Provision.Services.Foundations.CloudManage
             string projectname,
             string environment,
             ISqlServer sqlServer);
+
+        ValueTask<IWebApp> ProvisionWebAppAsync(
+            string projectName,
+            string environment,
+            string databaseConnectionString,
+            IResourceGroup resourceGroup,
+            IAppServicePlan appServicePlan);
     }
 }
