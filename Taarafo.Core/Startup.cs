@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
+using Taarafo.Core.Services.Foundations.Comments;
 using Taarafo.Core.Services.Foundations.Posts;
 
 namespace Taarafo.Core
@@ -66,8 +67,11 @@ namespace Taarafo.Core
             app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
 
-        private static void AddServices(IServiceCollection services) =>
+        private static void AddServices(IServiceCollection services)
+        {
+            services.AddTransient<ICommentService, CommentService>();
             services.AddTransient<IPostService, PostService>();
+        }
 
         private static void AddBrokers(IServiceCollection services)
         {
