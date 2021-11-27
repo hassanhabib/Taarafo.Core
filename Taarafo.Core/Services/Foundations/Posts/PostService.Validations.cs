@@ -133,7 +133,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
                     secondDateName: nameof(Post.CreatedDate)),
                 Parameter: nameof(Post.CreatedDate)),
 
-                (Rule: IsNotSame(
+                (Rule: IsSame(
                     firstDate: inputPost.UpdatedDate,
                     secondDate: storagePost.UpdatedDate,
                     secondDateName: nameof(Post.UpdatedDate)),
