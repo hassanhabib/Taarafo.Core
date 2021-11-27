@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -44,6 +45,34 @@ namespace Taarafo.Core.Controllers
                when (commentDependencyValidationException.InnerException is AlreadyExistsCommentException)
             {
                 return Conflict(commentDependencyValidationException.InnerException);
+            }
+            catch (CommentDependencyException commentDependencyException)
+            {
+                return InternalServerError(commentDependencyException);
+            }
+            catch (CommentServiceException commentServiceException)
+            {
+                return InternalServerError(commentServiceException);
+            }
+        }
+
+        [HttpGet("{commentId}")]
+        public async ValueTask<ActionResult<Comment>> GetCommentByIdAsync(Guid commentId)
+        {
+            try
+            {
+                Comment comment = await this.commentService.RetrieveCommentByIdAsync(commentId);
+
+                return Ok(comment);
+            }
+            catch (CommentValidationException commentValidationException)
+                when (commentValidationException.InnerException is NotFoundCommentException)
+            {
+                return NotFound(commentValidationException.InnerException);
+            }
+            catch (CommentValidationException commentValidationException)
+            {
+                return BadRequest(commentValidationException.InnerException);
             }
             catch (CommentDependencyException commentDependencyException)
             {
