@@ -3,7 +3,6 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -76,8 +75,5 @@ namespace Taarafo.Core.Controllers
                 return InternalServerError(commentServiceException);
             }
         }
-
-        private static string GetInnerMessage(Exception exception) =>
-            exception.InnerException.Message;
     }
 }
