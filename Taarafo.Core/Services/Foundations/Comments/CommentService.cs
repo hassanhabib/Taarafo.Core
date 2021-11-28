@@ -66,5 +66,19 @@ namespace Taarafo.Core.Services.Foundations.Comments
 
             return await this.storageBroker.UpdateCommentAsync(comment);
         });
+
+        public ValueTask<Comment> RemoveCommentByIdAsync(Guid commentId) =>
+            TryCatch(async () =>
+            {
+                ValidateCommentId(commentId);
+
+                Comment maybeComment = await this.storageBroker
+                    .SelectCommentByIdAsync(commentId);
+
+                ValidateStorageComment(maybeComment, commentId);
+
+                return await this.storageBroker
+                    .DeleteCommentAsync(maybeComment);
+            });
     }
 }
