@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -31,6 +32,93 @@ namespace Taarafo.Core.Controllers
                     await this.commentService.AddCommentAsync(comment);
 
                 return Created(addedComment);
+            }
+            catch (CommentValidationException commentValidationException)
+            {
+                return BadRequest(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyValidationException commentValidationException)
+                when (commentValidationException.InnerException is InvalidCommentReferenceException)
+            {
+                return FailedDependency(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyValidationException commentDependencyValidationException)
+               when (commentDependencyValidationException.InnerException is AlreadyExistsCommentException)
+            {
+                return Conflict(commentDependencyValidationException.InnerException);
+            }
+            catch (CommentDependencyException commentDependencyException)
+            {
+                return InternalServerError(commentDependencyException);
+            }
+            catch (CommentServiceException commentServiceException)
+            {
+                return InternalServerError(commentServiceException);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<IQueryable<Comment>> GetAllComments()
+        {
+            try
+            {
+                IQueryable<Comment> retrievedComments =
+                    this.commentService.RetrieveAllComments();
+
+                return Ok(retrievedComments);
+            }
+            catch (CommentDependencyException commentDependencyException)
+            {
+                return InternalServerError(commentDependencyException);
+            }
+            catch (CommentServiceException commentServiceException)
+            {
+                return InternalServerError(commentServiceException);
+            }
+        }
+
+        [HttpGet("{commentId}")]
+        public async ValueTask<ActionResult<Comment>> GetCommentByIdAsync(Guid commentId)
+        {
+            try
+            {
+                Comment comment = await this.commentService.RetrieveCommentByIdAsync(commentId);
+
+                return Ok(comment);
+            }
+            catch (CommentValidationException commentValidationException)
+                when (commentValidationException.InnerException is NotFoundCommentException)
+            {
+                return NotFound(commentValidationException.InnerException);
+            }
+            catch (CommentValidationException commentValidationException)
+            {
+                return BadRequest(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyException commentDependencyException)
+            {
+                return InternalServerError(commentDependencyException);
+            }
+            catch (CommentServiceException commentServiceException)
+            {
+                return InternalServerError(commentServiceException);
+            }
+        }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Comment>> PutCommentAsync(Comment comment)
+        {
+            try
+            {
+                Comment modifiedComment =
+                    await this.commentService.ModifyCommentAsync(comment);
+
+                return Ok(modifiedComment);
+            }
+            catch (CommentValidationException commentValidationException)
+                when (commentValidationException.InnerException is NotFoundCommentException)
+            {
+                return NotFound(commentValidationException.InnerException);
             }
             catch (CommentValidationException commentValidationException)
             {
