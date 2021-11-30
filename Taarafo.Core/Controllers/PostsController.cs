@@ -100,6 +100,40 @@ namespace Taarafo.Core.Controllers
             }
         }
 
+        [HttpPut]
+        public async ValueTask<ActionResult<Post>> PutPostAsync(Post post)
+        {
+            try
+            {
+                Post modifiedPost =
+                    await this.postService.ModifyPostAsync(post);
+
+                return Ok(modifiedPost);
+            }
+            catch (PostValidationException postValidationException)
+                when (postValidationException.InnerException is NotFoundPostException)
+            {
+                return NotFound(postValidationException.InnerException);
+            }
+            catch (PostValidationException postValidationException)
+            {
+                return BadRequest(postValidationException.InnerException);
+            }
+            catch (PostDependencyValidationException postDependencyValidationException)
+               when (postDependencyValidationException.InnerException is AlreadyExistsPostException)
+            {
+                return Conflict(postDependencyValidationException.InnerException);
+            }
+            catch (PostDependencyException postDependencyException)
+            {
+                return InternalServerError(postDependencyException);
+            }
+            catch (PostServiceException postServiceException)
+            {
+                return InternalServerError(postServiceException);
+            }
+        }
+
         [HttpDelete("{postId}")]
         public async ValueTask<ActionResult<Post>> DeletePostByIdAsync(Guid postId)
         {
