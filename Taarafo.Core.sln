@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Taarafo.Core.Tests.Unit", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Taarafo.Core.Tests.Acceptance", "Taarafo.Core.Tests.Acceptance\Taarafo.Core.Tests.Acceptance.csproj", "{006BFD4C-7F38-4F10-B772-D4A793D9194D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Taarafo.Core.Infrastructure.Build", "Taarafo.Core.Infrastructure.Build\Taarafo.Core.Infrastructure.Build.csproj", "{8F563F23-5136-42F3-916A-C7CFDA0CF424}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Taarafo.Core.Infrastructure.Build", "Taarafo.Core.Infrastructure.Build\Taarafo.Core.Infrastructure.Build.csproj", "{8F563F23-5136-42F3-916A-C7CFDA0CF424}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Taarafo.Core.Infrastructure.Provision", "Taarafo.Core.Infrastructure.Provision\Taarafo.Core.Infrastructure.Provision.csproj", "{6FBC6ACD-BF6D-4434-9E73-368B2AC74FCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{8F563F23-5136-42F3-916A-C7CFDA0CF424}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F563F23-5136-42F3-916A-C7CFDA0CF424}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F563F23-5136-42F3-916A-C7CFDA0CF424}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FBC6ACD-BF6D-4434-9E73-368B2AC74FCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FBC6ACD-BF6D-4434-9E73-368B2AC74FCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FBC6ACD-BF6D-4434-9E73-368B2AC74FCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FBC6ACD-BF6D-4434-9E73-368B2AC74FCD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

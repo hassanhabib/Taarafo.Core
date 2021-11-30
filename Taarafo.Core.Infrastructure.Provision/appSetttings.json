@@ -1,0 +1,12 @@
+{
+  "projectName": "Taarafo-Core",
+  "up": {
+    "environments": [
+      "DEV"
+    ]
+  },
+  "down": {
+    "environments": [
+    ]
+  }
+}
