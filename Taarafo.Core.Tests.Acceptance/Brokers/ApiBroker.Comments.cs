@@ -14,7 +14,7 @@ namespace Taarafo.Core.Tests.Acceptance.Brokers
     {
         private const string CommentsRelativeUrl = "api/comments";
 
-        public async ValueTask<Comment> CommentCommentAsync(Comment comment) =>
+        public async ValueTask<Comment> PostCommentAsync(Comment comment) =>
             await this.apiFactoryClient.PostContentAsync(CommentsRelativeUrl, comment);
 
         public async ValueTask<List<Comment>> GetAllCommentsAsync() =>
