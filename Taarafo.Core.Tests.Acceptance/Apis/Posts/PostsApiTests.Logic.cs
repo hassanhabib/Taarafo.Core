@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using RESTFulSense.Exceptions;
 using Taarafo.Core.Tests.Acceptance.Models.Posts;
 using Xunit;
 
@@ -51,6 +52,28 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Posts
                 actualPost.Should().BeEquivalentTo(expectedPost);
                 await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
             }
+        }
+
+        [Fact]
+        public async Task ShouldDeletePostAsync()
+        {
+            // given
+            Post randomPost = await PostRandomPostAsync();
+            Post inputPost = randomPost;
+            Post expectedPost = inputPost;
+
+            // when
+            Post deletedPost =
+                await this.apiBroker.DeletePostByIdAsync(inputPost.Id);
+
+            ValueTask<Post> getPostbyIdTask =
+                this.apiBroker.GetPostByIdAsync(inputPost.Id);
+
+            // then
+            deletedPost.Should().BeEquivalentTo(expectedPost);
+
+            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+                getPostbyIdTask.AsTask());
         }
     }
 }
