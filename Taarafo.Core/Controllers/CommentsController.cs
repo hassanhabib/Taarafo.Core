@@ -104,5 +104,44 @@ namespace Taarafo.Core.Controllers
                 return InternalServerError(commentServiceException);
             }
         }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Comment>> PutCommentAsync(Comment comment)
+        {
+            try
+            {
+                Comment modifiedComment =
+                    await this.commentService.ModifyCommentAsync(comment);
+
+                return Ok(modifiedComment);
+            }
+            catch (CommentValidationException commentValidationException)
+                when (commentValidationException.InnerException is NotFoundCommentException)
+            {
+                return NotFound(commentValidationException.InnerException);
+            }
+            catch (CommentValidationException commentValidationException)
+            {
+                return BadRequest(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyValidationException commentValidationException)
+                when (commentValidationException.InnerException is InvalidCommentReferenceException)
+            {
+                return FailedDependency(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyValidationException commentDependencyValidationException)
+               when (commentDependencyValidationException.InnerException is AlreadyExistsCommentException)
+            {
+                return Conflict(commentDependencyValidationException.InnerException);
+            }
+            catch (CommentDependencyException commentDependencyException)
+            {
+                return InternalServerError(commentDependencyException);
+            }
+            catch (CommentServiceException commentServiceException)
+            {
+                return InternalServerError(commentServiceException);
+            }
+        }
     }
 }
