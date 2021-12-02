@@ -35,7 +35,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 addCommentTask.AsTask());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 
@@ -96,7 +96,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 
@@ -143,7 +143,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 
@@ -198,7 +198,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 
