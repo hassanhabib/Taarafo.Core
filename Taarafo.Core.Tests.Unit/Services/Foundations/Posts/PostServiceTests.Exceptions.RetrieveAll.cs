@@ -57,8 +57,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             string exceptionMessage = GetRandomMessage();
             var serviceException = new Exception(exceptionMessage);
 
+            var failedPostServiceException =
+                new FailedPostServiceException(serviceException);
+
             var expectedPostServiceException =
-                new PostServiceException(serviceException);
+                new PostServiceException(failedPostServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllPosts())
