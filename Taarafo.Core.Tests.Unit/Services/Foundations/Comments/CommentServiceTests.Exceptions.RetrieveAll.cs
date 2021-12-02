@@ -58,8 +58,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             string exceptionMessage = GetRandomMessage();
             var serviceException = new Exception(exceptionMessage);
 
+            var failedCommentServiceException =
+                new FailedCommentServiceException(serviceException);
+
             var expectedCommentServiceException =
-                new CommentServiceException(serviceException);
+                new CommentServiceException(failedCommentServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllComments())
