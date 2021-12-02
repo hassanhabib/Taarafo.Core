@@ -40,7 +40,7 @@ namespace Taarafo.Core.Controllers
             catch (CommentDependencyValidationException commentValidationException)
                 when (commentValidationException.InnerException is InvalidCommentReferenceException)
             {
-                return FailedDependency(commentValidationException);
+                return FailedDependency(commentValidationException.InnerException);
             }
             catch (CommentDependencyValidationException commentDependencyValidationException)
                when (commentDependencyValidationException.InnerException is AlreadyExistsCommentException)
@@ -133,6 +133,44 @@ namespace Taarafo.Core.Controllers
                when (commentDependencyValidationException.InnerException is AlreadyExistsCommentException)
             {
                 return Conflict(commentDependencyValidationException.InnerException);
+            }
+            catch (CommentDependencyException commentDependencyException)
+            {
+                return InternalServerError(commentDependencyException);
+            }
+            catch (CommentServiceException commentServiceException)
+            {
+                return InternalServerError(commentServiceException);
+            }
+        }
+
+        [HttpDelete("{commentId}")]
+        public async ValueTask<ActionResult<Comment>> DeleteCommentByIdAsync(Guid commentId)
+        {
+            try
+            {
+                Comment deletedComment =
+                    await this.commentService.RemoveCommentByIdAsync(commentId);
+
+                return Ok(deletedComment);
+            }
+            catch (CommentValidationException commentValidationException)
+                when (commentValidationException.InnerException is NotFoundCommentException)
+            {
+                return NotFound(commentValidationException.InnerException);
+            }
+            catch (CommentValidationException commentValidationException)
+            {
+                return BadRequest(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyValidationException commentDependencyValidationException)
+                when (commentDependencyValidationException.InnerException is LockedCommentException)
+            {
+                return Locked(commentDependencyValidationException.InnerException);
+            }
+            catch (CommentDependencyValidationException commentDependencyValidationException)
+            {
+                return BadRequest(commentDependencyValidationException);
             }
             catch (CommentDependencyException commentDependencyException)
             {
