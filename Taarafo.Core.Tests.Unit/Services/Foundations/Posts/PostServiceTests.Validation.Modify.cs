@@ -71,7 +71,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             invalidPostException.AddData(
                 key: nameof(Post.Author),
-                values: "Id is required");
+                values: "Text is required");
 
             invalidPostException.AddData(
                 key: nameof(Post.CreatedDate),
