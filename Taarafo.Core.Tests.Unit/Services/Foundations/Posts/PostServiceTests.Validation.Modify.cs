@@ -34,7 +34,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 modifyPostTask.AsTask());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedPostValidationException))),
                         Times.Once);
 
@@ -98,7 +98,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedPostValidationException))),
                         Times.Once());
 
@@ -144,7 +144,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedPostValidationException))),
                         Times.Once);
 
@@ -193,7 +193,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedPostValidatonException))),
                         Times.Once);
 
@@ -248,7 +248,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedPostValidationException))),
                         Times.Once);
 
@@ -304,7 +304,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-               broker.LogError(It.Is(SameValidationExceptionAs(
+               broker.LogError(It.Is(SameExceptionAs(
                    expectedPostValidationException))),
                        Times.Once);
 
