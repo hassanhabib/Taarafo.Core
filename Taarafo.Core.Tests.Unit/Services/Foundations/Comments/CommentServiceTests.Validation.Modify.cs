@@ -34,7 +34,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 modifyCommentTask.AsTask());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogError(It.Is(SameValidationExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 
@@ -101,7 +101,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogError(It.Is(SameValidationExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once());
 
@@ -147,7 +147,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogError(It.Is(SameValidationExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 
@@ -196,7 +196,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogError(It.Is(SameValidationExceptionAs(
                     expectedCommentValidatonException))),
                         Times.Once);
 
@@ -251,7 +251,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogError(It.Is(SameValidationExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 
@@ -307,7 +307,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-               broker.LogError(It.Is(SameExceptionAs(
+               broker.LogError(It.Is(SameValidationExceptionAs(
                    expectedCommentValidationException))),
                        Times.Once);
 
