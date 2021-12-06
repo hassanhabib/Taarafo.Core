@@ -52,5 +52,20 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
                 await this.apiBroker.DeleteCommentByIdAsync(actualComment.Id);
             }
         }
+
+        [Fact]
+        public async Task ShouldGetCommentByIdAsync()
+        {
+            // given
+            Comment randomComment = await PostRandomCommentAsync();
+            Comment expectedComment = randomComment;
+
+            // when
+            Comment actualComment = await this.apiBroker.GetCommentByIdAsync(randomComment.Id);
+
+            // then
+            actualComment.Should().BeEquivalentTo(expectedComment);
+            await this.apiBroker.DeleteCommentByIdAsync(actualComment.Id);
+        }
     }
 }
