@@ -88,7 +88,10 @@ namespace Taarafo.Core.Services.Foundations.Posts
             }
             catch (Exception exception)
             {
-                throw CreateAndLogServiceException(exception);
+                var failedPostServiceException =
+                    new FailedPostServiceException(exception);
+
+                throw CreateAndLogServiceException(failedPostServiceException);
             }
         }
 
