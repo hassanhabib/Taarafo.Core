@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Taarafo.Core.Tests.Acceptance.Brokers;
 using Taarafo.Core.Tests.Acceptance.Models.Comments;
@@ -20,6 +21,20 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
 
         public CommentsApiTests(ApiBroker apiBroker) =>
             this.apiBroker = apiBroker;
+        private async ValueTask<List<Comment>> CreateRandomCommentsAsync()
+        {
+            int randomNumber = GetRandomNumber();
+            var randomComments = new List<Comment>();
+
+            for (int i = 0; i < randomNumber; i++)
+            {
+                randomComments.Add(await PostRandomCommentAsync());
+            }
+            return randomComments;
+        }
+
+        private int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
 
         private async ValueTask<Comment> PostRandomCommentAsync()
         {
