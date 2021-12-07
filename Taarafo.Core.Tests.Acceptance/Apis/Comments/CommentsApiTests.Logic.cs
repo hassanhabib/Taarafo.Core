@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using RESTFulSense.Exceptions;
 using Taarafo.Core.Tests.Acceptance.Models.Comments;
 using Xunit;
 
@@ -66,6 +67,28 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
             // then
             actualComment.Should().BeEquivalentTo(expectedComment);
             await this.apiBroker.DeleteCommentByIdAsync(actualComment.Id);
+        }
+
+        [Fact]
+        public async Task ShouldDeleteCommentAsync()
+        {
+            // given
+            Comment randomComment = await PostRandomCommentAsync();
+            Comment inputComment = randomComment;
+            Comment expectedComment = inputComment;
+
+            // when
+            Comment deletedComment =
+                await this.apiBroker.DeleteCommentByIdAsync(inputComment.Id);
+
+            ValueTask<Comment> getCommentbyIdTask =
+                this.apiBroker.GetCommentByIdAsync(inputComment.Id);
+
+            // then
+            deletedComment.Should().BeEquivalentTo(expectedComment);
+
+            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+                getCommentbyIdTask.AsTask());
         }
     }
 }
