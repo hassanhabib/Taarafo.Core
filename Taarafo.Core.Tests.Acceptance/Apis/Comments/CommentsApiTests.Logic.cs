@@ -39,7 +39,6 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
         {
             // given
             List<Comment> randomComments = await CreateRandomCommentsAsync();
-
             List<Comment> expectedComments = randomComments;
 
             // when

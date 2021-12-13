@@ -23,6 +23,9 @@ namespace Taarafo.Core.Tests.Acceptance.Brokers
         public async ValueTask<Comment> GetCommentByIdAsync(Guid commentId) =>
             await this.apiFactoryClient.GetContentAsync<Comment>($"{CommentsRelativeUrl}/{commentId}");
 
+        public async ValueTask<Comment> PutCommentAsync(Comment comment) =>
+            await this.apiFactoryClient.PutContentAsync(CommentsRelativeUrl, comment);
+
         public async ValueTask<Comment> DeleteCommentByIdAsync(Guid commentId) =>
             await this.apiFactoryClient.DeleteContentAsync<Comment>($"{CommentsRelativeUrl}/{commentId}");
     }
