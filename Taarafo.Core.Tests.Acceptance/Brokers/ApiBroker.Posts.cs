@@ -23,6 +23,9 @@ namespace Taarafo.Core.Tests.Acceptance.Brokers
         public async ValueTask<List<Post>> GetAllPostsAsync() =>
           await this.apiFactoryClient.GetContentAsync<List<Post>>($"{PostsRelativeUrl}/");
 
+        public async ValueTask<Post> PutPostAsync(Post post) =>
+            await this.apiFactoryClient.PutContentAsync(PostsRelativeUrl, post);
+
         public async ValueTask<Post> DeletePostByIdAsync(Guid postId) =>
             await this.apiFactoryClient.DeleteContentAsync<Post>($"{PostsRelativeUrl}/{postId}");
     }
