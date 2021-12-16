@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using RESTFulSense.Controllers;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Comments.Exceptions;
@@ -57,6 +58,7 @@ namespace Taarafo.Core.Controllers
             }
         }
 
+        [EnableQuery(PageSize = 10)]
         [HttpGet]
         public ActionResult<IQueryable<Comment>> GetAllComments()
         {
