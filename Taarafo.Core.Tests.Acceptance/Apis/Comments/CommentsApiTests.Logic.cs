@@ -44,11 +44,17 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
             List<Comment> actualComments = await this.apiBroker.GetAllCommentsAsync();
 
             // then
+            actualComments.Count.Should().BeGreaterThanOrEqualTo(expectedComments.Count);
+            actualComments.Count.Should().BeLessThanOrEqualTo(10);
+
             foreach (Comment expectedComment in expectedComments)
             {
-                Comment actualComment = actualComments.Single(comment => comment.Id == expectedComment.Id);
-                actualComment.Should().BeEquivalentTo(expectedComment);
-                await this.apiBroker.DeleteCommentByIdAsync(actualComment.Id);
+                if (actualComments.Any(comment => comment.Id == expectedComment.Id))
+                {
+                    Comment actualComment = actualComments.Single(comment => comment.Id == expectedComment.Id);
+                    actualComment.Should().BeEquivalentTo(expectedComment);
+                    await this.apiBroker.DeleteCommentByIdAsync(actualComment.Id);
+                }
             }
         }
 

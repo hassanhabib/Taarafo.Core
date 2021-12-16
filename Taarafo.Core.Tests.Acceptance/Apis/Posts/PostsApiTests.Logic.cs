@@ -46,11 +46,17 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Posts
             List<Post> actualPosts = await this.apiBroker.GetAllPostsAsync();
 
             // then
+            actualPosts.Count.Should().BeGreaterThanOrEqualTo(expectedPosts.Count);
+            actualPosts.Count.Should().BeLessThanOrEqualTo(10);
+
             foreach (Post expectedPost in expectedPosts)
             {
-                Post actualPost = actualPosts.Single(post => post.Id == expectedPost.Id);
-                actualPost.Should().BeEquivalentTo(expectedPost);
-                await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
+                if (actualPosts.Any(post => post.Id == expectedPost.Id))
+                {
+                    Post actualPost = actualPosts.Single(post => post.Id == expectedPost.Id);
+                    actualPost.Should().BeEquivalentTo(expectedPost);
+                    await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
+                }
             }
         }
 
