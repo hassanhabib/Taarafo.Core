@@ -66,6 +66,24 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
             return randomPost;
         }
 
+        private static DateTimeOffset GetRandomDateTime() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static Comment UpdateRandomComment(Comment inputComment)
+        {
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+
+            var filler = new Filler<Comment>();
+
+            filler.Setup()
+                .OnProperty(assignment => assignment.Id).Use(inputComment.Id)
+                .OnProperty(assignment => assignment.CreatedDate).Use(inputComment.CreatedDate)
+                .OnProperty(assignment => assignment.UpdatedDate).Use(now)
+                .OnType<DateTimeOffset>().Use(GetRandomDateTime());
+
+            return filler.Create();
+        }
+
         private static Post CreateRandomPost() =>
             CreateRandomPostFiller().Create();
 
