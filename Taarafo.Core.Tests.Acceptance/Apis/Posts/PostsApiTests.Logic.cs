@@ -55,6 +55,21 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Posts
         }
 
         [Fact]
+        public async Task ShouldGetPostByIdAsync()
+        {
+            // given
+            Post randomPost = await PostRandomPostAsync();
+            Post expectedPost = randomPost;
+
+            // when
+            Post actualPost = await this.apiBroker.GetPostByIdAsync(randomPost.Id);
+
+            // then
+            actualPost.Should().BeEquivalentTo(expectedPost);
+            await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
+        }
+
+        [Fact]
         public async Task ShouldDeletePostAsync()
         {
             // given
