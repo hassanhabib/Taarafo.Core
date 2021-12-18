@@ -54,9 +54,9 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Posts
             var filler = new Filler<Post>();
 
             filler.Setup()
-                .OnProperty(assignment => assignment.Id).Use(inputPost.Id)
-                .OnProperty(assignment => assignment.CreatedDate).Use(inputPost.CreatedDate)
-                .OnProperty(assignment => assignment.UpdatedDate).Use(now)
+                .OnProperty(post => post.Id).Use(inputPost.Id)
+                .OnProperty(post => post.CreatedDate).Use(inputPost.CreatedDate)
+                .OnProperty(post => post.UpdatedDate).Use(now)
                 .OnType<DateTimeOffset>().Use(GetRandomDateTime());
 
             return filler.Create();
