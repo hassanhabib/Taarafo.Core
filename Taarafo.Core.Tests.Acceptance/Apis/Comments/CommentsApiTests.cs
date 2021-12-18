@@ -69,17 +69,17 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
         private static DateTimeOffset GetRandomDateTime() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static Comment UpdateRandomComment(Comment inputComment)
+        private static Comment UpdateCommentWithRandomValues(Comment inputComment)
         {
             DateTimeOffset now = DateTimeOffset.UtcNow;
 
             var filler = new Filler<Comment>();
 
             filler.Setup()
-                .OnProperty(assignment => assignment.Id).Use(inputComment.Id)
-                .OnProperty(assignment => assignment.PostId).Use(inputComment.PostId)
-                .OnProperty(assignment => assignment.CreatedDate).Use(inputComment.CreatedDate)
-                .OnProperty(assignment => assignment.UpdatedDate).Use(now)
+                .OnProperty(comment => comment.Id).Use(inputComment.Id)
+                .OnProperty(comment => comment.PostId).Use(inputComment.PostId)
+                .OnProperty(comment => comment.CreatedDate).Use(inputComment.CreatedDate)
+                .OnProperty(comment => comment.UpdatedDate).Use(now)
                 .OnType<DateTimeOffset>().Use(GetRandomDateTime());
 
             return filler.Create();

@@ -73,7 +73,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
         {
             // given
             Comment randomComment = await PostRandomCommentAsync();
-            Comment modifiedComment = UpdateRandomComment(randomComment);
+            Comment modifiedComment = UpdateCommentWithRandomValues(randomComment);
 
             // when
             await this.apiBroker.PutCommentAsync(modifiedComment);
