@@ -77,6 +77,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
 
             filler.Setup()
                 .OnProperty(assignment => assignment.Id).Use(inputComment.Id)
+                .OnProperty(assignment => assignment.PostId).Use(inputComment.PostId)
                 .OnProperty(assignment => assignment.CreatedDate).Use(inputComment.CreatedDate)
                 .OnProperty(assignment => assignment.UpdatedDate).Use(now)
                 .OnType<DateTimeOffset>().Use(GetRandomDateTime());

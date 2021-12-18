@@ -68,6 +68,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
             await this.apiBroker.DeleteCommentByIdAsync(actualComment.Id);
         }
 
+        [Fact]
         public async Task ShouldPutCommentAsync()
         {
             // given
