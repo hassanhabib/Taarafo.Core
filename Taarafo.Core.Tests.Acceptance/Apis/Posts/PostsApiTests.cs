@@ -44,6 +44,24 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Posts
         private int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
+        private static DateTimeOffset GetRandomDateTime() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static Post UpdateRandomPost(Post inputPost)
+        {
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+
+            var filler = new Filler<Post>();
+
+            filler.Setup()
+                .OnProperty(assignment => assignment.Id).Use(inputPost.Id)
+                .OnProperty(assignment => assignment.CreatedDate).Use(inputPost.CreatedDate)
+                .OnProperty(assignment => assignment.UpdatedDate).Use(now)
+                .OnType<DateTimeOffset>().Use(GetRandomDateTime());
+
+            return filler.Create();
+        }
+
         private static Post CreateRandomPost() =>
             CreateRandomPostFiller().Create();
 
