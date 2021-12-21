@@ -69,6 +69,23 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
         }
 
         [Fact]
+        public async Task ShouldPutCommentAsync()
+        {
+            // given
+            Comment randomComment = await PostRandomCommentAsync();
+            Comment modifiedComment = UpdateCommentWithRandomValues(randomComment);
+
+            // when
+            await this.apiBroker.PutCommentAsync(modifiedComment);
+
+            Comment actualComment = await this.apiBroker.GetCommentByIdAsync(randomComment.Id);
+
+            // then
+            actualComment.Should().BeEquivalentTo(modifiedComment);
+            await this.apiBroker.DeleteCommentByIdAsync(actualComment.Id);
+        }
+
+        [Fact]
         public async Task ShouldDeleteCommentAsync()
         {
             // given
