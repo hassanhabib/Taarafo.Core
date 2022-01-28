@@ -23,9 +23,8 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Profile> AddProfileAsync(Profile profile)
-        {
-            throw new System.NotImplementedException();
-        }
+        public async ValueTask<Profile> AddProfileAsync(Profile profile) => 
+            await this.storageBroker.InsertProfileAsync(profile);
+        
     }
 }
