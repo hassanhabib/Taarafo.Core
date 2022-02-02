@@ -23,8 +23,13 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Profile> AddProfileAsync(Profile profile) => 
-            await this.storageBroker.InsertProfileAsync(profile);
-        
+        public ValueTask<Profile> AddProfileAsync(Profile profile) =>
+            TryCatch(async () =>
+            {
+                ValidateProfileOnAdd(profile);
+
+                return await this.storageBroker.InsertProfileAsync(profile);
+            });
+
     }
 }

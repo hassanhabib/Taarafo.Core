@@ -4,8 +4,6 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
-using FluentAssertions;
-using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
