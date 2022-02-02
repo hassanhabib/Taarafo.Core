@@ -38,8 +38,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 broker.InsertProfileAsync(inputProfile), 
                     Times.Once());
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
