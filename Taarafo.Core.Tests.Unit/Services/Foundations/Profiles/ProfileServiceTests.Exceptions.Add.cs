@@ -42,13 +42,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             await Assert.ThrowsAsync<ProfileDependencyException>(() =>
                 addProfileTask.AsTask());
 
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertProfileAsync(It.IsAny<Profile>()),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedProfileDependencyException))),
                         Times.Once);
 
-            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
 using Xeptions;
@@ -25,6 +26,13 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             {
                 throw CreateAndLogValidationException(nullProfileException);
             }
+            catch(SqlException sqlException)
+            {
+                var failedProfileStorageException =
+                    new FailedProfileStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedProfileStorageException);
+            }
         }
 
         private ProfileValidationException CreateAndLogValidationException(Xeption exception)
@@ -35,6 +43,16 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             this.loggingBroker.LogError(profileValidationException);
 
             return profileValidationException;
+        }
+
+        private ProfileDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
+        {
+            var profileDependencyException =
+                new ProfileDependencyException(exception);
+
+            this.loggingBroker.LogCritical(profileDependencyException);
+
+            return profileDependencyException;
         }
     }
 }
