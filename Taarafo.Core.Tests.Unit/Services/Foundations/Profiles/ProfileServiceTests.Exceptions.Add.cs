@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
@@ -21,7 +22,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
         {
             // given
-            Profile randomProfile = CreateRandomProfile();
+            DateTimeOffset dateTime = GetRandomDateTime();
+            Profile randomProfile = CreateRandomProfile(dateTime);
             SqlException sqlException = GetSqlException();
 
             var failedProfileStorageException =
@@ -29,6 +31,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             var expectedProfileDependencyException =
                             new ProfileDependencyException(failedProfileStorageException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(dateTime);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertProfileAsync(randomProfile))
@@ -42,6 +48,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             await Assert.ThrowsAsync<ProfileDependencyException>(() =>
                 addProfileTask.AsTask());
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertProfileAsync(It.IsAny<Profile>()),
                     Times.Once);
@@ -51,6 +61,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                     expectedProfileDependencyException))),
                         Times.Once);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }

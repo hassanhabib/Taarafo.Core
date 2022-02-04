@@ -4,8 +4,6 @@
 // ---------------------------------------------------------------
 
 using System;
-using Microsoft.Extensions.Hosting;
-using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
 
@@ -28,7 +26,9 @@ namespace Taarafo.Core.Services.Foundations.Profiles
                     firstDate: profile.UpdatedDate,
                     secondDate: profile.CreatedDate,
                     secondDateName: nameof(Profile.CreatedDate)),
-                Parameter: nameof(Profile.UpdatedDate)));
+                Parameter: nameof(Profile.UpdatedDate)),
+
+                (Rule: IsNotRecent(profile.CreatedDate), Parameter: nameof(Profile.CreatedDate)));
         }
 
         private void ValidateProfileIsNotNull(Profile profile)
@@ -65,6 +65,23 @@ namespace Taarafo.Core.Services.Foundations.Profiles
                 Condition = firstDate != secondDate,
                 Message = $"Date is not the same as {secondDateName}"
             };
+
+        private dynamic IsNotRecent(DateTimeOffset date) => new
+        {
+            Condition = IsDateNotRecent(date),
+            Message = "Date is not recent"
+        };
+
+        private bool IsDateNotRecent(DateTimeOffset date)
+        {
+            DateTimeOffset currentDateTime =
+                this.dateTimeBroker.GetCurrentDateTimeOffset();
+
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+            TimeSpan oneMinute = TimeSpan.FromMinutes(1);
+
+            return timeDifference.Duration() > oneMinute;
+        }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
