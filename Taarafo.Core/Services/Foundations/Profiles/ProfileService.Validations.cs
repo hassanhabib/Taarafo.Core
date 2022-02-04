@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using Microsoft.Extensions.Hosting;
 using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
@@ -21,7 +22,13 @@ namespace Taarafo.Core.Services.Foundations.Profiles
                 (Rule: IsInvalid(profile.Username), Parameter: nameof(Profile.Username)),
                 (Rule: IsInvalid(profile.Email), Parameter: nameof(Profile.Email)),
                 (Rule: IsInvalid(profile.CreatedDate), Parameter: nameof(Profile.CreatedDate)),
-                (Rule: IsInvalid(profile.UpdatedDate), Parameter: nameof(Profile.UpdatedDate)));
+                (Rule: IsInvalid(profile.UpdatedDate), Parameter: nameof(Profile.UpdatedDate)),
+
+                (Rule: IsNotSame(
+                    firstDate: profile.UpdatedDate,
+                    secondDate: profile.CreatedDate,
+                    secondDateName: nameof(Profile.CreatedDate)),
+                Parameter: nameof(Profile.UpdatedDate)));
         }
 
         private void ValidateProfileIsNotNull(Profile profile)
@@ -49,6 +56,15 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             Condition = String.IsNullOrWhiteSpace(text),
             Message = "Text is required"
         };
+
+        private static dynamic IsNotSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
+            };
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
