@@ -5,11 +5,8 @@
 
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
-using Force.DeepCloner;
 using Microsoft.Data.SqlClient;
 using Moq;
-using Taarafo.Core.Models.Posts.Exceptions;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
 using Xunit;
@@ -30,7 +27,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 new FailedProfileStorageException(sqlException);
 
             var expectedProfileDependencyException =
-                            new ProfileDependencyException(failedProfileStorageException);
+                new ProfileDependencyException(failedProfileStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
