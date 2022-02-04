@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using Taarafo.Core.Models.Posts.Exceptions;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
 using Xeptions;
@@ -32,6 +33,10 @@ namespace Taarafo.Core.Services.Foundations.Profiles
                     new FailedProfileStorageException(sqlException);
 
                 throw CreateAndLogCriticalDependencyException(failedProfileStorageException);
+            }
+            catch (InvalidProfileException invalidProfileException)
+            {
+                throw CreateAndLogValidationException(invalidProfileException);
             }
         }
 
