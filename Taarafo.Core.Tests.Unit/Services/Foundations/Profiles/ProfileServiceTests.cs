@@ -14,6 +14,8 @@ using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Services.Foundations.Profiles;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
+using Taarafo.Core.Brokers.DateTimes;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 {
@@ -21,20 +23,26 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
+        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly IProfileService profileService;
 
         public ProfileServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
 
             this.profileService = new ProfileService(
                 storageBroker: this.storageBrokerMock.Object,
-                loggingBroker: this.loggingBrokerMock.Object);
+                loggingBroker: this.loggingBrokerMock.Object,
+                dateTimeBroker: this.dateTimeBrokerMock.Object);
         }
 
         private static Profile CreateRandomProfile() =>
-            CreateProfileFiller().Create();
+            CreateProfileFiller(dates: GetRandomDateTime()).Create();
+
+        private static Profile CreateRandomProfile(DateTimeOffset dates) =>
+            CreateProfileFiller(dates: dates).Create();
 
         private static DateTimeOffset GetRandomDateTime() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
@@ -45,6 +53,24 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         private static int GetRandomNumber() =>
            new IntRange(min: 2, max: 10).GetValue();
 
+        private static int GetRandomNegativeNumber() => 
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        public static TheoryData MinutesBeforeOrAfter()
+        {
+            int randomNumber = GetRandomNumber();
+            int randomNegativeNumber = GetRandomNegativeNumber();
+
+            return new TheoryData<int>
+            {
+                randomNumber,
+                randomNegativeNumber
+            };
+        }
+
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expedtedException)
         {
             return actualException =>
@@ -53,12 +79,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 && (actualException.InnerException as Xeption).DataEquals(expedtedException.InnerException.Data);
         }
 
-        private static Filler<Profile> CreateProfileFiller()
+        private static Filler<Profile> CreateProfileFiller(DateTimeOffset dates)
         {
             var filler = new Filler<Profile>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(GetRandomDateTime());
+                .OnType<DateTimeOffset>().Use(dates);
 
             return filler;
         }
