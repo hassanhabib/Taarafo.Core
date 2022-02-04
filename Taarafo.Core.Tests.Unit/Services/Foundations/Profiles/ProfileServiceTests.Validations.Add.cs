@@ -5,6 +5,7 @@
 
 using System.Threading.Tasks;
 using Moq;
+using Taarafo.Core.Models.Posts.Exceptions;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
 using Xunit;
@@ -104,6 +105,48 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertProfileAsync(invalidProfile),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfCreateAndUpdateDatesIsNotSameAndLogItAsync()
+        {
+            // given
+            int randomNumber = GetRandomNumber();
+            Profile randomProfile = CreateRandomProfile();
+            Profile invalidProfile = randomProfile;
+
+            invalidProfile.UpdatedDate =
+                invalidProfile.CreatedDate.AddDays(randomNumber);
+
+            var invalidProfileException =
+                new InvalidProfileException();
+
+            invalidProfileException.AddData(
+                key: nameof(Profile.UpdatedDate),
+                values: $"Date is not the same as {nameof(Profile.CreatedDate)}");
+
+            var expectedProfileValidationException =
+                new ProfileValidationException(invalidProfileException);
+
+            // when
+            ValueTask<Profile> addProfileTask =
+                this.profileService.AddProfileAsync(invalidProfile);
+
+            // then
+            await Assert.ThrowsAsync<ProfileValidationException>(() =>
+               addProfileTask.AsTask());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedProfileValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertProfileAsync(It.IsAny<Profile>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
