@@ -60,6 +60,13 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             {
                 throw CreateAndLogValidationException(invalidProfileException);
             }
+            catch(Exception serviceException)
+            {
+                var failedServiceProfileException = 
+                    new FailedProfileServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedServiceProfileException);
+            }
         }
 
         private ProfileValidationException CreateAndLogValidationException(Xeption exception)
@@ -92,7 +99,6 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             return profileDependencyException;
         }
 
-
         private ProfileDependencyValidationException CreateAndLogDependencyValidationException(Xeption exception)
         {
             var profileDependencyValidationException =
@@ -101,6 +107,16 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             this.loggingBroker.LogError(profileDependencyValidationException);
 
             return profileDependencyValidationException;
+        }
+
+        private ProfileServiceException CreateAndLogServiceException(Xeption exception)
+        {
+            var profileServiceException = 
+                new ProfileServiceException(exception);
+
+            this.loggingBroker.LogError(profileServiceException);
+
+            return profileServiceException;
         }
     }
 }
