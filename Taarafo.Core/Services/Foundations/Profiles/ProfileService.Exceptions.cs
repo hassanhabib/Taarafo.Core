@@ -42,6 +42,13 @@ namespace Taarafo.Core.Services.Foundations.Profiles
 
                 throw CreateAndLogDependencyValidationException(alreadyExistProfileException);
             }
+            catch(ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            {
+                var invalidProfileReferenceException =
+                    new InvalidProfileReferenceException(foreignKeyConstraintConflictException);
+
+                throw CreateAndLogDependencyValidationException(invalidProfileReferenceException);
+            }
             catch(DbUpdateException databaseUpdateException)
             {
                 var failedStorageProfileException =
