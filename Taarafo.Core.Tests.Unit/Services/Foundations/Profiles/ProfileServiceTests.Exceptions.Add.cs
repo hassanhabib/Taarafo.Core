@@ -113,6 +113,49 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         }
 
         [Fact]
+        public async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+        {
+            // given
+            Profile someProfile = CreateRandomProfile();
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(exceptionMessage);
+
+            var invalidProfileReferenceException =
+                new InvalidProfileReferenceException(foreignKeyConstraintConflictException);
+
+            var expectedProfileValidationException =
+                new ProfileDependencyValidationException(invalidProfileReferenceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(foreignKeyConstraintConflictException);
+
+            // when
+            ValueTask<Profile> addProfileTask =
+                this.profileService.AddProfileAsync(someProfile);
+
+            // then
+            await Assert.ThrowsAsync<ProfileDependencyValidationException>(() =>
+                addProfileTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedProfileValidationException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
         public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
         {
             // given
