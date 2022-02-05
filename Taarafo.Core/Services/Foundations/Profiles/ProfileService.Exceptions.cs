@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.Posts.Exceptions;
 using Taarafo.Core.Models.Profiles;
@@ -34,6 +35,13 @@ namespace Taarafo.Core.Services.Foundations.Profiles
 
                 throw CreateAndLogCriticalDependencyException(failedProfileStorageException);
             }
+            catch(DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistProfileException =
+                    new AlreadyExistsProfileException(duplicateKeyException);
+
+                throw CreateAndLogDependencyValidationException(alreadyExistProfileException);
+            }
             catch (InvalidProfileException invalidProfileException)
             {
                 throw CreateAndLogValidationException(invalidProfileException);
@@ -58,6 +66,16 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             this.loggingBroker.LogCritical(profileDependencyException);
 
             return profileDependencyException;
+        }
+
+        private ProfileDependencyValidationException CreateAndLogDependencyValidationException(Xeption exception)
+        {
+            var profileDependencyValidationException =
+                new ProfileDependencyValidationException(exception);
+
+            this.loggingBroker.LogError(profileDependencyValidationException);
+
+            return profileDependencyValidationException;
         }
     }
 }

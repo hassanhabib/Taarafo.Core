@@ -3,14 +3,9 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xeptions;
 
-namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
+namespace Taarafo.Core.Models.Profiles.Exceptions
 {
     public class ProfileDependencyValidationException : Xeption
     {

@@ -14,6 +14,7 @@ namespace Taarafo.Core.Services.Foundations.Profiles
         private void ValidateProfileOnAdd(Profile profile)
         {
             ValidateProfileIsNotNull(profile);
+
             Validate(
                 (Rule: IsInvalid(profile.Id), Parameter: nameof(Profile.Id)),
                 (Rule: IsInvalid(profile.Name), Parameter: nameof(Profile.Name)),

@@ -72,18 +72,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             Profile alreadyExistsProfile = randomProfile;
             string randomMessage = GetRandomMessage();
 
-            var duplicateProfileKeyException =
+            var duplicateKeyException =
                 new DuplicateKeyException(randomMessage);
 
             var alreadyExistsProfileException =
-                new AlreadyExistsProfileException(duplicateProfileKeyException);
+                new AlreadyExistsProfileException(duplicateKeyException);
 
             var expectedProfileDependencyValidationException =
                 new ProfileDependencyValidationException(alreadyExistsProfileException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(duplicateProfileKeyException);
+              broker.GetCurrentDateTimeOffset())
+                  .Throws(duplicateKeyException);
 
             // when
             ValueTask<Profile> addProfileTask =

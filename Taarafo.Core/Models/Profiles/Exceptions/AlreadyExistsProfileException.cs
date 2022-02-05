@@ -6,7 +6,7 @@
 using System;
 using Xeptions;
 
-namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
+namespace Taarafo.Core.Models.Profiles.Exceptions
 {
     public class AlreadyExistsProfileException : Xeption
     {
