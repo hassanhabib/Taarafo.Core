@@ -199,5 +199,48 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Profile someProfile = CreateRandomProfile();
+            var serviceException = new Exception();
+
+            var failedProfileServiceException =
+                new FailedProfileServiceException(serviceException);
+
+            var expectedProfileServiceException =
+                new ProfileServiceException(failedProfileServiceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(serviceException);
+
+            // when
+            ValueTask<Profile> addProfileTask =
+                this.profileService.AddProfileAsync(someProfile);
+
+            // then
+            await Assert.ThrowsAsync<ProfileServiceException>(() =>
+                addProfileTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertProfileAsync(It.IsAny<Profile>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedProfileServiceException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
