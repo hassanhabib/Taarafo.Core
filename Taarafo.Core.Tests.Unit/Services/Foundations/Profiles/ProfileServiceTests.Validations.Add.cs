@@ -6,7 +6,6 @@
 using System;
 using System.Threading.Tasks;
 using Moq;
-using Taarafo.Core.Models.Posts.Exceptions;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
 using Xunit;

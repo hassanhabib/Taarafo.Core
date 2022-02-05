@@ -59,6 +59,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
+        private static string GetRandomMessage() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
         public static TheoryData MinutesBeforeOrAfter()
         {
             int randomNumber = GetRandomNumber();

@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Profiles;
@@ -56,6 +57,53 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedProfileDependencyException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfProfileAlreadyExsitsAndLogItAsync()
+        {
+            // given
+            Profile randomProfile = CreateRandomProfile();
+            Profile alreadyExistsProfile = randomProfile;
+            string randomMessage = GetRandomMessage();
+
+            var duplicateProfileKeyException =
+                new DuplicateKeyException(randomMessage);
+
+            var alreadyExistsProfileException =
+                new AlreadyExistsProfileException(duplicateProfileKeyException);
+
+            var expectedProfileDependencyValidationException =
+                new ProfileDependencyValidationException(alreadyExistsProfileException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(duplicateProfileKeyException);
+
+            // when
+            ValueTask<Profile> addProfileTask =
+                this.profileService.AddProfileAsync(alreadyExistsProfile);
+
+            // then
+            await Assert.ThrowsAsync<ProfileDependencyValidationException>(() =>
+                addProfileTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertProfileAsync(It.IsAny<Profile>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedProfileDependencyValidationException))),
                         Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
