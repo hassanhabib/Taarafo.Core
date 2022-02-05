@@ -16,6 +16,7 @@ using Tynamix.ObjectFiller;
 using Xeptions;
 using Xunit;
 using Taarafo.Core.Brokers.DateTimes;
+using System.Linq;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 {
@@ -37,6 +38,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 loggingBroker: this.loggingBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object);
         }
+
+        private static IQueryable<Profile> CreateRandomProfiles() =>
+            CreateProfileFiller(dates: GetRandomDateTime())
+                .Create(count:GetRandomNumber())
+                    .AsQueryable();
 
         private static Profile CreateRandomProfile() =>
             CreateProfileFiller(dates: GetRandomDateTime()).Create();

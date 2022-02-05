@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -35,5 +36,9 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             return await this.storageBroker.InsertProfileAsync(profile);
         });
 
+        public IQueryable<Profile> RetrieveAllProfiles()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
