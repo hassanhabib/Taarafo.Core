@@ -20,16 +20,16 @@ namespace Taarafo.Core.Services.Foundations.Profiles
 
         public ProfileService(
             IStorageBroker storageBroker,
-            ILoggingBroker loggingBroker,
-            IDateTimeBroker dateTimeBroker)
+            IDateTimeBroker dateTimeBroker,
+            ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
-            this.loggingBroker = loggingBroker;
             this.dateTimeBroker = dateTimeBroker;
+            this.loggingBroker = loggingBroker;
         }
 
         public ValueTask<Profile> AddProfileAsync(Profile profile) =>
-        TryCatch(async () =>
+            TryCatch(async () =>
         {
             ValidateProfileOnAdd(profile);
 

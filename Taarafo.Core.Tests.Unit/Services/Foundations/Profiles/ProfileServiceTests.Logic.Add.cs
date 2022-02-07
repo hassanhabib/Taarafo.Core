@@ -19,15 +19,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         public async Task ShouldAddProfileAsync()
         {
             // given
-            DateTimeOffset dateTime = GetRandomDateTime();
-            Profile randomProfile = CreateRandomProfile(dateTime);
+            DateTimeOffset randomDateTime = GetRandomDateTime();
+            Profile randomProfile = CreateRandomProfile(randomDateTime);
             Profile inputProfile = randomProfile;
             Profile insertedProfile = inputProfile;
             Profile expectedProfile = insertedProfile.DeepClone();
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                    .Returns(dateTime);
+                    .Returns(randomDateTime);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertProfileAsync(inputProfile))
@@ -49,8 +49,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                     Times.Once());
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

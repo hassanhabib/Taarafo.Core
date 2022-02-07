@@ -11,8 +11,6 @@ namespace Taarafo.Core.Models.Profiles.Exceptions
     {
         public NullProfileException()
             : base(message: "Profile is null.")
-        {
-
-        }
+        { }
     }
 }

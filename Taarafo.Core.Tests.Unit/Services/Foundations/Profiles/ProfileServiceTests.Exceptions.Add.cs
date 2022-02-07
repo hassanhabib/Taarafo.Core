@@ -21,8 +21,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
         {
             // given
-            DateTimeOffset dateTime = GetRandomDateTime();
-            Profile randomProfile = CreateRandomProfile(dateTime);
+            DateTimeOffset randomDateTime = GetRandomDateTime();
+            Profile someProfile = CreateRandomProfile(randomDateTime);
             SqlException sqlException = GetSqlException();
 
             var failedProfileStorageException =
@@ -33,15 +33,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                    .Returns(dateTime);
-
-            this.storageBrokerMock.Setup(broker =>
-                broker.InsertProfileAsync(randomProfile))
-                    .ThrowsAsync(sqlException);
+                    .Throws(sqlException);
 
             // when
             ValueTask<Profile> addProfileTask =
-                this.profileService.AddProfileAsync(randomProfile);
+                this.profileService.AddProfileAsync(someProfile);
 
             // then
             await Assert.ThrowsAsync<ProfileDependencyException>(() =>
@@ -51,18 +47,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertProfileAsync(It.IsAny<Profile>()),
-                    Times.Once);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedProfileDependencyException))),
                         Times.Once);
 
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertProfileAsync(It.IsAny<Profile>()),
+                    Times.Never);
+
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -126,7 +122,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             var invalidProfileReferenceException =
                 new InvalidProfileReferenceException(foreignKeyConstraintConflictException);
 
-            var expectedProfileValidationException =
+            var expectedProfileDependencyValidationException =
                 new ProfileDependencyValidationException(invalidProfileReferenceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
@@ -147,7 +143,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedProfileValidationException))),
+                    expectedProfileDependencyValidationException))),
                         Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

@@ -138,18 +138,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostAsync(It.IsAny<Post>()),
-                    Times.Never);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostDependencyException))),
                         Times.Once);
 
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertPostAsync(It.IsAny<Post>()),
+                    Times.Never);
+
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]

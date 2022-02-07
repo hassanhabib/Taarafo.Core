@@ -35,14 +35,27 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             this.profileService = new ProfileService(
                 storageBroker: this.storageBrokerMock.Object,
-                loggingBroker: this.loggingBrokerMock.Object,
-                dateTimeBroker: this.dateTimeBrokerMock.Object);
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
+                loggingBroker: this.loggingBrokerMock.Object);
         }
 
-        private static IQueryable<Profile> CreateRandomProfiles() =>
-            CreateProfileFiller(dates: GetRandomDateTime())
-                .Create(count:GetRandomNumber())
-                    .AsQueryable();
+        public static TheoryData MinutesBeforeOrAfter()
+        {
+            int randomNumber = GetRandomNumber();
+            int randomNegativeNumber = GetRandomNegativeNumber();
+
+            return new TheoryData<int>
+            {
+                randomNumber,
+                randomNegativeNumber
+            };
+        }
+
+        private static IQueryable<Profile> CreateRandomProfiles()
+        {
+            return CreateProfileFiller(dates: GetRandomDateTime())
+                .Create(count: GetRandomNumber()).AsQueryable();
+        }
 
         private static Profile CreateRandomProfile() =>
             CreateProfileFiller(dates: GetRandomDateTime()).Create();
@@ -67,18 +80,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
         private static string GetRandomMessage() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
-        public static TheoryData MinutesBeforeOrAfter()
-        {
-            int randomNumber = GetRandomNumber();
-            int randomNegativeNumber = GetRandomNegativeNumber();
-
-            return new TheoryData<int>
-            {
-                randomNumber,
-                randomNegativeNumber
-            };
-        }
-
+       
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expedtedException)
         {
             return actualException =>

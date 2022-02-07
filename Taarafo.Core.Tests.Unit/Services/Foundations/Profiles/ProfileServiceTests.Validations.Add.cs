@@ -18,17 +18,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         public async Task ShouldThrowValidationExceptionOnAddIfProfileIsNullAndLogItAsync()
         {
             // given
-            Profile nullProfile = null;
+            Profile invalidProfile = null;
 
             var nullProfileException =
                 new NullProfileException();
 
-            var expectedProfileValidationException
-                = new ProfileValidationException(nullProfileException);
+            var expectedProfileValidationException =
+                new ProfileValidationException(nullProfileException);
 
             // when
             ValueTask<Profile> addProfileTask =
-                this.profileService.AddProfileAsync(nullProfile);
+                this.profileService.AddProfileAsync(invalidProfile);
 
             // then
             await Assert.ThrowsAsync<ProfileValidationException>(() =>
@@ -40,9 +40,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.InsertProfileAsync(nullProfile),
+                broker.InsertProfileAsync(invalidProfile),
                     Times.Never);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
@@ -100,8 +101,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 addProfileTask.AsTask());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(expectedProfileValidationException))),
-                    Times.Once);
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedProfileValidationException))),
+                        Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertProfileAsync(invalidProfile),
@@ -183,12 +185,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                     .Returns(randomDateTime);
 
             // when
-            ValueTask<Profile> addPostTask =
+            ValueTask<Profile> addProfileTask =
                 this.profileService.AddProfileAsync(invalidProfile);
 
             // then
             await Assert.ThrowsAsync<ProfileValidationException>(() =>
-               addPostTask.AsTask());
+               addProfileTask.AsTask());
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
