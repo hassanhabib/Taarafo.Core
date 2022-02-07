@@ -11,8 +11,6 @@ namespace Taarafo.Core.Models.Profiles.Exceptions
     {
         public ProfileDependencyException(Xeption innerException)
             : base(message: "Post dependency error occurred, contact support.", innerException)
-        {
-
-        }
+        { }
     }
 }
