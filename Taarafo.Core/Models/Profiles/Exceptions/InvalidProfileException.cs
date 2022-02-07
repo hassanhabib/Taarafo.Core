@@ -10,7 +10,7 @@ namespace Taarafo.Core.Models.Profiles.Exceptions
     public class InvalidProfileException : Xeption
     {
         public InvalidProfileException()
-            : base(message: "Invalid profile. Please correct the errors and try again.")    
+            : base(message: "Invalid profile. Please correct the errors and try again.")
         {}
     }
 }
