@@ -29,7 +29,7 @@ namespace Taarafo.Core.Brokers.Storages
 
         public IQueryable<Profile> SelectAllProfiles()
         {
-            using var broker = 
+            using var broker =
                 new StorageBroker(this.configuration);
 
             return broker.Profiles;
