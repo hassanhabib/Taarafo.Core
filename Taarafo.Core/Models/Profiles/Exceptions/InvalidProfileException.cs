@@ -11,6 +11,6 @@ namespace Taarafo.Core.Models.Profiles.Exceptions
     {
         public InvalidProfileException()
             : base(message: "Invalid profile. Please correct the errors and try again.")
-        {}
+        { }
     }
 }
