@@ -7,10 +7,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Profiles;
 
-namespace Taarafo.Core.Brokers.Storages
+namespace Taarafo.Core.Services.Foundations.Profiles
 {
-    public partial interface IStorageBroker
+    public partial interface IProfileService
     {
-        ValueTask<Profile> InsertProfileAsync(Profile profile);
+        ValueTask<Profile> AddProfileAsync(Profile profile);
     }
 }

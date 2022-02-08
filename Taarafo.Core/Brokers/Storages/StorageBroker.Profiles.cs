@@ -26,13 +26,5 @@ namespace Taarafo.Core.Brokers.Storages
 
             return profileEntityEntry.Entity;
         }
-
-        public IQueryable<Profile> SelectAllProfiles()
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
-
-            return broker.Profiles;
-        }
     }
 }

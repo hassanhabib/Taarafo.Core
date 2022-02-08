@@ -3,9 +3,11 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Linq;
 using EFxceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Taarafo.Core.Models.Profiles;
 
 namespace Taarafo.Core.Brokers.Storages
 {

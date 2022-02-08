@@ -3,14 +3,14 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System.Linq;
-using System.Threading.Tasks;
-using Taarafo.Core.Models.Profiles;
+using Xeptions;
 
-namespace Taarafo.Core.Brokers.Storages
+namespace Taarafo.Core.Models.Profiles.Exceptions
 {
-    public partial interface IStorageBroker
+    public class NullProfileException : Xeption
     {
-        ValueTask<Profile> InsertProfileAsync(Profile profile);
+        public NullProfileException()
+            : base(message: "Profile is null.")
+        { }
     }
 }

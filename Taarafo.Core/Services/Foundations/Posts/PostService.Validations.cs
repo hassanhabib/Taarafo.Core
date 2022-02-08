@@ -124,6 +124,7 @@ namespace Taarafo.Core.Services.Foundations.Posts
 
             return timeDifference.Duration() > oneMinute;
         }
+
         private static void ValidateAginstStoragePostOnModify(Post inputPost, Post storagePost)
         {
             Validate(
