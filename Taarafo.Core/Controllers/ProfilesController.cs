@@ -36,6 +36,11 @@ namespace Taarafo.Core.Controllers
                 return BadRequest(profileValidationException.InnerException);
             }
             catch (ProfileDependencyValidationException profileDependencyValidationException)
+                when (profileDependencyValidationException.InnerException is InvalidProfileReferenceException)
+            {
+                return FailedDependency(profileDependencyValidationException.InnerException);
+            }
+            catch (ProfileDependencyValidationException profileDependencyValidationException)
                 when(profileDependencyValidationException.InnerException is AlreadyExistsProfileException)
             {
                 return Conflict(profileDependencyValidationException.InnerException);
