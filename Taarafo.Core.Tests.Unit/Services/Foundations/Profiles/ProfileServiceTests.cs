@@ -51,12 +51,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             };
         }
 
-        private static IQueryable<Profile> CreateRandomProfiles()
-        {
-            return CreateProfileFiller(dates: GetRandomDateTime())
-                .Create(count: GetRandomNumber()).AsQueryable();
-        }
-
         private static Profile CreateRandomProfile() =>
             CreateProfileFiller(dates: GetRandomDateTime()).Create();
 
