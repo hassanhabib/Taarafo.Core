@@ -12,5 +12,6 @@ namespace Taarafo.Core.Brokers.Storages
     public partial interface IStorageBroker
     {
         ValueTask<Profile> InsertProfileAsync(Profile profile);
+        ValueTask<Profile> UpdateProfileAsync(Profile profile);
     }
 }
