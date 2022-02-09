@@ -29,11 +29,16 @@ namespace Taarafo.Core.Services.Foundations.Profiles
         }
 
         public ValueTask<Profile> AddProfileAsync(Profile profile) =>
-        TryCatch(async () =>
+            TryCatch(async () =>
         {
             ValidateProfileOnAdd(profile);
 
             return await this.storageBroker.InsertProfileAsync(profile);
         });
+
+        public ValueTask<Profile> ModifyProfileAsync(Profile profile)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
