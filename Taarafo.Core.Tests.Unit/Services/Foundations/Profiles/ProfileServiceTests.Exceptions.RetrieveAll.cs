@@ -15,7 +15,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
     public partial class ProfileServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
+        public void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
         {
             // given
             SqlException sqlException = GetSqlException();
@@ -44,6 +44,44 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedProfileDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ShouldThrowServiceExceptionOnRetrieveAllWhenAllServiceErrorOccursAndLogIt()
+        {
+            // given
+            string exceptionMessage = GetRandomMessage();
+            var serviceException = new Exception(exceptionMessage);
+
+            var faileProfileServiceException = 
+                new FailedProfileServiceException(serviceException);
+
+            var expectedProfileServiceException = 
+                new ProfileServiceException(faileProfileServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAllProfiles())
+                    .Throws(serviceException);
+
+            // when
+            Action retrieveAllProfilesAction = () =>
+                this.profileService.RetrieveAllProfiles();
+
+            // then
+            Assert.Throws<ProfileServiceException>(
+                retrieveAllProfilesAction);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllProfiles(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedProfileServiceException))),
                         Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
