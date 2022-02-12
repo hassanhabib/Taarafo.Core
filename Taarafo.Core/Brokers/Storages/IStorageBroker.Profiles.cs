@@ -12,7 +12,7 @@ namespace Taarafo.Core.Brokers.Storages
     public partial interface IStorageBroker
     {
         ValueTask<Profile> InsertProfileAsync(Profile profile);
-        IQueryable<Profile> SelectAllProfileAsync();
+        IQueryable<Profile> SelectAllProfiles();
         ValueTask<Profile> UpdateProfileAsync(Profile profile);
     }
 }

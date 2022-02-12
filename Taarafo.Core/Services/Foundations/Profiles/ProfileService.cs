@@ -36,7 +36,7 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             return await this.storageBroker.InsertProfileAsync(profile);
         });
 
-        public ValueTask<Profile> RetrieveAllProfiles()
+        public IQueryable<Profile> RetrieveAllProfiles()
         {
             throw new System.NotImplementedException();
         }
