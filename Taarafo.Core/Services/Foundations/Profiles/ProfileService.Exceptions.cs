@@ -84,6 +84,13 @@ namespace Taarafo.Core.Services.Foundations.Profiles
 
                 throw CreateAndLogCriticalDependencyException(failedProfileStorageException);
             }
+            catch(Exception serviceException)
+            {
+                var failedProfileServiceException =
+                    new FailedProfileServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedProfileServiceException);
+            }
         }
 
         private ProfileValidationException CreateAndLogValidationException(Xeption exception)
