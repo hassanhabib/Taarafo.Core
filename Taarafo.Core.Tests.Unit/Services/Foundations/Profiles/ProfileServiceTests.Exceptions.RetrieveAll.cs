@@ -20,11 +20,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             // given
             SqlException sqlException = GetSqlException();
 
-            var failedStorageException =
+            var failedProfileStorageException =
                 new FailedProfileStorageException(sqlException);
 
             var expectedProfileDependencyException = 
-                new ProfileDependencyException(failedStorageException);
+                new ProfileDependencyException(failedProfileStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllProfiles())
@@ -39,7 +39,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 retrieveAllProfileAction);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllPosts());
+                broker.SelectAllProfiles());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
