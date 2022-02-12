@@ -29,7 +29,7 @@ namespace Taarafo.Core.Services.Foundations.Profiles
         }
 
         public ValueTask<Profile> AddProfileAsync(Profile profile) =>
-            TryCatch(async () =>
+        TryCatch(async () =>
         {
             ValidateProfileOnAdd(profile);
 
@@ -38,7 +38,7 @@ namespace Taarafo.Core.Services.Foundations.Profiles
 
         public IQueryable<Profile> RetrieveAllProfiles()
         {
-            throw new System.NotImplementedException();
+            return this.storageBroker.SelectAllProfiles();
         }
     }
 }
