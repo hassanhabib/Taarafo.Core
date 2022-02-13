@@ -40,7 +40,6 @@ namespace Taarafo.Core.Services.Foundations.Profiles
         TryCatch(() =>
         {
             return this.storageBroker.SelectAllProfiles();
-
         });
     }
 }

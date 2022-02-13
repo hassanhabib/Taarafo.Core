@@ -4,7 +4,6 @@
 // ---------------------------------------------------------------
 
 using System;
-using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Profiles.Exceptions;
@@ -23,7 +22,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             var failedProfileStorageException =
                 new FailedProfileStorageException(sqlException);
 
-            var expectedProfileDependencyException = 
+            var expectedProfileDependencyException =
                 new ProfileDependencyException(failedProfileStorageException);
 
             this.storageBrokerMock.Setup(broker =>
@@ -48,6 +47,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -57,10 +57,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             string exceptionMessage = GetRandomMessage();
             var serviceException = new Exception(exceptionMessage);
 
-            var faileProfileServiceException = 
+            var faileProfileServiceException =
                 new FailedProfileServiceException(serviceException);
 
-            var expectedProfileServiceException = 
+            var expectedProfileServiceException =
                 new ProfileServiceException(faileProfileServiceException);
 
             this.storageBrokerMock.Setup(broker =>
@@ -86,6 +86,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
