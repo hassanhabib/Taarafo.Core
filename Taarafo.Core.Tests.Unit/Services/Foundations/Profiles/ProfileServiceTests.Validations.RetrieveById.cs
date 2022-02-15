@@ -54,5 +54,43 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfProfileIsNotFoundAndLogItAsync()
+        {
+            // given
+            Guid someProfileId = Guid.NewGuid();
+            Profile noProfile = null;
+
+            var notFoundProfileException =
+                new NotFoundProfileException(someProfileId);
+
+            var expectedProfileValidationException =
+                new ProfileValidationException(notFoundProfileException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectProfileByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noProfile);
+            // when
+            ValueTask<Profile> retrieveProfileByIdTask =
+                this.profileService.RetrieveProfileByIdAsync(someProfileId);
+
+            // then
+            await Assert.ThrowsAsync<ProfileValidationException>(() =>
+                retrieveProfileByIdTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedProfileValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
