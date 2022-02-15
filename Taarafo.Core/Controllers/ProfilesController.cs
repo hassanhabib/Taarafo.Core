@@ -20,7 +20,7 @@ namespace Taarafo.Core.Controllers
 
         public ProfilesController(IProfileService profileService) =>
             this.profileService = profileService;
-        
+
         [HttpPost]
         public async ValueTask<ActionResult<Profile>> PostProfileAsync(Profile profile)
         {
@@ -41,11 +41,11 @@ namespace Taarafo.Core.Controllers
                 return FailedDependency(profileDependencyValidationException.InnerException);
             }
             catch (ProfileDependencyValidationException profileDependencyValidationException)
-                when(profileDependencyValidationException.InnerException is AlreadyExistsProfileException)
+                when (profileDependencyValidationException.InnerException is AlreadyExistsProfileException)
             {
                 return Conflict(profileDependencyValidationException.InnerException);
             }
-            catch(ProfileDependencyException profileDependencyException)
+            catch (ProfileDependencyException profileDependencyException)
             {
                 return InternalServerError(profileDependencyException);
             }

@@ -71,20 +71,20 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             invalidProfileException.AddData(
                 key: nameof(Profile.Name),
-                values: "Text is required"); 
-            
+                values: "Text is required");
+
             invalidProfileException.AddData(
                 key: nameof(Profile.Username),
                 values: "Text is required");
-            
+
             invalidProfileException.AddData(
                 key: nameof(Profile.Email),
                 values: "Text is required");
-            
+
             invalidProfileException.AddData(
                 key: nameof(Profile.CreatedDate),
                 values: "Date is required");
-            
+
             invalidProfileException.AddData(
                 key: nameof(Profile.UpdatedDate),
                 values: "Date is required");

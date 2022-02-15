@@ -3,7 +3,6 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -29,10 +28,10 @@ namespace Taarafo.Core.Brokers.Storages
 
         public async ValueTask<Profile> UpdateProfileAsync(Profile profile)
         {
-            using var broker = 
+            using var broker =
                 new StorageBroker(this.configuration);
 
-            EntityEntry<Profile> profileEntityEntry = 
+            EntityEntry<Profile> profileEntityEntry =
                 broker.Profiles.Update(profile);
 
             await broker.SaveChangesAsync();

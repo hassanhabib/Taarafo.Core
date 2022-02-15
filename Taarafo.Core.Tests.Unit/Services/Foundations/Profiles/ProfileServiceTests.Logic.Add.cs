@@ -44,8 +44,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.InsertProfileAsync(inputProfile), 
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertProfileAsync(inputProfile),
                     Times.Once());
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
