@@ -41,5 +41,10 @@ namespace Taarafo.Core.Services.Foundations.Profiles
         {
             return this.storageBroker.SelectAllProfiles();
         });
+
+        public ValueTask<Profile> RetrieveProfileByIdAsync()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
