@@ -3,11 +3,10 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
-using System.Threading.Tasks;
+using FluentAssertions;
+using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.Profiles;
-using Taarafo.Core.Models.Profiles.Exceptions;
 using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
@@ -15,37 +14,33 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
     public partial class ProfileServiceTests
     {
         [Fact]
-        public async void ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
+        public async void ShouldRetrieveProfileByIdAsync()
         {
             // given
-            Guid invalidProfileId = Guid.Empty;
+            Profile someProfile =
+                CreateRandomProfile();
 
-            var invalidProfileException =
-                new InvalidProfileException();
+            Profile storageProfile =
+                someProfile;
 
-            invalidProfileException.AddData(
-                key: nameof(Profile.Id),
-                values: "Id is required");
+            Profile expectedProfile =
+                storageProfile.DeepClone();
 
-            var expectedProfileValidationException =
-                new ProfileValidationException(invalidProfileException);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectProfileByIdAsync(someProfile.Id))
+                    .ReturnsAsync(storageProfile);
 
             // when
-            ValueTask<Profile> retrieveProfileByIdTask =
-                this.profileService.RetrieveProfileByIdAsync(invalidProfileId);
+            Profile actualProfile =
+                await this.profileService.
+                    RetrieveProfileByIdAsync(someProfile.Id);
 
             // then
-            await Assert.ThrowsAsync<ProfileValidationException>(() =>
-                retrieveProfileByIdTask.AsTask());
-
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedProfileValidationException))),
-                        Times.Once);
+            actualProfile.Should().BeEquivalentTo(expectedProfile);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
-                    Times.Never);
+                broker.SelectProfileByIdAsync(someProfile.Id),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

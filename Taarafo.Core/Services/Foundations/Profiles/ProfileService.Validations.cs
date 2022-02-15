@@ -40,6 +40,9 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             }
         }
 
+        private void ValidateProfileId(Guid profileId) =>
+            Validate((Rule: IsInvalid(profileId), Parameter: nameof(Profile.Id)));
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
