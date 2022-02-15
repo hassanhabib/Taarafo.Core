@@ -45,7 +45,7 @@ namespace Taarafo.Core.Services.Foundations.Profiles
 
         public ValueTask<Profile> RetrieveProfileByIdAsync(Guid profileId)
         {
-            throw new System.NotImplementedException();
+            return this.storageBroker.SelectProfileByIdAsync(profileId);
         }
     }
 }
