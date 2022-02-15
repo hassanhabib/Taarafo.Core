@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
@@ -48,6 +49,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 randomNumber,
                 randomNegativeNumber
             };
+        }
+
+        private static IQueryable<Profile> CreatedRandomProfiles()
+        {
+            return CreateProfileFiller(dates: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber())
+                    .AsQueryable();
         }
 
         private static Profile CreateRandomProfile() =>
