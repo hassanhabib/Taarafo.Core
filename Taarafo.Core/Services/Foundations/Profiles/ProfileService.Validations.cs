@@ -39,7 +39,13 @@ namespace Taarafo.Core.Services.Foundations.Profiles
                 throw new NullProfileException();
             }
         }
-
+        private void ValidateStorageProfile(Profile maybeProfile, Guid profileId)
+        {
+            if (maybeProfile is null)
+            {
+                throw new NotFoundProfileException(profileId);
+            }
+        }
         private void ValidateProfileId(Guid profileId) =>
             Validate((Rule: IsInvalid(profileId), Parameter: nameof(Profile.Id)));
 

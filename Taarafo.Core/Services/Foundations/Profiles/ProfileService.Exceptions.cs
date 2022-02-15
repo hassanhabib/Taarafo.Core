@@ -34,6 +34,10 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             {
                 throw CreateAndLogValidationException(invalidProfileException);
             }
+            catch(NotFoundProfileException notFoundProfileException)
+            {
+                throw CreateAndLogValidationException(notFoundProfileException);
+            }
             catch(SqlException sqlException)
             {
                 var failedProfileStorageException =
