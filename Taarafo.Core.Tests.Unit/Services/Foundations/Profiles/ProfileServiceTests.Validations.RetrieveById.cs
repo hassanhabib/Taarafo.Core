@@ -4,10 +4,8 @@
 // ---------------------------------------------------------------
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
-using Force.DeepCloner;
+using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
@@ -18,79 +16,42 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
     public partial class ProfileServiceTests
     {
         [Fact]
-        public async void ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
-        {
-            // given
-            Guid invalidProfileId = Guid.Empty;
-
-            var invalidProfileException =
-                new InvalidProfileException();
-
-            invalidProfileException.AddData(
-                key: nameof(Profile.Id),
-                values: "Id is required");
-
-            var expectedProfileValidationException =
-                new ProfileValidationException(invalidProfileException);
-
-            // when
-            ValueTask<Profile> retrieveProfileByIdTask =
-                this.profileService.RetrieveProfileByIdAsync(invalidProfileId);
-
-            // then
-            await Assert.ThrowsAsync<ProfileValidationException>(() =>
-                retrieveProfileByIdTask.AsTask());
-
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedProfileValidationException))),
-                        Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
-                    Times.Never);
-
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfProfileIsNotFoundAndLogItAsync()
+        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
         {
             // given
             Guid someProfileId = Guid.NewGuid();
-            Profile noProfile = null;
+            SqlException sqlException = GetSqlException();
 
-            var notFoundProfileException =
-                new NotFoundProfileException(someProfileId);
+            var failedProfileStorageException =
+                new FailedProfileStorageException(sqlException);
 
-            var expectedProfileValidationException =
-                new ProfileValidationException(notFoundProfileException);
+            var expectedProfileDependencyException =
+                new ProfileDependencyException(failedProfileStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectProfileByIdAsync(It.IsAny<Guid>()))
-                    .ReturnsAsync(noProfile);
+                    .ThrowsAsync(sqlException);
+
             // when
             ValueTask<Profile> retrieveProfileByIdTask =
                 this.profileService.RetrieveProfileByIdAsync(someProfileId);
 
             // then
-            await Assert.ThrowsAsync<ProfileValidationException>(() =>
+            await Assert.ThrowsAsync<ProfileDependencyException>(() =>
                 retrieveProfileByIdTask.AsTask());
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
-                    Times.Once());
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedProfileValidationException))),
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedProfileDependencyException))),
                         Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
