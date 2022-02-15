@@ -4,10 +4,12 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
-using Microsoft.Data.SqlClient;
 using System.Runtime.Serialization;
+using Microsoft.Data.SqlClient;
 using Moq;
+using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Profiles;
@@ -15,8 +17,6 @@ using Taarafo.Core.Services.Foundations.Profiles;
 using Tynamix.ObjectFiller;
 using Xeptions;
 using Xunit;
-using Taarafo.Core.Brokers.DateTimes;
-using System.Linq;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 {
@@ -51,6 +51,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             };
         }
 
+        private static IQueryable<Profile> CreatedRandomProfiles()
+        {
+            return CreateProfileFiller(dates: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber())
+                    .AsQueryable();
+        }
+
         private static Profile CreateRandomProfile() =>
             CreateProfileFiller(dates: GetRandomDateTime()).Create();
 
@@ -66,7 +73,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         private static int GetRandomNumber() =>
            new IntRange(min: 2, max: 10).GetValue();
 
-        private static int GetRandomNegativeNumber() => 
+        private static int GetRandomNegativeNumber() =>
             -1 * new IntRange(min: 2, max: 10).GetValue();
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
@@ -74,7 +81,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
         private static string GetRandomMessage() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
-       
+
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expedtedException)
         {
             return actualException =>

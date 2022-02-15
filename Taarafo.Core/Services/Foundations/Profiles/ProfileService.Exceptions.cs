@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -17,6 +18,7 @@ namespace Taarafo.Core.Services.Foundations.Profiles
     public partial class ProfileService
     {
         private delegate ValueTask<Profile> ReturningProfileFunction();
+        private delegate IQueryable<Profile> ReturningProfilesFunction();
 
         private async ValueTask<Profile> TryCatch(ReturningProfileFunction returningProfileFunction)
         {
@@ -66,6 +68,28 @@ namespace Taarafo.Core.Services.Foundations.Profiles
                     new FailedProfileServiceException(serviceException);
 
                 throw CreateAndLogServiceException(failedServiceProfileException);
+            }
+        }
+
+        private IQueryable<Profile> TryCatch(ReturningProfilesFunction returningProfilesFunction)
+        {
+            try
+            {
+                return returningProfilesFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedProfileStorageException =
+                    new FailedProfileStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedProfileStorageException);
+            }
+            catch(Exception serviceException)
+            {
+                var failedProfileServiceException =
+                    new FailedProfileServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedProfileServiceException);
             }
         }
 
