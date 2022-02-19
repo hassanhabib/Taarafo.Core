@@ -16,7 +16,8 @@ namespace Taarafo.Core.Brokers.Storages
 
 		public async ValueTask<Group> InsertGroupAsync(Group group)
         {
-			using var broker = new StorageBroker(this.configuration);
+			using var broker = 
+				new StorageBroker(this.configuration);
 
 			EntityEntry<Group> groupEntityEntry =
 				await broker.Groups.AddAsync(group);
