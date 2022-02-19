@@ -6,8 +6,6 @@
 using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
-
 namespace Taarafo.Core.Migrations
 {
     public partial class AddGroupModel : Migration
