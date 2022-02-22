@@ -2,6 +2,7 @@
 // Copyright (c) Coalition of the Good-Hearted Engineers
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
+
 using System;
 
 
@@ -16,10 +17,4 @@ namespace Taarafo.Core.Models.Groups
 		public DateTimeOffset CreatedDate { get; set; }
 		public DateTimeOffset UpdatedDate { get; set; }
 	}
-
-	public enum GroupStatus
-    {
-		Active,
-		Inactive
-    }
 }

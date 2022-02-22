@@ -3,13 +3,11 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System.Threading.Tasks;
-using Taarafo.Core.Models.Groups;
-
-
-namespace Taarafo.Core.Brokers.Storages
+namespace Taarafo.Core.Models.Groups
 {
-	public partial interface IStorageBroker
-	{
-	}
+    public enum GroupStatus
+    {
+        Active,
+        Inactive
+    }
 }
