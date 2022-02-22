@@ -6,7 +6,6 @@
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Groups;
 
-
 namespace Taarafo.Core.Brokers.Storages
 {
 	public partial interface IStorageBroker

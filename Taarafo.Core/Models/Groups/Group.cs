@@ -5,7 +5,6 @@
 
 using System;
 
-
 namespace Taarafo.Core.Models.Groups
 {
 	public class Group
