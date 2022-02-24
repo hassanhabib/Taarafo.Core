@@ -10,5 +10,6 @@ namespace Taarafo.Core.Brokers.Storages
 {
 	public partial interface IStorageBroker
 	{
+		ValueTask<Group> InsertGroupAsync(Group group);
 	}
 }
