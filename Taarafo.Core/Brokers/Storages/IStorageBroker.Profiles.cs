@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Profiles;
@@ -13,6 +14,7 @@ namespace Taarafo.Core.Brokers.Storages
     {
         ValueTask<Profile> InsertProfileAsync(Profile profile);
         IQueryable<Profile> SelectAllProfiles();
+        ValueTask<Profile> SelectProfileByIdAsync(Guid profileId);
         ValueTask<Profile> UpdateProfileAsync(Profile profile);
     }
 }
