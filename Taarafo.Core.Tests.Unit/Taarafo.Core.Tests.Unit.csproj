@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<IsPackable>false</IsPackable>
@@ -10,8 +10,8 @@
 	<ItemGroup>
 		<PackageReference Include="CompareNETObjects" Version="4.75.0" />
 		<PackageReference Include="DeepCloner" Version="0.10.3" />
-		<PackageReference Include="FluentAssertions" Version="6.4.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0-preview-20211109-03" />
+		<PackageReference Include="FluentAssertions" Version="6.5.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
 		<PackageReference Include="Moq" Version="4.16.1" />
 		<PackageReference Include="Tynamix.ObjectFiller" Version="1.5.7" />
 		<PackageReference Include="xunit" Version="2.4.2-pre.12" />
