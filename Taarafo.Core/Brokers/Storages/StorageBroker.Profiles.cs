@@ -38,7 +38,7 @@ namespace Taarafo.Core.Brokers.Storages
         public async ValueTask<Profile> SelectProfileByIdAsync(Guid profileId)
         {
             using var broker =
-               new StorageBroker(this.configuration);
+                new StorageBroker(this.configuration);
 
             return await broker.Profiles.FindAsync(profileId);
         }
