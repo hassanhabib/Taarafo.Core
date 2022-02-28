@@ -30,6 +30,14 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             {
                 throw CreateAndLogValidationException(nullProfileException);
             }
+            catch(InvalidProfileException invalidProfileException)
+            {
+                throw CreateAndLogValidationException(invalidProfileException);
+            }
+            catch(NotFoundProfileException notFoundProfileException)
+            {
+                throw CreateAndLogValidationException(notFoundProfileException);
+            }
             catch(SqlException sqlException)
             {
                 var failedProfileStorageException =
@@ -57,10 +65,6 @@ namespace Taarafo.Core.Services.Foundations.Profiles
                     new FailedProfileStorageException(databaseUpdateException);
 
                 throw CreateAndLogDependencyException(failedStorageProfileException);
-            }
-            catch (InvalidProfileException invalidProfileException)
-            {
-                throw CreateAndLogValidationException(invalidProfileException);
             }
             catch(Exception serviceException)
             {

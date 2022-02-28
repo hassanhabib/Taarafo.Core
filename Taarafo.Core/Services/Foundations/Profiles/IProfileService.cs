@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Profiles;
@@ -13,5 +14,6 @@ namespace Taarafo.Core.Services.Foundations.Profiles
     {
         ValueTask<Profile> AddProfileAsync(Profile profile);
         IQueryable<Profile> RetrieveAllProfiles();
+        ValueTask<Profile> RetrieveProfileByIdAsync(Guid profileId);
     }
 }

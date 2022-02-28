@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
@@ -40,6 +41,19 @@ namespace Taarafo.Core.Services.Foundations.Profiles
         TryCatch(() =>
         {
             return this.storageBroker.SelectAllProfiles();
+        });
+
+        public ValueTask<Profile> RetrieveProfileByIdAsync(Guid profileId) =>
+        TryCatch(async () =>
+        {
+            ValidateProfileId(profileId);
+
+            var maybeProfile =
+                await this.storageBroker.SelectProfileByIdAsync(profileId);
+
+            ValidateStorageProfile(maybeProfile, profileId);
+            
+            return maybeProfile;
         });
     }
 }
