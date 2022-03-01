@@ -23,7 +23,5 @@ namespace Taarafo.Core.Models.PostImpressions
         public DateTimeOffset UpdateDate { get; set; }
 
         public ImpressionType Impression { get; set; }
-
-
     }
 }
