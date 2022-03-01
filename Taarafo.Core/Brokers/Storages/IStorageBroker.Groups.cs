@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Groups;
@@ -13,5 +14,6 @@ namespace Taarafo.Core.Brokers.Storages
 	{
 		ValueTask<Group> InsertGroupAsync(Group group);
 		IQueryable<Group> SelectAllGroups();
+		ValueTask<Group> SelectGroupByIdAsync(Guid groupId);
 	}
 }
