@@ -64,7 +64,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         [Fact]
         public async Task ShouldThrowDependencyExceptionOnDeleteWhenSqlExceptionOccursAndLogItAsync()
         {
-
             // given
             Guid somePostId = Guid.NewGuid();
             SqlException sqlException = GetSqlException();
@@ -98,7 +97,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-
         }
 
         [Fact]
