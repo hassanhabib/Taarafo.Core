@@ -11,7 +11,7 @@ namespace Taarafo.Core.Models.Profiles.Exceptions
     public class InvalidProfileReferenceException : Xeption
     {
         public InvalidProfileReferenceException(Exception innerException)
-            : base(message: "Invalid profile reference error occurred.", innerException) 
+            : base(message: "Invalid profile reference error occurred.", innerException)
         { }
     }
 }
