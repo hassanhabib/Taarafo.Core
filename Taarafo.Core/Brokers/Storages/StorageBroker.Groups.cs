@@ -44,5 +44,10 @@ namespace Taarafo.Core.Brokers.Storages
 
 			return await broker.Groups.FindAsync(groupId);
         }
+
+		public async ValueTask<Group> DeleteGroupAsync(Group group)
+        {
+			return default;
+        }
 	}
 }
