@@ -52,7 +52,7 @@ namespace Taarafo.Core.Services.Foundations.Profiles
                 await this.storageBroker.SelectProfileByIdAsync(profileId);
 
             ValidateStorageProfile(maybeProfile, profileId);
-            
+
             return maybeProfile;
         });
     }

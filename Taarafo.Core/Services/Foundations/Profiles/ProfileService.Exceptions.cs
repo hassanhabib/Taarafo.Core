@@ -30,45 +30,45 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             {
                 throw CreateAndLogValidationException(nullProfileException);
             }
-            catch(InvalidProfileException invalidProfileException)
+            catch (InvalidProfileException invalidProfileException)
             {
                 throw CreateAndLogValidationException(invalidProfileException);
             }
-            catch(NotFoundProfileException notFoundProfileException)
+            catch (NotFoundProfileException notFoundProfileException)
             {
                 throw CreateAndLogValidationException(notFoundProfileException);
             }
-            catch(SqlException sqlException)
+            catch (SqlException sqlException)
             {
                 var failedProfileStorageException =
                     new FailedProfileStorageException(sqlException);
 
                 throw CreateAndLogCriticalDependencyException(failedProfileStorageException);
             }
-            catch(DuplicateKeyException duplicateKeyException)
+            catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistProfileException =
                     new AlreadyExistsProfileException(duplicateKeyException);
 
                 throw CreateAndLogDependencyValidationException(alreadyExistProfileException);
             }
-            catch(ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
             {
                 var invalidProfileReferenceException =
                     new InvalidProfileReferenceException(foreignKeyConstraintConflictException);
 
                 throw CreateAndLogDependencyValidationException(invalidProfileReferenceException);
             }
-            catch(DbUpdateException databaseUpdateException)
+            catch (DbUpdateException databaseUpdateException)
             {
                 var failedStorageProfileException =
                     new FailedProfileStorageException(databaseUpdateException);
 
                 throw CreateAndLogDependencyException(failedStorageProfileException);
             }
-            catch(Exception serviceException)
+            catch (Exception serviceException)
             {
-                var failedServiceProfileException = 
+                var failedServiceProfileException =
                     new FailedProfileServiceException(serviceException);
 
                 throw CreateAndLogServiceException(failedServiceProfileException);
@@ -88,7 +88,7 @@ namespace Taarafo.Core.Services.Foundations.Profiles
 
                 throw CreateAndLogCriticalDependencyException(failedProfileStorageException);
             }
-            catch(Exception serviceException)
+            catch (Exception serviceException)
             {
                 var failedProfileServiceException =
                     new FailedProfileServiceException(serviceException);
@@ -99,7 +99,7 @@ namespace Taarafo.Core.Services.Foundations.Profiles
 
         private ProfileValidationException CreateAndLogValidationException(Xeption exception)
         {
-            var profileValidationException = 
+            var profileValidationException =
                 new ProfileValidationException(exception);
 
             this.loggingBroker.LogError(profileValidationException);
@@ -139,7 +139,7 @@ namespace Taarafo.Core.Services.Foundations.Profiles
 
         private ProfileServiceException CreateAndLogServiceException(Xeption exception)
         {
-            var profileServiceException = 
+            var profileServiceException =
                 new ProfileServiceException(exception);
 
             this.loggingBroker.LogError(profileServiceException);

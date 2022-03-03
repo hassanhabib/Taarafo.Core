@@ -4,10 +4,6 @@
 // ---------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xeptions;
 
 namespace Taarafo.Core.Models.Profiles.Exceptions
@@ -16,6 +12,6 @@ namespace Taarafo.Core.Models.Profiles.Exceptions
     {
         public NotFoundProfileException(Guid profileId)
                 : base(message: $"Couldn't find profile with id: {profileId}.")
-        {}
+        { }
     }
 }

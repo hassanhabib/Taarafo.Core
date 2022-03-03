@@ -12,37 +12,37 @@ using Taarafo.Core.Models.Groups;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-	public partial class StorageBroker
-	{
-		public DbSet<Group> Groups { get; set; }	
+    public partial class StorageBroker
+    {
+        public DbSet<Group> Groups { get; set; }
 
-		public async ValueTask<Group> InsertGroupAsync(Group group)
+        public async ValueTask<Group> InsertGroupAsync(Group group)
         {
-			using var broker = 
-				new StorageBroker(this.configuration);
-			
-			EntityEntry<Group> groupEntityEntry =
-				await broker.Groups.AddAsync(group);
+            using var broker =
+                new StorageBroker(this.configuration);
 
-			await broker.SaveChangesAsync();
+            EntityEntry<Group> groupEntityEntry =
+                await broker.Groups.AddAsync(group);
 
-			return groupEntityEntry.Entity;
+            await broker.SaveChangesAsync();
+
+            return groupEntityEntry.Entity;
         }
 
-		public IQueryable<Group> SelectAllGroups()
+        public IQueryable<Group> SelectAllGroups()
         {
-			using var broker =
-				new StorageBroker(this.configuration);
+            using var broker =
+                new StorageBroker(this.configuration);
 
-			return broker.Groups;
+            return broker.Groups;
         }
 
-		public async ValueTask<Group> SelectGroupByIdAsync(Guid groupId)
+        public async ValueTask<Group> SelectGroupByIdAsync(Guid groupId)
         {
-			using var broker =
-				new StorageBroker(this.configuration);
+            using var broker =
+                new StorageBroker(this.configuration);
 
-			return await broker.Groups.FindAsync(groupId);
+            return await broker.Groups.FindAsync(groupId);
         }
-	}
+    }
 }
