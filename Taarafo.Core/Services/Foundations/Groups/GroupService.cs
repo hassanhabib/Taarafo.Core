@@ -16,9 +16,7 @@ namespace Taarafo.Core.Services.Foundations.Groups
         public GroupService(IStorageBroker storageBroker) =>
             this.storageBroker = storageBroker;
 
-        public IQueryable<Group> RetrieveAllGroups()
-        {
-            throw new System.NotImplementedException();
-        }
+        public IQueryable<Group> RetrieveAllGroups() =>
+            this.storageBroker.SelectAllGroups();  
     }
 }
