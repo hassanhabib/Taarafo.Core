@@ -6,6 +6,8 @@
 using EFxceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Taarafo.Core.Models.Profiles;
+using Taarafo.Core.Models.GroupMemberships;
 
 namespace Taarafo.Core.Brokers.Storages
 {
@@ -30,6 +32,31 @@ namespace Taarafo.Core.Brokers.Storages
             optionsBuilder.UseSqlServer(connectionString);
         }
 
+        private void AddGroupMembershipsReferences(ModelBuilder modelBuilder)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void Dispose() { }
+
+        public ValueTask<GroupMembership> InsertGroupMembershipAsync(GroupMembership groupMembership)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<GroupMembership> SelectAllGroupMemberships()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ValueTask<GroupMembership> SelectGroupMembershipByIdAsync(Guid groupMembershipId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void onModelCreating(ModelBuilder modelBuilder)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
