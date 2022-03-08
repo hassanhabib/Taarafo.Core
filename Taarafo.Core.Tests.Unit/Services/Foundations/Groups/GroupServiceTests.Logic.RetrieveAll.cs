@@ -37,6 +37,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
