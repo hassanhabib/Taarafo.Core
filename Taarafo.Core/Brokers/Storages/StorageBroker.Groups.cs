@@ -57,6 +57,5 @@ namespace Taarafo.Core.Brokers.Storages
 
             return groupEntityEntry.Entity;
         }
-
     }
 }
