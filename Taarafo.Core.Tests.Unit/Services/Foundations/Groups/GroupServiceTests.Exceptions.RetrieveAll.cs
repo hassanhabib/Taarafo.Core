@@ -38,7 +38,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 retrieveAllGroupsAction);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllComments(),
+                broker.SelectAllGroups(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>

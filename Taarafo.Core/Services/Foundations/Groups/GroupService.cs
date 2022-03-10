@@ -24,6 +24,6 @@ namespace Taarafo.Core.Services.Foundations.Groups
         }
 
         public IQueryable<Group> RetrieveAllGroups() =>
-            this.storageBroker.SelectAllGroups();
+        TryCatch(() => this.storageBroker.SelectAllGroups());
     }
 }
