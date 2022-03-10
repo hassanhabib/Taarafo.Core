@@ -15,5 +15,6 @@ namespace Taarafo.Core.Brokers.Storages
         ValueTask<Group> InsertGroupAsync(Group group);
         IQueryable<Group> SelectAllGroups();
         ValueTask<Group> SelectGroupByIdAsync(Guid groupId);
+        ValueTask<Group> DeleteGroupAsync(Group group);
     }
 }
