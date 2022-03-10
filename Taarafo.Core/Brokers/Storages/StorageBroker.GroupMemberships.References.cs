@@ -14,10 +14,17 @@ namespace Taarafo.Core.Brokers.Storages
 		private static void AddGroupMembershipReferences(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<GroupMembership>()
-				.HasMany(groupMembership => groupMembership.GroupMemberships)
-				.WithMany(profile => profile.GroupMemberships);
-				/*.HasForeignKey(groupMembership => groupMembership.profile);*/
+				.HasKey(membership => new { membership.GroupId, membership.ProfileId });
 
+			modelBuilder.Entity<GroupMembership>()
+				.HasOne(groupMembership => groupMembership.Profile)
+				.WithMany(profile => profile.GroupMemberships)
+				.HasForeignKey(groupMembership => groupMembership.ProfileId);
+
+			modelBuilder.Entity<GroupMembership>()
+				.HasOne(groupMembership => groupMembership.Group)
+				.WithMany(group => group.GroupMemberships)
+				.HasForeignKey(groupMembership => groupMembership.GroupId);
 		}
 	}
 }

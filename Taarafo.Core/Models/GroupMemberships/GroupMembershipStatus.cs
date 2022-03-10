@@ -1,13 +1,14 @@
-﻿using System;
+﻿// ---------------------------------------------------------------
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
+// ---------------------------------------------------------------
+
+using System;
 using Taarafo.Core.Models.GroupMemberships;
 
-public class GroupMembershipStatus
+public enum GroupMembershipStatus
 {
-	// move this guy in it's own file
-    public enum GroupMembershipStatuses
-    {
-        Allowed,
-        Muted,
-        Banned
-    }
+    Allowed,
+    Muted,
+    Banned
 }
