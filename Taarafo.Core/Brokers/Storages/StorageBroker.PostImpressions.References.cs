@@ -17,7 +17,10 @@ namespace Taarafo.Core.Brokers.Storages
                 .WithMany(post => post.PostImpressions)
                 .HasForeignKey(postImpression => postImpression.PostId)
                 .OnDelete(DeleteBehavior.NoAction);
-                
+            modelBuilders.Entity<PostImpression>()
+                .HasOne(postImpression => postImpression.Profile)
+                .WithOne(profile => profile.PostImpression)
+                .OnDelete(DeleteBehavior.NoAction);
                 
         }
     }
