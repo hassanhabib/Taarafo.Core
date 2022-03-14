@@ -45,6 +45,20 @@ namespace Taarafo.Core.Brokers.Storages
             return await broker.Groups.FindAsync(groupId);
         }
 
+        public async ValueTask<Group> UpdateGroupAsync(Group group)
+        {
+           using var broker =
+                new StorageBroker(this.configuration);
+
+            EntityEntry<Group> groupEntityEntry =
+                broker.Groups.Update(group);
+
+            await broker.SaveChangesAsync();
+
+            return groupEntityEntry.Entity;
+  
+        }
+
         public async ValueTask<Group> DeleteGroupAsync(Group group)
         {
             using var broker =
