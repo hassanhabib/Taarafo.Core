@@ -21,5 +21,4 @@ namespace Taarafo.Core.Models.Posts
         public IEnumerable<Comment> Comments { get; set; }
         public IEnumerable<PostImpression> PostImpressions { get; set; }
     }
-
 }

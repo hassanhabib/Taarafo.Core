@@ -27,9 +27,7 @@ namespace Taarafo.Core.Brokers.Storages
             AddCommentReferences(modelBuilder);
             AddPostImpressionsReferences(modelBuilder);
         }
-       
-
-
+     
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             string connectionString = this.configuration
