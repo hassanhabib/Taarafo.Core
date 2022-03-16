@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using Moq;
 using Taarafo.Core.Models.Profiles;
@@ -106,6 +107,59 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTime =
+                GetRandomDateTimeOffset();
+
+            Profile randomProfile =
+                CreateRandomProfile(randomDateTime);
+
+            Profile invalidProfile =
+                randomProfile;
+
+            var invalidProfileException =
+                new InvalidProfileException();
+
+            invalidProfileException.AddData(
+                key: nameof(Profile.UpdatedDate),
+                values: $"Date is the same as {nameof(Profile.CreatedDate)}");
+
+            var expectedProfileValidationException =
+                new ProfileValidationException(invalidProfileException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
+
+            // when
+            ValueTask<Profile> modifyProfileTask =
+                this.profileService.ModifyProfileAsync(invalidProfile);
+
+            // then
+            await Assert.ThrowsAsync<ProfileValidationException>(() =>
+                modifyProfileTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedProfileValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectProfileByIdAsync(invalidProfile.Id),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
