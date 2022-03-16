@@ -44,5 +44,73 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnModifyIfProfileIsInvalidAndLogItAsync(string invalidText)
+        {
+            // given 
+            var invalidProfile = new Profile
+            {
+                Username = invalidText
+            };
+
+            var invalidProfileException = new InvalidProfileException();
+
+            invalidProfileException.AddData(
+                key: nameof(Profile.Id),
+                values: "Id is required");
+
+            invalidProfileException.AddData(
+                key: nameof(Profile.Name),
+                values: "Text is required");
+
+            invalidProfileException.AddData(
+                key: nameof(Profile.Username),
+                values: "Text is required");
+
+            invalidProfileException.AddData(
+                key: nameof(Profile.Email),
+                values: "Text is required");
+
+            invalidProfileException.AddData(
+                key: nameof(Profile.CreatedDate),
+                values: "Date is required");
+
+            invalidProfileException.AddData(
+                key: nameof(Profile.UpdatedDate),
+                "Date is required",
+                $"Date is the same as {nameof(Profile.CreatedDate)}");
+
+            var expectedProfileValidationException =
+                new ProfileValidationException(invalidProfileException);
+
+            // when
+            ValueTask<Profile> modifyProfileTask =
+                this.profileService.ModifyProfileAsync(invalidProfile);
+
+            //then
+            await Assert.ThrowsAsync<ProfileValidationException>(() =>
+                modifyProfileTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedProfileValidationException))),
+                        Times.Once());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateProfileAsync(It.IsAny<Profile>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
