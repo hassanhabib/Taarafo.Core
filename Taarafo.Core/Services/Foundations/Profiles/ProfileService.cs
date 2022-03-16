@@ -56,9 +56,14 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             return maybeProfile;
         });
 
-        public ValueTask<Profile> ModifyProfileAsync(Profile profile)
+        public async ValueTask<Profile> ModifyProfileAsync(Profile profile)
         {
-            throw new NotImplementedException();
+            var maybeProfile =
+                await this.storageBroker.SelectProfileByIdAsync(profile.Id);
+
+            return
+                await this.storageBroker.UpdateProfileAsync(profile);
+
         }
     }
 }

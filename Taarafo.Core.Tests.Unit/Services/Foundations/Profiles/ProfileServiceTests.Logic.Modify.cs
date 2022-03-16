@@ -43,10 +43,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             Guid profileId =
                 inputProfile.Id;
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDate);
-
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectProfileByIdAsync(profileId))
                     .ReturnsAsync(storageProfile);
@@ -62,10 +58,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             // then
             actualProfile.Should().BeEquivalentTo(expectedProfile);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
-
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectProfileByIdAsync(profileId),
                     Times.Once);
@@ -74,7 +66,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 broker.UpdateProfileAsync(inputProfile),
                     Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
