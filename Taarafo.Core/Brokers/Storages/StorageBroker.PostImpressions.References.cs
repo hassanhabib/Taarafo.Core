@@ -13,6 +13,9 @@ namespace Taarafo.Core.Brokers.Storages
         public static void AddPostImpressionsReferences(ModelBuilder modelBuilders )
         {
             modelBuilders.Entity<PostImpression>()
+                .HasKey(postImpression => new { postImpression.PostId, postImpression.ProfileId });
+
+            modelBuilders.Entity<PostImpression>()
                 .HasOne(postImpression => postImpression.Post)
                 .WithMany(post => post.PostImpressions)
                 .HasForeignKey(postImpression => postImpression.PostId)
@@ -22,9 +25,6 @@ namespace Taarafo.Core.Brokers.Storages
                 .HasOne(postImpression => postImpression.Profile)
                 .WithOne(profile => profile.PostImpression)
                 .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilders.Entity<PostImpression>()
-                .HasKey(c => new { c.PostId, c.ProfileId });
         }
     }
 }
