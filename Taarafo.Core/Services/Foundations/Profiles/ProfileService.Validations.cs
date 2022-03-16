@@ -32,6 +32,11 @@ namespace Taarafo.Core.Services.Foundations.Profiles
                 (Rule: IsNotRecent(profile.CreatedDate), Parameter: nameof(Profile.CreatedDate)));
         }
 
+        private void ValidateProfileOnModify(Profile profile)
+        {
+            ValidateProfileIsNotNull(profile);
+        }
+
         private void ValidateProfileIsNotNull(Profile profile)
         {
             if (profile is null)
