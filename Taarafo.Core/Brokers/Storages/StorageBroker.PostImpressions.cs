@@ -13,6 +13,5 @@ namespace Taarafo.Core.Brokers.Storages
     public partial class StorageBroker
     {
         public DbSet<PostImpression> PostImpressions { get; set; }
-
     }
 }
