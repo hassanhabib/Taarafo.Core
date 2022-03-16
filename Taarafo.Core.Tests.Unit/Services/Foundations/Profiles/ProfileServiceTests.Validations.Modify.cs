@@ -57,7 +57,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 Username = invalidText
             };
 
-            var invalidProfileException = new InvalidProfileException();
+            var invalidProfileException =
+                new InvalidProfileException();
 
             invalidProfileException.AddData(
                 key: nameof(Profile.Id),
@@ -81,8 +82,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             invalidProfileException.AddData(
                 key: nameof(Profile.UpdatedDate),
-                "Date is required",
-                $"Date is the same as {nameof(Profile.CreatedDate)}");
+                "Date is required");
 
             var expectedProfileValidationException =
                 new ProfileValidationException(invalidProfileException);
@@ -94,10 +94,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             //then
             await Assert.ThrowsAsync<ProfileValidationException>(() =>
                 modifyProfileTask.AsTask());
-
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(

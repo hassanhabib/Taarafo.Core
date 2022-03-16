@@ -35,6 +35,20 @@ namespace Taarafo.Core.Services.Foundations.Profiles
         private void ValidateProfileOnModify(Profile profile)
         {
             ValidateProfileIsNotNull(profile);
+
+            Validate(
+                (Rule: IsInvalid(profile.Id), Parameter: nameof(Profile.Id)),
+                (Rule: IsInvalid(profile.Name), Parameter: nameof(Profile.Name)),
+                (Rule: IsInvalid(profile.Username), Parameter: nameof(Profile.Username)),
+                (Rule: IsInvalid(profile.Email), Parameter: nameof(Profile.Email)),
+                (Rule: IsInvalid(profile.CreatedDate), Parameter: nameof(Profile.CreatedDate)),
+                (Rule: IsInvalid(profile.UpdatedDate), Parameter: nameof(Profile.UpdatedDate)),
+
+                (Rule: IsNotSame(
+                    firstDate: profile.UpdatedDate,
+                    secondDate: profile.CreatedDate,
+                    secondDateName: nameof(Profile.CreatedDate)),
+                Parameter: nameof(Profile.UpdatedDate)));
         }
 
         private void ValidateProfileIsNotNull(Profile profile)
