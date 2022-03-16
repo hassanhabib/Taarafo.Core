@@ -16,5 +16,6 @@ namespace Taarafo.Core.Brokers.Storages
         IQueryable<Profile> SelectAllProfiles();
         ValueTask<Profile> SelectProfileByIdAsync(Guid profileId);
         ValueTask<Profile> UpdateProfileAsync(Profile profile);
+        ValueTask<Profile> DeleteProfileAsync(Profile profile);
     }
 }
