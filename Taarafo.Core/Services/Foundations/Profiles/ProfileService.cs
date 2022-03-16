@@ -55,5 +55,10 @@ namespace Taarafo.Core.Services.Foundations.Profiles
 
             return maybeProfile;
         });
+
+        public ValueTask<Profile> ModifyProfileAsync(Profile profile)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
