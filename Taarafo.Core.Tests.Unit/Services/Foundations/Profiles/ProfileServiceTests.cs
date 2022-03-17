@@ -57,7 +57,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 .Create(count: GetRandomNumber())
                     .AsQueryable();
         }
-
         private static Profile CreateRandomProfile() =>
             CreateProfileFiller(dates: GetRandomDateTime()).Create();
 
