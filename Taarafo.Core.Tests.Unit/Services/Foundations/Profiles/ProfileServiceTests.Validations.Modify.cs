@@ -213,5 +213,57 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfProfileDoesNotExistAndLogItAsync()
+        {
+            // given
+            int randomNegativeMinutes = GetRandomNegativeNumber();
+            DateTimeOffset dateTime = GetRandomDateTimeOffset();
+            Profile randomProfile = CreateRandomProfile(dateTime);
+            Profile nonExistProfile = randomProfile;
+            nonExistProfile.CreatedDate = dateTime.AddMinutes(randomNegativeMinutes);
+            Profile nullProfile = null;
+
+            var notFoundProfileException =
+                new NotFoundProfileException(nonExistProfile.Id);
+
+            var expectedProfileValidationException =
+                new ProfileValidationException(notFoundProfileException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectProfileByIdAsync(nonExistProfile.Id))
+                .ReturnsAsync(nullProfile);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                .Returns(dateTime);
+
+            // when 
+            ValueTask<Profile> modifyProfileTask =
+                this.profileService.ModifyProfileAsync(nonExistProfile);
+
+            // then
+            await Assert.ThrowsAsync<ProfileValidationException>(() =>
+                modifyProfileTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectProfileByIdAsync(nonExistProfile.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedProfileValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
     }
 }
