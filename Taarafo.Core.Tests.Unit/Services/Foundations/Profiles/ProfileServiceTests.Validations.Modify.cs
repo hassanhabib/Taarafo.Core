@@ -218,41 +218,41 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         public async Task ShouldThrowValidationExceptionOnModifyIfProfileDoesNotExistAndLogItAsync()
         {
             // given
-            int randomNegativeMinutes = GetRandomNegativeNumber();
-            DateTimeOffset dateTime = GetRandomDateTimeOffset();
-            Profile randomProfile = CreateRandomProfile(dateTime);
-            Profile nonExistProfile = randomProfile;
-            nonExistProfile.CreatedDate = dateTime.AddMinutes(randomNegativeMinutes);
+            DateTimeOffset someDate = DateTimeOffset.UtcNow;
+            Profile someProfile = CreateRandomProfile(someDate);
+
             Profile nullProfile = null;
 
             var notFoundProfileException =
-                new NotFoundProfileException(nonExistProfile.Id);
+                new NotFoundProfileException(someProfile.Id);
 
             var expectedProfileValidationException =
                 new ProfileValidationException(notFoundProfileException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectProfileByIdAsync(nonExistProfile.Id))
-                .ReturnsAsync(nullProfile);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                .Returns(dateTime);
+                    .Returns(DateTimeOffset.UtcNow);
+
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectProfileByIdAsync(someProfile.Id))
+                    .ReturnsAsync(nullProfile);
 
             // when 
             ValueTask<Profile> modifyProfileTask =
-                this.profileService.ModifyProfileAsync(nonExistProfile);
+                this.profileService.ModifyProfileAsync(someProfile);
 
             // then
             await Assert.ThrowsAsync<ProfileValidationException>(() =>
                 modifyProfileTask.AsTask());
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectProfileByIdAsync(nonExistProfile.Id),
-                    Times.Once);
-
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectProfileByIdAsync(someProfile.Id),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -260,8 +260,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                     expectedProfileValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
