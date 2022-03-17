@@ -160,5 +160,51 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnModifyIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        {
+            // given
+            Profile randomProfile = CreateRandomProfile();
+            var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
+
+            var lockedProfileException =
+                new LockedProfileException(databaseUpdateConcurrencyException);
+
+            var expectedProfileDependencyValidationException =
+                new ProfileDependencyValidationException(lockedProfileException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(databaseUpdateConcurrencyException);
+
+            // when
+            ValueTask<Profile> modifyProfileTask =
+                this.profileService.ModifyProfileAsync(randomProfile);
+
+            // then
+            await Assert.ThrowsAsync<ProfileDependencyValidationException>(() =>
+                modifyProfileTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectProfileByIdAsync(randomProfile.Id),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedProfileDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateProfileAsync(randomProfile),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
