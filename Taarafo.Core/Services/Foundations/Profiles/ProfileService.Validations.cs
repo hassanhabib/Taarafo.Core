@@ -48,7 +48,9 @@ namespace Taarafo.Core.Services.Foundations.Profiles
                     firstDate: profile.UpdatedDate,
                     secondDate: profile.CreatedDate,
                     secondDateName: nameof(Profile.CreatedDate)),
-                Parameter: nameof(Profile.UpdatedDate)));
+                Parameter: nameof(Profile.UpdatedDate)),
+
+                (Rule: IsNotRecent(profile.CreatedDate), Parameter: nameof(Profile.CreatedDate)));
         }
 
         private void ValidateProfileIsNotNull(Profile profile)

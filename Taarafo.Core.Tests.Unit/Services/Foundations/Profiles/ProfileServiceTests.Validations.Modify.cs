@@ -111,11 +111,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotSameAsCreatedDateAndLogItAsync()
         {
             // given
             DateTimeOffset randomDateTime =
                 GetRandomDateTimeOffset();
+
+            DateTimeOffset someDatetime =
+                GetRandomDateTime();
 
             Profile randomProfile =
                 CreateRandomProfile(randomDateTime);
@@ -123,19 +126,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             Profile invalidProfile =
                 randomProfile;
 
+            invalidProfile.UpdatedDate =
+                someDatetime;
+
             var invalidProfileException =
                 new InvalidProfileException();
 
             invalidProfileException.AddData(
                 key: nameof(Profile.UpdatedDate),
-                values: $"Date is the same as {nameof(Profile.CreatedDate)}");
+                values: $"Date is not the same as {nameof(Profile.CreatedDate)}");
 
             var expectedProfileValidationException =
                 new ProfileValidationException(invalidProfileException);
-
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDateTime);
 
             // when
             ValueTask<Profile> modifyProfileTask =
