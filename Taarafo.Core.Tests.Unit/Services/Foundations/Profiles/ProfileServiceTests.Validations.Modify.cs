@@ -79,14 +79,19 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             invalidProfileException.AddData(
                 key: nameof(Profile.CreatedDate),
-                values: "Date is required");
+                "Date is required",
+                "Date is not recent");
 
             invalidProfileException.AddData(
                 key: nameof(Profile.UpdatedDate),
-                "Date is required");
+                values: "Date is required");
 
             var expectedProfileValidationException =
                 new ProfileValidationException(invalidProfileException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(DateTimeOffset.UtcNow);
 
             // when
             ValueTask<Profile> modifyProfileTask =
@@ -96,10 +101,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             await Assert.ThrowsAsync<ProfileValidationException>(() =>
                 modifyProfileTask.AsTask());
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedProfileValidationException))),
-                        Times.Once());
+                        Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateProfileAsync(It.IsAny<Profile>()),
