@@ -173,12 +173,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             DateTimeOffset dateTime = GetRandomDateTimeOffset();
             Profile randomProfile = CreateRandomProfile(dateTime);
             Profile inputProfile = randomProfile;
-            inputProfile.UpdatedDate = dateTime.AddMinutes(minutes);
+            inputProfile.CreatedDate = dateTime.AddMinutes(minutes);
             var invalidProfileException =
                 new InvalidProfileException();
 
             invalidProfileException.AddData(
-                key: nameof(Profile.UpdatedDate),
+                key: nameof(Profile.CreatedDate),
                 values: "Date is not recent");
 
             var expectedProfileValidatonException =
