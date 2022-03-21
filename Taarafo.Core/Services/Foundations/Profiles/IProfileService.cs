@@ -13,7 +13,8 @@ namespace Taarafo.Core.Services.Foundations.Profiles
     public partial interface IProfileService
     {
         ValueTask<Profile> AddProfileAsync(Profile profile);
-        IQueryable<Profile> RetrieveAllProfiles();
         ValueTask<Profile> RetrieveProfileByIdAsync(Guid profileId);
+        IQueryable<Profile> RetrieveAllProfiles();
+        ValueTask<Profile> ModifyProfileAsync(Profile profile);
     }
 }

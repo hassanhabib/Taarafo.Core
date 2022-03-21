@@ -32,6 +32,27 @@ namespace Taarafo.Core.Services.Foundations.Profiles
                 (Rule: IsNotRecent(profile.CreatedDate), Parameter: nameof(Profile.CreatedDate)));
         }
 
+        private void ValidateProfileOnModify(Profile profile)
+        {
+            ValidateProfileIsNotNull(profile);
+
+            Validate(
+                (Rule: IsInvalid(profile.Id), Parameter: nameof(Profile.Id)),
+                (Rule: IsInvalid(profile.Name), Parameter: nameof(Profile.Name)),
+                (Rule: IsInvalid(profile.Username), Parameter: nameof(Profile.Username)),
+                (Rule: IsInvalid(profile.Email), Parameter: nameof(Profile.Email)),
+                (Rule: IsInvalid(profile.CreatedDate), Parameter: nameof(Profile.CreatedDate)),
+                (Rule: IsInvalid(profile.UpdatedDate), Parameter: nameof(Profile.UpdatedDate)),
+
+                (Rule: IsSame(
+                    firstDate: profile.UpdatedDate,
+                    secondDate: profile.CreatedDate,
+                    secondDateName: nameof(profile.CreatedDate)),
+                 Parameter: nameof(profile.UpdatedDate)),
+
+                (Rule: IsNotRecent(profile.UpdatedDate), Parameter: nameof(Profile.UpdatedDate)));
+        }
+
         private void ValidateProfileIsNotNull(Profile profile)
         {
             if (profile is null)
@@ -76,6 +97,15 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             {
                 Condition = firstDate != secondDate,
                 Message = $"Date is not the same as {secondDateName}"
+            };
+
+        private static dynamic IsSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
             };
 
         private dynamic IsNotRecent(DateTimeOffset date) => new

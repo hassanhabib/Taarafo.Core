@@ -37,12 +37,6 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             return await this.storageBroker.InsertProfileAsync(profile);
         });
 
-        public IQueryable<Profile> RetrieveAllProfiles() =>
-        TryCatch(() =>
-        {
-            return this.storageBroker.SelectAllProfiles();
-        });
-
         public ValueTask<Profile> RetrieveProfileByIdAsync(Guid profileId) =>
         TryCatch(async () =>
         {
@@ -54,6 +48,26 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             ValidateStorageProfile(maybeProfile, profileId);
 
             return maybeProfile;
+        });
+
+        public IQueryable<Profile> RetrieveAllProfiles() =>
+        TryCatch(() =>
+        {
+            return this.storageBroker.SelectAllProfiles();
+        });
+
+        public ValueTask<Profile> ModifyProfileAsync(Profile profile) =>
+        TryCatch(async () =>
+        {
+            ValidateProfileOnModify(profile);
+
+            var maybeProfile =
+                await this.storageBroker.SelectProfileByIdAsync(profile.Id);
+
+            ValidateStorageProfile(maybeProfile, profile.Id);
+
+            return
+                await this.storageBroker.UpdateProfileAsync(profile);
         });
     }
 }

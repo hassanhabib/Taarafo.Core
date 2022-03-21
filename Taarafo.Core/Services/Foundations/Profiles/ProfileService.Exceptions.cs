@@ -59,6 +59,15 @@ namespace Taarafo.Core.Services.Foundations.Profiles
 
                 throw CreateAndLogDependencyValidationException(invalidProfileReferenceException);
             }
+
+            catch (DbUpdateConcurrencyException databaseUpdateConcurrencyException)
+            {
+                var lockedProfileException =
+                    new LockedProfileException(databaseUpdateConcurrencyException);
+
+                throw CreateAndLogDependencyValidationException(lockedProfileException);
+            }
+
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedStorageProfileException =
