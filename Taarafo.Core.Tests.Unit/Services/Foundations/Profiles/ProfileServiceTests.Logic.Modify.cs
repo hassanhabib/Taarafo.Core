@@ -28,8 +28,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             Profile inputProfile =
                 randomProfile;
 
+            inputProfile.UpdatedDate =
+                randomDate.AddMinutes(1);
+
             Profile storageProfile =
-                inputProfile.DeepClone();
+                inputProfile;
 
             Profile updatedProfile =
                 inputProfile;
@@ -37,7 +40,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             Profile expectedProfile =
                 updatedProfile.DeepClone();
 
-            Guid profileId =
+            Guid inputProfileId =
                 inputProfile.Id;
 
             this.dateTimeBrokerMock.Setup(broker =>
@@ -45,26 +48,30 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                     .Returns(randomDate);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectProfileByIdAsync(profileId))
-                    .ReturnsAsync(storageProfile);
+                broker.SelectProfileByIdAsync(
+                    inputProfileId))
+                        .ReturnsAsync(storageProfile);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.UpdateProfileAsync(inputProfile))
-                    .ReturnsAsync(updatedProfile);
+                broker.UpdateProfileAsync(
+                    inputProfile))
+                        .ReturnsAsync(updatedProfile);
 
             // when
             Profile actualProfile =
-                await this.profileService.ModifyProfileAsync(inputProfile);
+                await this.profileService.
+                    ModifyProfileAsync(inputProfile);
 
             // then
-            actualProfile.Should().BeEquivalentTo(expectedProfile);
+            actualProfile.Should().BeEquivalentTo(
+                expectedProfile);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectProfileByIdAsync(profileId),
+                broker.SelectProfileByIdAsync(inputProfileId),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>

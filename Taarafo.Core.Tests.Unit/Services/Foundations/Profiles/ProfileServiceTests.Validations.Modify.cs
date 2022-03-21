@@ -38,6 +38,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
+                broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
+                    Times.Never);
+
+            this.storageBrokerMock.Verify(broker =>
                 broker.UpdateProfileAsync(It.IsAny<Profile>()),
                     Times.Never);
 
@@ -79,19 +83,24 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             invalidProfileException.AddData(
                 key: nameof(Profile.CreatedDate),
-                "Date is required",
-                "Date is not recent");
+                values: "Date is required");
 
             invalidProfileException.AddData(
                 key: nameof(Profile.UpdatedDate),
-                values: "Date is required");
+                    values: new[]
+                    {
+                        "Date is required",
+                        $"Date is the same as {nameof(Profile.CreatedDate)}",
+                        "Date is not recent"
+                    }
+                );
 
             var expectedProfileValidationException =
                 new ProfileValidationException(invalidProfileException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                    .Returns(DateTimeOffset.UtcNow);
+                    .Returns(GetRandomDateTime);
 
             // when
             ValueTask<Profile> modifyProfileTask =
@@ -123,30 +132,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotSameAsCreatedDateAndLogItAsync()
         {
             // given
-            DateTimeOffset randomDateTime =
-                GetRandomDateTimeOffset();
-
-            DateTimeOffset someDatetime =
-                GetRandomDateTime();
-
-            Profile randomProfile =
-                CreateRandomProfile(randomDateTime);
-
-            Profile invalidProfile =
-                randomProfile;
-
-            invalidProfile.UpdatedDate =
-                someDatetime;
-
-            var invalidProfileException =
-                new InvalidProfileException();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Profile randomProfile = CreateRandomProfile(randomDateTime);
+            Profile invalidProfile = randomProfile;
+            var invalidProfileException = new InvalidProfileException();
 
             invalidProfileException.AddData(
                 key: nameof(Profile.UpdatedDate),
-                values: $"Date is not the same as {nameof(Profile.CreatedDate)}");
+                values: $"Date is the same as {nameof(Profile.CreatedDate)}");
 
             var expectedProfileValidationException =
                 new ProfileValidationException(invalidProfileException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
 
             // when
             ValueTask<Profile> modifyProfileTask =
@@ -182,12 +182,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             DateTimeOffset dateTime = GetRandomDateTimeOffset();
             Profile randomProfile = CreateRandomProfile(dateTime);
             Profile inputProfile = randomProfile;
-            inputProfile.CreatedDate = dateTime.AddMinutes(minutes);
+            inputProfile.UpdatedDate = dateTime.AddMinutes(minutes);
+
             var invalidProfileException =
                 new InvalidProfileException();
 
             invalidProfileException.AddData(
-                key: nameof(Profile.CreatedDate),
+                key: nameof(Profile.UpdatedDate),
                 values: "Date is not recent");
 
             var expectedProfileValidatonException =
@@ -195,7 +196,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                .Returns(dateTime);
+                    .Returns(dateTime);
 
             // when
             ValueTask<Profile> modifyProfileTask =
@@ -218,6 +219,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
                     Times.Never);
 
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateProfileAsync(It.IsAny<Profile>()),
+                    Times.Never);
+
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -227,30 +232,30 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         public async Task ShouldThrowValidationExceptionOnModifyIfProfileDoesNotExistAndLogItAsync()
         {
             // given
-            DateTimeOffset someDate = DateTimeOffset.UtcNow;
-            Profile someProfile = CreateRandomProfile(someDate);
-
+            int randomNegativeMinutes = GetRandomNegativeNumber();
+            DateTimeOffset dateTime = GetRandomDateTimeOffset();
+            Profile randomProfile = CreateRandomProfile(dateTime);
+            Profile nonExistProfile = randomProfile;
+            nonExistProfile.CreatedDate = dateTime.AddMinutes(randomNegativeMinutes);
             Profile nullProfile = null;
 
             var notFoundProfileException =
-                new NotFoundProfileException(someProfile.Id);
+                new NotFoundProfileException(nonExistProfile.Id);
 
             var expectedProfileValidationException =
                 new ProfileValidationException(notFoundProfileException);
 
-
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                    .Returns(DateTimeOffset.UtcNow);
-
+                    .Returns(dateTime);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectProfileByIdAsync(someProfile.Id))
+                broker.SelectProfileByIdAsync(nonExistProfile.Id))
                     .ReturnsAsync(nullProfile);
 
             // when 
             ValueTask<Profile> modifyProfileTask =
-                this.profileService.ModifyProfileAsync(someProfile);
+                this.profileService.ModifyProfileAsync(nonExistProfile);
 
             // then
             await Assert.ThrowsAsync<ProfileValidationException>(() =>
@@ -261,7 +266,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectProfileByIdAsync(someProfile.Id),
+                broker.SelectProfileByIdAsync(nonExistProfile.Id),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -273,6 +278,5 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
-
     }
 }

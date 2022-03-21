@@ -35,12 +35,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                     .Throws(sqlException);
 
             // when
-            ValueTask<Profile> addProfileTask =
+            ValueTask<Profile> modifyProfileTask =
                 this.profileService.ModifyProfileAsync(randomProfile);
 
             // then
             await Assert.ThrowsAsync<ProfileDependencyException>(() =>
-               addProfileTask.AsTask());
+               modifyProfileTask.AsTask());
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -50,14 +50,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 broker.SelectProfileByIdAsync(randomProfile.Id),
                     Times.Never);
 
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateProfileAsync(randomProfile),
+                    Times.Never);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedProfileDependencyException))),
                         Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateProfileAsync(randomProfile),
-                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -68,9 +68,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         public async void ShouldThrowValidationExceptionOnModifyIfReferenceErrorOccursAndLogItAsync()
         {
             // given
-            Profile foreignKeyConflictedProfile = CreateRandomProfile();
-            string randomMessage = GetRandomMessage();
-            string exceptionMessage = randomMessage;
+            Profile someProfile =
+                CreateRandomProfile();
+
+            Profile foreignKeyConflictedProfile =
+                someProfile;
+
+            string randomMessage =
+                GetRandomMessage();
+
+            string exceptionMessage =
+                randomMessage;
 
             var foreignKeyConstraintConflictException =
                 new ForeignKeyConstraintConflictException(exceptionMessage);
@@ -78,7 +86,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             var invalidProfileReferenceException =
                 new InvalidProfileReferenceException(foreignKeyConstraintConflictException);
 
-            var ProfileDependencyValidationException =
+            var profileDependencyValidationException =
                 new ProfileDependencyValidationException(invalidProfileReferenceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
@@ -102,7 +110,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                     Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(ProfileDependencyValidationException))),
+                broker.LogError(It.Is(SameExceptionAs(profileDependencyValidationException))),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -121,11 +129,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             Profile randomProfile = CreateRandomProfile();
             var databaseUpdateException = new DbUpdateException();
 
-            var failedProfileException =
+            var failedProfileStorageException =
                 new FailedProfileStorageException(databaseUpdateException);
 
             var expectedProfileDependencyException =
-                new ProfileDependencyException(failedProfileException);
+                new ProfileDependencyException(failedProfileStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
