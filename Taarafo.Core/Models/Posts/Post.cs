@@ -18,5 +18,7 @@ namespace Taarafo.Core.Models.Posts
         public DateTimeOffset UpdatedDate { get; set; }
 
         public IEnumerable<Comment> Comments { get; set; }
+        public IEnumerable<PostReport> PostReports { get; set; }
+
     }
 }
