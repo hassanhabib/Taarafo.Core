@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using Microsoft.Data.SqlClient;
 using Taarafo.Core.Brokers.Loggings;
@@ -30,6 +31,13 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
                 throw CreateAndLogCriticalDependencyException(failedGroupStorageException);
             }
+            catch(Exception exception)
+            {
+                var failedGroupServiceException =
+                    new FailedGroupServiceException(exception);
+
+                throw CreateAndLogServiceException(failedGroupServiceException);
+            }
         }
 
         private GroupDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
@@ -38,6 +46,14 @@ namespace Taarafo.Core.Services.Foundations.Groups
             this.loggingBroker.LogCritical(groupDependencyException);
 
             return groupDependencyException;
+        }
+
+        private GroupServiceException CreateAndLogServiceException(Xeption exception)
+        {
+            var groupServiceException = new GroupServiceException(exception);
+            this.loggingBroker.LogError(groupServiceException);
+
+            return groupServiceException;
         }
     }
 }
