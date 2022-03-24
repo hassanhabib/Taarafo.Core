@@ -18,7 +18,7 @@ namespace Taarafo.Core.Models.Profiles
         public DateTimeOffset CreatedDate { get; set; }
         public DateTimeOffset UpdatedDate { get; set; }
 
-        public IEnumerable<PostReport> PostReports { get; set; }
+        public IEnumerable<PostReport> ReportedPosts { get; set; }
 
     }
 }

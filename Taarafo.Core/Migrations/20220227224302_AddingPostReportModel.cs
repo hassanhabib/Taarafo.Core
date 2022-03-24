@@ -15,7 +15,7 @@ namespace Taarafo.Core.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "PostReports",
+                name: "ReportedPosts",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -28,35 +28,35 @@ namespace Taarafo.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PostReports", x => x.Id);
+                    table.PrimaryKey("PK_ReportedPosts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PostReports_Posts_PostId",
+                        name: "FK_ReportedPosts_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PostReports_Profiles_ProfileId",
+                        name: "FK_ReportedPosts_Profiles_ProfileId",
                         column: x => x.ProfileId,
                         principalTable: "Profiles",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostReports_PostId",
-                table: "PostReports",
+                name: "IX_ReportedPosts_PostId",
+                table: "ReportedPosts",
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostReports_ProfileId",
-                table: "PostReports",
+                name: "IX_ReportedPosts_ProfileId",
+                table: "ReportedPosts",
                 column: "ProfileId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PostReports");
+                name: "ReportedPosts");
         }
     }
 }
