@@ -49,5 +49,43 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public void ShouldThrowServiceExceptionOnRetrieveAllWhenAllServiceErrorOccursAndLogIt()
+        {
+            //given
+            string exceptionMessage = GetRandomMessage();
+            var serviceException = new Exception(exceptionMessage);
+
+            var failedGroupServiceException =
+                new FailedGroupServiceException(serviceException);
+
+            var expectedGroupServiceException =
+                new GroupServiceException(failedGroupServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAllGroups())
+                    .Throws(serviceException);
+
+            //when
+            Action retrieveAllGroupsAction = () =>
+                 this.groupService.RetrieveAllGroups();
+
+            //then
+            Assert.Throws<GroupServiceException>(
+                retrieveAllGroupsAction);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllGroups(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
