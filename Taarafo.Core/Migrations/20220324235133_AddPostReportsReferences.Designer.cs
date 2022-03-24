@@ -12,7 +12,7 @@ using Taarafo.Core.Brokers.Storages;
 namespace Taarafo.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20220324234524_AddPostReportsReferences")]
+    [Migration("20220324235133_AddPostReportsReferences")]
     partial class AddPostReportsReferences
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
