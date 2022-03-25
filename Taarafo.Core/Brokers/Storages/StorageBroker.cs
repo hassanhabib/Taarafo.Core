@@ -22,8 +22,11 @@ namespace Taarafo.Core.Brokers.Storages
             this.Database.Migrate();
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
             AddCommentReferences(modelBuilder);
+            AddReportedPostsReferences(modelBuilder);
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
