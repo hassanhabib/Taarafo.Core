@@ -25,7 +25,7 @@ namespace Taarafo.Core.Brokers.Storages
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             AddCommentReferences(modelBuilder);
-            AddReportedPostsReferences(modelBuilder);
+            AddPostReportedReferences(modelBuilder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

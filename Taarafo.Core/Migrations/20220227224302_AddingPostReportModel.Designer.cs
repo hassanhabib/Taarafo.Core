@@ -132,7 +132,7 @@ namespace Taarafo.Core.Migrations
 
                     b.HasIndex("ProfileId");
 
-                    b.ToTable("ReportedPosts");
+                    b.ToTable("PostsReported");
                 });
 
             modelBuilder.Entity("Taarafo.Core.Models.Profiles.Profile", b =>

@@ -126,7 +126,7 @@ namespace Taarafo.Core.Migrations
 
                     b.HasIndex("ProfileId");
 
-                    b.ToTable("ReportedPosts");
+                    b.ToTable("PostsReported");
                 });
 
             modelBuilder.Entity("Taarafo.Core.Models.Profiles.Profile", b =>
@@ -169,13 +169,13 @@ namespace Taarafo.Core.Migrations
             modelBuilder.Entity("Taarafo.Core.Models.Posts.PostReport", b =>
                 {
                     b.HasOne("Taarafo.Core.Models.Posts.Post", "Post")
-                        .WithMany("ReportedPosts")
+                        .WithMany("PostsReported")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Taarafo.Core.Models.Profiles.Profile", "Profile")
-                        .WithMany("ReportedPosts")
+                        .WithMany("PostsReported")
                         .HasForeignKey("ProfileId");
 
                     b.Navigation("Post");
@@ -187,12 +187,12 @@ namespace Taarafo.Core.Migrations
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("ReportedPosts");
+                    b.Navigation("PostsReported");
                 });
 
             modelBuilder.Entity("Taarafo.Core.Models.Profiles.Profile", b =>
                 {
-                    b.Navigation("ReportedPosts");
+                    b.Navigation("PostsReported");
                 });
 #pragma warning restore 612, 618
         }

@@ -10,6 +10,6 @@ namespace Taarafo.Core.Brokers.Storages
 {
     public partial class StorageBroker
     {
-        public DbSet<PostReport> ReportedPosts { get; set; }
+        public DbSet<PostReport> PostsReported { get; set; }
     }
 }

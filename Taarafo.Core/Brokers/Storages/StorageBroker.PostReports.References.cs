@@ -10,17 +10,17 @@ namespace Taarafo.Core.Brokers.Storages
 {
     public partial class StorageBroker
     {
-        private static void AddReportedPostsReferences(ModelBuilder modelBuilder)
+        private static void AddPostReportedReferences(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PostReport>()
                 .HasOne(postReport => postReport.Post)
-                .WithMany(post => post.ReportedPosts)
+                .WithMany(post => post.PostsReported)
                 .HasForeignKey(postReport => postReport.PostId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<PostReport>()
                 .HasOne(postReport => postReport.Profile)
-                .WithMany(profile => profile.ReportedPosts)
+                .WithMany(profile => profile.PostsReported)
                 .HasForeignKey(postReport => postReport.ReporterId)
                 .OnDelete(DeleteBehavior.NoAction);
         }

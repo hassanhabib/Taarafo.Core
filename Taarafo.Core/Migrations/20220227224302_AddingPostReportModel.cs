@@ -15,7 +15,7 @@ namespace Taarafo.Core.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ReportedPosts",
+                name: "PostsReported",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -28,35 +28,35 @@ namespace Taarafo.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReportedPosts", x => x.Id);
+                    table.PrimaryKey("PK_PostsReported", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ReportedPosts_Posts_PostId",
+                        name: "FK_PostsReported_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ReportedPosts_Profiles_ProfileId",
+                        name: "FK_PostsReported_Profiles_ProfileId",
                         column: x => x.ProfileId,
                         principalTable: "Profiles",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReportedPosts_PostId",
-                table: "ReportedPosts",
+                name: "IX_PostsReported_PostId",
+                table: "PostsReported",
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReportedPosts_ProfileId",
-                table: "ReportedPosts",
+                name: "IX_PostsReported_ProfileId",
+                table: "PostsReported",
                 column: "ProfileId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ReportedPosts");
+                name: "PostsReported");
         }
     }
 }
