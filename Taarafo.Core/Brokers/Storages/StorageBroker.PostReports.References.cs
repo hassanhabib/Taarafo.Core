@@ -10,7 +10,7 @@ namespace Taarafo.Core.Brokers.Storages
 {
     public partial class StorageBroker
     {
-        private static void AddPostReportedReferences(ModelBuilder modelBuilder)
+        private static void AddPostReportsReferences(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PostReport>()
                 .HasOne(postReport => postReport.Post)
