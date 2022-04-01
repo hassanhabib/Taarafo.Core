@@ -51,5 +51,43 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
                 broker.DeleteProfileAsync(It.IsAny<Profile>()),
                     Times.Never);
         }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRemoveIdProfileIsNotFounfAndLogItAsync()
+        {
+            // given
+            Guid inputProfileId = Guid.NewGuid();
+            Profile noProfile = null;
+
+            var notFoundProfileException =
+                new NotFoundProfileException(inputProfileId);
+
+            var expectedProfileValidationException =
+                new ProfileValidationException(notFoundProfileException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectProfileByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noProfile);
+
+            // when
+            ValueTask<Profile> removeProfileByIdTask =
+                this.profileService.RemoveProfileByIdAsync(inputProfileId);
+
+            // then
+            await Assert.ThrowsAsync<ProfileValidationException>(() =>
+                removeProfileByIdTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(expectedProfileValidationException))),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeleteProfileAsync(It.IsAny<Profile>()),
+                    Times.Never);
+        }
     }
 }
