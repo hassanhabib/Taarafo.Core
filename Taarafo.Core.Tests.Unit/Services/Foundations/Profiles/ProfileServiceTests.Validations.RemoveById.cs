@@ -88,6 +88,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             this.storageBrokerMock.Verify(broker =>
                 broker.DeleteProfileAsync(It.IsAny<Profile>()),
                     Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+
         }
     }
 }
