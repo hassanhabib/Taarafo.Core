@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Taarafo.Core.Models.Profiles;
@@ -59,5 +60,45 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnDeleteWhenSqlExceptionOccursAndLogItAsync()
+        {
+            // given
+            Guid someProfileId = Guid.NewGuid();
+            SqlException sqlException = GetSqlException();
+
+            var failedProfileStorageException =
+                new FailedProfileStorageException(sqlException);
+
+            var expectedProfileDependencyException =
+                new ProfileDependencyException(failedProfileStorageException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectProfileByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(sqlException);
+
+            // when
+            ValueTask<Profile> deleteProfileTask =
+                this.profileService.RemoveProfileByIdAsync(someProfileId);
+
+            // then
+            await Assert.ThrowsAsync<ProfileDependencyException>(() =>
+                deleteProfileTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedProfileDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
     }
 }
