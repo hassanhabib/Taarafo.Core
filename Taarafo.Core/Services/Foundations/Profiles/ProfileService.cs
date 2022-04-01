@@ -78,6 +78,8 @@ namespace Taarafo.Core.Services.Foundations.Profiles
             Profile someProfile =
                 await this.storageBroker.SelectProfileByIdAsync(profileId);
 
+            ValidateStorageProfile(someProfile, profileId);
+
             return await this.storageBroker.DeleteProfileAsync(someProfile);
         });
     }
