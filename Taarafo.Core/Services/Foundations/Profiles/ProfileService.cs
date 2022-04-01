@@ -70,12 +70,15 @@ namespace Taarafo.Core.Services.Foundations.Profiles
                 await this.storageBroker.UpdateProfileAsync(profile);
         });
 
-        public async ValueTask<Profile> RemoveProfileByIdAsync(Guid profileId)
+        public ValueTask<Profile> RemoveProfileByIdAsync(Guid profileId) =>
+        TryCatch(async () =>
         {
+            ValidateProfileId(profileId);
+
             Profile someProfile =
                 await this.storageBroker.SelectProfileByIdAsync(profileId);
 
             return await this.storageBroker.DeleteProfileAsync(someProfile);
-        }
+        });
     }
 }
