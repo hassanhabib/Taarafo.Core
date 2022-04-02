@@ -25,6 +25,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllGroups())
                     .Returns(storageGroups);
+
             // when
             IQueryable<Group> actualGroups =
                 this.groupService.RetrieveAllGroups();
