@@ -43,7 +43,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectProfileByIdAsync(inputProfileId),
-                Times.Once());
+                    Times.Once());
 
             this.storageBrokerMock.Verify(broker =>
                 broker.DeleteProfileAsync(expectedInputProfile),
