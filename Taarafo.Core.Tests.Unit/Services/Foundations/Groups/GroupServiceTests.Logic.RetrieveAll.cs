@@ -20,6 +20,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             // given
             IQueryable<Group> randomGroups = CreateRandomGroups();
             IQueryable<Group> storageGroups = randomGroups;
+            IQueryable<Group> expectedGroups = storageGroups;
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllGroups())
