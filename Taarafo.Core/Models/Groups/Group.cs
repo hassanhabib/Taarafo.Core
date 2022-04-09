@@ -21,6 +21,5 @@ namespace Taarafo.Core.Models.Groups
 
         [JsonIgnore]
         public IEnumerable<GroupPost> GroupPosts { get; set; }
-
     }
 }
