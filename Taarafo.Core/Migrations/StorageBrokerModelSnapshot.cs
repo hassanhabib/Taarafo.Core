@@ -75,8 +75,10 @@ namespace Taarafo.Core.Migrations
 
             modelBuilder.Entity("Taarafo.Core.Models.PostImpressions.PostImpression", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProfileId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedDate")
@@ -85,18 +87,10 @@ namespace Taarafo.Core.Migrations
                     b.Property<int>("Impression")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProfileId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
+                    b.HasKey("PostId", "ProfileId");
 
                     b.HasIndex("ProfileId");
 
@@ -166,15 +160,15 @@ namespace Taarafo.Core.Migrations
             modelBuilder.Entity("Taarafo.Core.Models.PostImpressions.PostImpression", b =>
                 {
                     b.HasOne("Taarafo.Core.Models.Posts.Post", "Post")
-                        .WithMany()
+                        .WithMany("PostImpressions")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Taarafo.Core.Models.Profiles.Profile", "Profile")
-                        .WithMany()
+                        .WithMany("PostImpressions")
                         .HasForeignKey("ProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -185,6 +179,13 @@ namespace Taarafo.Core.Migrations
             modelBuilder.Entity("Taarafo.Core.Models.Posts.Post", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("PostImpressions");
+                });
+
+            modelBuilder.Entity("Taarafo.Core.Models.Profiles.Profile", b =>
+                {
+                    b.Navigation("PostImpressions");
                 });
 #pragma warning restore 612, 618
         }

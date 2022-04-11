@@ -11,8 +11,6 @@ namespace Taarafo.Core.Models.PostImpressions
 {
     public class PostImpression
     {
-        public Guid Id { get; set; }
-
         public Guid PostId { get; set; }
         public Post Post { get; set; }
 

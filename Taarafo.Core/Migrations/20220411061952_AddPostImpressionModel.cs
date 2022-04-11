@@ -13,12 +13,11 @@ namespace Taarafo.Core.Migrations
     public partial class AddPostImpressionModel : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        {            
             migrationBuilder.CreateTable(
                 name: "PostImpressions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -27,25 +26,18 @@ namespace Taarafo.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PostImpressions", x => x.Id);
+                    table.PrimaryKey("PK_PostImpressions", x => new { x.PostId, x.ProfileId });
                     table.ForeignKey(
                         name: "FK_PostImpressions_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_PostImpressions_Profiles_ProfileId",
                         column: x => x.ProfileId,
                         principalTable: "Profiles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PostImpressions_PostId",
-                table: "PostImpressions",
-                column: "PostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PostImpressions_ProfileId",
