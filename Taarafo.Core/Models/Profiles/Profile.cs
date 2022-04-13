@@ -4,6 +4,8 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using Taarafo.Core.Models.PostImpressions;
 
 namespace Taarafo.Core.Models.Profiles
 {
@@ -15,5 +17,7 @@ namespace Taarafo.Core.Models.Profiles
         public string Email { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public DateTimeOffset UpdatedDate { get; set; }
+
+        public IEnumerable<PostImpression> PostImpressions { get; set; }
     }
 }
