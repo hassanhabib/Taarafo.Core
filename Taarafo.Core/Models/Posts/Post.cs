@@ -19,7 +19,6 @@ namespace Taarafo.Core.Models.Posts
         public string Author { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public DateTimeOffset UpdatedDate { get; set; }
-        public IEnumerable<Comment> Comments { get; set; }
 
         [JsonIgnore]
         public IEnumerable<GroupPost> GroupPosts { get; set; }
