@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Taarafo.Core.Brokers.Storages;
 
@@ -11,9 +12,10 @@ using Taarafo.Core.Brokers.Storages;
 namespace Taarafo.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    partial class StorageBrokerModelSnapshot : ModelSnapshot
+    [Migration("20220411061952_AddPostImpressionModel")]
+    partial class AddPostImpressionModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,21 +47,6 @@ namespace Taarafo.Core.Migrations
                     b.HasIndex("PostId");
 
                     b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("Taarafo.Core.Models.GroupPosts.GroupPost", b =>
-                {
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("GroupId", "PostId");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("GroupPosts");
                 });
 
             modelBuilder.Entity("Taarafo.Core.Models.Groups.Group", b =>
@@ -172,30 +159,6 @@ namespace Taarafo.Core.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("Taarafo.Core.Models.GroupPosts.GroupPost", b =>
-                {
-                    b.HasOne("Taarafo.Core.Models.Groups.Group", "Group")
-                        .WithMany("GroupPosts")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Taarafo.Core.Models.Posts.Post", "Post")
-                        .WithMany("GroupPosts")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-
-                    b.Navigation("Post");
-                });
-
-            modelBuilder.Entity("Taarafo.Core.Models.Groups.Group", b =>
-                {
-                    b.Navigation("GroupPosts");
-                });
-
             modelBuilder.Entity("Taarafo.Core.Models.PostImpressions.PostImpression", b =>
                 {
                     b.HasOne("Taarafo.Core.Models.Posts.Post", "Post")
@@ -218,8 +181,6 @@ namespace Taarafo.Core.Migrations
             modelBuilder.Entity("Taarafo.Core.Models.Posts.Post", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("GroupPosts");
 
                     b.Navigation("PostImpressions");
                 });
