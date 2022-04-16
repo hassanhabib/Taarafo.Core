@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Taarafo.Core.Brokers.Storages;
 
@@ -11,9 +12,10 @@ using Taarafo.Core.Brokers.Storages;
 namespace Taarafo.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    partial class StorageBrokerModelSnapshot : ModelSnapshot
+    [Migration("20220401024818_AddGroupPostModel")]
+    partial class AddGroupPostModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,30 +88,6 @@ namespace Taarafo.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Groups");
-                });
-
-            modelBuilder.Entity("Taarafo.Core.Models.PostImpressions.PostImpression", b =>
-                {
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("Impression")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("PostId", "ProfileId");
-
-                    b.HasIndex("ProfileId");
-
-                    b.ToTable("PostImpressions");
                 });
 
             modelBuilder.Entity("Taarafo.Core.Models.Posts.Post", b =>
@@ -196,37 +174,11 @@ namespace Taarafo.Core.Migrations
                     b.Navigation("GroupPosts");
                 });
 
-            modelBuilder.Entity("Taarafo.Core.Models.PostImpressions.PostImpression", b =>
-                {
-                    b.HasOne("Taarafo.Core.Models.Posts.Post", "Post")
-                        .WithMany("PostImpressions")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Taarafo.Core.Models.Profiles.Profile", "Profile")
-                        .WithMany("PostImpressions")
-                        .HasForeignKey("ProfileId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Post");
-
-                    b.Navigation("Profile");
-                });
-
             modelBuilder.Entity("Taarafo.Core.Models.Posts.Post", b =>
                 {
                     b.Navigation("Comments");
 
                     b.Navigation("GroupPosts");
-
-                    b.Navigation("PostImpressions");
-                });
-
-            modelBuilder.Entity("Taarafo.Core.Models.Profiles.Profile", b =>
-                {
-                    b.Navigation("PostImpressions");
                 });
 #pragma warning restore 612, 618
         }
