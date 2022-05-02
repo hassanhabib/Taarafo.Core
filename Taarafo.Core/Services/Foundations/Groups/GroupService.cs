@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.Loggings;
@@ -27,9 +28,9 @@ namespace Taarafo.Core.Services.Foundations.Groups
         public IQueryable<Group> RetrieveAllGroups() =>
         TryCatch(() => this.storageBroker.SelectAllGroups());
 
-        public ValueTask<Group> RetrieveGroupByIdAsync()
+        public ValueTask<Group> RetrieveGroupByIdAsync(Guid groupId)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }
