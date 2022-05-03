@@ -30,7 +30,7 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
         public ValueTask<Group> RetrieveGroupByIdAsync(Guid groupId)
         {
-            throw new NotImplementedException();
+            return this.storageBroker.SelectGroupByIdAsync(groupId);
         }
     }
 }
