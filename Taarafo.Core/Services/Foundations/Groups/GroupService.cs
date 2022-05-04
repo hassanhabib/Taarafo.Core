@@ -28,10 +28,8 @@ namespace Taarafo.Core.Services.Foundations.Groups
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Group> CreateGroupAsync(Group group)
-        {
-            throw new System.NotImplementedException();
-        }
+        public async ValueTask<Group> CreateGroupAsync(Group group) =>
+            await this.storageBroker.InsertGroupAsync(group);
 
         public IQueryable<Group> RetrieveAllGroups() =>
         TryCatch(() => this.storageBroker.SelectAllGroups());
