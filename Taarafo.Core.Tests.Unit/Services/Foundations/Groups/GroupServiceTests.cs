@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
 using Moq;
+using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Groups;
@@ -22,20 +23,33 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
+        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly IGroupService groupService;
 
         public GroupServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.groupService = new GroupService(
                 storageBroker: this.storageBrokerMock.Object,
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
-        private static IQueryable<Group> CreateRandomGroups() =>
-            CreateGroupFiller().Create(count: GetRandomNumber()).AsQueryable();
+        private static Group CreateRandomGroup(DateTimeOffset dates) =>
+            CreateGroupFiller(dates: dates).Create();
+
+        private static IQueryable<Group> CreateRandomGroups()
+        {
+            return CreateGroupFiller(dates: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber())
+                    .AsQueryable();
+        }
+
+        private static DateTimeOffset GetRandomDateTime() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
@@ -56,12 +70,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 && (actualException.InnerException as Xeption).DataEquals(expectedException.InnerException.Data);
         }
 
-        private static Filler<Group> CreateGroupFiller()
+        private static Filler<Group> CreateGroupFiller(DateTimeOffset dates)
         {
             var filler = new Filler<Group>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(GetRandomDateTimeOffset());
+                .OnType<DateTimeOffset>().Use(dates);
 
             return filler;
         }
