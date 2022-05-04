@@ -4,12 +4,14 @@
 // ---------------------------------------------------------------
 
 using System.Linq;
+using System.Threading.Tasks;
 using Taarafo.Core.Models.Groups;
 
 namespace Taarafo.Core.Services.Foundations.Groups
 {
     public interface IGroupService
     {
+        ValueTask<Group> CreateGroupAsync(Group group);
         IQueryable<Group> RetrieveAllGroups();
     }
 }
