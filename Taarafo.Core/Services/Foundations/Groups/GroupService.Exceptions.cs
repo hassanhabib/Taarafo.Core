@@ -31,7 +31,7 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
                 throw CreateAndLogCriticalDependencyException(failedGroupStorageException);
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 var failedGroupServiceException =
                     new FailedGroupServiceException(exception);
