@@ -16,7 +16,7 @@ namespace Taarafo.Core.Services.Foundations.Groups
     public partial class GroupService
     {
         private delegate ValueTask<Group> ReturningGroupFunction();
-        private delegate IQueryable<Group> RetrieveAllGroupsFunction();
+        private delegate IQueryable<Group> ReturningGroupsFunction();
 
         private async ValueTask<Group> TryCatch(ReturningGroupFunction returningGroupFunction)
         {
@@ -30,11 +30,11 @@ namespace Taarafo.Core.Services.Foundations.Groups
             }
         }
 
-        private IQueryable<Group> TryCatch(RetrieveAllGroupsFunction retrieveAllGroups)
+        private IQueryable<Group> TryCatch(ReturningGroupsFunction returningGroupsFunction)
         {
             try
             {
-                return retrieveAllGroups();
+                return returningGroupsFunction();
             }
             catch (SqlException sqlException)
             {
