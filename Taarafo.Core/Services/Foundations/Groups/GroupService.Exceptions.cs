@@ -28,6 +28,10 @@ namespace Taarafo.Core.Services.Foundations.Groups
             {
                 throw CreateAndLogValidationException(nullGroupException);
             }
+            catch (InvalidGroupException invalidGroupException)
+            {
+                throw CreateAndLogValidationException(invalidGroupException);
+            }
         }
 
         private IQueryable<Group> TryCatch(ReturningGroupsFunction returningGroupsFunction)
