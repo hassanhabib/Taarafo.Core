@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.Groups;
 using Taarafo.Core.Models.Groups.Exceptions;
@@ -38,6 +39,13 @@ namespace Taarafo.Core.Services.Foundations.Groups
                     new FailedGroupStorageException(sqlException);
 
                 throw CreateAndLogCriticalDependencyException(failedGroupStorageException);
+            }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistGroupException =
+                    new AlreadyExistsGroupException(duplicateKeyException);
+
+                throw CreateAndLogDependencyException(alreadyExistGroupException);
             }
         }
 
@@ -85,6 +93,14 @@ namespace Taarafo.Core.Services.Foundations.Groups
             this.loggingBroker.LogError(groupServiceException);
 
             return groupServiceException;
+        }
+
+        private GroupDependencyException CreateAndLogDependencyException(Xeption exception)
+        {
+            var groupDependencyException = new GroupDependencyException(exception);
+            this.loggingBroker.LogError(groupDependencyException);
+
+            return groupDependencyException;
         }
     }
 }
