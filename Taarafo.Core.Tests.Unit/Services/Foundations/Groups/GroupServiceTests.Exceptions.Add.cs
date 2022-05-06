@@ -60,5 +60,52 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnCreateIfGroupAlreadyExsitsAndLogItAsync()
+        {
+            // given
+            Group randomGroup = CreateRandomGroup();
+            Group alreadyExistsGroup = randomGroup;
+            string randomMessage = GetRandomMessage();
+
+            var duplicateKeyException =
+                new DuplicateKeyException(randomMessage);
+
+            var alreadyExistsGroupException =
+                new AlreadyExistsGroupException(duplicateKeyException);
+
+            var expectedGroupDependencyValidationException =
+                new GroupDependencyException(alreadyExistsGroupException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+              broker.GetCurrentDateTimeOffset())
+                  .Throws(duplicateKeyException);
+
+            // when
+            ValueTask<Group> addGroupTask =
+                this.groupService.CreateGroupAsync(alreadyExistsGroup);
+
+            // then
+            await Assert.ThrowsAsync<GroupDependencyException>(() =>
+                addGroupTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupAsync(It.IsAny<Group>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupDependencyValidationException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
