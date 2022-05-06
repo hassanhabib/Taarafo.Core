@@ -107,5 +107,52 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async void ShouldThrowValidationExceptionOnCreateIfReferenceErrorOccursAndLogItAsync()
+        {
+            // given
+            Group someGroup = CreateRandomGroup();
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(exceptionMessage);
+
+            var invalidGroupReferenceException =
+                new InvalidGroupReferenceException(foreignKeyConstraintConflictException);
+
+            var expectedGroupDependencyValidationException =
+                new GroupDependencyException(invalidGroupReferenceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(foreignKeyConstraintConflictException);
+
+            // when
+            ValueTask<Group> addGroupTask =
+                this.groupService.CreateGroupAsync(someGroup);
+
+            // then
+            await Assert.ThrowsAsync<GroupDependencyException>(() =>
+                addGroupTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupAsync(It.IsAny<Group>()),
+                        Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
