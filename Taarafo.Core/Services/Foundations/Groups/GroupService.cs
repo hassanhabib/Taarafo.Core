@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
@@ -38,5 +39,10 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
         public IQueryable<Group> RetrieveAllGroups() =>
         TryCatch(() => this.storageBroker.SelectAllGroups());
+
+        public ValueTask<Group> UpdateGroupAsync(Group group)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -13,5 +13,6 @@ namespace Taarafo.Core.Services.Foundations.Groups
     {
         ValueTask<Group> CreateGroupAsync(Group group);
         IQueryable<Group> RetrieveAllGroups();
+        ValueTask<Group> UpdateGroupAsync(Group group);
     }
 }
