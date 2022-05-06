@@ -16,6 +16,7 @@ using Taarafo.Core.Models.Groups;
 using Taarafo.Core.Services.Foundations.Groups;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 {
@@ -57,6 +58,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
@@ -72,6 +76,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 actualException.Message == expedtedException.Message
                 && actualException.InnerException.Message == expedtedException.InnerException.Message
                 && (actualException.InnerException as Xeption).DataEquals(expedtedException.InnerException.Data);
+        }
+
+        public static TheoryData MinutesBeforeOrAfter()
+        {
+            int randomNumber = GetRandomNumber();
+            int randomNegativeNumber = GetRandomNegativeNumber();
+
+            return new TheoryData<int>
+            {
+                randomNumber,
+                randomNegativeNumber
+            };
         }
 
         private static Filler<Group> CreateGroupFiller(DateTimeOffset dates)
