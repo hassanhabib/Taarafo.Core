@@ -5,18 +5,30 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using Taarafo.Core.Brokers.Loggings;
-using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Groups;
 using Taarafo.Core.Models.Groups.Exceptions;
 using Xeptions;
 
 namespace Taarafo.Core.Services.Foundations.Groups
 {
-    public partial class GroupService : IGroupService
+    public partial class GroupService
     {
+        private delegate ValueTask<Group> ReturningGroupFunction();
         private delegate IQueryable<Group> RetrieveAllGroupsFunction();
+
+        private async ValueTask<Group> TryCatch(ReturningGroupFunction returningGroupFunction)
+        {
+            try
+            {
+                return await returningGroupFunction();
+            }
+            catch (NullGroupException nullGroupException)
+            {
+                throw CreateAndLogValidationException(nullGroupException);
+            }
+        }
 
         private IQueryable<Group> TryCatch(RetrieveAllGroupsFunction retrieveAllGroups)
         {
@@ -38,6 +50,14 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
                 throw CreateAndLogServiceException(failedGroupServiceException);
             }
+        }
+
+        private GroupValidationException CreateAndLogValidationException(Xeption exception)
+        {
+            var groupValidationException = new GroupValidationException(exception);
+            this.loggingBroker.LogError(groupValidationException);
+
+            return groupValidationException;
         }
 
         private GroupDependencyException CreateAndLogCriticalDependencyException(Xeption exception)

@@ -63,11 +63,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         private static SqlException GetSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
-        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException)
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expedtedException)
         {
-            return actualException => actualException.Message == expectedException.Message
-                && actualException.InnerException.Message == expectedException.InnerException.Message
-                && (actualException.InnerException as Xeption).DataEquals(expectedException.InnerException.Data);
+            return actualException =>
+                actualException.Message == expedtedException.Message
+                && actualException.InnerException.Message == expedtedException.InnerException.Message
+                && (actualException.InnerException as Xeption).DataEquals(expedtedException.InnerException.Data);
         }
 
         private static Filler<Group> CreateGroupFiller(DateTimeOffset dates)

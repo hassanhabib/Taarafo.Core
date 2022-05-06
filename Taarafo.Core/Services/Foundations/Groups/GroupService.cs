@@ -28,8 +28,13 @@ namespace Taarafo.Core.Services.Foundations.Groups
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Group> CreateGroupAsync(Group group) =>
-            await this.storageBroker.InsertGroupAsync(group);
+        public ValueTask<Group> CreateGroupAsync(Group group) =>
+        TryCatch(async () =>
+        {
+            ValidateGroupOnAdd(group);
+
+            return await this.storageBroker.InsertGroupAsync(group);
+        });
 
         public IQueryable<Group> RetrieveAllGroups() =>
         TryCatch(() => this.storageBroker.SelectAllGroups());

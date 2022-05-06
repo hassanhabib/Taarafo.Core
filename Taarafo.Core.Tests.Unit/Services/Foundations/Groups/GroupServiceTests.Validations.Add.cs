@@ -18,7 +18,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         public async Task ShouldThrowExceptionOnCreateIfGroupIsNullAndLogItAsync()
         {
             // given
-            Group invalidGroup = null;
+            Group nullGroup = null;
 
             var nullGroupException =
                 new NullGroupException();
@@ -27,21 +27,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 new GroupValidationException(nullGroupException);
 
             // when
-            ValueTask<Group> createGroupTask =
-                this.groupService.CreateGroupAsync(invalidGroup);
+            ValueTask<Group> addGroupTask =
+                this.groupService.CreateGroupAsync(nullGroup);
 
             // then
             await Assert.ThrowsAsync<GroupValidationException>(() =>
-                createGroupTask.AsTask());
+                addGroupTask.AsTask());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupValidationException))),
-                    Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupAsync(invalidGroup),
-                    Times.Never);
+                        Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
