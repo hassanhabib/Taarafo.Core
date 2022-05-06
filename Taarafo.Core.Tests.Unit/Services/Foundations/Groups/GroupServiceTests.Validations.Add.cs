@@ -106,7 +106,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnAddIfCreateAndUpdateDatesIsNotSameAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnCreateIfCreateAndUpdateDatesIsNotSameAndLogItAsync()
         {
             // given
             int randomNumber = GetRandomNumber();
