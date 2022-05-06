@@ -62,6 +62,13 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
                 throw CreateAndLogDependencyException(failedStorageGroupException);
             }
+            catch (Exception serviceException)
+            {
+                var failedServiceGroupException =
+                    new FailedGroupServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedServiceGroupException);
+            }
         }
 
         private IQueryable<Group> TryCatch(ReturningGroupsFunction returningGroupsFunction)
