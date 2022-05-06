@@ -42,7 +42,8 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
         public ValueTask<Group> UpdateGroupAsync(Group group)
         {
-            throw new NotImplementedException();
+            var maybeGroup = this.storageBroker.SelectGroupByIdAsync(group.Id);
+            return this.storageBroker.UpdateGroupAsync(group);
         }
     }
 }
