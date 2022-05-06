@@ -104,5 +104,47 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfCreateAndUpdateDatesIsNotSameAndLogItAsync()
+        {
+            // given
+            int randomNumber = GetRandomNumber();
+            Group randomGroup = CreateRandomGroup();
+            Group invalidGroup = randomGroup;
+
+            invalidGroup.UpdatedDate =
+                invalidGroup.CreatedDate.AddDays(randomNumber);
+
+            var invalidGroupException =
+                new InvalidGroupException();
+
+            invalidGroupException.AddData(
+                key: nameof(Group.UpdatedDate),
+                values: $"Date is not the same as {nameof(Group.CreatedDate)}");
+
+            var expectedGroupValidationException =
+                new GroupValidationException(invalidGroupException);
+
+            // when
+            ValueTask<Group> addGroupTask =
+                this.groupService.CreateGroupAsync(invalidGroup);
+
+            // then
+            await Assert.ThrowsAsync<GroupValidationException>(() =>
+               addGroupTask.AsTask());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupAsync(It.IsAny<Group>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
