@@ -156,7 +156,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        public async Task ShouldThrowDependencyExceptionOnCreateIfDatabaseUpdateErrorOccursAndLogItAsync()
         {
             // given
             Group someGroup = CreateRandomGroup();

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.Groups;
 using Taarafo.Core.Models.Groups.Exceptions;
 using Xeptions;
@@ -53,6 +54,13 @@ namespace Taarafo.Core.Services.Foundations.Groups
                     new InvalidGroupReferenceException(foreignKeyConstraintConflictException);
 
                 throw CreateAndLogDependencyException(invalidGroupReferenceException);
+            }
+            catch (DbUpdateException databaseUpdateException)
+            {
+                var failedStorageGroupException =
+                    new FailedGroupStorageException(databaseUpdateException);
+
+                throw CreateAndLogDependencyException(failedStorageGroupException);
             }
         }
 
