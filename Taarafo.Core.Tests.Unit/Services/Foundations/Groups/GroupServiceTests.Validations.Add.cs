@@ -43,5 +43,66 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnCreateIfGroupIsInvalidAndLogItAsync(
+            string invalidText)
+        {
+            // given
+            var invalidGroup = new Group
+            {
+                Name = invalidText,
+                Description = invalidText
+            };
+
+            var invalidGroupException =
+                new InvalidGroupException();
+
+            invalidGroupException.AddData(
+                key: nameof(Group.Id),
+                values: "Id is required");
+
+            invalidGroupException.AddData(
+                key: nameof(Group.Name),
+                values: "Text is required");
+
+            invalidGroupException.AddData(
+                key: nameof(Group.Description),
+                values: "Text is required");
+
+            invalidGroupException.AddData(
+                key: nameof(Group.CreatedDate),
+                values: "Date is required");
+
+            invalidGroupException.AddData(
+                key: nameof(Group.UpdatedDate),
+                values: "Date is required");
+
+            var expectedGroupValidationException =
+                new GroupValidationException(invalidGroupException);
+
+            // when
+            ValueTask<Group> addGroupTask =
+                this.groupService.CreateGroupAsync(invalidGroup);
+
+            // then
+            await Assert.ThrowsAsync<GroupValidationException>(() =>
+                addGroupTask.AsTask());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupAsync(invalidGroup),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
