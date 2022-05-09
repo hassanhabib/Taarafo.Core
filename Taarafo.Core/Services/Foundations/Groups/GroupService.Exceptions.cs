@@ -38,13 +38,6 @@ namespace Taarafo.Core.Services.Foundations.Groups
             {
                 throw CreateAndLogValidationException(notFoundGroupException);
             }
-            catch (SqlException sqlException)
-            {
-                var failedGroupStorageException =
-                    new FailedGroupStorageException(sqlException);
-
-                throw CreateAndLogCriticalDependencyException(failedGroupStorageException);
-            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistGroupException =
