@@ -40,7 +40,13 @@ namespace Taarafo.Core.Services.Foundations.Groups
                 (Rule: IsInvalid(group.Name), Parameter: nameof(Group.Name)),
                 (Rule: IsInvalid(group.Description), Parameter: nameof(Group.Description)),
                 (Rule: IsInvalid(group.CreatedDate), Parameter: nameof(Group.CreatedDate)),
-                (Rule: IsInvalid(group.UpdatedDate), Parameter: nameof(Group.UpdatedDate)));
+                (Rule: IsInvalid(group.UpdatedDate), Parameter: nameof(Group.UpdatedDate)),
+                
+                (Rule: IsSame(
+                    firstDate: group.UpdatedDate,
+                    secondDate: group.CreatedDate,
+                    secondDateName: nameof(Group.CreatedDate)),
+                Parameter: nameof(Group.UpdatedDate)));
         }
 
         private static void ValidateGroupIsNotNull(Group group)
@@ -76,6 +82,15 @@ namespace Taarafo.Core.Services.Foundations.Groups
             {
                 Condition = firstDate != secondDate,
                 Message = $"Date is not the same as {secondDateName}"
+            };
+
+        private static dynamic IsSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
             };
 
         private dynamic IsNotRecent(DateTimeOffset date) => new

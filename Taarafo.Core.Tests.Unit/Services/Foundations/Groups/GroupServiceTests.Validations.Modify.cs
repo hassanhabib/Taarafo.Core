@@ -85,7 +85,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             invalidGroupException.AddData(
                 key: nameof(Group.UpdatedDate),
-                values: "Date is required");
+                values: new[] 
+                    {
+                        "Date is required",
+                        $"Date is the same as {nameof(Group.CreatedDate)}"
+                    });
 
             var expectedGroupValidationException =
                 new GroupValidationException(invalidGroupException);
@@ -127,10 +131,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             var expectedGroupValidationException =
                 new GroupValidationException(invalidGroupException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDateTime);
-
             // when
             ValueTask<Group> updateGroupTask =
                 this.groupService.UpdateGroupAsync(invalidGroup);
@@ -138,10 +138,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             // then
             await Assert.ThrowsAsync<GroupValidationException>(() =>
                updateGroupTask.AsTask());
-
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -152,7 +148,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 broker.InsertGroupAsync(It.IsAny<Group>()),
                     Times.Never);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
