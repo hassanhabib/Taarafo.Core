@@ -55,5 +55,43 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        {
+            //given
+            Guid someGroupId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedGroupServiceException =
+                new FailedGroupServiceException(serviceException);
+
+            var expectedGroupServiceException =
+                new GroupServiceException(failedGroupServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGroupByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            //when
+            ValueTask<Group> retrieveGroupByIdTask =
+                this.groupService.RetrieveGroupByIdAsync(someGroupId);
+
+            //then
+            await Assert.ThrowsAsync<GroupServiceException>(() =>
+                retrieveGroupByIdTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
