@@ -52,6 +52,13 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
                 throw CreateAndLogDependencyException(alreadyExistGroupException);
             }
+            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            {
+                var invalidGroupReferenceException =
+                    new InvalidGroupReferenceException(foreignKeyConstraintConflictException);
+
+                throw CreateAndLogDependencyException(invalidGroupReferenceException);
+            }
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedStorageGroupException =
