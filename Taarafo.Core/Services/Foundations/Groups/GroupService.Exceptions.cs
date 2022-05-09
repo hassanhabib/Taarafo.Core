@@ -34,6 +34,10 @@ namespace Taarafo.Core.Services.Foundations.Groups
             {
                 throw CreateAndLogValidationException(invalidGroupException);
             }
+            catch (NotFoundGroupException notFoundGroupException)
+            {
+                throw CreateAndLogValidationException(notFoundGroupException);
+            }
             catch (SqlException sqlException)
             {
                 var failedGroupStorageException =
