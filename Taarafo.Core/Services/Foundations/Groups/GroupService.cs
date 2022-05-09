@@ -40,11 +40,15 @@ namespace Taarafo.Core.Services.Foundations.Groups
         public IQueryable<Group> RetrieveAllGroups() =>
         TryCatch(() => this.storageBroker.SelectAllGroups());
 
-        public ValueTask<Group> UpdateGroupAsync(Group group)
+        public ValueTask<Group> UpdateGroupAsync(Group group)=>
+        TryCatch(async () =>
         {
-            var maybeGroup = this.storageBroker.SelectGroupByIdAsync(group.Id);
-            
-            return this.storageBroker.UpdateGroupAsync(group);
-        }
+            ValidateGroupOnModify(group);
+
+            var maybeGroup =
+                await this.storageBroker.SelectGroupByIdAsync(group.Id);
+
+            return await this.storageBroker.UpdateGroupAsync(group);
+        });
     }
 }

@@ -31,6 +31,11 @@ namespace Taarafo.Core.Services.Foundations.Groups
                 (Rule: IsNotRecent(group.CreatedDate), Parameter: nameof(Group.CreatedDate)));
         }
 
+        private void ValidateGroupOnModify(Group group)
+        {
+            throw new NotImplementedException();
+        }
+
         private static void ValidateGroupIsNotNull(Group group)
         {
             if (group is null)
