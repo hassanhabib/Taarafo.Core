@@ -49,5 +49,75 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnUpdateIfGroupIsInvalidAndLogItAsync(
+            string invalidText)
+        {
+            // given
+            var invalidGroup = new Group
+            {
+                Name = invalidText,
+                Description = invalidText
+            };
+
+            var invalidGroupException =
+                new InvalidGroupException();
+
+            invalidGroupException.AddData(
+                key: nameof(Group.Id),
+                values: "Id is required");
+
+            invalidGroupException.AddData(
+                key: nameof(Group.Name),
+                values: "Text is required");
+
+            invalidGroupException.AddData(
+                key: nameof(Group.Description),
+                values: "Text is required");
+
+            invalidGroupException.AddData(
+                key: nameof(Group.CreatedDate),
+                values: "Date is required");
+
+            invalidGroupException.AddData(
+                key: nameof(Group.UpdatedDate),
+                values: "Date is required");
+
+            var expectedGroupValidationException =
+                new GroupValidationException(invalidGroupException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(GetRandomDateTime);
+
+            // when
+            ValueTask<Group> updateGroupTask =
+                this.groupService.UpdateGroupAsync(invalidGroup);
+
+            // then
+            await Assert.ThrowsAsync<GroupValidationException>(() =>
+                updateGroupTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateGroupAsync(invalidGroup),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
