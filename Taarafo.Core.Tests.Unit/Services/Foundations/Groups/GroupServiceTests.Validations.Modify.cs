@@ -151,5 +151,59 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [MemberData(nameof(MinutesBeforeOrAfter))]
+        public async Task ShouldThrowValidationExceptionOnUpdateIfUpdatedDateIsNotRecentAndLogItAsync(int minutes)
+        {
+            // given
+            DateTimeOffset dateTime = GetRandomDateTimeOffset();
+            Group randomGroup = CreateRandomGroup(dateTime);
+            Group inputGroup = randomGroup;
+            inputGroup.UpdatedDate = dateTime.AddMinutes(minutes);
+
+            var invalidGroupException =
+                new InvalidGroupException();
+
+            invalidGroupException.AddData(
+                key: nameof(Group.UpdatedDate),
+                values: "Date is not recent");
+
+            var expectedGroupValidatonException =
+                new GroupValidationException(invalidGroupException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(dateTime);
+
+            // when
+            ValueTask<Group> modifyGroupTask =
+                this.groupService.UpdateGroupAsync(inputGroup);
+
+            // then
+            await Assert.ThrowsAsync<GroupValidationException>(() =>
+                modifyGroupTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupValidatonException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
+                    Times.Never);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateGroupAsync(It.IsAny<Group>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
