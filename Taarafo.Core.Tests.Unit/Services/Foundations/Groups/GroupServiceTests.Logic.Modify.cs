@@ -28,6 +28,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             Group expectedGroup = updatedGroup.DeepClone();
             Guid inputGroupId =inputGroup.Id;
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDate);
+
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupByIdAsync(inputGroupId))
                         .ReturnsAsync(storageGroup);
@@ -43,6 +47,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             // then
             actualGroup.Should().BeEquivalentTo(expectedGroup);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectGroupByIdAsync(inputGroupId),
                     Times.Once);
@@ -51,6 +59,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 broker.UpdateGroupAsync(inputGroup),
                     Times.Once);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }

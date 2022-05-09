@@ -46,7 +46,9 @@ namespace Taarafo.Core.Services.Foundations.Groups
                     firstDate: group.UpdatedDate,
                     secondDate: group.CreatedDate,
                     secondDateName: nameof(Group.CreatedDate)),
-                Parameter: nameof(Group.UpdatedDate)));
+                Parameter: nameof(Group.UpdatedDate)),
+                
+                (Rule: IsNotRecent(group.UpdatedDate), Parameter: nameof(Group.UpdatedDate)));
         }
 
         private static void ValidateGroupIsNotNull(Group group)
