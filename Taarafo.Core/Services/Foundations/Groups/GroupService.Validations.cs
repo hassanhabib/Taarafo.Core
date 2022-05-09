@@ -34,6 +34,13 @@ namespace Taarafo.Core.Services.Foundations.Groups
         private void ValidateGroupOnModify(Group group)
         {
             ValidateGroupIsNotNull(group);
+
+            Validate(
+                (Rule: IsInvalid(group.Id), Parameter: nameof(Group.Id)),
+                (Rule: IsInvalid(group.Name), Parameter: nameof(Group.Name)),
+                (Rule: IsInvalid(group.Description), Parameter: nameof(Group.Description)),
+                (Rule: IsInvalid(group.CreatedDate), Parameter: nameof(Group.CreatedDate)),
+                (Rule: IsInvalid(group.UpdatedDate), Parameter: nameof(Group.UpdatedDate)));
         }
 
         private static void ValidateGroupIsNotNull(Group group)
