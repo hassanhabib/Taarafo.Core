@@ -167,5 +167,52 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnUpdateIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        {
+            // given
+            Group randomGroup = CreateRandomGroup();
+            var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
+
+            var lockedGroupException =
+                new LockedGroupException(databaseUpdateConcurrencyException);
+
+            var expectedGroupDependencyValidationException =
+                new GroupDependencyException(lockedGroupException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(databaseUpdateConcurrencyException);
+
+            // when
+            ValueTask<Group> modifyGroupTask =
+                this.groupService.UpdateGroupAsync(randomGroup);
+
+            // then
+            await Assert.ThrowsAsync<GroupDependencyException>(() =>
+                modifyGroupTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupByIdAsync(randomGroup.Id),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateGroupAsync(randomGroup),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
