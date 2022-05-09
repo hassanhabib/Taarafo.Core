@@ -59,13 +59,6 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
                 throw CreateAndLogDependencyException(invalidGroupReferenceException);
             }
-            catch (DbUpdateException databaseUpdateException)
-            {
-                var failedStorageGroupException =
-                    new FailedGroupStorageException(databaseUpdateException);
-
-                throw CreateAndLogDependencyException(failedStorageGroupException);
-            }
             catch (Exception serviceException)
             {
                 var failedServiceGroupException =
