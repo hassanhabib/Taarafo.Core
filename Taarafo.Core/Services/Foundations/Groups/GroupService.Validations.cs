@@ -59,6 +59,11 @@ namespace Taarafo.Core.Services.Foundations.Groups
             }
         }
 
+        private void ValidateStorageGroup(Group maybeGroup, Guid groupId)
+        {
+            throw new NotImplementedException();
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,

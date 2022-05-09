@@ -48,6 +48,8 @@ namespace Taarafo.Core.Services.Foundations.Groups
             var maybeGroup =
                 await this.storageBroker.SelectGroupByIdAsync(group.Id);
 
+            ValidateStorageGroup(maybeGroup, group.Id);
+
             return await this.storageBroker.UpdateGroupAsync(group);
         });
     }

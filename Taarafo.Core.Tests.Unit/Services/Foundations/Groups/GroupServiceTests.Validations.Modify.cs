@@ -224,5 +224,56 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfGroupDoesNotExistAndLogItAsync()
+        {
+            // given
+            int randomNegativeMinutes = GetRandomNegativeNumber();
+            DateTimeOffset dateTime = GetRandomDateTimeOffset();
+            Group randomGroup = CreateRandomGroup(dateTime);
+            Group nonExistGroup = randomGroup;
+            nonExistGroup.CreatedDate = dateTime.AddMinutes(randomNegativeMinutes);
+            Group nullGroup = null;
+
+            var notFoundGroupException =
+                new NotFoundGroupException(nonExistGroup.Id);
+
+            var expectedGroupValidationException =
+                new GroupValidationException(notFoundGroupException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(dateTime);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGroupByIdAsync(nonExistGroup.Id))
+                    .ReturnsAsync(nullGroup);
+
+            // when 
+            ValueTask<Group> modifyGroupTask =
+                this.groupService.UpdateGroupAsync(nonExistGroup);
+
+            // then
+            await Assert.ThrowsAsync<GroupValidationException>(() =>
+                modifyGroupTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupByIdAsync(nonExistGroup.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupValidationException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
