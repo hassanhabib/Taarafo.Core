@@ -33,7 +33,7 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
         private void ValidateGroupOnModify(Group group)
         {
-            throw new NotImplementedException();
+            ValidateGroupIsNotNull(group);
         }
 
         private static void ValidateGroupIsNotNull(Group group)
