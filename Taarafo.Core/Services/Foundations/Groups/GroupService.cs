@@ -53,12 +53,15 @@ namespace Taarafo.Core.Services.Foundations.Groups
             return await this.storageBroker.UpdateGroupAsync(group);
         });
 
-        public async ValueTask<Group> RemoveGroupByIdAsync(Guid groupId)
+        public ValueTask<Group> RemoveGroupByIdAsync(Guid groupId) =>
+        TryCatch(async () =>
         {
-            var maybeGroup =
+            ValidateGroupId(groupId);
+
+            Group someGroup =
                 await this.storageBroker.SelectGroupByIdAsync(groupId);
 
-            return await this.storageBroker.DeleteGroupAsync(maybeGroup);
-        }
+            return await this.storageBroker.DeleteGroupAsync(someGroup);
+        });
     }
 }
