@@ -50,6 +50,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.storageBrokerMock.Verify(broker =>
                 broker.DeleteGroupAsync(It.IsAny<Group>()),
                     Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
