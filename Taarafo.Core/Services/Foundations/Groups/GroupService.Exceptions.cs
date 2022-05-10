@@ -59,13 +59,6 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
                 throw CreateAndLogDependencyException(invalidGroupReferenceException);
             }
-            catch (DbUpdateConcurrencyException databaseUpdateConcurrencyException)
-            {
-                var lockedGroupException =
-                    new LockedGroupException(databaseUpdateConcurrencyException);
-
-                throw CreateAndLogDependencyException(lockedGroupException);
-            }
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedStorageGroupException =

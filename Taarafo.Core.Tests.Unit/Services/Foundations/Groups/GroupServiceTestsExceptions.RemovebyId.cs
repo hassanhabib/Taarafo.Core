@@ -58,5 +58,50 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationOnRemoveIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid someGroupId = Guid.NewGuid();
+
+            var databaseUpdateConcurrencyException =
+                new DbUpdateConcurrencyException();
+
+            var lockedGroupException =
+                new LockedGroupException(databaseUpdateConcurrencyException);
+
+            var expectedGroupDependencyValidationException =
+                new GroupDependencyException(lockedGroupException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGroupByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(databaseUpdateConcurrencyException);
+
+            // when
+            ValueTask<Group> removeGroupByIdTask =
+                this.groupService.RemoveGroupByIdAsync(someGroupId);
+
+            // then
+            await Assert.ThrowsAsync<GroupDependencyException>(() =>
+                removeGroupByIdTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeleteGroupAsync(It.IsAny<Group>()),
+                    Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
