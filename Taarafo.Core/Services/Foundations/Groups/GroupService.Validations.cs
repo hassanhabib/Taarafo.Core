@@ -68,7 +68,7 @@ namespace Taarafo.Core.Services.Foundations.Groups
         }
 
         private void ValidateGroupId(Guid groupId) =>
-            throw new NotImplementedException();
+            Validate((Rule: IsInvalid(groupId), Parameter: nameof(Group.Id)));
 
         private static dynamic IsInvalid(Guid id) => new
         {
