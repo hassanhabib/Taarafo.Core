@@ -61,7 +61,10 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
         private void ValidateStorageGroup(Group maybeGroup, Guid groupId)
         {
-            throw new NotImplementedException();
+            if (maybeGroup is null)
+            {
+                throw new NotFoundGroupException(groupId);
+            }
         }
 
         private void ValidateGroupId(Guid groupId) =>
