@@ -55,5 +55,48 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRemoveGroupByIdIsNotFoundAndLogItAsync()
+        {
+            // given
+            Guid inputGroupId = Guid.NewGuid();
+            Group noGroup = null;
+
+            var notFoundGroupException =
+                new NotFoundGroupException(inputGroupId);
+
+            var expectedGroupValidationException =
+                new GroupValidationException(notFoundGroupException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGroupByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noGroup);
+
+            // when
+            ValueTask<Group> removeGroupByIdTask =
+                this.groupService.RemoveGroupByIdAsync(inputGroupId);
+
+            // then
+            await Assert.ThrowsAsync<GroupValidationException>(() =>
+                removeGroupByIdTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeleteGroupAsync(It.IsAny<Group>()),
+                    Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }

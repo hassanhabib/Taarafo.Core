@@ -61,6 +61,8 @@ namespace Taarafo.Core.Services.Foundations.Groups
             Group someGroup =
                 await this.storageBroker.SelectGroupByIdAsync(groupId);
 
+            ValidateStorageGroup(someGroup, groupId);
+
             return await this.storageBroker.DeleteGroupAsync(someGroup);
         });
     }
