@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.Groups;
@@ -14,5 +15,6 @@ namespace Taarafo.Core.Services.Foundations.Groups
         ValueTask<Group> CreateGroupAsync(Group group);
         IQueryable<Group> RetrieveAllGroups();
         ValueTask<Group> UpdateGroupAsync(Group group);
+        ValueTask<Group> RemoveGroupByIdAsync(Guid groupId);
     }
 }
