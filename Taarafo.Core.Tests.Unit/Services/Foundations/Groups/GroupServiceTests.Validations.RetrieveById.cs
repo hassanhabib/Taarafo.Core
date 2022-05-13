@@ -4,9 +4,6 @@
 // ---------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Moq;
 using Taarafo.Core.Models.Groups;
@@ -21,7 +18,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
         {
             //given
-            var invalidGroupId = Guid.Empty;
+            Guid invalidGroupId = Guid.Empty;
 
             var invalidGroupException =
                 new InvalidGroupException();

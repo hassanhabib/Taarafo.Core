@@ -7,8 +7,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using Taarafo.Core.Brokers.Loggings;
-using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Groups;
 using Taarafo.Core.Models.Groups.Exceptions;
 using Xeptions;
@@ -74,7 +72,7 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
         private GroupDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
         {
-            var groupDependencyException= new GroupDependencyException(exception);
+            var groupDependencyException = new GroupDependencyException(exception);
             this.loggingBroker.LogCritical(groupDependencyException);
 
             return groupDependencyException;
@@ -87,7 +85,7 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
             return groupServiceException;
         }
-        
+
         private GroupValidationException CreateAndLogValidationException(
             Xeption exception)
         {

@@ -5,7 +5,6 @@
 
 using System.Linq;
 using FluentAssertions;
-using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.Groups;
 using Xunit;

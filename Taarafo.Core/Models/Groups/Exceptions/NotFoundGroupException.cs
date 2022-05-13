@@ -11,7 +11,7 @@ namespace Taarafo.Core.Models.Groups.Exceptions
     public class NotFoundGroupException : Xeption
     {
         public NotFoundGroupException(Guid groupId)
-            : base(message: $"Could not find the group with id: {groupId}.") 
+            : base(message: $"Could not find the group with id: {groupId}.")
         { }
     }
 }

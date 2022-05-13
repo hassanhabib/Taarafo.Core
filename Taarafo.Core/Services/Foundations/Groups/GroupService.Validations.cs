@@ -11,9 +11,6 @@ namespace Taarafo.Core.Services.Foundations.Groups
 {
     public partial class GroupService
     {
-        public void ValidateGroupId(Guid groupId) =>
-            Validate((Rule: IsInvalid(groupId), Parameter: nameof(Group.Id)));
-
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidGroupException = new InvalidGroupException();
@@ -44,5 +41,8 @@ namespace Taarafo.Core.Services.Foundations.Groups
                 throw new NotFoundGroupException(groupId);
             }
         }
+
+        public void ValidateGroupId(Guid groupId) =>
+            Validate((Rule: IsInvalid(groupId), Parameter: nameof(Group.Id)));
     }
 }

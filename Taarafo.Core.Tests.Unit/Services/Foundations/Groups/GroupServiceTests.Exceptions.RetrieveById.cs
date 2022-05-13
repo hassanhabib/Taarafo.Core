@@ -4,9 +4,6 @@
 // ---------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -25,10 +22,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             Guid someGroupId = Guid.NewGuid();
             SqlException sqlException = GetSqlException();
 
-            var failedGroupStorageException = 
+            var failedGroupStorageException =
                 new FailedGroupStorageException(sqlException);
 
-            var expectedGroupDependencyException = 
+            var expectedGroupDependencyException =
                 new GroupDependencyException(failedGroupStorageException);
 
             this.storageBrokerMock.Setup(broker =>
