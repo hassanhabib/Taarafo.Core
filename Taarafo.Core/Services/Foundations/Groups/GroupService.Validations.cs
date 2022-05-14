@@ -11,6 +11,23 @@ namespace Taarafo.Core.Services.Foundations.Groups
 {
     public partial class GroupService
     {
+        public void ValidateGroupId(Guid groupId) =>
+            Validate((Rule: IsInvalid(groupId), Parameter: nameof(Group.Id)));
+
+        private static dynamic IsInvalid(Guid id) => new
+        {
+            Condition = id == Guid.Empty,
+            Message = "Id is required"
+        };
+
+        private static void ValidateStorageGroup(Group maybeGroup, Guid groupId)
+        {
+            if (maybeGroup is null)
+            {
+                throw new NotFoundGroupException(groupId);
+            }
+        }
+
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidGroupException = new InvalidGroupException();
@@ -27,22 +44,5 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
             invalidGroupException.ThrowIfContainsErrors();
         }
-
-        private static dynamic IsInvalid(Guid id) => new
-        {
-            Condition = id == Guid.Empty,
-            Message = "Id is required"
-        };
-
-        private static void ValidateStorageGroup(Group maybeGroup, Guid groupId)
-        {
-            if (maybeGroup is null)
-            {
-                throw new NotFoundGroupException(groupId);
-            }
-        }
-
-        public void ValidateGroupId(Guid groupId) =>
-            Validate((Rule: IsInvalid(groupId), Parameter: nameof(Group.Id)));
     }
 }
