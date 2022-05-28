@@ -56,6 +56,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 && (actualException.InnerException as Xeption).DataEquals(expectedException.InnerException.Data);
         }
 
+        private static Group CreateRandomGroup() =>
+            CreateGroupFiller().Create();
+
         private static Filler<Group> CreateGroupFiller()
         {
             var filler = new Filler<Group>();
