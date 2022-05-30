@@ -3,7 +3,6 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -15,22 +14,20 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
     public partial class PostImpressionService : IPostImpressionService
     {
         private readonly IStorageBroker storageBroker;
-        private readonly ILoggingBroker loggingBroker;
         private readonly IDateTimeBroker dateTimeBroker;
+        private readonly ILoggingBroker loggingBroker;
 
         public PostImpressionService(
             IStorageBroker storageBroker,
-            ILoggingBroker loggingBroker,
-            IDateTimeBroker dateTimeBroker)
+            IDateTimeBroker dateTimeBroker,
+            ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
-            this.loggingBroker = loggingBroker;
             this.dateTimeBroker = dateTimeBroker;
+            this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<PostImpression> AddPostImpressions(PostImpression postImpression)
-        {
-            throw new System.NotImplementedException();
-        }
+        public async ValueTask<PostImpression> AddPostImpressions(PostImpression postImpression) => 
+            await this.storageBroker.InsertPostImpressionAsync(postImpression);
     }
 }
