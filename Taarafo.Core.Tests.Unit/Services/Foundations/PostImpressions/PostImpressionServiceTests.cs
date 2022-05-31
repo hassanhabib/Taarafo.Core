@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq.Expressions;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -11,6 +12,7 @@ using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Services.Foundations.PostImpressions;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 {
@@ -38,6 +40,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
         private static PostImpression CreateRandomPostImpression(DateTimeOffset dates) =>
             CreatePostImpressionFiller(dates).Create();
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException)
+        {
+            return actualException =>
+                actualException.Message == expectedException.Message
+                && actualException.InnerException.Message == expectedException.InnerException.Message
+                && (actualException.InnerException as Xeption).DataEquals(expectedException.InnerException.Data);
+        }
 
         private static Filler<PostImpression> CreatePostImpressionFiller(DateTimeOffset dates)
         {
