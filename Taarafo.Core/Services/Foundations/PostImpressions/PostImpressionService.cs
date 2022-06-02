@@ -27,7 +27,12 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<PostImpression> AddPostImpressions(PostImpression postImpression) => 
-            await this.storageBroker.InsertPostImpressionAsync(postImpression);
+        public ValueTask<PostImpression> AddPostImpressions(PostImpression postImpression) => 
+        TryCatch(async () =>
+        {
+            ValidatePostImpressionOnAdd(postImpression);
+
+            return await this.storageBroker.InsertPostImpressionAsync(postImpression);
+        });
     }
 }
