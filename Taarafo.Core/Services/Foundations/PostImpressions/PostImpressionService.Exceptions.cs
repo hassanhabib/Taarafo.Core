@@ -24,6 +24,10 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             {
                 throw CreateAndLogValidationException(nullPostImpressionException);
             }
+            catch (InvalidPostImpressionException invalidPostImpressionException)
+            {
+                throw CreateAndLogValidationException(invalidPostImpressionException);
+            }
         }
 
         private PostImpressionValidationException CreateAndLogValidationException(Xeption exception)

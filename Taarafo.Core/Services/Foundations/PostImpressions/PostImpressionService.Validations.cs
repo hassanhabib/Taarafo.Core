@@ -25,7 +25,6 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                 (Rule: IsInvalid(postImpression.Profile), Parameter: nameof(PostImpression.Profile)),
                 (Rule: IsInvalid(postImpression.CreatedDate), Parameter: nameof(PostImpression.CreatedDate)),
                 (Rule: IsInvalid(postImpression.UpdatedDate), Parameter: nameof(PostImpression.UpdatedDate)),
-                //(Rule: IsInvalid(postImpression.Impression), Parameter: nameof(PostImpression.Impression)),
 
                 (Rule: IsNotSame(
                     firstDate: postImpression.UpdatedDate,
