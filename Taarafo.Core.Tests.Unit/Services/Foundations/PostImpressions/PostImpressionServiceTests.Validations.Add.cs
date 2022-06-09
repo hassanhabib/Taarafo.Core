@@ -109,5 +109,47 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfCreateAndUpdateDatesIsNotSameAndLogItAsync()
+        {
+            //given
+            int randomNumber = GetRandomNumber();
+            PostImpression randomPostImpression = CreateRandomPostImpression();
+            PostImpression invalidPostImpression = randomPostImpression;
+
+            invalidPostImpression.UpdatedDate =
+                invalidPostImpression.CreatedDate.AddDays(randomNumber);
+
+            var invalidPostImpressionException =
+                new InvalidPostImpressionException();
+
+            invalidPostImpressionException.AddData(
+                key: nameof(PostImpression.UpdatedDate),
+                values: $"Date is not the same as {nameof(PostImpression.CreatedDate)}.");
+
+            var expectedPostImpressionValidationException =
+                new PostImpressionValidationException(invalidPostImpressionException);
+
+            //when
+            ValueTask<PostImpression> addPostImpressionTask =
+                this.postImpressionService.AddPostImpressions(invalidPostImpression);
+
+            //then
+            await Assert.ThrowsAsync<PostImpressionValidationException>(() =>
+                addPostImpressionTask.AsTask());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostImpressionValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }

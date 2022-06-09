@@ -26,11 +26,11 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                 (Rule: IsInvalid(postImpression.CreatedDate), Parameter: nameof(PostImpression.CreatedDate)),
                 (Rule: IsInvalid(postImpression.UpdatedDate), Parameter: nameof(PostImpression.UpdatedDate)),
 
-                (Rule: IsNotSame(
+                /*(Rule: IsNotSame(
                     firstDate: postImpression.UpdatedDate,
                     secondDate: postImpression.CreatedDate,
                     secondDateName: nameof(PostImpression.CreatedDate)),
-                Parameter: nameof(PostImpression.UpdatedDate)),
+                Parameter: nameof(PostImpression.UpdatedDate)),*/
 
                 (Rule: IsNotRecent(postImpression.CreatedDate), Parameter: nameof(PostImpression.CreatedDate)));
         }
@@ -67,14 +67,14 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             Message = "Profile is required."
         };
 
-        private static dynamic IsNotSame(
+        /*private static dynamic IsNotSame(
             DateTimeOffset firstDate,
             DateTimeOffset secondDate,
             string secondDateName) => new
             {
                 Condition = firstDate != secondDate,
                 Message = $"Date is not the same as {secondDateName}."
-            };
+            };*/
 
         private dynamic IsNotRecent(DateTimeOffset date) => new
         {
