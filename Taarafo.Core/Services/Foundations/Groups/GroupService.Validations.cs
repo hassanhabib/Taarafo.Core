@@ -38,6 +38,8 @@ namespace Taarafo.Core.Services.Foundations.Groups
                 throw new NullGroupException();
             }
         }
+        public void ValidateGroupId(Guid groupId) =>
+            Validate((Rule: IsInvalid(groupId), Parameter: nameof(Group.Id)));
 
         private static dynamic IsInvalid(Guid id) => new
         {
@@ -81,6 +83,14 @@ namespace Taarafo.Core.Services.Foundations.Groups
             TimeSpan oneMinute = TimeSpan.FromMinutes(1);
 
             return timeDifference.Duration() > oneMinute;
+        }
+        
+        private static void ValidateStorageGroup(Group maybeGroup, Guid groupId)
+        {
+            if (maybeGroup is null)
+            {
+                throw new NotFoundGroupException(groupId);
+            }
         }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
