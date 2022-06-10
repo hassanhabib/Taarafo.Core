@@ -13,6 +13,7 @@ using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Services.Foundations.PostImpressions;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 {
@@ -34,6 +35,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
+
+        public static TheoryData MinutesBeforeOrAfter()
+        {
+            int randomNumber = GetRandomNumber();
+            int randomNegativeNumber = GetRandomNegativeNumber();
+
+            return new TheoryData<int>
+            {
+                randomNumber,
+                randomNegativeNumber
+            };
+        }
+
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
