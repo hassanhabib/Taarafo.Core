@@ -9,7 +9,7 @@ using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.PostImpressions;
 
-namespace Taarafo.Core.Services.Foundations.PostImpressions 
+namespace Taarafo.Core.Services.Foundations.PostImpressions
 {
     public partial class PostImpressionService : IPostImpressionService
     {
@@ -27,7 +27,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<PostImpression> AddPostImpressions(PostImpression postImpression) => 
+        public ValueTask<PostImpression> AddPostImpressions(PostImpression postImpression) =>
         TryCatch(async () =>
         {
             ValidatePostImpressionOnAdd(postImpression);

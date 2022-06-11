@@ -7,7 +7,6 @@ using System;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
 using Taarafo.Core.Models.Posts;
-using Taarafo.Core.Models.Posts.Exceptions;
 using Taarafo.Core.Models.Profiles;
 
 namespace Taarafo.Core.Services.Foundations.PostImpressions
@@ -37,7 +36,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
         private static void ValidatePostImpressionIsNotNull(PostImpression postImpression)
         {
-            if(postImpression is null)
+            if (postImpression is null)
             {
                 throw new NullPostImpressionException();
             }

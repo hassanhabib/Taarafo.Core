@@ -13,7 +13,7 @@ namespace Taarafo.Core.Migrations
     public partial class AddPostImpressionModel : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
-        {            
+        {
             migrationBuilder.CreateTable(
                 name: "PostImpressions",
                 columns: table => new

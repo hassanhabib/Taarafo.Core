@@ -60,7 +60,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         private static int GetRandomNumber() =>
             new IntRange(min: 1, max: 10).GetValue();
 
-        private static PostImpression  CreateRandomPostImpression() =>
+        private static PostImpression CreateRandomPostImpression() =>
             CreatePostImpressionFiller(dates: GetRandomDateTimeOffset()).Create();
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException)
