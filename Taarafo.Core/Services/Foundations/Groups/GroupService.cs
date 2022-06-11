@@ -3,7 +3,9 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Groups;
@@ -25,5 +27,18 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
         public IQueryable<Group> RetrieveAllGroups() =>
         TryCatch(() => this.storageBroker.SelectAllGroups());
+
+        public ValueTask<Group> RetrieveGroupByIdAsync(Guid groupId) =>
+        TryCatch(async () =>
+        {
+            ValidateGroupId(groupId);
+
+            Group maybeGroup = await this.storageBroker
+                .SelectGroupByIdAsync(groupId);
+
+            ValidateStorageGroup(maybeGroup, groupId);
+
+            return maybeGroup;
+        });
     }
 }

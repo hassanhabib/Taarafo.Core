@@ -3,7 +3,9 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Taarafo.Core.Models.Groups;
 
 namespace Taarafo.Core.Services.Foundations.Groups
@@ -11,5 +13,6 @@ namespace Taarafo.Core.Services.Foundations.Groups
     public interface IGroupService
     {
         IQueryable<Group> RetrieveAllGroups();
+        ValueTask<Group> RetrieveGroupByIdAsync(Guid groupId);
     }
 }
