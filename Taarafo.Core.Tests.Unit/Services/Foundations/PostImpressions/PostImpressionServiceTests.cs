@@ -5,6 +5,8 @@
 
 using System;
 using System.Linq.Expressions;
+using System.Runtime.Serialization;
+using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -62,6 +64,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
         private static PostImpression CreateRandomPostImpression() =>
             CreatePostImpressionFiller(dates: GetRandomDateTimeOffset()).Create();
+
+        private static SqlException GetSqlException() =>
+            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException)
         {
