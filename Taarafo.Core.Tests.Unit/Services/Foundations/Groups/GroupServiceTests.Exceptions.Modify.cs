@@ -36,7 +36,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> modifyGroupTask =
-                this.groupService.UpdateGroupAsync(randomGroup);
+                this.groupService.ModifyGroupAsync(randomGroup);
 
             // then
             await Assert.ThrowsAsync<GroupDependencyException>(() =>
@@ -51,7 +51,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                     Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(randomGroup),
+                broker.ModifyGroupAsync(randomGroup),
                     Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -68,17 +68,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         public async void ShouldThrowValidationExceptionOnUpdateIfReferenceErrorOccursAndLogItAsync()
         {
             // given
-            Group someGroup =
-                CreateRandomGroup();
-
-            Group foreignKeyConflictedGroup =
-                someGroup;
-
-            string randomMessage =
-                GetRandomMessage();
-
-            string exceptionMessage =
-                randomMessage;
+            Group someGroup = CreateRandomGroup();
+            Group foreignKeyConflictedGroup = someGroup;
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
 
             var foreignKeyConstraintConflictException =
                 new ForeignKeyConstraintConflictException(exceptionMessage);
@@ -95,7 +88,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> modifyGroupTask =
-                this.groupService.UpdateGroupAsync(foreignKeyConflictedGroup);
+                this.groupService.ModifyGroupAsync(foreignKeyConflictedGroup);
 
             // then
             await Assert.ThrowsAsync<GroupDependencyException>(() =>
@@ -114,7 +107,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(foreignKeyConflictedGroup),
+                broker.ModifyGroupAsync(foreignKeyConflictedGroup),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -141,7 +134,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> modifyGroupTask =
-                this.groupService.UpdateGroupAsync(randomGroup);
+                this.groupService.ModifyGroupAsync(randomGroup);
 
             // then
             await Assert.ThrowsAsync<GroupDependencyException>(() =>
@@ -161,7 +154,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(randomGroup),
+                broker.ModifyGroupAsync(randomGroup),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -188,7 +181,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> modifyGroupTask =
-                this.groupService.UpdateGroupAsync(randomGroup);
+                this.groupService.ModifyGroupAsync(randomGroup);
 
             // then
             await Assert.ThrowsAsync<GroupDependencyException>(() =>
@@ -208,7 +201,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(randomGroup),
+                broker.ModifyGroupAsync(randomGroup),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -235,7 +228,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> modifyGroupTask =
-                this.groupService.UpdateGroupAsync(randomGroup);
+                this.groupService.ModifyGroupAsync(randomGroup);
 
             // then
             await Assert.ThrowsAsync<GroupServiceException>(() =>
@@ -255,7 +248,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(randomGroup),
+                broker.ModifyGroupAsync(randomGroup),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

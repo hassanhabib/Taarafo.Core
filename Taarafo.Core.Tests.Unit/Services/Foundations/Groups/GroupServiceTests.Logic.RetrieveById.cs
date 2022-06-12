@@ -3,8 +3,8 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System.Linq;
 using FluentAssertions;
+using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.Groups;
 using Xunit;
@@ -14,26 +14,26 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
     public partial class GroupServiceTests
     {
         [Fact]
-        public void ShouldRetrieveAllGroups()
+        public async void ShouldRetrieveGroupByIdAsync()
         {
-            // given
-            IQueryable<Group> randomGroups = CreateRandomGroups();
-            IQueryable<Group> storageGroups = randomGroups;
-            IQueryable<Group> expectedGroups = storageGroups;
+            //given
+            Group someGroup = CreateRandomGroup();
+            Group storageGroup = someGroup;
+            Group expectedGroup = storageGroup.DeepClone();
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllGroups())
-                    .Returns(storageGroups);
+                broker.SelectGroupByIdAsync(someGroup.Id))
+                    .ReturnsAsync(storageGroup);
 
-            // when
-            IQueryable<Group> actualGroups =
-                this.groupService.RetrieveAllGroups();
+            //when
+            Group actualGroup =
+                await this.groupService.RetrieveGroupByIdAsync(someGroup.Id);
 
-            // then
-            actualGroups.Should().BeEquivalentTo(expectedGroups);
+            //then
+            actualGroup.Should().BeEquivalentTo(expectedGroup);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllGroups(),
+                broker.SelectGroupByIdAsync(someGroup.Id),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();

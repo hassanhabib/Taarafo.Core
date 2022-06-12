@@ -95,12 +95,12 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
                 throw CreateAndLogCriticalDependencyException(failedGroupStorageException);
             }
-            catch(Exception exception)
+            catch (Exception serviceException)
             {
-                var failedGroupServiceException =
-                    new FailedGroupServiceException(exception);
+                var failedServiceGroupException =
+                    new FailedGroupServiceException(serviceException);
 
-                throw CreateAndLogServiceException(failedGroupServiceException);
+                throw CreateAndLogServiceException(failedServiceGroupException);
             }
         }
 
@@ -114,7 +114,7 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
         private GroupDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
         {
-            var groupDependencyException= new GroupDependencyException(exception);
+            var groupDependencyException = new GroupDependencyException(exception);
             this.loggingBroker.LogCritical(groupDependencyException);
 
             return groupDependencyException;

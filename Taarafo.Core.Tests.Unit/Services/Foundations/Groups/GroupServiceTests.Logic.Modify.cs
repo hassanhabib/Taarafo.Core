@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
     public partial class GroupServiceTests
     {
         [Fact]
-        public async Task ShouldUpdateGroupAsync()
+        public async Task ShouldModifyGroupAsync()
         {
             // given
             DateTimeOffset randomDate = GetRandomDateTimeOffset();
@@ -37,12 +37,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                         .ReturnsAsync(storageGroup);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.UpdateGroupAsync(inputGroup))
+                broker.ModifyGroupAsync(inputGroup))
                         .ReturnsAsync(updatedGroup);
 
             // when
             Group actualGroup =
-                await this.groupService.UpdateGroupAsync(inputGroup);
+                await this.groupService.ModifyGroupAsync(inputGroup);
 
             // then
             actualGroup.Should().BeEquivalentTo(expectedGroup);
@@ -56,7 +56,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(inputGroup),
+                broker.ModifyGroupAsync(inputGroup),
                     Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

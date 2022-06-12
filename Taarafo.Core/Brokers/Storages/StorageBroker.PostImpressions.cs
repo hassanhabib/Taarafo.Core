@@ -16,10 +16,10 @@ namespace Taarafo.Core.Brokers.Storages
 
         public async ValueTask<PostImpression> InsertPostImpressionAsync(PostImpression postImpression)
         {
-            using var broker =                
+            using var broker =
                 new StorageBroker(this.configuration);
 
-            EntityEntry<PostImpression> postImpressionEntityEntry = 
+            EntityEntry<PostImpression> postImpressionEntityEntry =
                 await broker.PostImpressions.AddAsync(postImpression);
 
             await broker.SaveChangesAsync();

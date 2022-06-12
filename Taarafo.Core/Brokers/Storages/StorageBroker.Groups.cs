@@ -45,10 +45,10 @@ namespace Taarafo.Core.Brokers.Storages
             return await broker.Groups.FindAsync(groupId);
         }
 
-        public async ValueTask<Group> UpdateGroupAsync(Group group)
+        public async ValueTask<Group> ModifyGroupAsync(Group group)
         {
-           using var broker =
-                new StorageBroker(this.configuration);
+            using var broker =
+                 new StorageBroker(this.configuration);
 
             EntityEntry<Group> groupEntityEntry =
                 broker.Groups.Update(group);
@@ -56,7 +56,7 @@ namespace Taarafo.Core.Brokers.Storages
             await broker.SaveChangesAsync();
 
             return groupEntityEntry.Entity;
-  
+
         }
 
         public async ValueTask<Group> DeleteGroupAsync(Group group)

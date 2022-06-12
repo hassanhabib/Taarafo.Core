@@ -66,6 +66,8 @@ namespace Taarafo.Core.Services.Foundations.Groups
                 throw new NotFoundGroupException(groupId);
             }
         }
+        public void ValidateGroupId(Guid groupId) =>
+            Validate((Rule: IsInvalid(groupId), Parameter: nameof(Group.Id)));
 
         private static dynamic IsInvalid(Guid id) => new
         {
@@ -122,8 +124,7 @@ namespace Taarafo.Core.Services.Foundations.Groups
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
-            var invalidGroupException =
-                new InvalidGroupException();
+            var invalidGroupException = new InvalidGroupException();
 
             foreach ((dynamic rule, string parameter) in validations)
             {
