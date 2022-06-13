@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
 using Xeptions;
@@ -28,6 +29,13 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             {
                 throw CreateAndLogValidationException(invalidPostImpressionException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedPostImpressionStorageException =
+                    new FailedPostImpressionStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedPostImpressionStorageException);
+            }
         }
 
         private PostImpressionValidationException CreateAndLogValidationException(Xeption exception)
@@ -38,6 +46,14 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             this.loggingBroker.LogError(postImpressionValidationException);
 
             return postImpressionValidationException;
+        }
+
+        private PostImpressionDependencyException CreateAndLogCriticalDependencyException (Xeption exception)
+        {
+            var postImpressionDependencyException = new PostImpressionDependencyException(exception);
+            this.loggingBroker.LogCritical(postImpressionDependencyException);
+
+            return postImpressionDependencyException;
         }
     }
 }
