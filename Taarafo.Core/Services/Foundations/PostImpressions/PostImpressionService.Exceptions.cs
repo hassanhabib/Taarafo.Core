@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
@@ -36,6 +37,13 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
                 throw CreateAndLogCriticalDependencyException(failedPostImpressionStorageException);
             }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsPostImpressionException =
+                    new AlreadyExistsPostImpressionException(duplicateKeyException);
+
+                throw CreateAndLogDependencyValidationException(alreadyExistsPostImpressionException);
+            }
         }
 
         private PostImpressionValidationException CreateAndLogValidationException(Xeption exception)
@@ -48,12 +56,23 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             return postImpressionValidationException;
         }
 
-        private PostImpressionDependencyException CreateAndLogCriticalDependencyException (Xeption exception)
+        private PostImpressionDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
         {
             var postImpressionDependencyException = new PostImpressionDependencyException(exception);
             this.loggingBroker.LogCritical(postImpressionDependencyException);
 
             return postImpressionDependencyException;
+        }
+
+        private PostImpressionDependencyValidationException CreateAndLogDependencyValidationException(
+            Xeption exception)
+        {
+            var postImpressionDependencyValidationException =
+                new PostImpressionDependencyValidationException(exception);
+
+            this.loggingBroker.LogError(postImpressionDependencyValidationException);
+
+            return postImpressionDependencyValidationException;
         }
     }
 }
