@@ -52,6 +52,13 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
                 throw CreateAndLogDependencyException(failedPostImpressionStorageException);
             }
+            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            {
+                var invalidPostImpressionReferenceException =
+                    new InvalidPostImpressionReferenceException(foreignKeyConstraintConflictException);
+
+                throw CreateAndLogDependencyValidationException(invalidPostImpressionReferenceException);
+            }
         }
 
         private PostImpressionValidationException CreateAndLogValidationException(Xeption exception)
