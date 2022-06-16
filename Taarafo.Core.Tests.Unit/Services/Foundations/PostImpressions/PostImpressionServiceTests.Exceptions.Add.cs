@@ -152,5 +152,52 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+        {
+            //given
+            PostImpression somePostImpression = CreateRandomPostImpression();
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(exceptionMessage);
+
+            var invalidPostImpressionReferenceException =
+                new InvalidPostImpressionReferenceException(foreignKeyConstraintConflictException);
+
+            var expectedPostImpressionDependencyValidationException =
+                new PostImpressionDependencyValidationException(invalidPostImpressionReferenceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(foreignKeyConstraintConflictException);
+
+            //when
+            ValueTask<PostImpression> addPostImpressionTask =
+                this.postImpressionService.AddPostImpressions(somePostImpression);
+
+            //then
+            await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(() =>
+                addPostImpressionTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostImpressionDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
