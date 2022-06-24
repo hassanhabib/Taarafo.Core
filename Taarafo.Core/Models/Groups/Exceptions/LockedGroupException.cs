@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Groups.Exceptions
 {
-    public class NotFoundGroupException : Xeption
+    public class LockedGroupException : Xeption
     {
-        public NotFoundGroupException(Guid groupId)
-            : base(message: $"Couldn't find group with id: {groupId}.")
+        public LockedGroupException(Exception innerException)
+            : base(message: "Locked group record exception, please try again later", innerException)
         { }
     }
 }

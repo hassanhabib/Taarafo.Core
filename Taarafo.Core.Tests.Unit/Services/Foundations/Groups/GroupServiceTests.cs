@@ -9,12 +9,14 @@ using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
 using Moq;
+using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Groups;
 using Taarafo.Core.Services.Foundations.Groups;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 {
@@ -22,23 +24,42 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
+        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly IGroupService groupService;
 
         public GroupServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.groupService = new GroupService(
                 storageBroker: this.storageBrokerMock.Object,
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
-        private static IQueryable<Group> CreateRandomGroups() =>
-            CreateGroupFiller().Create(count: GetRandomNumber()).AsQueryable();
+        private static Group CreateRandomGroup() =>
+            CreateGroupFiller(dates: GetRandomDateTime()).Create();
+            
+        private static Group CreateRandomGroup(DateTimeOffset dates) =>
+            CreateGroupFiller(dates: dates).Create();
+
+        private static IQueryable<Group> CreateRandomGroups()
+        {
+            return CreateGroupFiller(dates: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber())
+                    .AsQueryable();
+        }
+
+        private static DateTimeOffset GetRandomDateTime() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
+
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
@@ -49,22 +70,32 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         private static SqlException GetSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
-        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException)
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expedtedException)
         {
-            return actualException => actualException.Message == expectedException.Message
-                && actualException.InnerException.Message == expectedException.InnerException.Message
-                && (actualException.InnerException as Xeption).DataEquals(expectedException.InnerException.Data);
+            return actualException =>
+                actualException.Message == expedtedException.Message
+                && actualException.InnerException.Message == expedtedException.InnerException.Message
+                && (actualException.InnerException as Xeption).DataEquals(expedtedException.InnerException.Data);
         }
 
-        private static Group CreateRandomGroup() =>
-            CreateGroupFiller().Create();
+        public static TheoryData MinutesBeforeOrAfter()
+        {
+            int randomNumber = GetRandomNumber();
+            int randomNegativeNumber = GetRandomNegativeNumber();
 
-        private static Filler<Group> CreateGroupFiller()
+            return new TheoryData<int>
+            {
+                randomNumber,
+                randomNegativeNumber
+            };
+        }
+
+        private static Filler<Group> CreateGroupFiller(DateTimeOffset dates)
         {
             var filler = new Filler<Group>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(GetRandomDateTimeOffset());
+                .OnType<DateTimeOffset>().Use(dates);
 
             return filler;
         }

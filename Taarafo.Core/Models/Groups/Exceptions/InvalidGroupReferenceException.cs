@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Groups.Exceptions
 {
-    public class NotFoundGroupException : Xeption
+    public class InvalidGroupReferenceException : Xeption
     {
-        public NotFoundGroupException(Guid groupId)
-            : base(message: $"Couldn't find group with id: {groupId}.")
+        public InvalidGroupReferenceException(Exception innerException)
+            : base(message: "Invalid group reference error occurred.", innerException)
         { }
     }
 }

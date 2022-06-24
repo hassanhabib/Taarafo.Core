@@ -12,7 +12,10 @@ namespace Taarafo.Core.Services.Foundations.Groups
 {
     public interface IGroupService
     {
+        ValueTask<Group> CreateGroupAsync(Group group);
         IQueryable<Group> RetrieveAllGroups();
         ValueTask<Group> RetrieveGroupByIdAsync(Guid groupId);
+        ValueTask<Group> UpdateGroupAsync(Group group);
+        ValueTask<Group> RemoveGroupByIdAsync(Guid groupId);
     }
 }

@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Groups.Exceptions
 {
-    public class NotFoundGroupException : Xeption
+    public class AlreadyExistsGroupException : Xeption
     {
-        public NotFoundGroupException(Guid groupId)
-            : base(message: $"Couldn't find group with id: {groupId}.")
+        public AlreadyExistsGroupException(Exception innerException)
+            : base(message: "Group with the same id already exists.", innerException)
         { }
     }
 }
