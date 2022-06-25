@@ -41,6 +41,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -93,6 +94,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             await Assert.ThrowsAsync<PostImpressionValidationException>(() =>
                 addPostImpressionTask.AsTask());
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostImpressionValidationException))),
@@ -102,6 +107,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.InsertPostImpressionAsync(invalidPostImpression),
                     Times.Never);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
@@ -135,6 +141,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             await Assert.ThrowsAsync<PostImpressionValidationException>(() =>
                 addPostImpressionTask.AsTask());
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostImpressionValidationException))),
@@ -144,6 +154,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
                     Times.Never);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
