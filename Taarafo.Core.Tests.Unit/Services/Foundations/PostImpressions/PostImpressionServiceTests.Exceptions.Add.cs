@@ -154,7 +154,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         }
 
         [Fact]
-        public async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+        public async void ShouldThrowDependencyValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
         {
             //given
             PostImpression somePostImpression = CreateRandomPostImpression();
