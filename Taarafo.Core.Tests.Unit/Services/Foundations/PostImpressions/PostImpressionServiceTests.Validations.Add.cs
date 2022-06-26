@@ -61,27 +61,27 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.PostId),
-                values: "Id is required.");
+                values: "Id is required");
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.Post),
-                values: "Object is required.");
+                values: "Object is required");
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.ProfileId),
-                values: "Id is required.");
+                values: "Id is required");
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.Profile),
-                values: "Object is required.");
+                values: "Object is required");
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.CreatedDate),
-                values: "Date is required.");
+                values: "Date is required");
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.UpdatedDate),
-                values: "Date is required.");
+                values: "Date is required");
 
             var expectedPostImpressionValidationException =
                 new PostImpressionValidationException(invalidPostImpressionException);
@@ -128,7 +128,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.UpdatedDate),
-                values: $"Date is not the same as {nameof(PostImpression.CreatedDate)}.");
+                values: $"Date is not the same as {nameof(PostImpression.CreatedDate)}");
 
             var expectedPostImpressionValidationException =
                 new PostImpressionValidationException(invalidPostImpressionException);
@@ -179,7 +179,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.CreatedDate),
-                values: "Date is not recent.");
+                values: "Date is not recent");
 
             var expectedPostImpressionValidationException =
                 new PostImpressionValidationException(invalidPostImpressionException);
