@@ -65,7 +65,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.Post),
-                values: "Post is required.");
+                values: "Object is required.");
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.ProfileId),
@@ -73,7 +73,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.Profile),
-                values: "Profile is required.");
+                values: "Object is required.");
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.CreatedDate),

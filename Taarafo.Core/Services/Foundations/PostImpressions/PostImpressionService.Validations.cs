@@ -57,13 +57,13 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
         private static dynamic IsInvalid(Post post) => new
         {
             Condition = post == null,
-            Message = "Post is required."
+            Message = "Object is required."
         };
 
         private static dynamic IsInvalid(Profile profile) => new
         {
             Condition = profile == null,
-            Message = "Profile is required."
+            Message = "Object is required."
         };
 
         private static dynamic IsNotSame(
