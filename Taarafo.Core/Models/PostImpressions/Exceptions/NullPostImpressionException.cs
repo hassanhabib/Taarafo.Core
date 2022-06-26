@@ -10,7 +10,7 @@ namespace Taarafo.Core.Models.PostImpressions.Exceptions
     public class NullPostImpressionException : Xeption
     {
         public NullPostImpressionException()
-            : base(message: "Post Impression is null.")
+            : base(message: "Post impression is null.")
         { }
     }
 }
