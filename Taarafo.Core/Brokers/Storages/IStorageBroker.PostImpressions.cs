@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.PostImpressions;
 
@@ -12,5 +13,6 @@ namespace Taarafo.Core.Brokers.Storages
     {
         ValueTask<PostImpression> InsertPostImpressionAsync(PostImpression postImpression);
         ValueTask<PostImpression> UpdatePostImpressionAsync(PostImpression postImpression);
+        IQueryable<PostImpression> SelectAllPostImpressions();
     }
 }

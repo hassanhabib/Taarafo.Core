@@ -85,7 +85,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             invalidGroupException.AddData(
                 key: nameof(Group.UpdatedDate),
-                values: new[] 
+                values: new[]
                     {
                         "Date is required",
                         $"Date is the same as {nameof(Group.CreatedDate)}",

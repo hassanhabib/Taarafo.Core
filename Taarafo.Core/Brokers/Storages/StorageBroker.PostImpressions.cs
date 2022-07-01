@@ -3,6 +3,8 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -39,5 +41,8 @@ namespace Taarafo.Core.Brokers.Storages
 
             return postImpressionEntityEntry.Entity;
         }
+
+        public IQueryable<PostImpression> SelectAllPostImpressions() =>
+            throw new NotImplementedException();
     }
 }
