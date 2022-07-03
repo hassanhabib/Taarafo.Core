@@ -42,7 +42,12 @@ namespace Taarafo.Core.Brokers.Storages
             return postImpressionEntityEntry.Entity;
         }
 
-        public IQueryable<PostImpression> SelectAllPostImpressions() =>
-            throw new NotImplementedException();
+        public IQueryable<PostImpression> SelectAllPostImpressions()
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            return broker.PostImpressions;
+        }
     }
 }

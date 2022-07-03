@@ -38,6 +38,6 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
         });
 
         public IQueryable<PostImpression> RetrieveAllPostImpressions() =>
-            throw new NotImplementedException();
+            this.storageBroker.SelectAllPostImpressions();
     }
 }
