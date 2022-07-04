@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -17,6 +18,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
     public partial class PostImpressionService
     {
         private delegate ValueTask<PostImpression> ReturningPostImpressionFunction();
+        private delegate IQueryable<PostImpression> ReturningPostImpressionsFunction();
 
         private async ValueTask<PostImpression> TryCatch(ReturningPostImpressionFunction returningPostImpressionFunction)
         {
@@ -66,6 +68,21 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                     new FailedPostImpressionServiceException(exception);
 
                 throw CreateAndLogServiceException(failedPostImpressionServiceException);
+            }
+        }
+
+        private IQueryable<PostImpression> TryCatch(ReturningPostImpressionsFunction returningPostImpressionsFunction)
+        {
+            try
+            {
+                return returningPostImpressionsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedPostImpressionStorageException =
+                    new FailedPostImpressionStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedPostImpressionStorageException);
             }
         }
 
