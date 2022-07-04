@@ -1,0 +1,31 @@
+name: Provisioning Taarafo Core
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+jobs:
+  build:
+    runs-on: windows-2019
+    env:
+      AzureClientId: ${{ secrets.AZURECLIENTID }}
+      AzureTenantId: ${{ secrets.AZURETENANTID }}
+      AzureClientSecret: ${{ secrets.AZURECLIENTSECRET }}
+      AzureAdminAccess: ${{ secrets.AZUREADMINACCESS }}
+      AzureAdminName: ${{ secrets.AZUREADMINNAME }}
+    steps:
+    - name: Check Out
+      uses: actions/checkout@v2
+    - name: Setup Dot Net Version
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 7.0.100-preview.1.22110.4
+        include-prerelease: true
+    - name: Restore
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Provision
+      run: dotnet run --project .\Taarafo.Core.Infrastructure.Provision\Taarafo.Core.Infrastructure.Provision.csproj
