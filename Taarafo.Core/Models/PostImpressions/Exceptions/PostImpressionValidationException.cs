@@ -10,7 +10,7 @@ namespace Taarafo.Core.Models.PostImpressions.Exceptions
     public class PostImpressionValidationException : Xeption
     {
         public PostImpressionValidationException(Xeption innerException)
-            : base(message: "Post Impression validation errors occurred, please try again.",
+            : base(message: "Post impression validation errors occurred, please try again.",
                   innerException)
         { }
     }

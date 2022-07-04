@@ -45,25 +45,19 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
-            Message = "Id is required."
+            Message = "Id is required"
         };
 
         private static dynamic IsInvalid(DateTimeOffset date) => new
         {
             Condition = date == default,
-            Message = "Date is required."
+            Message = "Date is required"
         };
 
-        private static dynamic IsInvalid(Post post) => new
+        private static dynamic IsInvalid(object @object) => new
         {
-            Condition = post == null,
-            Message = "Post is required."
-        };
-
-        private static dynamic IsInvalid(Profile profile) => new
-        {
-            Condition = profile == null,
-            Message = "Profile is required."
+            Condition = @object is null,
+            Message = "Object is required"
         };
 
         private static dynamic IsNotSame(
@@ -72,13 +66,13 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             string secondDateName) => new
             {
                 Condition = firstDate != secondDate,
-                Message = $"Date is not the same as {secondDateName}."
+                Message = $"Date is not the same as {secondDateName}"
             };
 
         private dynamic IsNotRecent(DateTimeOffset date) => new
         {
             Condition = IsDateNotRecent(date),
-            Message = "Date is not recent."
+            Message = "Date is not recent"
         };
 
         private bool IsDateNotRecent(DateTimeOffset date)
