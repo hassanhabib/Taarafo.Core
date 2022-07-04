@@ -19,7 +19,7 @@ namespace Taarafo.Core.Infrastructure.Provision.Brokers.Clouds
         {
             return await this.azure.SqlServers
                 .Define(sqlServerName)
-                .WithRegion(Region.USWest2)
+                .WithRegion(Region.USWest3)
                 .WithExistingResourceGroup(resourceGroup)
                 .WithAdministratorLogin(this.adminName)
                 .WithAdministratorPassword(this.adminAccess)
