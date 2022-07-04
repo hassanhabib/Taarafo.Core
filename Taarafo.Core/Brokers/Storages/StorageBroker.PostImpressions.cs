@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -34,6 +35,27 @@ namespace Taarafo.Core.Brokers.Storages
 
             EntityEntry<PostImpression> postImpressionEntityEntry =
                 broker.PostImpressions.Update(postImpression);
+
+            await broker.SaveChangesAsync();
+
+            return postImpressionEntityEntry.Entity;
+        }
+
+        public async ValueTask<PostImpression> SelectPostImpressionByIdAsync(Guid postImpressionId)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            return await broker.PostImpressions.FindAsync(postImpressionId);
+        }
+
+        public async ValueTask<PostImpression> DeletePostImpressionAsync(PostImpression postImpression)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            EntityEntry<PostImpression> postImpressionEntityEntry =
+                broker.PostImpressions.Remove(postImpression);
 
             await broker.SaveChangesAsync();
 
