@@ -50,5 +50,41 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        {
+            //given
+            string exceptionMessage = GetRandomMessage();
+            var serviceException = new Exception(exceptionMessage);
+
+            var expectedPostImpressionServiceException =
+                new PostImpressionServiceException(serviceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAllPostImpressions())
+                    .Throws(serviceException);
+
+            //when
+            Action retrieveAllPostImpressionsAction = () =>
+                this.postImpressionService.RetrieveAllPostImpressions();
+
+            //then
+            Assert.Throws<PostImpressionServiceException>(
+                retrieveAllPostImpressionsAction);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllPostImpressions(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostImpressionServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
