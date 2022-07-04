@@ -15,7 +15,7 @@ namespace Taarafo.Core.Infrastructure.Provision.Brokers.Configurations
         {
             IConfigurationRoot configurationRoot = new ConfigurationBuilder()
                 .SetBasePath(basePath: Directory.GetCurrentDirectory())
-                .AddJsonFile(path: "appSettings.json", optional: false)
+                .AddJsonFile(path: "Taarafo.Core.Infrastructure.Provision\\appSettings.json", optional: false)
                 .Build();
 
             return configurationRoot.Get<CloudManagementConfiguration>();
