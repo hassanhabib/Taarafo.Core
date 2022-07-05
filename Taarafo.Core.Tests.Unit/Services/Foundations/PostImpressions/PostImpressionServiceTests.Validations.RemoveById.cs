@@ -30,6 +30,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 key: nameof(PostImpression.PostId),
                 values: "Id is required");
 
+            invalidPostImpressionException.AddData(
+                key: nameof(PostImpression.ProfileId),
+                values: "Id is required");
+
             var expectedPostImpressionValidationException =
                 new PostImpressionValidationException(invalidPostImpressionException);
 
