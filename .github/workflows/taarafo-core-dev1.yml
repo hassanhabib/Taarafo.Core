@@ -6,7 +6,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: taarafo-core-dev
   AZURE_WEBAPP_PACKAGE_PATH: Taarafo.Core/publish
-  AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.taarafo_core_dev_258a }}
+  AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.taarafo_core_dev_c89c }}
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 7.0.x
   WORKING_DIRECTORY: Taarafo.Core
@@ -27,7 +27,7 @@ jobs:
     - name: Test
       run: dotnet test "${{ env.WORKING_DIRECTORY }}" --no-build
     - name: Publish
-      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --self-contained --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v2
       with:
