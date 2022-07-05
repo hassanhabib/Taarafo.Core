@@ -49,6 +49,14 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                 (Rule: IsInvalid(postImpressionId), Parameter: nameof(PostImpression.ProfileId)));
         }
 
+        private static void ValidateStoragePostImpression(PostImpression maybePostImpression, Guid postImpressionId)
+        {
+            if (maybePostImpression is null)
+            {
+                throw new NotFoundPostImpressionException(postImpressionId);
+            }
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,

@@ -39,6 +39,10 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
                 throw CreateAndLogCriticalDependencyException(failedPostImpressionStorageException);
             }
+            catch (NotFoundPostImpressionException notFoundPostImpressionException)
+            {
+                throw CreateAndLogValidationException(notFoundPostImpressionException);
+            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsPostImpressionException =
