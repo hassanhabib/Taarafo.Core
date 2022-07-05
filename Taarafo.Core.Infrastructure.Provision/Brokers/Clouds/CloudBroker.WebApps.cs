@@ -22,7 +22,7 @@ namespace Taarafo.Core.Infrastructure.Provision.Brokers.Clouds
                 .Define(webAppName)
                 .WithExistingWindowsPlan(plan)
                 .WithExistingResourceGroup(resourceGroup)
-                .WithNetFrameworkVersion(NetFrameworkVersion.Parse("v7.0"))
+                .WithNetFrameworkVersion(NetFrameworkVersion.Parse("v6.0"))
                 .WithConnectionString(
                     name: "DefaultConnect",
                     value: databaseConnectionString,
