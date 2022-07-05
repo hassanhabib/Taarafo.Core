@@ -36,7 +36,13 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             return await this.storageBroker.InsertPostImpressionAsync(postImpression);
         });
 
-        public ValueTask<PostImpression> RemovePostImpressionByIdAsync(Guid postImpressionId) =>
-            throw new NotImplementedException();
+        public async ValueTask<PostImpression> RemovePostImpressionByIdAsync(Guid postImpressionId)
+        {
+            PostImpression maybePostImpression = await this.storageBroker
+                .SelectPostImpressionByIdAsync(postImpressionId);
+
+            return await this.storageBroker
+                .DeletePostImpressionAsync(maybePostImpression);
+        }
     }
 }
