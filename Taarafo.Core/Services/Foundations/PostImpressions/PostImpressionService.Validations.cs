@@ -45,7 +45,8 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
         private static void ValidatePostImpressionId(Guid postImpressionId)
         {
             Validate(
-                (Rule: IsInvalid(postImpressionId), Parameter: nameof(PostImpression.PostId)));
+                (Rule: IsInvalid(postImpressionId), Parameter: nameof(PostImpression.PostId)),
+                (Rule: IsInvalid(postImpressionId), Parameter: nameof(PostImpression.ProfileId)));
         }
 
         private static dynamic IsInvalid(Guid id) => new
