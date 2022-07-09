@@ -19,7 +19,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
     public partial class PostImpressionServiceTests
     {
         [Fact]
-        public async Task ShouldThrowDependencyExceptionOnDeleteWhenSqlExceptionOccursAndLogItAsync()
+        public async Task ShouldThrowCriticalDependencyExceptionOnRemoveWhenSqlExceptionOccursAndLogItAsync()
         {
             //given 
             Guid somePostImpressionId = Guid.NewGuid();
