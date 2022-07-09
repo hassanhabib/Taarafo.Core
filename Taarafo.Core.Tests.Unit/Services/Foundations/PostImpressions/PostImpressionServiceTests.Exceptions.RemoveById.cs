@@ -56,5 +56,44 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
+        {
+            //given
+            Guid somePostImpressionId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedPostImpressionServiceException =
+                new FailedPostImpressionServiceException(serviceException);
+
+            var expectedPostImpressionServiceException =
+                new PostImpressionServiceException(failedPostImpressionServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostImpressionByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            //when
+            ValueTask<PostImpression> removePostImpressionByIdTask =
+                this.postImpressionService.RemovePostImpressionByIdAsync(somePostImpressionId);
+
+            //then
+            await Assert.ThrowsAsync<PostImpressionServiceException>(() =>
+                removePostImpressionByIdTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostImpressionByIdAsync(It.IsAny<Guid>()),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostImpressionServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
