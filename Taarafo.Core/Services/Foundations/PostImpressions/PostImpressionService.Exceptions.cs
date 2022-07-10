@@ -50,6 +50,12 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsPostImpressionException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedPostImpressionException = new LockedPostImpressionException(dbUpdateConcurrencyException);
+
+                throw CreateAndLogDependencyValidationException(lockedPostImpressionException);
+            }
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedPostImpressionStorageException =
