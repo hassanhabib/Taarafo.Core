@@ -28,19 +28,6 @@ namespace Taarafo.Core.Brokers.Storages
             return postImpressionEntityEntry.Entity;
         }
 
-        public async ValueTask<PostImpression> UpdatePostImpressionAsync(PostImpression postImpression)
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
-
-            EntityEntry<PostImpression> postImpressionEntityEntry =
-                broker.PostImpressions.Update(postImpression);
-
-            await broker.SaveChangesAsync();
-
-            return postImpressionEntityEntry.Entity;
-        }
-
         public async ValueTask<PostImpression> SelectPostImpressionByIdsAsync(
             Guid PostId,
             Guid ProfileId)
@@ -52,6 +39,19 @@ namespace Taarafo.Core.Brokers.Storages
                 QueryTrackingBehavior.NoTracking;
 
             return await broker.PostImpressions.FindAsync(PostId, ProfileId);
+        }
+
+        public async ValueTask<PostImpression> UpdatePostImpressionAsync(PostImpression postImpression)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            EntityEntry<PostImpression> postImpressionEntityEntry =
+                broker.PostImpressions.Update(postImpression);
+
+            await broker.SaveChangesAsync();
+
+            return postImpressionEntityEntry.Entity;
         }
     }
 }
