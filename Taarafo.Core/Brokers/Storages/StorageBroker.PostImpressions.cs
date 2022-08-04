@@ -17,7 +17,7 @@ namespace Taarafo.Core.Brokers.Storages
 
         public async ValueTask<PostImpression> InsertPostImpressionAsync(PostImpression postImpression)
         {
-            using var broker =
+            var broker =
                 new StorageBroker(this.configuration);
 
             EntityEntry<PostImpression> postImpressionEntityEntry =
@@ -32,18 +32,15 @@ namespace Taarafo.Core.Brokers.Storages
             Guid PostId,
             Guid ProfileId)
         {
-            using var broker =
+            var broker =
                 new StorageBroker(this.configuration);
-
-            broker.ChangeTracker.QueryTrackingBehavior =
-                QueryTrackingBehavior.NoTracking;
 
             return await broker.PostImpressions.FindAsync(PostId, ProfileId);
         }
 
         public async ValueTask<PostImpression> UpdatePostImpressionAsync(PostImpression postImpression)
         {
-            using var broker =
+            var broker =
                 new StorageBroker(this.configuration);
 
             EntityEntry<PostImpression> postImpressionEntityEntry =
