@@ -39,5 +39,18 @@ namespace Taarafo.Core.Brokers.Storages
 
             return postImpressionEntityEntry.Entity;
         }
+
+        public async ValueTask<PostImpression> DeletePostImpressionAsync(PostImpression postImpression)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            EntityEntry<PostImpression> postImpressionEntityEntry =
+                broker.PostImpressions.Remove(postImpression);
+
+            await broker.SaveChangesAsync();
+
+            return postImpressionEntityEntry.Entity;
+        }
     }
 }
