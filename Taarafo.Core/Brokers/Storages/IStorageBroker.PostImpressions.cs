@@ -14,5 +14,6 @@ namespace Taarafo.Core.Brokers.Storages
         ValueTask<PostImpression> InsertPostImpressionAsync(PostImpression postImpression);
         IQueryable<PostImpression> SelectAllPostImpressions();
         ValueTask<PostImpression> UpdatePostImpressionAsync(PostImpression postImpression);
+        ValueTask<PostImpression> DeletePostImpressionAsync(PostImpression postImpression);
     }
 }
