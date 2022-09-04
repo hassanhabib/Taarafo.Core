@@ -117,7 +117,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         {
             //given
             int randomNumber = GetRandomNumber();
-            PostImpression randomPostImpression = CreateRandomPostImpression();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            PostImpression randomPostImpression = CreateRandomPostImpression(randomDateTimeOffset);
             PostImpression invalidPostImpression = randomPostImpression;
 
             invalidPostImpression.UpdatedDate =
@@ -132,6 +133,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             var expectedPostImpressionValidationException =
                 new PostImpressionValidationException(invalidPostImpressionException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTimeOffset);
 
             //when
             ValueTask<PostImpression> addPostImpressionTask =
