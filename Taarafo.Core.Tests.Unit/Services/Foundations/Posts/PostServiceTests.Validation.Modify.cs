@@ -94,8 +94,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                 this.postService.ModifyPostAsync(invalidPost);
 
             PostValidationException actualPostValidationException =
-                await Assert.ThrowsAsync<PostValidationException>(
-                modifyPostTask.AsTask);
+                await Assert.ThrowsAsync<PostValidationException>(modifyPostTask.AsTask);
 
             // then
             actualPostValidationException.Should().BeEquivalentTo(expectedPostValidationException);
