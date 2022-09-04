@@ -10,7 +10,7 @@ namespace Taarafo.Core.Brokers.Storages
 {
     public partial class StorageBroker
     {
-        private static void AddCommentReferences(ModelBuilder modelBuilder)
+        private static void AddCommentConfigurations(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Comment>()
                 .HasOne(comment => comment.Post)
