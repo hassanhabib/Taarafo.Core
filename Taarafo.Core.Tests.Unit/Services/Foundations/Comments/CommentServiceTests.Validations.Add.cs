@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Comments.Exceptions;
@@ -113,8 +114,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         public async Task ShouldThrowValidationExceptionOnAddIfCreateAndUpdateDatesIsNotSameAndLogItAsync()
         {
             // given
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             int randomNumber = GetRandomNumber();
-            Comment randomComment = CreateRandomComment();
+            Comment randomComment = CreateRandomComment(randomDateTime);
             Comment invalidComment = randomComment;
 
             invalidComment.UpdatedDate =
@@ -130,13 +132,20 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             var expectedCommentValidationException =
                 new CommentValidationException(invalidCommentException);
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
+
             // when
             ValueTask<Comment> addCommentTask =
                 this.commentService.AddCommentAsync(invalidComment);
 
+            CommentValidationException actualCommentValidationException =
+                await Assert.ThrowsAsync<CommentValidationException>(
+                    addCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentValidationException>(() =>
-               addCommentTask.AsTask());
+            actualCommentValidationException.Should().BeEquivalentTo(expectedCommentValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
