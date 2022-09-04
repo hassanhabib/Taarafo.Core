@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Posts;
@@ -36,9 +37,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> retrievePostByIdTask =
                 this.postService.RetrievePostByIdAsync(someId);
 
+            PostDependencyException actaulPostDependencyException =
+                await Assert.ThrowsAsync<PostDependencyException>(
+                    retrievePostByIdTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostDependencyException>(() =>
-                retrievePostByIdTask.AsTask());
+            actaulPostDependencyException.Should().BeEquivalentTo(expectedPostDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()),
@@ -75,9 +79,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> retrievePostByIdTask =
                 this.postService.RetrievePostByIdAsync(someId);
 
+            PostServiceException actualPostServiceException =
+                await Assert.ThrowsAsync<PostServiceException>(
+                    retrievePostByIdTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostServiceException>(() =>
-                retrievePostByIdTask.AsTask());
+            actualPostServiceException.Should().BeEquivalentTo(expectedPostServiceException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()),

@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -37,12 +38,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
                     .Throws(sqlException);
 
             // when
-            ValueTask<Post> addPostTask =
+            ValueTask<Post> modifyPostTask =
                 this.postService.ModifyPostAsync(somePost);
 
+            PostDependencyException actualPostDependencyException =
+              await Assert.ThrowsAsync<PostDependencyException>(
+                  modifyPostTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostDependencyException>(() =>
-               addPostTask.AsTask());
+            actualPostDependencyException.Should().BeEquivalentTo(expectedPostDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -96,9 +100,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> modifyPostTask =
                 this.postService.ModifyPostAsync(SomePost);
 
+            PostDependencyException actualPostDependencyException =
+              await Assert.ThrowsAsync<PostDependencyException>(
+                  modifyPostTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostDependencyException>(() =>
-                modifyPostTask.AsTask());
+            actualPostDependencyException.Should().BeEquivalentTo(expectedPostDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(postId),
@@ -148,9 +155,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> modifyPostTask =
                 this.postService.ModifyPostAsync(somePost);
 
+            PostDependencyValidationException actualPostDependencyValidationException =
+                await Assert.ThrowsAsync<PostDependencyValidationException>(
+                    modifyPostTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostDependencyValidationException>(() =>
-                modifyPostTask.AsTask());
+            actualPostDependencyValidationException.Should().BeEquivalentTo(expectedPostDependencyValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -199,9 +209,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> modifyPostTask =
                 this.postService.ModifyPostAsync(somePost);
 
+            PostServiceException actualPostServiceException =
+                await Assert.ThrowsAsync<PostServiceException>(
+                    modifyPostTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostServiceException>(() =>
-                modifyPostTask.AsTask());
+            actualPostServiceException.Should().BeEquivalentTo(expectedPostServiceException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),

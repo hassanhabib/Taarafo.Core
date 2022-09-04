@@ -41,13 +41,13 @@ namespace Taarafo.Core.Services.Foundations.Groups
                 (Rule: IsInvalid(group.Description), Parameter: nameof(Group.Description)),
                 (Rule: IsInvalid(group.CreatedDate), Parameter: nameof(Group.CreatedDate)),
                 (Rule: IsInvalid(group.UpdatedDate), Parameter: nameof(Group.UpdatedDate)),
-                
+
                 (Rule: IsSame(
                     firstDate: group.UpdatedDate,
                     secondDate: group.CreatedDate,
                     secondDateName: nameof(Group.CreatedDate)),
                 Parameter: nameof(Group.UpdatedDate)),
-                
+
                 (Rule: IsNotRecent(group.UpdatedDate), Parameter: nameof(Group.UpdatedDate)));
         }
 
@@ -111,7 +111,7 @@ namespace Taarafo.Core.Services.Foundations.Groups
             Condition = IsDateNotRecent(date),
             Message = "Date is not recent"
         };
-        
+
         private bool IsDateNotRecent(DateTimeOffset date)
         {
             DateTimeOffset currentDateTime =

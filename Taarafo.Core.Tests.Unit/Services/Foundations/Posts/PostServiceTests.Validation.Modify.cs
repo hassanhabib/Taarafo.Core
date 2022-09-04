@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.Posts;
@@ -29,9 +30,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> modifyPostTask =
                 this.postService.ModifyPostAsync(nullPost);
 
+            PostValidationException actualPostValidationException =
+                await Assert.ThrowsAsync<PostValidationException>(
+                    modifyPostTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostValidationException>(() =>
-                modifyPostTask.AsTask());
+            actualPostValidationException.Should().BeEquivalentTo(expectedPostValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -89,9 +93,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> modifyPostTask =
                 this.postService.ModifyPostAsync(invalidPost);
 
-            //then
-            await Assert.ThrowsAsync<PostValidationException>(() =>
-                modifyPostTask.AsTask());
+            PostValidationException actualPostValidationException =
+                await Assert.ThrowsAsync<PostValidationException>(modifyPostTask.AsTask);
+
+            // then
+            actualPostValidationException.Should().BeEquivalentTo(expectedPostValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -135,9 +141,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> modifyPostTask =
                 this.postService.ModifyPostAsync(invalidPost);
 
+            PostValidationException actualPostValidationException =
+                await Assert.ThrowsAsync<PostValidationException>(
+                    modifyPostTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostValidationException>(() =>
-                modifyPostTask.AsTask());
+            actualPostValidationException.Should().BeEquivalentTo(expectedPostValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -184,9 +193,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> modifyPostTask =
                 this.postService.ModifyPostAsync(inputPost);
 
+            PostValidationException actualPostValidationException =
+                await Assert.ThrowsAsync<PostValidationException>(
+                    modifyPostTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostValidationException>(() =>
-                modifyPostTask.AsTask());
+            actualPostValidationException.Should().BeEquivalentTo(expectedPostValidatonException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -235,9 +247,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> modifyPostTask =
                 this.postService.ModifyPostAsync(nonExistPost);
 
+            PostValidationException actualPostValidationException =
+               await Assert.ThrowsAsync<PostValidationException>(
+                   modifyPostTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostValidationException>(() =>
-                modifyPostTask.AsTask());
+            actualPostValidationException.Should().BeEquivalentTo(expectedPostValidationException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(nonExistPost.Id),
@@ -261,16 +276,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldThrowValidationExceptionOnModifyIfStorageCreatedDateNotSameAsCreatedDateAndLogItAsync()
         {
             // given
-            int randomNumber = GetRandomNumber();
+            int randomNumber = GetRandomNegativeNumber();
             int randomMinutes = randomNumber;
-            DateTimeOffset randomDate = GetRandomDateTimeOffset();
-            Post randomPost = CreateRandomPost(randomDate);
-            Post invalidPost = randomPost;
-            invalidPost.UpdatedDate = randomDate;
-            Post storagePost = randomPost.DeepClone();
-            Guid postId = invalidPost.Id;
-            invalidPost.CreatedDate = storagePost.CreatedDate.AddMinutes(randomMinutes);
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Post randomPost = CreateRandomModifyPost(randomDateTimeOffset);
+            Post invalidPost = randomPost.DeepClone();
+            Post storagePost = invalidPost.DeepClone();
+            storagePost.CreatedDate = storagePost.CreatedDate.AddMinutes(randomMinutes);
+            storagePost.UpdatedDate = storagePost.UpdatedDate.AddMinutes(randomMinutes);
             var invalidPostException = new InvalidPostException();
+            Guid postId = invalidPost.Id;
 
             invalidPostException.AddData(
                 key: nameof(Post.CreatedDate),
@@ -285,15 +300,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                .Returns(randomDate);
+                .Returns(randomDateTimeOffset);
 
             // when
             ValueTask<Post> modifyPostTask =
                 this.postService.ModifyPostAsync(invalidPost);
 
+            PostValidationException actualPostValidationException =
+                await Assert.ThrowsAsync<PostValidationException>(
+                    modifyPostTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostValidationException>(() =>
-                modifyPostTask.AsTask());
+            actualPostValidationException.Should().BeEquivalentTo(expectedPostValidationException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(invalidPost.Id),
@@ -344,9 +362,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> modifyPostTask =
                 this.postService.ModifyPostAsync(invalidPost);
 
+            PostValidationException actualPostValidationException =
+               await Assert.ThrowsAsync<PostValidationException>(
+                   modifyPostTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostValidationException>(() =>
-                modifyPostTask.AsTask());
+            actualPostValidationException.Should().BeEquivalentTo(expectedPostValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),

@@ -81,13 +81,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         private static string GetRandomMessage() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
-        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expedtedException)
-        {
-            return actualException =>
-                actualException.Message == expedtedException.Message
-                && actualException.InnerException.Message == expedtedException.InnerException.Message
-                && (actualException.InnerException as Xeption).DataEquals(expedtedException.InnerException.Data);
-        }
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expedtedException) =>
+            actualException => actualException.SameExceptionAs(expedtedException);
 
         private static Filler<Profile> CreateProfileFiller(DateTimeOffset dates)
         {

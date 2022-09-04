@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Comments.Exceptions;
@@ -35,7 +36,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 addCommentTask.AsTask());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 
@@ -96,7 +97,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 
@@ -114,7 +115,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         {
             // given
             int randomNumber = GetRandomNumber();
-            Comment randomComment = CreateRandomComment();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Comment randomComment = CreateRandomComment(randomDateTimeOffset);
             Comment invalidComment = randomComment;
 
             invalidComment.UpdatedDate =
@@ -130,20 +132,27 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             var expectedCommentValidationException =
                 new CommentValidationException(invalidCommentException);
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTimeOffset);
+
             // when
             ValueTask<Comment> addCommentTask =
                 this.commentService.AddCommentAsync(invalidComment);
 
+            CommentValidationException actualCommentValidationException =
+                await Assert.ThrowsAsync<CommentValidationException>(
+                    addCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentValidationException>(() =>
-               addCommentTask.AsTask());
+            actualCommentValidationException.Should().BeEquivalentTo(expectedCommentValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 
@@ -198,7 +207,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 

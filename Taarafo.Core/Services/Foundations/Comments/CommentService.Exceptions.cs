@@ -95,7 +95,10 @@ namespace Taarafo.Core.Services.Foundations.Comments
             }
             catch (Exception exception)
             {
-                throw CreateAndLogServiceException(exception);
+                var failedCommentServiceException =
+                    new FailedCommentServiceException(exception);
+
+                throw CreateAndLogServiceException(failedCommentServiceException);
             }
         }
 

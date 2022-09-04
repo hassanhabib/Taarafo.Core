@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
@@ -117,8 +118,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
         public async Task ShouldThrowValidationExceptionOnAddIfCreateAndUpdateDatesIsNotSameAndLogItAsync()
         {
             // given
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             int randomNumber = GetRandomNumber();
-            Profile randomProfile = CreateRandomProfile();
+            Profile randomProfile = CreateRandomProfile(randomDateTime);
             Profile invalidProfile = randomProfile;
 
             invalidProfile.UpdatedDate =
@@ -134,13 +136,20 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             var expectedProfileValidationException =
                 new ProfileValidationException(invalidProfileException);
 
+            this.dateTimeBrokerMock.Setup(broker =>
+              broker.GetCurrentDateTimeOffset())
+                  .Returns(randomDateTime);
+
             // when
             ValueTask<Profile> addProfileTask =
                 this.profileService.AddProfileAsync(invalidProfile);
 
+            ProfileValidationException actualProfileValidationException =
+                await Assert.ThrowsAsync<ProfileValidationException>(() =>
+                    addProfileTask.AsTask());
+
             // then
-            await Assert.ThrowsAsync<ProfileValidationException>(() =>
-               addProfileTask.AsTask());
+            actualProfileValidationException.Should().BeEquivalentTo(expectedProfileValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(

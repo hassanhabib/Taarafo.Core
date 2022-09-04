@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.Groups;
 using Taarafo.Core.Models.Groups.Exceptions;
@@ -110,14 +111,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         {
             // given
             int randomNumber = GetRandomNumber();
-            Group randomGroup = CreateRandomGroup();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Group randomGroup = CreateRandomGroup(randomDateTimeOffset);
             Group invalidGroup = randomGroup;
 
             invalidGroup.UpdatedDate =
                 invalidGroup.CreatedDate.AddDays(randomNumber);
 
-            var invalidGroupException =
-                new InvalidGroupException();
+            var invalidGroupException = new InvalidGroupException();
 
             invalidGroupException.AddData(
                 key: nameof(Group.UpdatedDate),
@@ -126,13 +127,25 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             var expectedGroupValidationException =
                 new GroupValidationException(invalidGroupException);
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTimeOffset);
+
             // when
             ValueTask<Group> addGroupTask =
                 this.groupService.CreateGroupAsync(invalidGroup);
 
+            GroupValidationException actialGroupValidationException =
+                await Assert.ThrowsAsync<GroupValidationException>(() =>
+                    addGroupTask.AsTask());
+
             // then
-            await Assert.ThrowsAsync<GroupValidationException>(() =>
-               addGroupTask.AsTask());
+            actialGroupValidationException.Should()
+                .BeEquivalentTo(expectedGroupValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -143,6 +156,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 broker.InsertGroupAsync(It.IsAny<Group>()),
                     Times.Never);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }

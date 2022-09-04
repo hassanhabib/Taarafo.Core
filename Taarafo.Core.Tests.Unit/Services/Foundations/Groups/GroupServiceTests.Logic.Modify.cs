@@ -26,7 +26,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             Group storageGroup = inputGroup;
             Group updatedGroup = inputGroup;
             Group expectedGroup = updatedGroup.DeepClone();
-            Guid inputGroupId =inputGroup.Id;
+            Guid inputGroupId = inputGroup.Id;
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())

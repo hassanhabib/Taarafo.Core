@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.Comments;
@@ -34,7 +35,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 modifyCommentTask.AsTask());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 
@@ -101,7 +102,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once());
 
@@ -147,7 +148,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 
@@ -196,7 +197,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentValidatonException))),
                         Times.Once);
 
@@ -228,11 +229,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectCommentByIdAsync(nonExistComment.Id))
-                .ReturnsAsync(nullComment);
+                    .ReturnsAsync(nullComment);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                .Returns(dateTime);
+                    .Returns(dateTime);
 
             // when 
             ValueTask<Comment> modifyCommentTask =
@@ -251,7 +252,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameValidationExceptionAs(
+                broker.LogError(It.Is(SameExceptionAs(
                     expectedCommentValidationException))),
                         Times.Once);
 
@@ -267,13 +268,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             int randomNumber = GetRandomNumber();
             int randomMinutes = randomNumber;
             DateTimeOffset randomDate = GetRandomDateTimeOffset();
-            Comment randomComment = CreateRandomComment(randomDate);
-            Comment invalidComment = randomComment;
-            invalidComment.UpdatedDate = randomDate;
+            Comment randomComment = CreateRandomModifyComment(randomDate);
+            Comment invalidComment = randomComment.DeepClone();
             Comment storageComment = randomComment.DeepClone();
+            storageComment.CreatedDate = storageComment.CreatedDate.AddMinutes(randomMinutes);
+            storageComment.UpdatedDate = storageComment.UpdatedDate.AddMinutes(randomMinutes);
             Guid commentId = invalidComment.Id;
-            invalidComment.CreatedDate = storageComment.CreatedDate.AddMinutes(randomMinutes);
-            var invalidCommentException = new InvalidCommentException();
+
+            var invalidCommentException =
+                new InvalidCommentException();
 
             invalidCommentException.AddData(
                 key: nameof(Comment.CreatedDate),
@@ -288,15 +291,19 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                .Returns(randomDate);
+                    .Returns(randomDate);
 
             // when
             ValueTask<Comment> modifyCommentTask =
                 this.commentService.ModifyCommentAsync(invalidComment);
 
+            CommentValidationException actualCommentValidationException =
+                await Assert.ThrowsAsync<CommentValidationException>(() =>
+                    modifyCommentTask.AsTask());
+
             // then
-            await Assert.ThrowsAsync<CommentValidationException>(() =>
-                modifyCommentTask.AsTask());
+            actualCommentValidationException.Should()
+                .BeEquivalentTo(expectedCommentValidationException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectCommentByIdAsync(invalidComment.Id),
@@ -307,7 +314,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-               broker.LogError(It.Is(SameValidationExceptionAs(
+               broker.LogError(It.Is(SameExceptionAs(
                    expectedCommentValidationException))),
                        Times.Once);
 

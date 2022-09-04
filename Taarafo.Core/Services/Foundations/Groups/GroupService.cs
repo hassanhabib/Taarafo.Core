@@ -30,53 +30,53 @@ namespace Taarafo.Core.Services.Foundations.Groups
         }
 
         public ValueTask<Group> CreateGroupAsync(Group group) =>
-        TryCatch(async () =>
-        {
-            ValidateGroupOnAdd(group);
+            TryCatch(async () =>
+            {
+                ValidateGroupOnAdd(group);
 
-            return await this.storageBroker.InsertGroupAsync(group);
-        });
+                return await this.storageBroker.InsertGroupAsync(group);
+            });
 
         public IQueryable<Group> RetrieveAllGroups() =>
         TryCatch(() => this.storageBroker.SelectAllGroups());
 
-        public ValueTask<Group> UpdateGroupAsync(Group group)=>
-        TryCatch(async () =>
-        {
-            ValidateGroupOnModify(group);
+        public ValueTask<Group> UpdateGroupAsync(Group group) =>
+            TryCatch(async () =>
+            {
+                ValidateGroupOnModify(group);
 
-            var maybeGroup =
-                await this.storageBroker.SelectGroupByIdAsync(group.Id);
+                var maybeGroup =
+                    await this.storageBroker.SelectGroupByIdAsync(group.Id);
 
-            ValidateStorageGroup(maybeGroup, group.Id);
+                ValidateStorageGroup(maybeGroup, group.Id);
 
-            return await this.storageBroker.UpdateGroupAsync(group);
-        });
+                return await this.storageBroker.UpdateGroupAsync(group);
+            });
 
         public ValueTask<Group> RetrieveGroupByIdAsync(Guid groupId) =>
-        TryCatch(async () =>
-        {
-            ValidateGroupId(groupId);
+            TryCatch(async () =>
+            {
+                ValidateGroupId(groupId);
 
-            Group maybeGroup = await this.storageBroker
-                .SelectGroupByIdAsync(groupId);
+                Group maybeGroup = await this.storageBroker
+                    .SelectGroupByIdAsync(groupId);
 
-            ValidateStorageGroup(maybeGroup, groupId);
+                ValidateStorageGroup(maybeGroup, groupId);
 
-            return maybeGroup;
-        });
+                return maybeGroup;
+            });
 
         public ValueTask<Group> RemoveGroupByIdAsync(Guid groupId) =>
-        TryCatch(async () =>
-        {
-            ValidateGroupId(groupId);
+            TryCatch(async () =>
+            {
+                ValidateGroupId(groupId);
 
-            Group someGroup =
-                await this.storageBroker.SelectGroupByIdAsync(groupId);
+                Group someGroup =
+                    await this.storageBroker.SelectGroupByIdAsync(groupId);
 
-            ValidateStorageGroup(someGroup, groupId);
+                ValidateStorageGroup(someGroup, groupId);
 
-            return await this.storageBroker.DeleteGroupAsync(someGroup);
-        });
+                return await this.storageBroker.DeleteGroupAsync(someGroup);
+            });
     }
 }
