@@ -13,5 +13,5 @@ namespace Taarafo.Core.Models.PostImpressions.Exceptions
         public FailedPostImpressionServiceException(Exception innerException)
             : base(message: "Failed post impression service occurred, please contact support.", innerException)
         { }
-    } 
+    }
 }

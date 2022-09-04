@@ -41,7 +41,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
         private static Group CreateRandomGroup() =>
             CreateGroupFiller(dates: GetRandomDateTime()).Create();
-            
+
         private static Group CreateRandomGroup(DateTimeOffset dates) =>
             CreateGroupFiller(dates: dates).Create();
 

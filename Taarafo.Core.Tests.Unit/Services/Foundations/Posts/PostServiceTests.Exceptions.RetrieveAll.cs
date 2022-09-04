@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Posts.Exceptions;
@@ -33,9 +34,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             Action retrieveAllPostsAction = () =>
                 this.postService.RetrieveAllPosts();
 
+            PostDependencyException actualPostDependencyException =
+                Assert.Throws<PostDependencyException>(
+                    retrieveAllPostsAction);
+
             // then
-            Assert.Throws<PostDependencyException>(
-                retrieveAllPostsAction);
+            actualPostDependencyException.Should().BeEquivalentTo(expectedPostDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllPosts(),
@@ -71,9 +75,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             Action retrieveAllPostsAction = () =>
                 this.postService.RetrieveAllPosts();
 
+            PostServiceException actualPostServiceException =
+                Assert.Throws<PostServiceException>(
+                    retrieveAllPostsAction);
+
             // then
-            Assert.Throws<PostServiceException>(
-                retrieveAllPostsAction);
+            actualPostServiceException.Should().BeEquivalentTo(expectedPostServiceException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllPosts(),

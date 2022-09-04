@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Models.Posts.Exceptions;
@@ -34,9 +35,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> retrievePostByIdTask =
                 this.postService.RetrievePostByIdAsync(invalidPostId);
 
+            PostValidationException actualPostValidationException =
+                await Assert.ThrowsAsync<PostValidationException>(
+                    retrievePostByIdTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostValidationException>(() =>
-                retrievePostByIdTask.AsTask());
+            actualPostValidationException.Should().BeEquivalentTo(expectedPostValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -73,9 +77,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> retrievePostByIdTask =
                 this.postService.RetrievePostByIdAsync(somePostId);
 
-            //then
-            await Assert.ThrowsAsync<PostValidationException>(() =>
-               retrievePostByIdTask.AsTask());
+            PostValidationException actualPostValidationException =
+                await Assert.ThrowsAsync<PostValidationException>(
+                    retrievePostByIdTask.AsTask);
+
+            // then
+            actualPostValidationException.Should().BeEquivalentTo(expectedPostValidationException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()),

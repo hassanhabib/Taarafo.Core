@@ -1,10 +1,12 @@
-﻿// ---------------------------------------------------------------
+﻿
+// ---------------------------------------------------------------
 // Copyright (c) Coalition of the Good-Hearted Engineers
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -39,9 +41,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> removePostByIdTask =
                 this.postService.RemovePostByIdAsync(somePostId);
 
+            PostDependencyValidationException actualPostDependencyValidationException =
+                await Assert.ThrowsAsync<PostDependencyValidationException>(
+                    removePostByIdTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostDependencyValidationException>(() =>
-                removePostByIdTask.AsTask());
+            actualPostDependencyValidationException.Should().BeEquivalentTo(expectedPostDependencyValidationException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()),
@@ -81,9 +86,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> deletePostTask =
                 this.postService.RemovePostByIdAsync(somePostId);
 
+            PostDependencyException actualPostDependencyException =
+                await Assert.ThrowsAsync<PostDependencyException>(
+                    deletePostTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostDependencyException>(() =>
-                deletePostTask.AsTask());
+            actualPostDependencyException.Should().BeEquivalentTo(expectedPostDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()),
@@ -120,9 +128,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
             ValueTask<Post> removePostByIdTask =
                 this.postService.RemovePostByIdAsync(somePostId);
 
+            PostServiceException actualPostServiceException =
+                await Assert.ThrowsAsync<PostServiceException>(
+                    removePostByIdTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<PostServiceException>(() =>
-                removePostByIdTask.AsTask());
+            actualPostServiceException.Should().BeEquivalentTo(expectedPostServiceException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostByIdAsync(It.IsAny<Guid>()),

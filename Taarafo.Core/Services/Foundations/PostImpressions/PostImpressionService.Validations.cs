@@ -6,8 +6,6 @@
 using System;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
-using Taarafo.Core.Models.Posts;
-using Taarafo.Core.Models.Profiles;
 
 namespace Taarafo.Core.Services.Foundations.PostImpressions
 {
