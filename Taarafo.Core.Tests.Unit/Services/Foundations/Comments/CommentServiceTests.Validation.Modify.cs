@@ -271,8 +271,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             Comment randomComment = CreateRandomModifyComment(randomDate);
             Comment invalidComment = randomComment.DeepClone();
             Comment storageComment = randomComment.DeepClone();
-            invalidComment.CreatedDate = storageComment.CreatedDate.AddMinutes(randomMinutes);
-            invalidComment.UpdatedDate = storageComment.UpdatedDate.AddMinutes(randomMinutes);
+            storageComment.CreatedDate = storageComment.CreatedDate.AddMinutes(randomMinutes);
+            storageComment.UpdatedDate = storageComment.UpdatedDate.AddMinutes(randomMinutes);
             Guid commentId = invalidComment.Id;
 
             var invalidCommentException =
