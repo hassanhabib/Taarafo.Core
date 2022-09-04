@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Comments.Exceptions;
@@ -58,8 +59,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             string exceptionMessage = GetRandomMessage();
             var serviceException = new Exception(exceptionMessage);
 
+            var failedCommentServiceException =
+                new FailedCommentServiceException(serviceException);
+
             var expectedCommentServiceException =
-                new CommentServiceException(serviceException);
+                new CommentServiceException(failedCommentServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllComments())
@@ -69,9 +73,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             Action retrieveAllCommentsAction = () =>
                 this.commentService.RetrieveAllComments();
 
+            CommentServiceException actualCommentServiceException =
+                Assert.Throws<CommentServiceException>(retrieveAllCommentsAction);
+
             // then
-            Assert.Throws<CommentServiceException>(
-                retrieveAllCommentsAction);
+            actualCommentServiceException.Should()
+                .BeEquivalentTo(expectedCommentServiceException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllComments(),

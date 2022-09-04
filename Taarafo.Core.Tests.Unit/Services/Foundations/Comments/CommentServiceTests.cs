@@ -40,16 +40,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
-        private static Expression<Func<Exception, bool>> SameExceptionAs(Exception expectedException)
-        {
-            return actualException =>
-                actualException.Message == expectedException.Message
-                && actualException.InnerException.Message == expectedException.InnerException.Message;
-        }
-
-        private static Expression<Func<Exception, bool>> SameValidationExceptionAs(Exception expectedException) =>
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
-    
+
         private static IQueryable<Comment> CreateRandomComments()
         {
             return CreateCommentFiller(date: GetRandomDateTimeOffset())

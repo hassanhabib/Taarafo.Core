@@ -144,7 +144,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> addProfileTask =
                 this.profileService.AddProfileAsync(invalidProfile);
 
-            ProfileValidationException  actualProfileValidationException =
+            ProfileValidationException actualProfileValidationException =
                 await Assert.ThrowsAsync<ProfileValidationException>(() =>
                     addProfileTask.AsTask());
 
