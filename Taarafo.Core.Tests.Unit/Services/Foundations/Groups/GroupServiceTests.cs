@@ -70,13 +70,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         private static SqlException GetSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
-        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expedtedException)
-        {
-            return actualException =>
-                actualException.Message == expedtedException.Message
-                && actualException.InnerException.Message == expedtedException.InnerException.Message
-                && (actualException.InnerException as Xeption).DataEquals(expedtedException.InnerException.Data);
-        }
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
 
         public static TheoryData MinutesBeforeOrAfter()
         {
