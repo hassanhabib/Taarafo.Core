@@ -55,7 +55,7 @@ namespace Taarafo.Core.Infrastructure.Build.Services
 
                             TargetDotNetVersion = new TargetDotNetVersion
                             {
-                                DotNetVersion = "7.0.100-preview.1.22110.4",
+                                DotNetVersion = "7.0.100-preview.4.22252.9",
                                 IncludePrerelease = true
                             }
                         },
