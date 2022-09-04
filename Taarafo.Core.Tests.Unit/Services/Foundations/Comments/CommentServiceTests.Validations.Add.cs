@@ -114,7 +114,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         public async Task ShouldThrowValidationExceptionOnAddIfCreateAndUpdateDatesIsNotSameAndLogItAsync()
         {
             // given
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             int randomNumber = GetRandomNumber();
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             Comment randomComment = CreateRandomComment(randomDateTimeOffset);
@@ -132,6 +131,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 
             var expectedCommentValidationException =
                 new CommentValidationException(invalidCommentException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTimeOffset);
 
             // when
             ValueTask<Comment> addCommentTask =
