@@ -277,16 +277,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
         public async Task ShouldThrowValidationExceptionOnModifyIfStorageCreatedDateNotSameAsCreatedDateAndLogItAsync()
         {
             // given
-            int randomNumber = GetRandomNumber();
+            int randomNumber = GetRandomNegativeNumber();
             int randomMinutes = randomNumber;
-            DateTimeOffset randomDate = GetRandomDateTimeOffset();
-            Post randomPost = CreateRandomPost(randomDate);
-            Post invalidPost = randomPost;
-            invalidPost.UpdatedDate = randomDate;
-            Post storagePost = randomPost.DeepClone();
-            Guid postId = invalidPost.Id;
-            invalidPost.CreatedDate = storagePost.CreatedDate.AddMinutes(randomMinutes);
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Post randomPost = CreateRandomModifyPost(randomDateTimeOffset);
+            Post invalidPost = randomPost.DeepClone();
+            Post storagePost = invalidPost.DeepClone();
+            storagePost.CreatedDate = storagePost.CreatedDate.AddMinutes(randomMinutes);
+            storagePost.UpdatedDate = storagePost.UpdatedDate.AddMinutes(randomMinutes);
             var invalidPostException = new InvalidPostException();
+            Guid postId = invalidPost.Id;
 
             invalidPostException.AddData(
                 key: nameof(Post.CreatedDate),
@@ -301,7 +301,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
-                .Returns(randomDate);
+                .Returns(randomDateTimeOffset);
 
             // when
             ValueTask<Post> modifyPostTask =
