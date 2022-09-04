@@ -114,7 +114,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         {
             // given
             int randomNumber = GetRandomNumber();
-            Comment randomComment = CreateRandomComment();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Comment randomComment = CreateRandomComment(randomDateTimeOffset);
             Comment invalidComment = randomComment;
 
             invalidComment.UpdatedDate =
@@ -129,6 +130,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 
             var expectedCommentValidationException =
                 new CommentValidationException(invalidCommentException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTimeOffset);
 
             // when
             ValueTask<Comment> addCommentTask =
