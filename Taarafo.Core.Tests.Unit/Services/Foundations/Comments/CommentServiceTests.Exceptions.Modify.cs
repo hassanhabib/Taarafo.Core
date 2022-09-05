@@ -197,8 +197,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 this.commentService.ModifyCommentAsync(randomComment);
 
             CommentDependencyValidationException actualCommentDependencyValidationException =
-                await Assert.ThrowsAsync<CommentDependencyValidationException>(() =>
-                    modifyCommentTask.AsTask());
+                await Assert.ThrowsAsync<CommentDependencyValidationException>(
+                    modifyCommentTask.AsTask);
 
             // then
             actualCommentDependencyValidationException.Should().BeEquivalentTo(
