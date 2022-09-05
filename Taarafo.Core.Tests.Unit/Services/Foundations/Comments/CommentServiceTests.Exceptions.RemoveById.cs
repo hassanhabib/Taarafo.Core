@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -39,9 +40,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> removeCommentByIdTask =
                 this.commentService.RemoveCommentByIdAsync(someCommentId);
 
+            CommentDependencyValidationException actualCommentDependencyValidationException =
+                await Assert.ThrowsAsync<CommentDependencyValidationException>(
+                    removeCommentByIdTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentDependencyValidationException>(() =>
-                removeCommentByIdTask.AsTask());
+            actualCommentDependencyValidationException.Should().BeEquivalentTo(
+                expectedCommentDependencyValidationException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
@@ -82,9 +87,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> deleteCommentTask =
                 this.commentService.RemoveCommentByIdAsync(someCommentId);
 
+            CommentDependencyException actualCommentDependencyException =
+                await Assert.ThrowsAsync<CommentDependencyException>(
+                    deleteCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentDependencyException>(() =>
-                deleteCommentTask.AsTask());
+            actualCommentDependencyException.Should().BeEquivalentTo(
+                expectedCommentDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
@@ -121,9 +130,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> removeCommentByIdTask =
                 this.commentService.RemoveCommentByIdAsync(someCommentId);
 
+            CommentServiceException actualCommentServiceException =
+                await Assert.ThrowsAsync<CommentServiceException>(
+                    removeCommentByIdTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentServiceException>(() =>
-                removeCommentByIdTask.AsTask());
+            actualCommentServiceException.Should().BeEquivalentTo(expectedCommentServiceException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectCommentByIdAsync(It.IsAny<Guid>()),

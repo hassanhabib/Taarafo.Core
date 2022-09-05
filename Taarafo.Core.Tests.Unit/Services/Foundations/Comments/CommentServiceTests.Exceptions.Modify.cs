@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -38,9 +39,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> addCommentTask =
                 this.commentService.ModifyCommentAsync(randomComment);
 
+            CommentDependencyException acutalCommentDependencyException =
+                await Assert.ThrowsAsync<CommentDependencyException>(
+                    addCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentDependencyException>(() =>
-               addCommentTask.AsTask());
+            acutalCommentDependencyException.Should().BeEquivalentTo(
+                expectedCommentDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -78,7 +83,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             var invalidCommentReferenceException =
                 new InvalidCommentReferenceException(foreignKeyConstraintConflictException);
 
-            var commentDependencyValidationException =
+            var expectedCommentDependencyValidationException =
                 new CommentDependencyValidationException(invalidCommentReferenceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
@@ -89,9 +94,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> modifyCommentTask =
                 this.commentService.ModifyCommentAsync(foreignKeyConflictedComment);
 
+            CommentDependencyValidationException actualCommentDependencyValidationException =
+                await Assert.ThrowsAsync<CommentDependencyValidationException>(
+                    modifyCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentDependencyValidationException>(() =>
-                modifyCommentTask.AsTask());
+            actualCommentDependencyValidationException.Should().BeEquivalentTo(
+                expectedCommentDependencyValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -102,8 +111,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                     Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(commentDependencyValidationException))),
-                    Times.Once);
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedCommentDependencyValidationException))),
+                        Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateCommentAsync(foreignKeyConflictedComment),
@@ -131,13 +141,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
                 broker.GetCurrentDateTimeOffset())
                     .Throws(databaseUpdateException);
 
-            // when
+            //when
             ValueTask<Comment> modifyCommentTask =
                 this.commentService.ModifyCommentAsync(randomComment);
 
+            CommentDependencyException actualCommentDependencyException =
+                await Assert.ThrowsAsync<CommentDependencyException>(
+                    modifyCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentDependencyException>(() =>
-                modifyCommentTask.AsTask());
+            actualCommentDependencyException.Should().BeEquivalentTo(
+                expectedCommentDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -182,9 +196,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> modifyCommentTask =
                 this.commentService.ModifyCommentAsync(randomComment);
 
+            CommentDependencyValidationException actualCommentDependencyValidationException =
+                await Assert.ThrowsAsync<CommentDependencyValidationException>(
+                    modifyCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentDependencyValidationException>(() =>
-                modifyCommentTask.AsTask());
+            actualCommentDependencyValidationException.Should().BeEquivalentTo(
+                expectedCommentDependencyValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -229,9 +247,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> modifyCommentTask =
                 this.commentService.ModifyCommentAsync(randomComment);
 
+            CommentServiceException actualCommentServiceException =
+                await Assert.ThrowsAsync<CommentServiceException>(
+                    modifyCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentServiceException>(() =>
-                modifyCommentTask.AsTask());
+            actualCommentServiceException.Should().BeEquivalentTo(
+                expectedCommentServiceException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),

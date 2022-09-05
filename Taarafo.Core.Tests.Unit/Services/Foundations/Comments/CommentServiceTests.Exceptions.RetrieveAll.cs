@@ -34,9 +34,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             Action retrieveAllCommentsAction = () =>
                 this.commentService.RetrieveAllComments();
 
+            CommentDependencyException actualCommentDependencyException =
+                Assert.Throws<CommentDependencyException>(
+                    retrieveAllCommentsAction);
+
             // then
-            Assert.Throws<CommentDependencyException>(
-                retrieveAllCommentsAction);
+            actualCommentDependencyException.Should().BeEquivalentTo(
+                expectedCommentDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllComments(),
