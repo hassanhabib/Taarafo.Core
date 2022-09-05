@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -38,9 +39,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> addCommentTask =
                 this.commentService.AddCommentAsync(someComment);
 
+            CommentDependencyException actualCommentDependencyException =
+                await Assert.ThrowsAsync<CommentDependencyException>(
+                    addCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentDependencyException>(() =>
-               addCommentTask.AsTask());
+            actualCommentDependencyException.Should().BeEquivalentTo(
+                expectedCommentDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -85,9 +90,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> addCommentTask =
                 this.commentService.AddCommentAsync(alreadyExistsComment);
 
+            CommentDependencyValidationException actualCommentDependencyValidationException =
+                await Assert.ThrowsAsync<CommentDependencyValidationException>(
+                    addCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentDependencyValidationException>(() =>
-                addCommentTask.AsTask());
+            actualCommentDependencyValidationException.Should().BeEquivalentTo(
+                expectedCommentDependencyValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -130,9 +139,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> addCommentTask =
                 this.commentService.AddCommentAsync(someComment);
 
+            CommentDependencyException actualCommentDependencyException =
+                await Assert.ThrowsAsync<CommentDependencyException>(
+                    addCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentDependencyException>(() =>
-               addCommentTask.AsTask());
+            actualCommentDependencyException.Should().BeEquivalentTo(
+                expectedCommentDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -173,9 +186,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> addCommentTask =
                 this.commentService.AddCommentAsync(someComment);
 
-            // then
-            await Assert.ThrowsAsync<CommentServiceException>(() =>
-                addCommentTask.AsTask());
+            CommentServiceException actualCommentServiceException =
+                await Assert.ThrowsAsync<CommentServiceException>(
+                    addCommentTask.AsTask);
+
+            //then
+            actualCommentServiceException.Should().BeEquivalentTo(
+                expectedCommentServiceException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -220,9 +237,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> addCommentTask =
                 this.commentService.AddCommentAsync(someComment);
 
+            CommentDependencyValidationException actualCommentDependencyValidationException =
+                await Assert.ThrowsAsync<CommentDependencyValidationException>(
+                    addCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentDependencyValidationException>(() =>
-                addCommentTask.AsTask());
+            actualCommentDependencyValidationException.Should().BeEquivalentTo(
+                expectedCommentValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),

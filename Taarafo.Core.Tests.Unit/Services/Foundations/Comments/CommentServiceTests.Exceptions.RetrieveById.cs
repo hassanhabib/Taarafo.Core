@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Comments;
@@ -36,9 +37,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> retrieveCommentByIdTask =
                 this.commentService.RetrieveCommentByIdAsync(someId);
 
+            CommentDependencyException actualCommentDependencyException =
+                await Assert.ThrowsAsync<CommentDependencyException>(
+                    retrieveCommentByIdTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentDependencyException>(() =>
-                retrieveCommentByIdTask.AsTask());
+            actualCommentDependencyException.Should().BeEquivalentTo(
+                expectedCommentDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
@@ -75,9 +80,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> retrieveCommentByIdTask =
                 this.commentService.RetrieveCommentByIdAsync(someId);
 
+            CommentServiceException actualCommentServiceException =
+                await Assert.ThrowsAsync<CommentServiceException>(
+                    retrieveCommentByIdTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentServiceException>(() =>
-                retrieveCommentByIdTask.AsTask());
+            actualCommentServiceException.Should().BeEquivalentTo(
+                expectedCommentServiceException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectCommentByIdAsync(It.IsAny<Guid>()),

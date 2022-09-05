@@ -31,9 +31,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> addCommentTask =
                 this.commentService.AddCommentAsync(nullComment);
 
+            CommentValidationException actualCommentValidationException =
+               await Assert.ThrowsAsync<CommentValidationException>(
+                   addCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentValidationException>(() =>
-                addCommentTask.AsTask());
+            actualCommentValidationException.Should().BeEquivalentTo(
+                expectedCommentValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -88,9 +92,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> addCommentTask =
                 this.commentService.AddCommentAsync(invalidComment);
 
+            CommentValidationException actualCommentValidationException =
+               await Assert.ThrowsAsync<CommentValidationException>(
+                   addCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentValidationException>(() =>
-               addCommentTask.AsTask());
+            actualCommentValidationException.Should().BeEquivalentTo(
+                expectedCommentValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -198,9 +206,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> addCommentTask =
                 this.commentService.AddCommentAsync(invalidComment);
 
+            CommentValidationException actualCommentValidationException =
+               await Assert.ThrowsAsync<CommentValidationException>(
+                   addCommentTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentValidationException>(() =>
-               addCommentTask.AsTask());
+            actualCommentValidationException.Should().BeEquivalentTo(
+                expectedCommentValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),

@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Comments.Exceptions;
@@ -34,9 +35,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> retrieveCommentByIdTask =
                 this.commentService.RetrieveCommentByIdAsync(invalidCommentId);
 
+            CommentValidationException actualCommentValidationException =
+               await Assert.ThrowsAsync<CommentValidationException>(
+                   retrieveCommentByIdTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<CommentValidationException>(() =>
-                retrieveCommentByIdTask.AsTask());
+            actualCommentValidationException.Should().BeEquivalentTo(
+                expectedCommentValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -73,9 +78,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ValueTask<Comment> retrieveCommentByIdTask =
                 this.commentService.RetrieveCommentByIdAsync(someCommentId);
 
-            //then
-            await Assert.ThrowsAsync<CommentValidationException>(() =>
-               retrieveCommentByIdTask.AsTask());
+            CommentValidationException actualCommentValidationException =
+              await Assert.ThrowsAsync<CommentValidationException>(
+                  retrieveCommentByIdTask.AsTask);
+
+            // then
+            actualCommentValidationException.Should().BeEquivalentTo(
+                expectedCommentValidationException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
