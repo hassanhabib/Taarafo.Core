@@ -23,7 +23,7 @@ namespace Taarafo.Core.Brokers.Storages
         {
             AddCommentConfigurations(modelBuilder);
             AddGroupPostConfigurations(modelBuilder);
-            AddPostImpressionReferences(modelBuilder);
+            AddPostImpressionConfigurations(modelBuilder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
