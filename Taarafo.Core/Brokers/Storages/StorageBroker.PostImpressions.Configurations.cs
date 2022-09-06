@@ -10,7 +10,7 @@ namespace Taarafo.Core.Brokers.Storages
 {
     public partial class StorageBroker
     {
-        private static void AddPostImpressionReferences(ModelBuilder modelBuilder)
+        private static void AddPostImpressionConfigurations(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PostImpression>()
                    .HasKey(postImpression =>
