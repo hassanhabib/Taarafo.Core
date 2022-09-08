@@ -3,7 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-namespace Taarafo.Core.Models.Groups
+namespace Taarafo.Core.Models.Groups.Enums
 {
     public enum GroupStatus
     {

@@ -3,7 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-namespace Taarafo.Core.Models.PostImpressions
+namespace Taarafo.Core.Models.PostImpressions.Enums
 {
     public enum PostImpressionType
     {

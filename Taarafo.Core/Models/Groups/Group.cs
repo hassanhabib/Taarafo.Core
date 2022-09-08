@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Taarafo.Core.Models.GroupPosts;
+using Taarafo.Core.Models.Groups.Enums;
 
 namespace Taarafo.Core.Models.Groups
 {
