@@ -5,6 +5,6 @@ namespace Taarafo.Core.Brokers.Storages
 {
     public partial interface IStorageBroker
     {
-        ValueTask<Event> InsertEventAsynce(Event @event);
+        ValueTask<Event> InsertEventAsync(Event @event);
     }
 }
