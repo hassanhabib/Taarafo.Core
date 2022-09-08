@@ -5,7 +5,7 @@
 
 using System;
 
-namespace Taarafo.Core.Models.NewFolder
+namespace Taarafo.Core.Models.Events
 {
     public class Event
     {
