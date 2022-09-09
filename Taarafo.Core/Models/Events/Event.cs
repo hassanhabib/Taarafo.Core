@@ -18,6 +18,6 @@ namespace Taarafo.Core.Models.Events
         public Guid CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public Guid UpdatedBy { get; set; }
-        public DateTime MyProperty { get; set; }
+        public DateTime? UpdatedDate { get; set; }
     }
 }
