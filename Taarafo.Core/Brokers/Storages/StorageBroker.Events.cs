@@ -11,7 +11,7 @@ using Taarafo.Core.Models.Events;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial class StorageBroker
+    public partial class StorageBroker : IStorageBroker
     {
         public DbSet<Event> Events { get; set; }
 
