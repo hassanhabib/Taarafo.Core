@@ -4,7 +4,6 @@
 // ---------------------------------------------------------------
 
 using System;
-using Taarafo.Core.Models.PostImpressions.Enums;
 using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Models.Profiles;
 
