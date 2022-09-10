@@ -8,6 +8,6 @@ namespace Taarafo.Core.Services.Foundations.Events
     public interface IEventService
     {
         IQueryable<Event> RetrieveAllEvents();
-        ValueTask<Event> AddEvenAsync(Event @event);
+        ValueTask<Event> AddEventAsync(Event @event);
     }
 }
