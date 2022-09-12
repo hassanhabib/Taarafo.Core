@@ -29,7 +29,7 @@ namespace Taarafo.Core.Services.Foundations.Groups
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Group> CreateGroupAsync(Group group) =>
+        public ValueTask<Group> AddGroupAsync(Group group) =>
             TryCatch(async () =>
             {
                 ValidateGroupOnAdd(group);

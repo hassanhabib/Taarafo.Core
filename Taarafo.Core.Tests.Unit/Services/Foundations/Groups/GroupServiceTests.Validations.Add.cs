@@ -29,7 +29,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> addGroupTask =
-                this.groupService.CreateGroupAsync(nullGroup);
+                this.groupService.AddGroupAsync(nullGroup);
 
             // then
             await Assert.ThrowsAsync<GroupValidationException>(() =>
@@ -87,7 +87,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> addGroupTask =
-                this.groupService.CreateGroupAsync(invalidGroup);
+                this.groupService.AddGroupAsync(invalidGroup);
 
             // then
             await Assert.ThrowsAsync<GroupValidationException>(() =>
@@ -133,7 +133,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> addGroupTask =
-                this.groupService.CreateGroupAsync(invalidGroup);
+                this.groupService.AddGroupAsync(invalidGroup);
 
             GroupValidationException actialGroupValidationException =
                 await Assert.ThrowsAsync<GroupValidationException>(() =>
@@ -192,7 +192,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> addGroupTask =
-                this.groupService.CreateGroupAsync(invalidGroup);
+                this.groupService.AddGroupAsync(invalidGroup);
 
             // then
             await Assert.ThrowsAsync<GroupValidationException>(() =>
