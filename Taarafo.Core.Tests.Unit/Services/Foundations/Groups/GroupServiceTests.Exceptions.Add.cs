@@ -37,7 +37,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> addGroupTask =
-                this.groupService.CreateGroupAsync(someGroup);
+                this.groupService.AddGroupAsync(someGroup);
 
             // then
             await Assert.ThrowsAsync<GroupDependencyException>(() =>
@@ -84,7 +84,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> addGroupTask =
-                this.groupService.CreateGroupAsync(alreadyExistsGroup);
+                this.groupService.AddGroupAsync(alreadyExistsGroup);
 
             // then
             await Assert.ThrowsAsync<GroupDependencyException>(() =>
@@ -131,7 +131,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> addGroupTask =
-                this.groupService.CreateGroupAsync(someGroup);
+                this.groupService.AddGroupAsync(someGroup);
 
             // then
             await Assert.ThrowsAsync<GroupDependencyException>(() =>
@@ -176,7 +176,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> addGroupTask =
-                this.groupService.CreateGroupAsync(someGroup);
+                this.groupService.AddGroupAsync(someGroup);
 
             // then
             await Assert.ThrowsAsync<GroupDependencyException>(() =>
@@ -219,7 +219,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             ValueTask<Group> addGroupTask =
-                this.groupService.CreateGroupAsync(someGroup);
+                this.groupService.AddGroupAsync(someGroup);
 
             // then
             await Assert.ThrowsAsync<GroupServiceException>(() =>
