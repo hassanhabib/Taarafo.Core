@@ -1,6 +1,7 @@
 ﻿using Taarafo.Core.Models.Events;
 using System.Threading.Tasks;
 using System.Linq;
+using System;
 
 namespace Taarafo.Core.Brokers.Storages
 {
@@ -8,5 +9,6 @@ namespace Taarafo.Core.Brokers.Storages
     {
         ValueTask<Event> InsertEventAsync(Event @event);
         IQueryable<Event> SelectAllEvents();
+        ValueTask<Event> SelectEventByIdAsync(Guid eventId);
     }
 }
