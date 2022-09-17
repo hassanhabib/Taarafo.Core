@@ -16,6 +16,6 @@ namespace Taarafo.Core.Services.Foundations.Comments
         ValueTask<Comment> RetrieveCommentByIdAsync(Guid commentId);
         IQueryable<Comment> RetrieveAllComments();
         ValueTask<Comment> ModifyCommentAsync(Comment comment);
-        ValueTask<Comment> RemoveCommentByIdAsync(Guid postId);
+        ValueTask<Comment> RemoveCommentByIdAsync(Guid commentId);
     }
 }

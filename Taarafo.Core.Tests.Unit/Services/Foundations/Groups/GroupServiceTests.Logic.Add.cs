@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
     public partial class GroupServiceTests
     {
         [Fact]
-        public async Task ShouldCreateGroupAsync()
+        public async Task ShouldAddGroupAsync()
         {
             // given
             DateTimeOffset randomDateTime = GetRandomDateTime();
@@ -35,7 +35,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
             // when
             Group actualGroup =
-                await this.groupService.CreateGroupAsync(inputGroup);
+                await this.groupService.AddGroupAsync(inputGroup);
 
             // then
             actualGroup.Should().BeEquivalentTo(expectedGroup);

@@ -5,7 +5,7 @@
 
 using System;
 
-namespace Taarafo.Core.Models.NewFolder
+namespace Taarafo.Core.Models.Events
 {
     public class Event
     {
@@ -18,6 +18,6 @@ namespace Taarafo.Core.Models.NewFolder
         public Guid CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public Guid UpdatedBy { get; set; }
-        public DateTime MyProperty { get; set; }
+        public DateTime UpdatedDate { get; set; }
     }
 }
