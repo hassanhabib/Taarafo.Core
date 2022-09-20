@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,14 @@ namespace Taarafo.Core.Brokers.Storages
                 new StorageBroker(this.configuration);
 
             return broker.Events;
+        }
+
+        public async ValueTask<Event> SelectEventByIdAsync(Guid eventId)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            return await broker.Events.FindAsync(eventId);
         }
     }
 }
