@@ -37,12 +37,12 @@ namespace Taarafo.Core.Brokers.Storages
             return broker.Events;
         }
 
-        public async ValueTask<Event> SelectEventByIdAsync(Guid eventID)
+        public async ValueTask<Event> SelectEventByIdAsync(Guid eventId)
         {
             using var broker =
                 new StorageBroker(this.configuration);
 
-            return await broker.Events.FindAsync(eventID);
+            return await broker.Events.FindAsync(eventId);
         }
     }
 }
