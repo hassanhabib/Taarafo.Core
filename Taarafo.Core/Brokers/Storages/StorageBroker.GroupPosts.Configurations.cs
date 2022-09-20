@@ -10,7 +10,7 @@ namespace Taarafo.Core.Brokers.Storages
 {
     public partial class StorageBroker
     {
-        private static void AddGroupPostReferences(ModelBuilder modelBuilder)
+        private static void AddGroupPostConfigurations(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<GroupPost>()
                 .HasKey(groupPost =>
