@@ -39,7 +39,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             ValueTask<PostImpression> addPostImpressionTask =
                 this.postImpressionService.AddPostImpressions(somePostImpression);
 
-            PostImpressionDependencyException actulaPostImpressionDependencyException =
+            PostImpressionDependencyException actualPostImpressionDependencyException =
                  await Assert.ThrowsAsync<PostImpressionDependencyException>(
                      addPostImpressionTask.AsTask);
 
@@ -95,7 +95,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                         addPostImpressionTask.AsTask);
 
             //then
-            actualPostImpressionDependencyValidationException.Shoould().BeEquivalentTo(
+            actualPostImpressionDependencyValidationException.Should().BeEquivalentTo(
                 expectedPostImpressionDependencyValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>

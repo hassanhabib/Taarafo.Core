@@ -72,7 +72,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
-       actualException => actualException.SameExceptionAs(expectedException);
+            actualException => actualException.SameExceptionAs(expectedException);
 
         private static Filler<PostImpression> CreatePostImpressionFiller(DateTimeOffset dates)
         {
