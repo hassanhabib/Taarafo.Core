@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -44,7 +45,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                      addPostImpressionTask.AsTask);
 
             //then
-            actulaPostImpressionDependencyException.Should().BeEquivalentTo(
+            actualPostImpressionDependencyException.Should().BeEquivalentTo(
                 expectedPostImpressionDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>

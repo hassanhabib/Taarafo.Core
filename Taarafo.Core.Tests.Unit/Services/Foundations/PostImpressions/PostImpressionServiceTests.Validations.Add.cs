@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
