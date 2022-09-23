@@ -41,8 +41,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 this.postImpressionService.AddPostImpressions(somePostImpression);
 
             PostImpressionDependencyException actualPostImpressionDependencyException =
-                 await Assert.ThrowsAsync<PostImpressionDependencyException>(
-                     addPostImpressionTask.AsTask);
+                await Assert.ThrowsAsync<PostImpressionDependencyException>(
+                    addPostImpressionTask.AsTask);
 
             //then
             actualPostImpressionDependencyException.Should().BeEquivalentTo(
@@ -92,8 +92,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 this.postImpressionService.AddPostImpressions(alreadyExistsPostImpression);
 
             PostImpressionDependencyValidationException actualPostImpressionDependencyValidationException =
-                    await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(
-                        addPostImpressionTask.AsTask);
+                await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(
+                    addPostImpressionTask.AsTask);
 
             //then
             actualPostImpressionDependencyValidationException.Should().BeEquivalentTo(
@@ -142,7 +142,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             PostImpressionDependencyException actualPostImpressionDependencyException =
                 await Assert.ThrowsAsync<PostImpressionDependencyException>(
-                   addPostImpressionTask.AsTask);
+                    addPostImpressionTask.AsTask);
 
             //then
             actualPostImpressionDependencyException.Should().BeEquivalentTo(
@@ -192,8 +192,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 this.postImpressionService.AddPostImpressions(somePostImpression);
 
             PostImpressionDependencyValidationException actualPostImpressionDependencyValidationException =
-                  await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(
-                     addPostImpressionTask.AsTask);
+                await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(
+                    addPostImpressionTask.AsTask);
 
             //then
             actualPostImpressionDependencyValidationException.Should().BeEquivalentTo(
@@ -239,8 +239,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 this.postImpressionService.AddPostImpressions(somePostImpression);
 
             PostImpressionServiceException actualPostImpressionServiceException =
-                   await Assert.ThrowsAsync<PostImpressionServiceException>(
-                      addPostImpressionTask.AsTask);
+                await Assert.ThrowsAsync<PostImpressionServiceException>(
+                    addPostImpressionTask.AsTask);
 
             //then
             actualPostImpressionServiceException.Should().BeEquivalentTo(
