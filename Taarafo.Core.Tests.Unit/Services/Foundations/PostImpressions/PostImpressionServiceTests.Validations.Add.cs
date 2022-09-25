@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
@@ -30,9 +31,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             ValueTask<PostImpression> addPostImpressionTask =
                 this.postImpressionService.AddPostImpressions(nullPostImpression);
 
+            PostImpressionValidationException actualPostImpressionValidationException =
+                await Assert.ThrowsAsync<PostImpressionValidationException>(
+                    addPostImpressionTask.AsTask);
+
             //then
-            await Assert.ThrowsAsync<PostImpressionValidationException>(() =>
-                addPostImpressionTask.AsTask());
+            actualPostImpressionValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -90,9 +95,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             ValueTask<PostImpression> addPostImpressionTask =
                 this.postImpressionService.AddPostImpressions(invalidPostImpression);
 
+            PostImpressionValidationException actualPostImpressionValidationException =
+                await Assert.ThrowsAsync<PostImpressionValidationException>(
+                    addPostImpressionTask.AsTask);
+
             //then
-            await Assert.ThrowsAsync<PostImpressionValidationException>(() =>
-                addPostImpressionTask.AsTask());
+            actualPostImpressionValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -142,9 +151,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             ValueTask<PostImpression> addPostImpressionTask =
                 this.postImpressionService.AddPostImpressions(invalidPostImpression);
 
+            PostImpressionValidationException actualPostImpressionValidationException =
+                await Assert.ThrowsAsync<PostImpressionValidationException>(
+                    addPostImpressionTask.AsTask);
+
             //then
-            await Assert.ThrowsAsync<PostImpressionValidationException>(() =>
-                addPostImpressionTask.AsTask());
+            actualPostImpressionValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -197,9 +210,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             ValueTask<PostImpression> addPostImpressionTask =
                 this.postImpressionService.AddPostImpressions(invalidPostImpression);
 
+            PostImpressionValidationException actualPostImpressionValidationException =
+                await Assert.ThrowsAsync<PostImpressionValidationException>(
+                    addPostImpressionTask.AsTask);
+
             //then
-            await Assert.ThrowsAsync<PostImpressionValidationException>(() =>
-                addPostImpressionTask.AsTask());
+            actualPostImpressionValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),

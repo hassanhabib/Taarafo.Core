@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -39,9 +40,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             ValueTask<PostImpression> addPostImpressionTask =
                 this.postImpressionService.AddPostImpressions(somePostImpression);
 
+            PostImpressionDependencyException actualPostImpressionDependencyException =
+                await Assert.ThrowsAsync<PostImpressionDependencyException>(
+                    addPostImpressionTask.AsTask);
+
             //then
-            await Assert.ThrowsAsync<PostImpressionDependencyException>(() =>
-                addPostImpressionTask.AsTask());
+            actualPostImpressionDependencyException.Should().BeEquivalentTo(
+                expectedPostImpressionDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -86,9 +91,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             ValueTask<PostImpression> addPostImpressionTask =
                 this.postImpressionService.AddPostImpressions(alreadyExistsPostImpression);
 
+            PostImpressionDependencyValidationException actualPostImpressionDependencyValidationException =
+                await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(
+                    addPostImpressionTask.AsTask);
+
             //then
-            await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(() =>
-                addPostImpressionTask.AsTask());
+            actualPostImpressionDependencyValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionDependencyValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -131,9 +140,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             ValueTask<PostImpression> addPostImpressionTask =
                 this.postImpressionService.AddPostImpressions(somePostImpression);
 
+            PostImpressionDependencyException actualPostImpressionDependencyException =
+                await Assert.ThrowsAsync<PostImpressionDependencyException>(
+                    addPostImpressionTask.AsTask);
+
             //then
-            await Assert.ThrowsAsync<PostImpressionDependencyException>(() =>
-                addPostImpressionTask.AsTask());
+            actualPostImpressionDependencyException.Should().BeEquivalentTo(
+                expectedPostImpressionDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -178,9 +191,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             ValueTask<PostImpression> addPostImpressionTask =
                 this.postImpressionService.AddPostImpressions(somePostImpression);
 
+            PostImpressionDependencyValidationException actualPostImpressionDependencyValidationException =
+                await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(
+                    addPostImpressionTask.AsTask);
+
             //then
-            await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(() =>
-                addPostImpressionTask.AsTask());
+            actualPostImpressionDependencyValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionDependencyValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -221,9 +238,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             ValueTask<PostImpression> addPostImpressionTask =
                 this.postImpressionService.AddPostImpressions(somePostImpression);
 
+            PostImpressionServiceException actualPostImpressionServiceException =
+                await Assert.ThrowsAsync<PostImpressionServiceException>(
+                    addPostImpressionTask.AsTask);
+
             //then
-            await Assert.ThrowsAsync<PostImpressionServiceException>(() =>
-                addPostImpressionTask.AsTask());
+            actualPostImpressionServiceException.Should().BeEquivalentTo(
+                expectedPostImpressionServiceException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
