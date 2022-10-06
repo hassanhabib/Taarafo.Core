@@ -26,5 +26,17 @@ namespace Taarafo.Core.Brokers.Storages
 
             return groupPostEntityEntry.Entity;
         }
+        public async ValueTask<GroupPost> InsertGroupPostAsync(GroupPost groupPost)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            EntityEntry<GroupPost> groupPostEntityEntry =
+                await broker.GroupPosts.AddAsync(groupPost);
+
+            await broker.SaveChangesAsync();
+
+            return groupPostEntityEntry.Entity;
+        }
     }
 }

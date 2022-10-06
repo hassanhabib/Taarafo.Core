@@ -11,5 +11,6 @@ namespace Taarafo.Core.Brokers.Storages
     public partial interface IStorageBroker
     {
         ValueTask<GroupPost> DeleteGroupPostAsync(GroupPost groupPost);
+        ValueTask<GroupPost> InsertGroupPostAsync(GroupPost groupPost);
     }
 }
