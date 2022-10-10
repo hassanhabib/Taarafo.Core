@@ -5,6 +5,7 @@
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,7 +30,10 @@ namespace Taarafo.Core
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddLogging();
-            services.AddControllers();
+
+            services.AddControllers()
+                .AddOData(options => options.Select().Filter().Expand().OrderBy().Count().SetMaxTop(25));
+
             services.AddDbContext<StorageBroker>();
             AddBrokers(services);
             AddServices(services);
