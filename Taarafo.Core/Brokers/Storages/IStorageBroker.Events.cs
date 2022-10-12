@@ -10,5 +10,6 @@ namespace Taarafo.Core.Brokers.Storages
         ValueTask<Event> InsertEventAsync(Event @event);
         IQueryable<Event> SelectAllEvents();
         ValueTask<Event> SelectEventByIdAsync(Guid eventId);
+        ValueTask<Event> DeleteEventAsync(Event @event);
     }
 }
