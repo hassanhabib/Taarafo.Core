@@ -45,7 +45,7 @@ namespace Taarafo.Core.Brokers.Storages
             return await broker.Events.FindAsync(eventId);
         }
 
-        public async ValueTast<Event> UpdateEventAsync(Event @event)
+        public async ValueTask<Event> UpdateEventAsync(Event @event)
         {
             using var broker =
                 new StorageBroker(this.configuration);
