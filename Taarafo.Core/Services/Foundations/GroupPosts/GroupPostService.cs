@@ -23,9 +23,7 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<GroupPost> AddGroupPostAsync(GroupPost groupPost)
-        {
-            throw new System.NotImplementedException();
-        }
+        public async ValueTask<GroupPost> AddGroupPostAsync(GroupPost groupPost) => 
+            await this.storageBroker.InsertGroupPostAsync(groupPost);           
     }
 }
