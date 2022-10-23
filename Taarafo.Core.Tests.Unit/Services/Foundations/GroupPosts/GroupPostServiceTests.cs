@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq.Expressions;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -12,6 +13,7 @@ using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Services.Foundations.GroupPosts;
 using Taarafo.Core.Services.Foundations.Groups;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 {
@@ -37,6 +39,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
         private static GroupPost CreateRandomGroupPost(DateTimeOffset dates) =>
             CreateGroupPostFiller(dates).Create();
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
 
         private static Filler<GroupPost> CreateGroupPostFiller(DateTimeOffset dates)
         {
