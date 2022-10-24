@@ -4,7 +4,6 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
-using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.GroupPosts;
@@ -16,14 +15,19 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
         private readonly IStorageBroker storageBroker;
         private readonly ILoggingBroker loggingBroker;
 
-        public GroupPostService(IStorageBroker storageBroker, 
+        public GroupPostService(IStorageBroker storageBroker,
             ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<GroupPost> AddGroupPostAsync(GroupPost groupPost) => 
-            await this.storageBroker.InsertGroupPostAsync(groupPost);           
+        public ValueTask<GroupPost> AddGroupPostAsync(GroupPost groupPost) =>
+        TryCatch(async () =>
+        {
+            ValidateGroupPostOnAdd(groupPost);
+
+            return await this.storageBroker.InsertGroupPostAsync(groupPost);
+        });
     }
 }

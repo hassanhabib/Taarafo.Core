@@ -3,10 +3,6 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -27,7 +23,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             var nullGroupPostException =
                 new NullGroupPostException();
 
-            var expectedGroupPostValidationException = 
+            var expectedGroupPostValidationException =
                 new GroupPostValidationException(nullGroupPostException);
 
             // when
