@@ -5,6 +5,8 @@
 
 using System;
 using System.Linq.Expressions;
+using Microsoft.Data.SqlClient;
+using System.Runtime.Serialization;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -39,6 +41,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
         private static GroupPost CreateRandomGroupPost(DateTimeOffset dates) =>
             CreateGroupPostFiller(dates).Create();
+
+        private static SqlException GetSqlException() =>
+            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);

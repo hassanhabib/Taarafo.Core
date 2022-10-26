@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Models.GroupPosts.Exceptions;
@@ -106,6 +107,45 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            GroupPost randomGroupPost = CreateRandomGroupPost(randomDateTime);
+            SqlException sqlException = GetSqlException();
+
+            var failedGroupPostStorageException =
+                new FailedGroupPostStorageException(sqlException);
+
+            var expectedGroupPostDependencyException = 
+                new GroupPostDependencyException(failedGroupPostStorageException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertGroupPostAsync(It.IsAny<GroupPost>()))
+                    .ThrowsAsync(sqlException);
+
+            // when
+            ValueTask<GroupPost> addGroupPostTask =
+                this.groupPostService.AddGroupPostAsync(randomGroupPost);
+
+            // then
+            await Assert.ThrowsAsync<GroupPostDependencyException>(() =>
+                addGroupPostTask.AsTask());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupPostAsync(It.IsAny<GroupPost>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedGroupPostDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
