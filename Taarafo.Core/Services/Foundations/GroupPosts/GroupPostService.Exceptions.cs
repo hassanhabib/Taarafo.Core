@@ -25,6 +25,10 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             {
                 throw CreateAndLogValidationException(nullGroupPostException);
             }
+            catch (InvalidGroupPostException invalidGroupPostException)
+            {
+                throw CreateAndLogValidationException(invalidGroupPostException);
+            }
         }
 
         private GroupPostValidationException CreateAndLogValidationException(
