@@ -10,7 +10,7 @@ namespace Taarafo.Core.Models.GroupPosts.Exceptions
     public class GroupPostValidationException : Xeption
     {
         public GroupPostValidationException(Xeption innerException)
-            : base (message: "Group post validation error occurred, please try again.",
+            : base(message: "Group post validation error occurred, please try again.",
                   innerException)
         { }
     }

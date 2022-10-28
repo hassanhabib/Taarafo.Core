@@ -6,7 +6,6 @@
 using System;
 using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Models.GroupPosts.Exceptions;
-using Taarafo.Core.Models.PostImpressions;
 
 namespace Taarafo.Core.Services.Foundations.GroupPosts
 {
@@ -17,7 +16,7 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             ValidateGroupPostIsNotNull(groupPost);
 
             Validate(
-                (Rule: IsInvalid(groupPost.GroupId), Parameter: nameof(GroupPost.GroupId)), 
+                (Rule: IsInvalid(groupPost.GroupId), Parameter: nameof(GroupPost.GroupId)),
                 (Rule: IsInvalid(groupPost.Group), Parameter: nameof(GroupPost.Group)),
                 (Rule: IsInvalid(groupPost.PostId), Parameter: nameof(GroupPost.PostId)),
                 (Rule: IsInvalid(groupPost.Post), Parameter: nameof(GroupPost.Post)));
@@ -37,7 +36,7 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 
         private static void ValidateGroupPostIsNotNull(GroupPost groupPost)
         {
-            if(groupPost is null)
+            if (groupPost is null)
             {
                 throw new NullGroupPostException();
             }
