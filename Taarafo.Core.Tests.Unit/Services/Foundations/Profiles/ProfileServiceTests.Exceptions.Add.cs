@@ -191,26 +191,30 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> addProfileTask =
                 this.profileService.AddProfileAsync(someProfile);
 
+            ProfileDependencyException actualProfileDependencyException =
+                await Assert.ThrowsAsync<ProfileDependencyException>(
+                    addProfileTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<ProfileDependencyException>(() =>
-               addProfileTask.AsTask());
+            actualProfileDependencyException.Should()
+                .BeEquivalentTo(expectedProfileDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertProfileAsync(It.IsAny<Profile>()),
-                    Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedProfileDependencyException))),
                         Times.Once);
 
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertProfileAsync(It.IsAny<Profile>()),
+                    Times.Never);
+
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -234,22 +238,26 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> addProfileTask =
                 this.profileService.AddProfileAsync(someProfile);
 
-            // then
-            await Assert.ThrowsAsync<ProfileServiceException>(() =>
-                addProfileTask.AsTask());
+            ProfileServiceException actualProfileServiceException =
+                await Assert.ThrowsAsync<ProfileServiceException>(
+                    addProfileTask.AsTask);
 
+            // then
+            actualProfileServiceException.Should()
+                .BeEquivalentTo(expectedProfileServiceException);
+            
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertProfileAsync(It.IsAny<Profile>()),
-                    Times.Never);
-
+            
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedProfileServiceException))),
                         Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertProfileAsync(It.IsAny<Profile>()),
+                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
