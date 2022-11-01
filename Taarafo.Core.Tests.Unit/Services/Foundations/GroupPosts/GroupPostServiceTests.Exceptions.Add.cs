@@ -4,9 +4,6 @@
 // ---------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -76,6 +73,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             var expectedGroupPostDependencyValidationException =
                 new GroupPostDependencyValidationException(alreadyExistsGroupPostException);
 
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertGroupPostAsync(It.IsAny<GroupPost>()))
+                    .ThrowsAsync(duplicateKeyException);
+
             // when
             ValueTask<GroupPost> addGroupPostTask =
                 this.groupPostService.AddGroupPostAsync(randomGroupPost);
@@ -95,7 +96,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertGroupPostAsync(randomGroupPost),
-                    Times.Never);
+                    Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();

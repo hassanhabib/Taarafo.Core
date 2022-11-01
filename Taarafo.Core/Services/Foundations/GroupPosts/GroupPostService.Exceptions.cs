@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Models.GroupPosts.Exceptions;
@@ -37,6 +38,14 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
                 throw CreateAndLogCriticalDependencyException(
                     failedGroupPostStorageException);
             }
+            catch(DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsGroupPostException = 
+                    new AlreadyExistsGroupPostException(duplicateKeyException);
+
+                throw CreateAndLogDependencyValidationException(
+                    alreadyExistsGroupPostException);   
+            }
         }
 
         private GroupPostValidationException CreateAndLogValidationException(
@@ -59,6 +68,17 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             this.loggingBroker.LogCritical(groupPostDependencyException);
 
             return groupPostDependencyException;
+        }
+
+        private GroupPostDependencyValidationException CreateAndLogDependencyValidationException(
+            Xeption exception)
+        {
+            var groupPostDependencyValidationException =
+                new GroupPostDependencyValidationException(exception);
+
+            this.loggingBroker.LogError(groupPostDependencyValidationException);
+
+            return groupPostDependencyValidationException;
         }
     }
 }
