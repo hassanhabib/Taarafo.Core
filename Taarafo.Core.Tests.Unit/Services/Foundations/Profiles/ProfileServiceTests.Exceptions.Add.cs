@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -39,9 +40,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> addProfileTask =
                 this.profileService.AddProfileAsync(someProfile);
 
+            ProfileDependencyException actualProfileDependencyException = 
+                await Assert.ThrowsAsync<ProfileDependencyException>(
+                    addProfileTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<ProfileDependencyException>(() =>
-                addProfileTask.AsTask());
+            actualProfileDependencyException.Should()
+                .BeEquivalentTo(expectedProfileDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
