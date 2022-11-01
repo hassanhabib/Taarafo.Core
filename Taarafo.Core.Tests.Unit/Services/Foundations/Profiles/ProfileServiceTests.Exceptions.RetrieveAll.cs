@@ -33,11 +33,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             // when
             Action retrieveAllProfileAction = () =>
                 this.profileService.RetrieveAllProfiles();
-            
+
             ProfileDependencyException actualProfileDependencyException =
                 Assert.Throws<ProfileDependencyException>(
                     retrieveAllProfileAction);
-            
+
             // then
             actualProfileDependencyException.Should()
                 .BeEquivalentTo(expectedProfileDependencyException);

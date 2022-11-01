@@ -40,7 +40,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> addProfileTask =
                 this.profileService.AddProfileAsync(someProfile);
 
-            ProfileDependencyException actualProfileDependencyException = 
+            ProfileDependencyException actualProfileDependencyException =
                 await Assert.ThrowsAsync<ProfileDependencyException>(
                     addProfileTask.AsTask);
 
@@ -149,7 +149,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             // then
             actualProfileDependencyValidationException.Should()
                 .BeEquivalentTo(expectedProfileDependencyValidationException);
-            
+
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once());
@@ -245,11 +245,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             // then
             actualProfileServiceException.Should()
                 .BeEquivalentTo(expectedProfileServiceException);
-            
+
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
-            
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedProfileServiceException))),

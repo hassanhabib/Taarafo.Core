@@ -109,7 +109,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             // then
             actualProfileDependencyValidationException.Should()
                 .BeEquivalentTo(profileDependencyValidationException);
-            
+
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
@@ -249,7 +249,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
                     .Throws(serviceException);
-            
+
             // when
             ValueTask<Profile> modifyProfileTask =
                 this.profileService.ModifyProfileAsync(randomProfile);

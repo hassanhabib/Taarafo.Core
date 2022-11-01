@@ -36,7 +36,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             // then
             actualProfileValidationException.Should()
                 .BeEquivalentTo(expectedProfileValidationException);
-            
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedProfileValidationException))),
@@ -118,7 +118,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             //then
             actualProfileValidationException.Should()
                 .BeEquivalentTo(expectedProfileValidationException);
-            
+
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);

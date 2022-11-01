@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
-using Taarafo.Core.Models.Profiles.Exceptions;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
 using Xunit;

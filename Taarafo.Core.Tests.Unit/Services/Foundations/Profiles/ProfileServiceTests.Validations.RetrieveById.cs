@@ -5,13 +5,11 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
+using FluentAssertions;
 using Moq;
-using Taarafo.Core.Models.Profiles.Exceptions;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
 using Xunit;
-using FluentAssertions;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 {

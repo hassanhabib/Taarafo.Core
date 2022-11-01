@@ -30,7 +30,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             // when
             ValueTask<Profile> addProfileTask =
                 this.profileService.AddProfileAsync(invalidProfile);
-            
+
             ProfileValidationException actualProfileValidationException =
                 await Assert.ThrowsAsync<ProfileValidationException>(
                     addProfileTask.AsTask);
@@ -211,7 +211,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             // then
             actualProfileValidationException.Should()
                 .BeEquivalentTo(expectedProfileValidationException);
-            
+
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once());
