@@ -91,26 +91,30 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> addProfileTask =
                 this.profileService.AddProfileAsync(alreadyExistsProfile);
 
+            ProfileDependencyValidationException actualProfileDependencyValidationException =
+                await Assert.ThrowsAsync<ProfileDependencyValidationException>(
+                    addProfileTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<ProfileDependencyValidationException>(() =>
-                addProfileTask.AsTask());
+            actualProfileDependencyValidationException.Should()
+                .BeEquivalentTo(expectedProfileDependencyValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertProfileAsync(It.IsAny<Profile>()),
-                    Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedProfileDependencyValidationException))),
                         Times.Once);
 
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertProfileAsync(It.IsAny<Profile>()),
+                    Times.Never);
+
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -138,10 +142,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> addProfileTask =
                 this.profileService.AddProfileAsync(someProfile);
 
-            // then
-            await Assert.ThrowsAsync<ProfileDependencyValidationException>(() =>
-                addProfileTask.AsTask());
+            ProfileDependencyValidationException actualProfileDependencyValidationException =
+                await Assert.ThrowsAsync<ProfileDependencyValidationException>(
+                    addProfileTask.AsTask);
 
+            // then
+            actualProfileDependencyValidationException.Should()
+                .BeEquivalentTo(expectedProfileDependencyValidationException);
+            
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once());
