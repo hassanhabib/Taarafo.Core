@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
@@ -28,10 +29,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> modifyProfileTask =
                 this.profileService.ModifyProfileAsync(nullProfile);
 
-            // then
-            await Assert.ThrowsAsync<ProfileValidationException>(() =>
-                modifyProfileTask.AsTask());
+            ProfileValidationException actualProfileValidationException =
+                await Assert.ThrowsAsync<ProfileValidationException>(
+                modifyProfileTask.AsTask);
 
+            // then
+            actualProfileValidationException.Should()
+                .BeEquivalentTo(expectedProfileValidationException);
+            
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedProfileValidationException))),
@@ -106,10 +111,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> modifyProfileTask =
                 this.profileService.ModifyProfileAsync(invalidProfile);
 
-            //then
-            await Assert.ThrowsAsync<ProfileValidationException>(() =>
-                modifyProfileTask.AsTask());
+            ProfileValidationException actualProfileValidationException =
+                await Assert.ThrowsAsync<ProfileValidationException>(
+                    modifyProfileTask.AsTask);
 
+            //then
+            actualProfileValidationException.Should()
+                .BeEquivalentTo(expectedProfileValidationException);
+            
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
@@ -152,9 +161,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> modifyProfileTask =
                 this.profileService.ModifyProfileAsync(invalidProfile);
 
+            ProfileValidationException actualProfileValidationException =
+                await Assert.ThrowsAsync<ProfileValidationException>(
+                    modifyProfileTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<ProfileValidationException>(() =>
-                modifyProfileTask.AsTask());
+            actualProfileValidationException.Should()
+                .BeEquivalentTo(expectedProfileValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -202,9 +215,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> modifyProfileTask =
                 this.profileService.ModifyProfileAsync(inputProfile);
 
+            ProfileValidationException actualProfileValidationException =
+                await Assert.ThrowsAsync<ProfileValidationException>(
+                    modifyProfileTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<ProfileValidationException>(() =>
-                modifyProfileTask.AsTask());
+            actualProfileValidationException.Should()
+                .BeEquivalentTo(expectedProfileValidatonException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
@@ -257,9 +274,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> modifyProfileTask =
                 this.profileService.ModifyProfileAsync(nonExistProfile);
 
+            ProfileValidationException actualProfileValidationException =
+                await Assert.ThrowsAsync<ProfileValidationException>(
+                    modifyProfileTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<ProfileValidationException>(() =>
-                modifyProfileTask.AsTask());
+            actualProfileValidationException.Should()
+                .BeEquivalentTo(expectedProfileValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
