@@ -94,7 +94,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             // then
             actualProfileDependencyValidationException.Should()
                 .BeEquivalentTo(expectedProfileDependencyValidationException);
-
+            
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
                     Times.Once);

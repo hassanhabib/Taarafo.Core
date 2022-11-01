@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Profiles.Exceptions;
@@ -32,10 +33,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             // when
             Action retrieveAllProfileAction = () =>
                 this.profileService.RetrieveAllProfiles();
-
+            
+            ProfileDependencyException actualProfileDependencyException =
+                Assert.Throws<ProfileDependencyException>(
+                    retrieveAllProfileAction);
+            
             // then
-            Assert.Throws<ProfileDependencyException>(
-                retrieveAllProfileAction);
+            actualProfileDependencyException.Should()
+                .BeEquivalentTo(expectedProfileDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllProfiles());
@@ -71,9 +76,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             Action retrieveAllProfilesAction = () =>
                 this.profileService.RetrieveAllProfiles();
 
+            ProfileServiceException actualProfileServiceException =
+                Assert.Throws<ProfileServiceException>(
+                    retrieveAllProfilesAction);
+
             // then
-            Assert.Throws<ProfileServiceException>(
-                retrieveAllProfilesAction);
+            actualProfileServiceException.Should()
+                .BeEquivalentTo(expectedProfileServiceException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllProfiles(),
