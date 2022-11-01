@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -37,10 +38,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> removeProfileByIdTask =
                 this.profileService.RemoveProfileByIdAsync(someProfileId);
 
-            // then
-            await Assert.ThrowsAsync<ProfileDependencyException>(() =>
-                removeProfileByIdTask.AsTask());
+            ProfileDependencyException actualProfileDependencyException =
+                await Assert.ThrowsAsync<ProfileDependencyException>(
+                    removeProfileByIdTask.AsTask);
 
+            // then
+            actualProfileDependencyException.Should()
+                .BeEquivalentTo(expectedProfileDependencyException);
+            
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
@@ -82,9 +87,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> removeProfileByIdTask =
                 this.profileService.RemoveProfileByIdAsync(someProfileId);
 
+            ProfileDependencyValidationException actualProfileDependencyValidationException =
+                await Assert.ThrowsAsync<ProfileDependencyValidationException>(
+                    removeProfileByIdTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<ProfileDependencyValidationException>(() =>
-                removeProfileByIdTask.AsTask());
+            actualProfileDependencyValidationException.Should()
+                .BeEquivalentTo(expectedProfileDependencyValidationException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
@@ -125,9 +134,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> removeProfileByIdTask =
                 this.profileService.RemoveProfileByIdAsync(someProfileId);
 
+            ProfileServiceException actualProfileServiceException =
+                await Assert.ThrowsAsync<ProfileServiceException>(
+                    removeProfileByIdTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<ProfileServiceException>(() =>
-                removeProfileByIdTask.AsTask());
+            actualProfileServiceException.Should()
+                .BeEquivalentTo(expectedProfileServiceException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
