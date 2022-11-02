@@ -10,12 +10,12 @@ using Taarafo.Core.Models.PostImpressions;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial interface IStorageBroker
-    {
-        ValueTask<PostImpression> InsertPostImpressionAsync(PostImpression postImpression);
-        IQueryable<PostImpression> SelectAllPostImpressions();
-        ValueTask<PostImpression> SelectPostImpressionByIdsAsync(Guid PostId, Guid ProfileId);
-        ValueTask<PostImpression> UpdatePostImpressionAsync(PostImpression postImpression);
-        ValueTask<PostImpression> DeletePostImpressionAsync(PostImpression postImpression);
-    }
+	public partial interface IStorageBroker
+	{
+		ValueTask<PostImpression> InsertPostImpressionAsync(PostImpression postImpression);
+		IQueryable<PostImpression> SelectAllPostImpressions();
+		ValueTask<PostImpression> SelectPostImpressionByIdsAsync(Guid PostId, Guid ProfileId);
+		ValueTask<PostImpression> UpdatePostImpressionAsync(PostImpression postImpression);
+		ValueTask<PostImpression> DeletePostImpressionAsync(PostImpression postImpression);
+	}
 }

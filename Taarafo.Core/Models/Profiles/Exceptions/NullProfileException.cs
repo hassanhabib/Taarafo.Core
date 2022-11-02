@@ -7,10 +7,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Profiles.Exceptions
 {
-    public class NullProfileException : Xeption
-    {
-        public NullProfileException()
-            : base(message: "Profile is null.")
-        { }
-    }
+	public class NullProfileException : Xeption
+	{
+		public NullProfileException()
+			: base(message: "Profile is null.")
+		{ }
+	}
 }

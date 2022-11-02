@@ -7,10 +7,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Comments.Exceptions
 {
-    public class NullCommentException : Xeption
-    {
-        public NullCommentException()
-            : base(message: "Comment is null.")
-        { }
-    }
+	public class NullCommentException : Xeption
+	{
+		public NullCommentException()
+			: base(message: "Comment is null.")
+		{ }
+	}
 }

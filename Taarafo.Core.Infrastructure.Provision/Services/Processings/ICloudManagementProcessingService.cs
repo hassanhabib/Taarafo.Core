@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Taarafo.Core.Infrastructure.Provision.Services.Processings
 {
-    public interface ICloudManagementProcessingService
-    {
-        ValueTask ProcessAsync();
-    }
+	public interface ICloudManagementProcessingService
+	{
+		ValueTask ProcessAsync();
+	}
 }

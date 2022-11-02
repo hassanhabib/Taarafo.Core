@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Profiles.Exceptions
 {
-    public class InvalidProfileReferenceException : Xeption
-    {
-        public InvalidProfileReferenceException(Exception innerException)
-            : base(message: "Invalid profile reference error occurred.", innerException)
-        { }
-    }
+	public class InvalidProfileReferenceException : Xeption
+	{
+		public InvalidProfileReferenceException(Exception innerException)
+			: base(message: "Invalid profile reference error occurred.", innerException)
+		{ }
+	}
 }

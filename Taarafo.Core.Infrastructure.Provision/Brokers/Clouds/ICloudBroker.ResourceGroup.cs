@@ -8,10 +8,10 @@ using Microsoft.Azure.Management.ResourceManager.Fluent;
 
 namespace Taarafo.Core.Infrastructure.Provision.Brokers.Clouds
 {
-    public partial interface ICloudBroker
-    {
-        ValueTask<IResourceGroup> CreateResourceGroupAsync(string resourceGroupName);
-        ValueTask<bool> CheckResourceGroupExistAsync(string resourceGroupName);
-        ValueTask DeleteResourceGroupAsync(string resourceGroupName);
-    }
+	public partial interface ICloudBroker
+	{
+		ValueTask<IResourceGroup> CreateResourceGroupAsync(string resourceGroupName);
+		ValueTask<bool> CheckResourceGroupExistAsync(string resourceGroupName);
+		ValueTask DeleteResourceGroupAsync(string resourceGroupName);
+	}
 }

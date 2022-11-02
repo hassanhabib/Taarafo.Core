@@ -11,33 +11,33 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
-    public partial class PostServiceTests
-    {
-        [Fact]
-        public void ShouldReturnPosts()
-        {
-            // given
-            IQueryable<Post> randomPosts = CreateRandomPosts();
-            IQueryable<Post> storagePosts = randomPosts;
-            IQueryable<Post> expectedPosts = storagePosts;
+	public partial class PostServiceTests
+	{
+		[Fact]
+		public void ShouldReturnPosts()
+		{
+			// given
+			IQueryable<Post> randomPosts = CreateRandomPosts();
+			IQueryable<Post> storagePosts = randomPosts;
+			IQueryable<Post> expectedPosts = storagePosts;
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllPosts())
-                    .Returns(storagePosts);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectAllPosts())
+					.Returns(storagePosts);
 
-            // when
-            IQueryable<Post> actualPosts =
-                this.postService.RetrieveAllPosts();
+			// when
+			IQueryable<Post> actualPosts =
+				this.postService.RetrieveAllPosts();
 
-            // then
-            actualPosts.Should().BeEquivalentTo(expectedPosts);
+			// then
+			actualPosts.Should().BeEquivalentTo(expectedPosts);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllPosts(),
-                    Times.Once);
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectAllPosts(),
+					Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }

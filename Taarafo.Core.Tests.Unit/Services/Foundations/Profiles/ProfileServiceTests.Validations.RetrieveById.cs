@@ -15,7 +15,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 {
     public partial class ProfileServiceTests
     {
-
         [Fact]
         public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
         {

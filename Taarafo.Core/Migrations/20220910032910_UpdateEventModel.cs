@@ -9,22 +9,22 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Taarafo.Core.Migrations
 {
-    public partial class UpdateEventModel : Migration
-    {
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.RenameColumn(
-                name: "MyProperty",
-                table: "Events",
-                newName: "UpdatedDate");
-        }
+	public partial class UpdateEventModel : Migration
+	{
+		protected override void Up(MigrationBuilder migrationBuilder)
+		{
+			migrationBuilder.RenameColumn(
+				name: "MyProperty",
+				table: "Events",
+				newName: "UpdatedDate");
+		}
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.RenameColumn(
-                name: "UpdatedDate",
-                table: "Events",
-                newName: "MyProperty");
-        }
-    }
+		protected override void Down(MigrationBuilder migrationBuilder)
+		{
+			migrationBuilder.RenameColumn(
+				name: "UpdatedDate",
+				table: "Events",
+				newName: "MyProperty");
+		}
+	}
 }

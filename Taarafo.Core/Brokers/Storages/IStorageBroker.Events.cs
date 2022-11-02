@@ -10,10 +10,10 @@ using Taarafo.Core.Models.Events;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial interface IStorageBroker
-    {
-        ValueTask<Event> InsertEventAsync(Event @event);
-        IQueryable<Event> SelectAllEvents();
-        ValueTask<Event> SelectEventByIdAsync(Guid eventId);
-    }
+	public partial interface IStorageBroker
+	{
+		ValueTask<Event> InsertEventAsync(Event @event);
+		IQueryable<Event> SelectAllEvents();
+		ValueTask<Event> SelectEventByIdAsync(Guid eventId);
+	}
 }

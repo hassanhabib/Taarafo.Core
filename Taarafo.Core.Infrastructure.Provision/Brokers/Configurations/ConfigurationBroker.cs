@@ -9,16 +9,16 @@ using Taarafo.Core.Infrastructure.Provision.Models.Configurations;
 
 namespace Taarafo.Core.Infrastructure.Provision.Brokers.Configurations
 {
-    public class ConfigurationBroker : IConfigurationBroker
-    {
-        public CloudManagementConfiguration GetConfigurations()
-        {
-            IConfigurationRoot configurationRoot = new ConfigurationBuilder()
-                .SetBasePath(basePath: Directory.GetCurrentDirectory())
-                .AddJsonFile(path: "Taarafo.Core.Infrastructure.Provision\\appSettings.json", optional: false)
-                .Build();
+	public class ConfigurationBroker : IConfigurationBroker
+	{
+		public CloudManagementConfiguration GetConfigurations()
+		{
+			IConfigurationRoot configurationRoot = new ConfigurationBuilder()
+				.SetBasePath(basePath: Directory.GetCurrentDirectory())
+				.AddJsonFile(path: "Taarafo.Core.Infrastructure.Provision\\appSettings.json", optional: false)
+				.Build();
 
-            return configurationRoot.Get<CloudManagementConfiguration>();
-        }
-    }
+			return configurationRoot.Get<CloudManagementConfiguration>();
+		}
+	}
 }
