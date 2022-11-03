@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Profiles.Exceptions
 {
-    public class LockedProfileException : Xeption
-    {
-        public LockedProfileException(Exception innerException)
-            : base(message: "Locked profile record exception, please try again later", innerException)
-        { }
-    }
+	public class LockedProfileException : Xeption
+	{
+		public LockedProfileException(Exception innerException)
+			: base(message: "Locked profile record exception, please try again later", innerException)
+		{ }
+	}
 }

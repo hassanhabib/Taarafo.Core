@@ -8,9 +8,9 @@ using Taarafo.Core.Models.GroupPosts;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial interface IStorageBroker
-    {
-        ValueTask<GroupPost> InsertGroupPostAsync(GroupPost groupPost);
-        ValueTask<GroupPost> DeleteGroupPostAsync(GroupPost groupPost);
-    }
+	public partial interface IStorageBroker
+	{
+		ValueTask<GroupPost> InsertGroupPostAsync(GroupPost groupPost);
+		ValueTask<GroupPost> DeleteGroupPostAsync(GroupPost groupPost);
+	}
 }

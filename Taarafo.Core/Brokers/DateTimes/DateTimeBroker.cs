@@ -7,9 +7,9 @@ using System;
 
 namespace Taarafo.Core.Brokers.DateTimes
 {
-    public class DateTimeBroker : IDateTimeBroker
-    {
-        public DateTimeOffset GetCurrentDateTimeOffset() =>
-            DateTimeOffset.UtcNow;
-    }
+	public class DateTimeBroker : IDateTimeBroker
+	{
+		public DateTimeOffset GetCurrentDateTimeOffset() =>
+			DateTimeOffset.UtcNow;
+	}
 }

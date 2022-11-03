@@ -7,11 +7,11 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Profiles.Exceptions
 {
-    public class ProfileValidationException : Xeption
-    {
-        public ProfileValidationException(Xeption innerException)
-            : base(message: "Profile validation errors occurred, please try again.",
-                  innerException)
-        { }
-    }
+	public class ProfileValidationException : Xeption
+	{
+		public ProfileValidationException(Xeption innerException)
+			: base(message: "Profile validation errors occurred, please try again.",
+				  innerException)
+		{ }
+	}
 }

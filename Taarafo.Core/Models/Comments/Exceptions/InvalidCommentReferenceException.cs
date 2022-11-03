@@ -8,9 +8,9 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Comments.Exceptions
 {
-    public class InvalidCommentReferenceException : Xeption
-    {
-        public InvalidCommentReferenceException(Exception innerException)
-            : base(message: "Invalid comment reference error occurred.", innerException) { }
-    }
+	public class InvalidCommentReferenceException : Xeption
+	{
+		public InvalidCommentReferenceException(Exception innerException)
+			: base(message: "Invalid comment reference error occurred.", innerException) { }
+	}
 }

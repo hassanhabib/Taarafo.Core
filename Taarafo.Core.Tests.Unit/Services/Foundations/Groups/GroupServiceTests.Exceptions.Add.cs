@@ -15,232 +15,232 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 {
-    public partial class GroupServiceTests
-    {
-        [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnCreateIfSqlErrorOccursAndLogItAsync()
-        {
-            // given
-            DateTimeOffset randomDateTime = GetRandomDateTime();
-            Group someGroup = CreateRandomGroup(randomDateTime);
-            SqlException sqlException = GetSqlException();
+	public partial class GroupServiceTests
+	{
+		[Fact]
+		public async Task ShouldThrowCriticalDependencyExceptionOnCreateIfSqlErrorOccursAndLogItAsync()
+		{
+			// given
+			DateTimeOffset randomDateTime = GetRandomDateTime();
+			Group someGroup = CreateRandomGroup(randomDateTime);
+			SqlException sqlException = GetSqlException();
 
-            var failedGroupStorageException =
-                new FailedGroupStorageException(sqlException);
+			var failedGroupStorageException =
+				new FailedGroupStorageException(sqlException);
 
-            var expectedGroupDependencyException =
-                new GroupDependencyException(failedGroupStorageException);
+			var expectedGroupDependencyException =
+				new GroupDependencyException(failedGroupStorageException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(sqlException);
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Throws(sqlException);
 
-            // when
-            ValueTask<Group> addGroupTask =
-                this.groupService.AddGroupAsync(someGroup);
+			// when
+			ValueTask<Group> addGroupTask =
+				this.groupService.AddGroupAsync(someGroup);
 
-            // then
-            await Assert.ThrowsAsync<GroupDependencyException>(() =>
-                addGroupTask.AsTask());
+			// then
+			await Assert.ThrowsAsync<GroupDependencyException>(() =>
+				addGroupTask.AsTask());
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedGroupDependencyException))),
-                        Times.Once);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogCritical(It.Is(SameExceptionAs(
+					expectedGroupDependencyException))),
+						Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupAsync(It.IsAny<Group>()),
-                    Times.Never);
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertGroupAsync(It.IsAny<Group>()),
+					Times.Never);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-        }
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+		}
 
-        [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnCreateIfGroupAlreadyExsitsAndLogItAsync()
-        {
-            // given
-            Group randomGroup = CreateRandomGroup();
-            Group alreadyExistsGroup = randomGroup;
-            string randomMessage = GetRandomMessage();
+		[Fact]
+		public async Task ShouldThrowDependencyValidationExceptionOnCreateIfGroupAlreadyExsitsAndLogItAsync()
+		{
+			// given
+			Group randomGroup = CreateRandomGroup();
+			Group alreadyExistsGroup = randomGroup;
+			string randomMessage = GetRandomMessage();
 
-            var duplicateKeyException =
-                new DuplicateKeyException(randomMessage);
+			var duplicateKeyException =
+				new DuplicateKeyException(randomMessage);
 
-            var alreadyExistsGroupException =
-                new AlreadyExistsGroupException(duplicateKeyException);
+			var alreadyExistsGroupException =
+				new AlreadyExistsGroupException(duplicateKeyException);
 
-            var expectedGroupDependencyValidationException =
-                new GroupDependencyException(alreadyExistsGroupException);
+			var expectedGroupDependencyValidationException =
+				new GroupDependencyException(alreadyExistsGroupException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-              broker.GetCurrentDateTimeOffset())
-                  .Throws(duplicateKeyException);
+			this.dateTimeBrokerMock.Setup(broker =>
+			  broker.GetCurrentDateTimeOffset())
+				  .Throws(duplicateKeyException);
 
-            // when
-            ValueTask<Group> addGroupTask =
-                this.groupService.AddGroupAsync(alreadyExistsGroup);
+			// when
+			ValueTask<Group> addGroupTask =
+				this.groupService.AddGroupAsync(alreadyExistsGroup);
 
-            // then
-            await Assert.ThrowsAsync<GroupDependencyException>(() =>
-                addGroupTask.AsTask());
+			// then
+			await Assert.ThrowsAsync<GroupDependencyException>(() =>
+				addGroupTask.AsTask());
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupAsync(It.IsAny<Group>()),
-                    Times.Never);
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertGroupAsync(It.IsAny<Group>()),
+					Times.Never);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedGroupDependencyValidationException))),
-                        Times.Once);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedGroupDependencyValidationException))),
+						Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
 
-        [Fact]
-        public async void ShouldThrowValidationExceptionOnCreateIfReferenceErrorOccursAndLogItAsync()
-        {
-            // given
-            Group someGroup = CreateRandomGroup();
-            string randomMessage = GetRandomMessage();
-            string exceptionMessage = randomMessage;
+		[Fact]
+		public async void ShouldThrowValidationExceptionOnCreateIfReferenceErrorOccursAndLogItAsync()
+		{
+			// given
+			Group someGroup = CreateRandomGroup();
+			string randomMessage = GetRandomMessage();
+			string exceptionMessage = randomMessage;
 
-            var foreignKeyConstraintConflictException =
-                new ForeignKeyConstraintConflictException(exceptionMessage);
+			var foreignKeyConstraintConflictException =
+				new ForeignKeyConstraintConflictException(exceptionMessage);
 
-            var invalidGroupReferenceException =
-                new InvalidGroupReferenceException(foreignKeyConstraintConflictException);
+			var invalidGroupReferenceException =
+				new InvalidGroupReferenceException(foreignKeyConstraintConflictException);
 
-            var expectedGroupDependencyValidationException =
-                new GroupDependencyException(invalidGroupReferenceException);
+			var expectedGroupDependencyValidationException =
+				new GroupDependencyException(invalidGroupReferenceException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(foreignKeyConstraintConflictException);
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Throws(foreignKeyConstraintConflictException);
 
-            // when
-            ValueTask<Group> addGroupTask =
-                this.groupService.AddGroupAsync(someGroup);
+			// when
+			ValueTask<Group> addGroupTask =
+				this.groupService.AddGroupAsync(someGroup);
 
-            // then
-            await Assert.ThrowsAsync<GroupDependencyException>(() =>
-                addGroupTask.AsTask());
+			// then
+			await Assert.ThrowsAsync<GroupDependencyException>(() =>
+				addGroupTask.AsTask());
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once());
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once());
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedGroupDependencyValidationException))),
-                        Times.Once);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedGroupDependencyValidationException))),
+						Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupAsync(It.IsAny<Group>()),
-                        Times.Never);
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertGroupAsync(It.IsAny<Group>()),
+						Times.Never);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-        }
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+		}
 
-        [Fact]
-        public async Task ShouldThrowDependencyExceptionOnCreateIfDatabaseUpdateErrorOccursAndLogItAsync()
-        {
-            // given
-            Group someGroup = CreateRandomGroup();
+		[Fact]
+		public async Task ShouldThrowDependencyExceptionOnCreateIfDatabaseUpdateErrorOccursAndLogItAsync()
+		{
+			// given
+			Group someGroup = CreateRandomGroup();
 
-            var databaseUpdateException =
-                new DbUpdateException();
+			var databaseUpdateException =
+				new DbUpdateException();
 
-            var failedGroupStorageException =
-                new FailedGroupStorageException(databaseUpdateException);
+			var failedGroupStorageException =
+				new FailedGroupStorageException(databaseUpdateException);
 
-            var expectedGroupDependencyException =
-                new GroupDependencyException(failedGroupStorageException);
+			var expectedGroupDependencyException =
+				new GroupDependencyException(failedGroupStorageException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(databaseUpdateException);
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Throws(databaseUpdateException);
 
-            // when
-            ValueTask<Group> addGroupTask =
-                this.groupService.AddGroupAsync(someGroup);
+			// when
+			ValueTask<Group> addGroupTask =
+				this.groupService.AddGroupAsync(someGroup);
 
-            // then
-            await Assert.ThrowsAsync<GroupDependencyException>(() =>
-               addGroupTask.AsTask());
+			// then
+			await Assert.ThrowsAsync<GroupDependencyException>(() =>
+			   addGroupTask.AsTask());
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupAsync(It.IsAny<Group>()),
-                    Times.Never);
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertGroupAsync(It.IsAny<Group>()),
+					Times.Never);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedGroupDependencyException))),
-                        Times.Once);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedGroupDependencyException))),
+						Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
 
-        [Fact]
-        public async Task ShouldThrowServiceExceptionOnCreateIfServiceErrorOccursAndLogItAsync()
-        {
-            // given
-            Group someGroup = CreateRandomGroup();
-            var serviceException = new Exception();
+		[Fact]
+		public async Task ShouldThrowServiceExceptionOnCreateIfServiceErrorOccursAndLogItAsync()
+		{
+			// given
+			Group someGroup = CreateRandomGroup();
+			var serviceException = new Exception();
 
-            var failedGroupServiceException =
-                new FailedGroupServiceException(serviceException);
+			var failedGroupServiceException =
+				new FailedGroupServiceException(serviceException);
 
-            var expectedGroupServiceException =
-                new GroupServiceException(failedGroupServiceException);
+			var expectedGroupServiceException =
+				new GroupServiceException(failedGroupServiceException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(serviceException);
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Throws(serviceException);
 
-            // when
-            ValueTask<Group> addGroupTask =
-                this.groupService.AddGroupAsync(someGroup);
+			// when
+			ValueTask<Group> addGroupTask =
+				this.groupService.AddGroupAsync(someGroup);
 
-            // then
-            await Assert.ThrowsAsync<GroupServiceException>(() =>
-                addGroupTask.AsTask());
+			// then
+			await Assert.ThrowsAsync<GroupServiceException>(() =>
+				addGroupTask.AsTask());
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupAsync(It.IsAny<Group>()),
-                    Times.Never);
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertGroupAsync(It.IsAny<Group>()),
+					Times.Never);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedGroupServiceException))),
-                        Times.Once);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedGroupServiceException))),
+						Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }
