@@ -22,8 +22,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         public async Task ShouldAddGroupPostAsync()
         {
             // given
-            DateTimeOffset dateTime = GetRandomDateTimeOffset();
-            GroupPost randomGroupPost = CreateRandomGroupPost(dateTime);
+            GroupPost randomGroupPost = CreateRandomGroupPost();
             GroupPost inputGroupPost = randomGroupPost;
             GroupPost storageGroupPost = inputGroupPost;
             GroupPost expectedGroupPost = storageGroupPost.DeepClone();

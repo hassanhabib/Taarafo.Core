@@ -36,14 +36,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
-        private static DateTimeOffset GetRandomDateTimeOffset() =>
-            new DateTimeRange(earliestDate: new DateTime()).GetValue();
-
         private static int GetRandomNumber() =>
             new IntRange(min: 1, max: 10).GetValue();
 
-        private static GroupPost CreateRandomGroupPost(DateTimeOffset dates) =>
-            CreateGroupPostFiller(dates).Create();
+        private static GroupPost CreateRandomGroupPost() =>
+            CreateGroupPostFiller().Create();
 
         private static SqlException GetSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
@@ -54,12 +51,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
 
-        private static Filler<GroupPost> CreateGroupPostFiller(DateTimeOffset dates)
+        private static Filler<GroupPost> CreateGroupPostFiller()
         {
             var filler = new Filler<GroupPost>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(dates);
+                .OnType<DateTimeOffset>().IgnoreIt();
 
             return filler;
         }

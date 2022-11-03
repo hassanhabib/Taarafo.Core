@@ -21,8 +21,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
         {
             // given
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            GroupPost randomGroupPost = CreateRandomGroupPost(randomDateTime);
+            GroupPost randomGroupPost = CreateRandomGroupPost();
             SqlException sqlException = GetSqlException();
 
             var failedGroupPostStorageException =
@@ -60,8 +59,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         public async Task ShouldThrowDependencyValidationExceptionOnAddIfGroupPostAlreadyExistsAndLogItAsync()
         {
             // given
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            GroupPost randomGroupPost = CreateRandomGroupPost(randomDateTime);
+            GroupPost randomGroupPost = CreateRandomGroupPost();
             string randomMessage = GetRandomMessage();
 
             var duplicateKeyException =
