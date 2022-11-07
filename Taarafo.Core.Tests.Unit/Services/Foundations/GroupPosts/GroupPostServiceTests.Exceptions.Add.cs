@@ -12,6 +12,9 @@ using Taarafo.Core.Models.GroupPosts;
 using Xunit;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Taarafo.Core.Models.PostImpressions.Exceptions;
+using Taarafo.Core.Models.PostImpressions;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 {
@@ -98,6 +101,50 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            //given
+            GroupPost someGroupPost = CreateRandomGroupPost();
+
+            var databaseUpdateException =
+                new DbUpdateException();
+
+            var failedGroupPostStorageException =
+                new FailedGroupPostStorageException(databaseUpdateException);
+
+            var expectedGroupPostDependencyException =
+                new GroupPostDependencyException(failedGroupPostStorageException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertGroupPostAsync(someGroupPost))
+                    .Throws(databaseUpdateException);
+
+            //when
+            ValueTask<GroupPost> addGroupPostTask =
+                this.groupPostService.AddGroupPostAsync(someGroupPost);
+
+            GroupPostDependencyException actualGroupPostDependencyException =
+                await Assert.ThrowsAsync<GroupPostDependencyException>(
+                    addGroupPostTask.AsTask);
+
+            //then
+            actualGroupPostDependencyException.Should().BeEquivalentTo(
+                expectedGroupPostDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupPostAsync(It.IsAny<GroupPost>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupPostDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

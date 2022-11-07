@@ -38,13 +38,13 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
                 throw CreateAndLogCriticalDependencyException(
                     failedGroupPostStorageException);
             }
-            catch(DuplicateKeyException duplicateKeyException)
+            catch (DuplicateKeyException duplicateKeyException)
             {
-                var alreadyExistsGroupPostException = 
+                var alreadyExistsGroupPostException =
                     new AlreadyExistsGroupPostException(duplicateKeyException);
 
                 throw CreateAndLogDependencyValidationException(
-                    alreadyExistsGroupPostException);   
+                    alreadyExistsGroupPostException);
             }
         }
 
