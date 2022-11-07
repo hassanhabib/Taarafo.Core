@@ -6,6 +6,7 @@
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Models.GroupPosts.Exceptions;
 using Xeptions;
@@ -46,6 +47,13 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
                 throw CreateAndLogDependencyValidationException(
                     alreadyExistsGroupPostException);
             }
+            catch (DbUpdateException databaseUpdateException)
+            {
+                var failedGroupPostStorageException =
+                    new FailedGroupPostStorageException(databaseUpdateException);
+
+                throw CreateAndLogDependencyException(failedGroupPostStorageException);
+            }
         }
 
         private GroupPostValidationException CreateAndLogValidationException(
@@ -79,6 +87,16 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             this.loggingBroker.LogError(groupPostDependencyValidationException);
 
             return groupPostDependencyValidationException;
+        }
+
+        private GroupPostDependencyException CreateAndLogDependencyException(Xeption exception)
+        {
+            var groupPostDependencyException =
+                new GroupPostDependencyException(exception);
+
+            this.loggingBroker.LogError(groupPostDependencyException);
+
+            return groupPostDependencyException;
         }
     }
 }
