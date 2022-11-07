@@ -21,7 +21,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
         {
             // given
-            GroupPost randomGroupPost = CreateRandomGroupPost();
+            GroupPost someGroupPost = CreateRandomGroupPost();
             SqlException sqlException = GetSqlException();
 
             var failedGroupPostStorageException =
@@ -36,7 +36,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
             // when
             ValueTask<GroupPost> addGroupPostTask =
-                this.groupPostService.AddGroupPostAsync(randomGroupPost);
+                this.groupPostService.AddGroupPostAsync(someGroupPost);
 
             // then
             await Assert.ThrowsAsync<GroupPostDependencyException>(() =>
@@ -59,7 +59,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         public async Task ShouldThrowDependencyValidationExceptionOnAddIfGroupPostAlreadyExistsAndLogItAsync()
         {
             // given
-            GroupPost randomGroupPost = CreateRandomGroupPost();
+            GroupPost someGroupPost = CreateRandomGroupPost();
             string randomMessage = GetRandomMessage();
 
             var duplicateKeyException =
@@ -77,7 +77,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
             // when
             ValueTask<GroupPost> addGroupPostTask =
-                this.groupPostService.AddGroupPostAsync(randomGroupPost);
+                this.groupPostService.AddGroupPostAsync(someGroupPost);
 
             GroupPostDependencyValidationException actualGroupPostDependencyValidationException =
                 await Assert.ThrowsAsync<GroupPostDependencyValidationException>(
@@ -93,7 +93,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupPostAsync(randomGroupPost),
+                broker.InsertGroupPostAsync(someGroupPost),
                     Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
