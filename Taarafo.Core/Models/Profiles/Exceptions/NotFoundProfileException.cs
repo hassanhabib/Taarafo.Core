@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Profiles.Exceptions
 {
-    public class NotFoundProfileException : Xeption
-    {
-        public NotFoundProfileException(Guid profileId)
-                : base(message: $"Couldn't find profile with id: {profileId}.")
-        { }
-    }
+	public class NotFoundProfileException : Xeption
+	{
+		public NotFoundProfileException(Guid profileId)
+				: base(message: $"Couldn't find profile with id: {profileId}.")
+		{ }
+	}
 }

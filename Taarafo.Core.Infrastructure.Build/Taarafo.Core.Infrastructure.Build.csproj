@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="ADotNet" Version="2.1.2" />
+    <PackageReference Include="RESTFulSense" Version="2.9.0" />
   </ItemGroup>
 
 </Project>

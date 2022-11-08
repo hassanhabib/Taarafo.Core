@@ -8,9 +8,9 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Comments.Exceptions
 {
-    public class CommentServiceException : Xeption
-    {
-        public CommentServiceException(Exception innerException)
-            : base(message: "Comment service error occurred, contact support.", innerException) { }
-    }
+	public class CommentServiceException : Xeption
+	{
+		public CommentServiceException(Exception innerException)
+			: base(message: "Comment service error occurred, contact support.", innerException) { }
+	}
 }

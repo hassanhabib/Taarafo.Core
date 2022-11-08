@@ -13,72 +13,72 @@ using Taarafo.Core.Models.Comments;
 
 namespace Taarafo.Core.Services.Foundations.Comments
 {
-    public partial class CommentService : ICommentService
-    {
-        private readonly IStorageBroker storageBroker;
-        private readonly IDateTimeBroker dateTimeBroker;
-        private readonly ILoggingBroker loggingBroker;
+	public partial class CommentService : ICommentService
+	{
+		private readonly IStorageBroker storageBroker;
+		private readonly IDateTimeBroker dateTimeBroker;
+		private readonly ILoggingBroker loggingBroker;
 
-        public CommentService(
-            IStorageBroker storageBroker,
-            IDateTimeBroker dateTimeBroker,
-            ILoggingBroker loggingBroker)
-        {
-            this.storageBroker = storageBroker;
-            this.dateTimeBroker = dateTimeBroker;
-            this.loggingBroker = loggingBroker;
-        }
+		public CommentService(
+			IStorageBroker storageBroker,
+			IDateTimeBroker dateTimeBroker,
+			ILoggingBroker loggingBroker)
+		{
+			this.storageBroker = storageBroker;
+			this.dateTimeBroker = dateTimeBroker;
+			this.loggingBroker = loggingBroker;
+		}
 
-        public ValueTask<Comment> AddCommentAsync(Comment comment) =>
-        TryCatch(async () =>
-        {
-            ValidateCommentOnAdd(comment);
+		public ValueTask<Comment> AddCommentAsync(Comment comment) =>
+		TryCatch(async () =>
+		{
+			ValidateCommentOnAdd(comment);
 
-            return await this.storageBroker.InsertCommentAsync(comment);
-        });
+			return await this.storageBroker.InsertCommentAsync(comment);
+		});
 
-        public ValueTask<Comment> RetrieveCommentByIdAsync(Guid commentId) =>
-        TryCatch(async () =>
-        {
-            ValidateCommentId(commentId);
+		public ValueTask<Comment> RetrieveCommentByIdAsync(Guid commentId) =>
+		TryCatch(async () =>
+		{
+			ValidateCommentId(commentId);
 
-            Comment maybeComment = await this.storageBroker
-                .SelectCommentByIdAsync(commentId);
+			Comment maybeComment = await this.storageBroker
+				.SelectCommentByIdAsync(commentId);
 
-            ValidateStorageComment(maybeComment, commentId);
+			ValidateStorageComment(maybeComment, commentId);
 
-            return maybeComment;
-        });
+			return maybeComment;
+		});
 
-        public IQueryable<Comment> RetrieveAllComments() =>
-        TryCatch(() => this.storageBroker.SelectAllComments());
+		public IQueryable<Comment> RetrieveAllComments() =>
+		TryCatch(() => this.storageBroker.SelectAllComments());
 
-        public ValueTask<Comment> ModifyCommentAsync(Comment comment) =>
-        TryCatch(async () =>
-        {
-            ValidateCommentOnModify(comment);
+		public ValueTask<Comment> ModifyCommentAsync(Comment comment) =>
+		TryCatch(async () =>
+		{
+			ValidateCommentOnModify(comment);
 
-            Comment maybeComment =
-                await this.storageBroker.SelectCommentByIdAsync(comment.Id);
+			Comment maybeComment =
+				await this.storageBroker.SelectCommentByIdAsync(comment.Id);
 
-            ValidateStorageComment(maybeComment, comment.Id);
-            ValidateAginstStorageCommentOnModify(inputComment: comment, storageComment: maybeComment);
+			ValidateStorageComment(maybeComment, comment.Id);
+			ValidateAginstStorageCommentOnModify(inputComment: comment, storageComment: maybeComment);
 
-            return await this.storageBroker.UpdateCommentAsync(comment);
-        });
+			return await this.storageBroker.UpdateCommentAsync(comment);
+		});
 
-        public ValueTask<Comment> RemoveCommentByIdAsync(Guid commentId) =>
-            TryCatch(async () =>
-            {
-                ValidateCommentId(commentId);
+		public ValueTask<Comment> RemoveCommentByIdAsync(Guid commentId) =>
+			TryCatch(async () =>
+			{
+				ValidateCommentId(commentId);
 
-                Comment maybeComment = await this.storageBroker
-                    .SelectCommentByIdAsync(commentId);
+				Comment maybeComment = await this.storageBroker
+					.SelectCommentByIdAsync(commentId);
 
-                ValidateStorageComment(maybeComment, commentId);
+				ValidateStorageComment(maybeComment, commentId);
 
-                return await this.storageBroker
-                    .DeleteCommentAsync(maybeComment);
-            });
-    }
+				return await this.storageBroker
+					.DeleteCommentAsync(maybeComment);
+			});
+	}
 }

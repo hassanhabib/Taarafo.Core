@@ -5,7 +5,7 @@
 
 namespace Taarafo.Core.Infrastructure.Provision.Brokers.Clouds
 {
-    public partial interface ICloudBroker
-    {
-    }
+	public partial interface ICloudBroker
+	{
+	}
 }

@@ -8,14 +8,14 @@ using Taarafo.Core.Infrastructure.Provision.Services.Processings;
 
 namespace Taarafo.Core.Infrastructure.Provision
 {
-    internal class Program
-    {
-        static async Task Main(string[] args)
-        {
-            ICloudManagementProcessingService cloudManagementProcessingService =
-                new CloudManagementProcessingService();
+	internal class Program
+	{
+		static async Task Main(string[] args)
+		{
+			ICloudManagementProcessingService cloudManagementProcessingService =
+				new CloudManagementProcessingService();
 
-            await cloudManagementProcessingService.ProcessAsync();
-        }
-    }
+			await cloudManagementProcessingService.ProcessAsync();
+		}
+	}
 }

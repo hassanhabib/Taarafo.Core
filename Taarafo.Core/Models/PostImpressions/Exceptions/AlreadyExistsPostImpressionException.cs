@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.PostImpressions.Exceptions
 {
-    public class AlreadyExistsPostImpressionException : Xeption
-    {
-        public AlreadyExistsPostImpressionException(Exception innerException)
-            : base(message: "Post impression with the same id already exists.", innerException)
-        { }
-    }
+	public class AlreadyExistsPostImpressionException : Xeption
+	{
+		public AlreadyExistsPostImpressionException(Exception innerException)
+			: base(message: "Post impression with the same id already exists.", innerException)
+		{ }
+	}
 }

@@ -5,8 +5,8 @@
 
 namespace Taarafo.Core.Infrastructure.Provision.Brokers.Loggings
 {
-    public interface ILoggingBroker
-    {
-        void LogActivity(string message);
-    }
+	public interface ILoggingBroker
+	{
+		void LogActivity(string message);
+	}
 }

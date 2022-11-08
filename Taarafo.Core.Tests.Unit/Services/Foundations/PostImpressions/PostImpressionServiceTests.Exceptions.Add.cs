@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -15,232 +16,252 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 {
-    public partial class PostImpressionServiceTests
-    {
-        [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
-        {
-            //given
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            PostImpression somePostImpression = CreateRandomPostImpression(randomDateTime);
-            SqlException sqlException = GetSqlException();
+	public partial class PostImpressionServiceTests
+	{
+		[Fact]
+		public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
+		{
+			//given
+			DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+			PostImpression somePostImpression = CreateRandomPostImpression(randomDateTime);
+			SqlException sqlException = GetSqlException();
 
-            var failedPostImpressionStorageException =
-                new FailedPostImpressionStorageException(sqlException);
+			var failedPostImpressionStorageException =
+				new FailedPostImpressionStorageException(sqlException);
 
-            var expectedPostImpressionDependencyException =
-                new PostImpressionDependencyException(failedPostImpressionStorageException);
+			var expectedPostImpressionDependencyException =
+				new PostImpressionDependencyException(failedPostImpressionStorageException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(sqlException);
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Throws(sqlException);
 
-            //when
-            ValueTask<PostImpression> addPostImpressionTask =
-                this.postImpressionService.AddPostImpressions(somePostImpression);
+			//when
+			ValueTask<PostImpression> addPostImpressionTask =
+				this.postImpressionService.AddPostImpressions(somePostImpression);
 
-            //then
-            await Assert.ThrowsAsync<PostImpressionDependencyException>(() =>
-                addPostImpressionTask.AsTask());
+			PostImpressionDependencyException actualPostImpressionDependencyException =
+				await Assert.ThrowsAsync<PostImpressionDependencyException>(
+					addPostImpressionTask.AsTask);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+			//then
+			actualPostImpressionDependencyException.Should().BeEquivalentTo(
+				expectedPostImpressionDependencyException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedPostImpressionDependencyException))),
-                        Times.Once);
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
-                    Times.Never);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogCritical(It.Is(SameExceptionAs(
+					expectedPostImpressionDependencyException))),
+						Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-        }
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
+					Times.Never);
 
-        [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnAddIfPostImpressionAlreadyExistsAndLogItAsync()
-        {
-            //given
-            PostImpression randomPostImpression = CreateRandomPostImpression();
-            PostImpression alreadyExistsPostImpression = randomPostImpression;
-            string randomMessage = GetRandomMessage();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var duplicateKeyException =
-                new DuplicateKeyException(randomMessage);
+		[Fact]
+		public async Task ShouldThrowDependencyValidationExceptionOnAddIfPostImpressionAlreadyExistsAndLogItAsync()
+		{
+			//given
+			PostImpression randomPostImpression = CreateRandomPostImpression();
+			PostImpression alreadyExistsPostImpression = randomPostImpression;
+			string randomMessage = GetRandomMessage();
 
-            var alreadyExistsPostImpressionException =
-                new AlreadyExistsPostImpressionException(duplicateKeyException);
+			var duplicateKeyException =
+				new DuplicateKeyException(randomMessage);
 
-            var expectedPostImpressionDependencyValidationException =
-                new PostImpressionDependencyValidationException(alreadyExistsPostImpressionException);
+			var alreadyExistsPostImpressionException =
+				new AlreadyExistsPostImpressionException(duplicateKeyException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(duplicateKeyException);
+			var expectedPostImpressionDependencyValidationException =
+				new PostImpressionDependencyValidationException(alreadyExistsPostImpressionException);
 
-            //when
-            ValueTask<PostImpression> addPostImpressionTask =
-                this.postImpressionService.AddPostImpressions(alreadyExistsPostImpression);
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Throws(duplicateKeyException);
 
-            //then
-            await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(() =>
-                addPostImpressionTask.AsTask());
+			//when
+			ValueTask<PostImpression> addPostImpressionTask =
+				this.postImpressionService.AddPostImpressions(alreadyExistsPostImpression);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+			PostImpressionDependencyValidationException actualPostImpressionDependencyValidationException =
+				await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(
+					addPostImpressionTask.AsTask);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
-                    Times.Never);
+			//then
+			actualPostImpressionDependencyValidationException.Should().BeEquivalentTo(
+				expectedPostImpressionDependencyValidationException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionDependencyValidationException))),
-                        Times.Once);
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
+					Times.Never);
 
-        [Fact]
-        public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
-        {
-            //given
-            PostImpression somePostImpression = CreateRandomPostImpression();
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedPostImpressionDependencyValidationException))),
+						Times.Once);
 
-            var databaseUpdateException =
-                new DbUpdateException();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var failedPostImpressionStorageException =
-                new FailedPostImpressionStorageException(databaseUpdateException);
+		[Fact]
+		public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+		{
+			//given
+			PostImpression somePostImpression = CreateRandomPostImpression();
 
-            var expectedPostImpressionDependencyException =
-                new PostImpressionDependencyException(failedPostImpressionStorageException);
+			var databaseUpdateException =
+				new DbUpdateException();
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(databaseUpdateException);
+			var failedPostImpressionStorageException =
+				new FailedPostImpressionStorageException(databaseUpdateException);
 
-            //when
-            ValueTask<PostImpression> addPostImpressionTask =
-                this.postImpressionService.AddPostImpressions(somePostImpression);
+			var expectedPostImpressionDependencyException =
+				new PostImpressionDependencyException(failedPostImpressionStorageException);
 
-            //then
-            await Assert.ThrowsAsync<PostImpressionDependencyException>(() =>
-                addPostImpressionTask.AsTask());
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Throws(databaseUpdateException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+			//when
+			ValueTask<PostImpression> addPostImpressionTask =
+				this.postImpressionService.AddPostImpressions(somePostImpression);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
-                    Times.Never);
+			PostImpressionDependencyException actualPostImpressionDependencyException =
+				await Assert.ThrowsAsync<PostImpressionDependencyException>(
+					addPostImpressionTask.AsTask);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionDependencyException))),
-                        Times.Once);
+			//then
+			actualPostImpressionDependencyException.Should().BeEquivalentTo(
+				expectedPostImpressionDependencyException);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once);
 
-        [Fact]
-        public async void ShouldThrowDependencyValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
-        {
-            //given
-            PostImpression somePostImpression = CreateRandomPostImpression();
-            string randomMessage = GetRandomMessage();
-            string exceptionMessage = randomMessage;
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
+					Times.Never);
 
-            var foreignKeyConstraintConflictException =
-                new ForeignKeyConstraintConflictException(exceptionMessage);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedPostImpressionDependencyException))),
+						Times.Once);
 
-            var invalidPostImpressionReferenceException =
-                new InvalidPostImpressionReferenceException(foreignKeyConstraintConflictException);
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var expectedPostImpressionDependencyValidationException =
-                new PostImpressionDependencyValidationException(invalidPostImpressionReferenceException);
+		[Fact]
+		public async void ShouldThrowDependencyValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+		{
+			//given
+			PostImpression somePostImpression = CreateRandomPostImpression();
+			string randomMessage = GetRandomMessage();
+			string exceptionMessage = randomMessage;
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(foreignKeyConstraintConflictException);
+			var foreignKeyConstraintConflictException =
+				new ForeignKeyConstraintConflictException(exceptionMessage);
 
-            //when
-            ValueTask<PostImpression> addPostImpressionTask =
-                this.postImpressionService.AddPostImpressions(somePostImpression);
+			var invalidPostImpressionReferenceException =
+				new InvalidPostImpressionReferenceException(foreignKeyConstraintConflictException);
 
-            //then
-            await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(() =>
-                addPostImpressionTask.AsTask());
+			var expectedPostImpressionDependencyValidationException =
+				new PostImpressionDependencyValidationException(invalidPostImpressionReferenceException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once());
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Throws(foreignKeyConstraintConflictException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionDependencyValidationException))),
-                        Times.Once);
+			//when
+			ValueTask<PostImpression> addPostImpressionTask =
+				this.postImpressionService.AddPostImpressions(somePostImpression);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
-                    Times.Never);
+			PostImpressionDependencyValidationException actualPostImpressionDependencyValidationException =
+				await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(
+					addPostImpressionTask.AsTask);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-        }
+			//then
+			actualPostImpressionDependencyValidationException.Should().BeEquivalentTo(
+				expectedPostImpressionDependencyValidationException);
 
-        [Fact]
-        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
-        {
-            //given
-            PostImpression somePostImpression = CreateRandomPostImpression();
-            var serviceException = new Exception();
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once());
 
-            var failedPostImpressionServiceException =
-                new FailedPostImpressionServiceException(serviceException);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedPostImpressionDependencyValidationException))),
+						Times.Once);
 
-            var expectedPostImpressionServiceException =
-                new PostImpressionServiceException(failedPostImpressionServiceException);
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
+					Times.Never);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(serviceException);
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+		}
 
-            //when
-            ValueTask<PostImpression> addPostImpressionTask =
-                this.postImpressionService.AddPostImpressions(somePostImpression);
+		[Fact]
+		public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+		{
+			//given
+			PostImpression somePostImpression = CreateRandomPostImpression();
+			var serviceException = new Exception();
 
-            //then
-            await Assert.ThrowsAsync<PostImpressionServiceException>(() =>
-                addPostImpressionTask.AsTask());
+			var failedPostImpressionServiceException =
+				new FailedPostImpressionServiceException(serviceException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+			var expectedPostImpressionServiceException =
+				new PostImpressionServiceException(failedPostImpressionServiceException);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
-                    Times.Never);
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Throws(serviceException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionServiceException))),
-                        Times.Once);
+			//when
+			ValueTask<PostImpression> addPostImpressionTask =
+				this.postImpressionService.AddPostImpressions(somePostImpression);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			PostImpressionServiceException actualPostImpressionServiceException =
+				await Assert.ThrowsAsync<PostImpressionServiceException>(
+					addPostImpressionTask.AsTask);
+
+			//then
+			actualPostImpressionServiceException.Should().BeEquivalentTo(
+				expectedPostImpressionServiceException);
+
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once);
+
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
+					Times.Never);
+
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedPostImpressionServiceException))),
+						Times.Once);
+
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }

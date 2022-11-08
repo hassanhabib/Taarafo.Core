@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -15,232 +16,252 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 {
-    public partial class ProfileServiceTests
-    {
-        [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
-        {
-            // given
-            DateTimeOffset randomDateTime = GetRandomDateTime();
-            Profile someProfile = CreateRandomProfile(randomDateTime);
-            SqlException sqlException = GetSqlException();
+	public partial class ProfileServiceTests
+	{
+		[Fact]
+		public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
+		{
+			// given
+			DateTimeOffset randomDateTime = GetRandomDateTime();
+			Profile someProfile = CreateRandomProfile(randomDateTime);
+			SqlException sqlException = GetSqlException();
 
-            var failedProfileStorageException =
-                new FailedProfileStorageException(sqlException);
+			var failedProfileStorageException =
+				new FailedProfileStorageException(sqlException);
 
-            var expectedProfileDependencyException =
-                new ProfileDependencyException(failedProfileStorageException);
+			var expectedProfileDependencyException =
+				new ProfileDependencyException(failedProfileStorageException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(sqlException);
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Throws(sqlException);
 
-            // when
-            ValueTask<Profile> addProfileTask =
-                this.profileService.AddProfileAsync(someProfile);
+			// when
+			ValueTask<Profile> addProfileTask =
+				this.profileService.AddProfileAsync(someProfile);
 
-            // then
-            await Assert.ThrowsAsync<ProfileDependencyException>(() =>
-                addProfileTask.AsTask());
+			ProfileDependencyException actualProfileDependencyException =
+				await Assert.ThrowsAsync<ProfileDependencyException>(
+					addProfileTask.AsTask);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+			// then
+			actualProfileDependencyException.Should()
+				.BeEquivalentTo(expectedProfileDependencyException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedProfileDependencyException))),
-                        Times.Once);
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertProfileAsync(It.IsAny<Profile>()),
-                    Times.Never);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogCritical(It.Is(SameExceptionAs(
+					expectedProfileDependencyException))),
+						Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-        }
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertProfileAsync(It.IsAny<Profile>()),
+					Times.Never);
 
-        [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnAddIfProfileAlreadyExsitsAndLogItAsync()
-        {
-            // given
-            Profile randomProfile = CreateRandomProfile();
-            Profile alreadyExistsProfile = randomProfile;
-            string randomMessage = GetRandomMessage();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var duplicateKeyException =
-                new DuplicateKeyException(randomMessage);
+		[Fact]
+		public async Task ShouldThrowDependencyValidationExceptionOnAddIfProfileAlreadyExsitsAndLogItAsync()
+		{
+			// given
+			Profile randomProfile = CreateRandomProfile();
+			Profile alreadyExistsProfile = randomProfile;
+			string randomMessage = GetRandomMessage();
 
-            var alreadyExistsProfileException =
-                new AlreadyExistsProfileException(duplicateKeyException);
+			var duplicateKeyException =
+				new DuplicateKeyException(randomMessage);
 
-            var expectedProfileDependencyValidationException =
-                new ProfileDependencyValidationException(alreadyExistsProfileException);
+			var alreadyExistsProfileException =
+				new AlreadyExistsProfileException(duplicateKeyException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-              broker.GetCurrentDateTimeOffset())
-                  .Throws(duplicateKeyException);
+			var expectedProfileDependencyValidationException =
+				new ProfileDependencyValidationException(alreadyExistsProfileException);
 
-            // when
-            ValueTask<Profile> addProfileTask =
-                this.profileService.AddProfileAsync(alreadyExistsProfile);
+			this.dateTimeBrokerMock.Setup(broker =>
+			  broker.GetCurrentDateTimeOffset())
+				  .Throws(duplicateKeyException);
 
-            // then
-            await Assert.ThrowsAsync<ProfileDependencyValidationException>(() =>
-                addProfileTask.AsTask());
+			// when
+			ValueTask<Profile> addProfileTask =
+				this.profileService.AddProfileAsync(alreadyExistsProfile);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+			ProfileDependencyValidationException actualProfileDependencyValidationException =
+				await Assert.ThrowsAsync<ProfileDependencyValidationException>(
+					addProfileTask.AsTask);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertProfileAsync(It.IsAny<Profile>()),
-                    Times.Never);
+			// then
+			actualProfileDependencyValidationException.Should()
+				.BeEquivalentTo(expectedProfileDependencyValidationException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedProfileDependencyValidationException))),
-                        Times.Once);
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedProfileDependencyValidationException))),
+						Times.Once);
 
-        [Fact]
-        public async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
-        {
-            // given
-            Profile someProfile = CreateRandomProfile();
-            string randomMessage = GetRandomMessage();
-            string exceptionMessage = randomMessage;
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertProfileAsync(It.IsAny<Profile>()),
+					Times.Never);
 
-            var foreignKeyConstraintConflictException =
-                new ForeignKeyConstraintConflictException(exceptionMessage);
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var invalidProfileReferenceException =
-                new InvalidProfileReferenceException(foreignKeyConstraintConflictException);
+		[Fact]
+		public async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+		{
+			// given
+			Profile someProfile = CreateRandomProfile();
+			string randomMessage = GetRandomMessage();
+			string exceptionMessage = randomMessage;
 
-            var expectedProfileDependencyValidationException =
-                new ProfileDependencyValidationException(invalidProfileReferenceException);
+			var foreignKeyConstraintConflictException =
+				new ForeignKeyConstraintConflictException(exceptionMessage);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(foreignKeyConstraintConflictException);
+			var invalidProfileReferenceException =
+				new InvalidProfileReferenceException(foreignKeyConstraintConflictException);
 
-            // when
-            ValueTask<Profile> addProfileTask =
-                this.profileService.AddProfileAsync(someProfile);
+			var expectedProfileDependencyValidationException =
+				new ProfileDependencyValidationException(invalidProfileReferenceException);
 
-            // then
-            await Assert.ThrowsAsync<ProfileDependencyValidationException>(() =>
-                addProfileTask.AsTask());
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Throws(foreignKeyConstraintConflictException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once());
+			// when
+			ValueTask<Profile> addProfileTask =
+				this.profileService.AddProfileAsync(someProfile);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedProfileDependencyValidationException))),
-                        Times.Once);
+			ProfileDependencyValidationException actualProfileDependencyValidationException =
+				await Assert.ThrowsAsync<ProfileDependencyValidationException>(
+					addProfileTask.AsTask);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertProfileAsync(It.IsAny<Profile>()),
-                        Times.Never);
+			// then
+			actualProfileDependencyValidationException.Should()
+				.BeEquivalentTo(expectedProfileDependencyValidationException);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-        }
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once());
 
-        [Fact]
-        public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
-        {
-            // given
-            Profile someProfile = CreateRandomProfile();
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedProfileDependencyValidationException))),
+						Times.Once);
 
-            var databaseUpdateException =
-                new DbUpdateException();
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertProfileAsync(It.IsAny<Profile>()),
+						Times.Never);
 
-            var failedProfileStorageException =
-                new FailedProfileStorageException(databaseUpdateException);
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var expectedProfileDependencyException =
-                new ProfileDependencyException(failedProfileStorageException);
+		[Fact]
+		public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+		{
+			// given
+			Profile someProfile = CreateRandomProfile();
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(databaseUpdateException);
+			var databaseUpdateException =
+				new DbUpdateException();
 
-            // when
-            ValueTask<Profile> addProfileTask =
-                this.profileService.AddProfileAsync(someProfile);
+			var failedProfileStorageException =
+				new FailedProfileStorageException(databaseUpdateException);
 
-            // then
-            await Assert.ThrowsAsync<ProfileDependencyException>(() =>
-               addProfileTask.AsTask());
+			var expectedProfileDependencyException =
+				new ProfileDependencyException(failedProfileStorageException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Throws(databaseUpdateException);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertProfileAsync(It.IsAny<Profile>()),
-                    Times.Never);
+			// when
+			ValueTask<Profile> addProfileTask =
+				this.profileService.AddProfileAsync(someProfile);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedProfileDependencyException))),
-                        Times.Once);
+			ProfileDependencyException actualProfileDependencyException =
+				await Assert.ThrowsAsync<ProfileDependencyException>(
+					addProfileTask.AsTask);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
+			// then
+			actualProfileDependencyException.Should()
+				.BeEquivalentTo(expectedProfileDependencyException);
 
-        [Fact]
-        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
-        {
-            // given
-            Profile someProfile = CreateRandomProfile();
-            var serviceException = new Exception();
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once);
 
-            var failedProfileServiceException =
-                new FailedProfileServiceException(serviceException);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedProfileDependencyException))),
+						Times.Once);
 
-            var expectedProfileServiceException =
-                new ProfileServiceException(failedProfileServiceException);
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertProfileAsync(It.IsAny<Profile>()),
+					Times.Never);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(serviceException);
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+		}
 
-            // when
-            ValueTask<Profile> addProfileTask =
-                this.profileService.AddProfileAsync(someProfile);
+		[Fact]
+		public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+		{
+			// given
+			Profile someProfile = CreateRandomProfile();
+			var serviceException = new Exception();
 
-            // then
-            await Assert.ThrowsAsync<ProfileServiceException>(() =>
-                addProfileTask.AsTask());
+			var failedProfileServiceException =
+				new FailedProfileServiceException(serviceException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+			var expectedProfileServiceException =
+				new ProfileServiceException(failedProfileServiceException);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertProfileAsync(It.IsAny<Profile>()),
-                    Times.Never);
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Throws(serviceException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedProfileServiceException))),
-                        Times.Once);
+			// when
+			ValueTask<Profile> addProfileTask =
+				this.profileService.AddProfileAsync(someProfile);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			ProfileServiceException actualProfileServiceException =
+				await Assert.ThrowsAsync<ProfileServiceException>(
+					addProfileTask.AsTask);
+
+			// then
+			actualProfileServiceException.Should()
+				.BeEquivalentTo(expectedProfileServiceException);
+
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once);
+
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedProfileServiceException))),
+						Times.Once);
+
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertProfileAsync(It.IsAny<Profile>()),
+					Times.Never);
+
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }

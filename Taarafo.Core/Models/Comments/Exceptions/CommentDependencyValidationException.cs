@@ -7,10 +7,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Comments.Exceptions
 {
-    public class CommentDependencyValidationException : Xeption
-    {
-        public CommentDependencyValidationException(Xeption innerException)
-            : base(message: "Comment dependency validation occurred, please try again.", innerException)
-        { }
-    }
+	public class CommentDependencyValidationException : Xeption
+	{
+		public CommentDependencyValidationException(Xeption innerException)
+			: base(message: "Comment dependency validation occurred, please try again.", innerException)
+		{ }
+	}
 }

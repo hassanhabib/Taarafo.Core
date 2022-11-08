@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Groups.Exceptions
 {
-    public class FailedGroupStorageException : Xeption
-    {
-        public FailedGroupStorageException(Exception innerException)
-            : base(message: "Failed group storage error occurred, contact support.", innerException)
-        { }
-    }
+	public class FailedGroupStorageException : Xeption
+	{
+		public FailedGroupStorageException(Exception innerException)
+			: base(message: "Failed group storage error occurred, contact support.", innerException)
+		{ }
+	}
 }

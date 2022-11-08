@@ -7,10 +7,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Comments.Exceptions
 {
-    public class InvalidCommentException : Xeption
-    {
-        public InvalidCommentException()
-            : base(message: "Invalid comment. Please correct the errors and try again.")
-        { }
-    }
+	public class InvalidCommentException : Xeption
+	{
+		public InvalidCommentException()
+			: base(message: "Invalid comment. Please correct the errors and try again.")
+		{ }
+	}
 }
