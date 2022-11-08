@@ -7,8 +7,8 @@ using Taarafo.Core.Infrastructure.Provision.Models.Configurations;
 
 namespace Taarafo.Core.Infrastructure.Provision.Brokers.Configurations
 {
-    public interface IConfigurationBroker
-    {
-        CloudManagementConfiguration GetConfigurations();
-    }
+	public interface IConfigurationBroker
+	{
+		CloudManagementConfiguration GetConfigurations();
+	}
 }

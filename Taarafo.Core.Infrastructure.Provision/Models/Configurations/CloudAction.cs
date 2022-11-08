@@ -7,8 +7,8 @@ using System.Collections.Generic;
 
 namespace Taarafo.Core.Infrastructure.Provision.Models.Configurations
 {
-    public class CloudAction
-    {
-        public List<string> Environments { get; set; }
-    }
+	public class CloudAction
+	{
+		public List<string> Environments { get; set; }
+	}
 }

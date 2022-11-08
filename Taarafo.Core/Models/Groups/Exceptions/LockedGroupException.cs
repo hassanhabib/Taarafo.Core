@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Groups.Exceptions
 {
-    public class LockedGroupException : Xeption
-    {
-        public LockedGroupException(Exception innerException)
-            : base(message: "Locked group record exception, please try again later", innerException)
-        { }
-    }
+	public class LockedGroupException : Xeption
+	{
+		public LockedGroupException(Exception innerException)
+			: base(message: "Locked group record exception, please try again later", innerException)
+		{ }
+	}
 }

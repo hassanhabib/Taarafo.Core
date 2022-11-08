@@ -5,9 +5,9 @@
 
 namespace Taarafo.Core.Models.Groups
 {
-    public enum GroupStatus
-    {
-        Active,
-        Inactive
-    }
+	public enum GroupStatus
+	{
+		Active,
+		Inactive
+	}
 }

@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Profiles.Exceptions
 {
-    public class FailedProfileServiceException : Xeption
-    {
-        public FailedProfileServiceException(Exception innerException)
-            : base(message: "Failed profile service occurred, please contact support", innerException)
-        { }
-    }
+	public class FailedProfileServiceException : Xeption
+	{
+		public FailedProfileServiceException(Exception innerException)
+			: base(message: "Failed profile service occurred, please contact support", innerException)
+		{ }
+	}
 }

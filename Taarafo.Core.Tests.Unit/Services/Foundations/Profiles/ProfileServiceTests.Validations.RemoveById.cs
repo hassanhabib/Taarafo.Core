@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
@@ -34,9 +35,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> removeProfileByIdTask =
                 this.profileService.RemoveProfileByIdAsync(invalidProfileId);
 
+            ProfileValidationException actualProfileValidationException =
+                await Assert.ThrowsAsync<ProfileValidationException>(() =>
+                    removeProfileByIdTask.AsTask());
+
             // then
-            await Assert.ThrowsAsync<ProfileValidationException>(() =>
-                removeProfileByIdTask.AsTask());
+            actualProfileValidationException.Should()
+                .BeEquivalentTo(expectedProfileValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -73,9 +78,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
             ValueTask<Profile> removeProfileByIdTask =
                 this.profileService.RemoveProfileByIdAsync(inputProfileId);
 
+            ProfileValidationException actualProfileValidationException =
+                await Assert.ThrowsAsync<ProfileValidationException>(() =>
+                    removeProfileByIdTask.AsTask());
+
             // then
-            await Assert.ThrowsAsync<ProfileValidationException>(() =>
-                removeProfileByIdTask.AsTask());
+            actualProfileValidationException.Should()
+                .BeEquivalentTo(expectedProfileValidationException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectProfileByIdAsync(It.IsAny<Guid>()),

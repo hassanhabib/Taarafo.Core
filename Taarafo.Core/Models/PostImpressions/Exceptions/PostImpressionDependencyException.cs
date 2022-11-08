@@ -7,10 +7,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.PostImpressions.Exceptions
 {
-    public class PostImpressionDependencyException : Xeption
-    {
-        public PostImpressionDependencyException(Xeption innerException)
-            : base(message: "Post impression dependency error has occurred, please contact support.", innerException)
-        { }
-    }
+	public class PostImpressionDependencyException : Xeption
+	{
+		public PostImpressionDependencyException(Xeption innerException)
+			: base(message: "Post impression dependency error has occurred, please contact support.", innerException)
+		{ }
+	}
 }

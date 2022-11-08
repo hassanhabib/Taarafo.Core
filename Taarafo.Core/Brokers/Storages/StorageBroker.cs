@@ -9,31 +9,31 @@ using Microsoft.Extensions.Configuration;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial class StorageBroker : EFxceptionsContext, IStorageBroker
-    {
-        private readonly IConfiguration configuration;
+	public partial class StorageBroker : EFxceptionsContext, IStorageBroker
+	{
+		private readonly IConfiguration configuration;
 
-        public StorageBroker(IConfiguration configuration)
-        {
-            this.configuration = configuration;
-            this.Database.Migrate();
-        }
+		public StorageBroker(IConfiguration configuration)
+		{
+			this.configuration = configuration;
+			this.Database.Migrate();
+		}
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            AddCommentConfigurations(modelBuilder);
-            AddGroupPostConfigurations(modelBuilder);
-            AddPostImpressionConfigurations(modelBuilder);
-        }
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			AddCommentConfigurations(modelBuilder);
+			AddGroupPostConfigurations(modelBuilder);
+			AddPostImpressionConfigurations(modelBuilder);
+		}
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            string connectionString = this.configuration
-                .GetConnectionString(name: "DefaultConnection");
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		{
+			string connectionString = this.configuration
+				.GetConnectionString(name: "DefaultConnection");
 
-            optionsBuilder.UseSqlServer(connectionString);
-        }
+			optionsBuilder.UseSqlServer(connectionString);
+		}
 
-        public override void Dispose() { }
-    }
+		public override void Dispose() { }
+	}
 }

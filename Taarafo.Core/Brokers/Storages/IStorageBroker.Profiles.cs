@@ -10,12 +10,12 @@ using Taarafo.Core.Models.Profiles;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial interface IStorageBroker
-    {
-        ValueTask<Profile> InsertProfileAsync(Profile profile);
-        IQueryable<Profile> SelectAllProfiles();
-        ValueTask<Profile> SelectProfileByIdAsync(Guid profileId);
-        ValueTask<Profile> UpdateProfileAsync(Profile profile);
-        ValueTask<Profile> DeleteProfileAsync(Profile profile);
-    }
+	public partial interface IStorageBroker
+	{
+		ValueTask<Profile> InsertProfileAsync(Profile profile);
+		IQueryable<Profile> SelectAllProfiles();
+		ValueTask<Profile> SelectProfileByIdAsync(Guid profileId);
+		ValueTask<Profile> UpdateProfileAsync(Profile profile);
+		ValueTask<Profile> DeleteProfileAsync(Profile profile);
+	}
 }

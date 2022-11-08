@@ -13,68 +13,68 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Acceptance.Apis.Posts
 {
-    [Collection(nameof(ApiTestCollection))]
-    public partial class PostsApiTests
-    {
-        private readonly ApiBroker apiBroker;
+	[Collection(nameof(ApiTestCollection))]
+	public partial class PostsApiTests
+	{
+		private readonly ApiBroker apiBroker;
 
-        public PostsApiTests(ApiBroker apiBroker) =>
-            this.apiBroker = apiBroker;
+		public PostsApiTests(ApiBroker apiBroker) =>
+			this.apiBroker = apiBroker;
 
-        private async ValueTask<Post> PostRandomPostAsync()
-        {
-            Post randomPost = CreateRandomPost();
-            await this.apiBroker.PostPostAsync(randomPost);
+		private async ValueTask<Post> PostRandomPostAsync()
+		{
+			Post randomPost = CreateRandomPost();
+			await this.apiBroker.PostPostAsync(randomPost);
 
-            return randomPost;
-        }
+			return randomPost;
+		}
 
-        private async ValueTask<List<Post>> CreateRandomPostedPostsAsync()
-        {
-            int randomNumber = GetRandomNumber();
-            var randomPosts = new List<Post>();
+		private async ValueTask<List<Post>> CreateRandomPostedPostsAsync()
+		{
+			int randomNumber = GetRandomNumber();
+			var randomPosts = new List<Post>();
 
-            for (int i = 0; i < randomNumber; i++)
-            {
-                randomPosts.Add(await PostRandomPostAsync());
-            }
-            return randomPosts;
-        }
+			for (int i = 0; i < randomNumber; i++)
+			{
+				randomPosts.Add(await PostRandomPostAsync());
+			}
+			return randomPosts;
+		}
 
-        private int GetRandomNumber() =>
-            new IntRange(min: 2, max: 10).GetValue();
+		private int GetRandomNumber() =>
+			new IntRange(min: 2, max: 10).GetValue();
 
-        private static DateTimeOffset GetRandomDateTime() =>
-            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+		private static DateTimeOffset GetRandomDateTime() =>
+			new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static Post UpdateRandomPost(Post inputPost)
-        {
-            DateTimeOffset now = DateTimeOffset.UtcNow;
+		private static Post UpdateRandomPost(Post inputPost)
+		{
+			DateTimeOffset now = DateTimeOffset.UtcNow;
 
-            var filler = new Filler<Post>();
+			var filler = new Filler<Post>();
 
-            filler.Setup()
-                .OnProperty(post => post.Id).Use(inputPost.Id)
-                .OnProperty(post => post.CreatedDate).Use(inputPost.CreatedDate)
-                .OnProperty(post => post.UpdatedDate).Use(now)
-                .OnType<DateTimeOffset>().Use(GetRandomDateTime());
+			filler.Setup()
+				.OnProperty(post => post.Id).Use(inputPost.Id)
+				.OnProperty(post => post.CreatedDate).Use(inputPost.CreatedDate)
+				.OnProperty(post => post.UpdatedDate).Use(now)
+				.OnType<DateTimeOffset>().Use(GetRandomDateTime());
 
-            return filler.Create();
-        }
+			return filler.Create();
+		}
 
-        private static Post CreateRandomPost() =>
-            CreateRandomPostFiller().Create();
+		private static Post CreateRandomPost() =>
+			CreateRandomPostFiller().Create();
 
-        private static Filler<Post> CreateRandomPostFiller()
-        {
-            DateTimeOffset now = DateTimeOffset.UtcNow;
-            var filler = new Filler<Post>();
+		private static Filler<Post> CreateRandomPostFiller()
+		{
+			DateTimeOffset now = DateTimeOffset.UtcNow;
+			var filler = new Filler<Post>();
 
-            filler.Setup()
-                .OnProperty(post => post.CreatedDate).Use(now)
-                .OnProperty(post => post.UpdatedDate).Use(now);
+			filler.Setup()
+				.OnProperty(post => post.CreatedDate).Use(now)
+				.OnProperty(post => post.UpdatedDate).Use(now);
 
-            return filler;
-        }
-    }
+			return filler;
+		}
+	}
 }
