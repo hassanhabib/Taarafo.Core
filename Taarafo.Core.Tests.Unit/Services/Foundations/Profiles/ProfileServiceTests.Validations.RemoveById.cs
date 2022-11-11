@@ -13,95 +13,95 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 {
-    public partial class ProfileServiceTests
-    {
-        [Fact]
-        public async Task ShouldThrowValidationExceptionOnRemoveIfIdIsInvalidAndLogItAsync()
-        {
-            // given
-            Guid invalidProfileId = Guid.Empty;
+	public partial class ProfileServiceTests
+	{
+		[Fact]
+		public async Task ShouldThrowValidationExceptionOnRemoveIfIdIsInvalidAndLogItAsync()
+		{
+			// given
+			Guid invalidProfileId = Guid.Empty;
 
-            var invalidProfileException =
-                new InvalidProfileException();
+			var invalidProfileException =
+				new InvalidProfileException();
 
-            invalidProfileException.AddData(
-                key: nameof(Profile.Id),
-                values: "Id is required");
+			invalidProfileException.AddData(
+				key: nameof(Profile.Id),
+				values: "Id is required");
 
-            var expectedProfileValidationException =
-                new ProfileValidationException(invalidProfileException);
+			var expectedProfileValidationException =
+				new ProfileValidationException(invalidProfileException);
 
-            // when
-            ValueTask<Profile> removeProfileByIdTask =
-                this.profileService.RemoveProfileByIdAsync(invalidProfileId);
+			// when
+			ValueTask<Profile> removeProfileByIdTask =
+				this.profileService.RemoveProfileByIdAsync(invalidProfileId);
 
-            ProfileValidationException actualProfileValidationException =
-                await Assert.ThrowsAsync<ProfileValidationException>(() =>
-                    removeProfileByIdTask.AsTask());
+			ProfileValidationException actualProfileValidationException =
+				await Assert.ThrowsAsync<ProfileValidationException>(() =>
+					removeProfileByIdTask.AsTask());
 
-            // then
-            actualProfileValidationException.Should()
-                .BeEquivalentTo(expectedProfileValidationException);
+			// then
+			actualProfileValidationException.Should()
+				.BeEquivalentTo(expectedProfileValidationException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedProfileValidationException))),
-                        Times.Once);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedProfileValidationException))),
+						Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
-                    Times.Never);
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
+					Times.Never);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.DeleteProfileAsync(It.IsAny<Profile>()),
-                    Times.Never);
-        }
+			this.storageBrokerMock.Verify(broker =>
+				broker.DeleteProfileAsync(It.IsAny<Profile>()),
+					Times.Never);
+		}
 
-        [Fact]
-        public async Task ShouldThrowNotFoundExceptionOnRemoveProfileByIdIsNotFounfAndLogItAsync()
-        {
-            // given
-            Guid inputProfileId = Guid.NewGuid();
-            Profile noProfile = null;
+		[Fact]
+		public async Task ShouldThrowNotFoundExceptionOnRemoveProfileByIdIsNotFounfAndLogItAsync()
+		{
+			// given
+			Guid inputProfileId = Guid.NewGuid();
+			Profile noProfile = null;
 
-            var notFoundProfileException =
-                new NotFoundProfileException(inputProfileId);
+			var notFoundProfileException =
+				new NotFoundProfileException(inputProfileId);
 
-            var expectedProfileValidationException =
-                new ProfileValidationException(notFoundProfileException);
+			var expectedProfileValidationException =
+				new ProfileValidationException(notFoundProfileException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectProfileByIdAsync(It.IsAny<Guid>()))
-                    .ReturnsAsync(noProfile);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectProfileByIdAsync(It.IsAny<Guid>()))
+					.ReturnsAsync(noProfile);
 
-            // when
-            ValueTask<Profile> removeProfileByIdTask =
-                this.profileService.RemoveProfileByIdAsync(inputProfileId);
+			// when
+			ValueTask<Profile> removeProfileByIdTask =
+				this.profileService.RemoveProfileByIdAsync(inputProfileId);
 
-            ProfileValidationException actualProfileValidationException =
-                await Assert.ThrowsAsync<ProfileValidationException>(() =>
-                    removeProfileByIdTask.AsTask());
+			ProfileValidationException actualProfileValidationException =
+				await Assert.ThrowsAsync<ProfileValidationException>(() =>
+					removeProfileByIdTask.AsTask());
 
-            // then
-            actualProfileValidationException.Should()
-                .BeEquivalentTo(expectedProfileValidationException);
+			// then
+			actualProfileValidationException.Should()
+				.BeEquivalentTo(expectedProfileValidationException);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
-                    Times.Once);
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
+					Times.Once);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedProfileValidationException))),
-                        Times.Once);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedProfileValidationException))),
+						Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.DeleteProfileAsync(It.IsAny<Profile>()),
-                    Times.Never);
+			this.storageBrokerMock.Verify(broker =>
+				broker.DeleteProfileAsync(It.IsAny<Profile>()),
+					Times.Never);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }

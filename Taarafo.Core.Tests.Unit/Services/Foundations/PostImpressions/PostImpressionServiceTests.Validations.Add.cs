@@ -9,8 +9,6 @@ using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
-using Taarafo.Core.Models.Posts.Exceptions;
-using Taarafo.Core.Models.Posts;
 using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
@@ -223,7 +221,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
 			this.dateTimeBrokerMock.Verify(broker =>
 				broker.GetCurrentDateTimeOffset(),
-					Times.Once());
+					Times.Once);
 
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
