@@ -195,15 +195,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 			PostImpression randomPostImpression = CreateRandomPostImpression(invalidDateTime);
 			PostImpression invalidPostImpression = randomPostImpression;
 
-			var invalidPostException =
+			var invalidPostImpressionException =
 				new InvalidPostImpressionException();
 
-			invalidPostException.AddData(
+			invalidPostImpressionException.AddData(
 				key: nameof(PostImpression.CreatedDate),
 				values: "Date is not recent");
 
 			var expectedPostImpressionValidationException =
-				new PostImpressionValidationException(invalidPostException);
+				new PostImpressionValidationException(invalidPostImpressionException);
 
 			this.dateTimeBrokerMock.Setup(broker =>
 				broker.GetCurrentDateTimeOffset())
