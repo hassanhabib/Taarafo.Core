@@ -182,7 +182,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 		public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotRecentAndLogItAsync(
 			int minutesBeforeOrAfter)
 		{
-			//given 
+			// given
 			DateTimeOffset randomDateTime =
 				GetRandomDateTimeOffset();
 
@@ -206,15 +206,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 				broker.GetCurrentDateTimeOffset())
 					.Returns(randomDateTime);
 
-			//when
+			// when
 			ValueTask<PostImpression> addPostImpressionTask =
 				this.postImpressionService.AddPostImpressions(invalidPostImpression);
 
 			PostImpressionValidationException actualPostImpressionValidationException =
-				await Assert.ThrowsAsync<PostImpressionValidationException>(
-					addPostImpressionTask.AsTask);
+			   await Assert.ThrowsAsync<PostImpressionValidationException>(
+				   addPostImpressionTask.AsTask);
 
-			//then
+			// then
 			actualPostImpressionValidationException.Should().BeEquivalentTo(
 				expectedPostImpressionValidationException);
 
