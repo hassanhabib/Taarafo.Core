@@ -177,7 +177,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 			this.storageBrokerMock.VerifyNoOtherCalls();
 		}
 
-
 		[Theory]
 		[MemberData(nameof(MinutesBeforeOrAfter))]
 		public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotRecentAndLogItAsync(
