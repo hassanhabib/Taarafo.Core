@@ -9,10 +9,14 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
+using Taarafo.Core.Models.Comments;
+using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Services.Foundations.Comments;
 using Taarafo.Core.Services.Foundations.Posts;
 
@@ -30,13 +34,18 @@ namespace Taarafo.Core
             services.AddLogging();
 
             services.AddControllers()
-                .AddOData(options => options
-                    .Select()
-                    .Filter()
-                    .Expand()
-                    .OrderBy()
-                    .Count()
-                    .SetMaxTop(10));
+                .AddOData(options =>
+                {
+                    options.AddRouteComponents("odata", GetEdmModel());
+
+                    options
+                        .Select()
+                        .Filter()
+                        .Expand()
+                        .OrderBy()
+                        .Count()
+                        .SetMaxTop(25);
+                });
 
             services.AddDbContext<StorageBroker>();
             AddBrokers(services);
@@ -89,5 +98,18 @@ namespace Taarafo.Core
             services.AddTransient<ILoggingBroker, LoggingBroker>();
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
         }
+
+        private IEdmModel GetEdmModel()
+        {
+            ODataConventionModelBuilder builder =
+                new ODataConventionModelBuilder();
+
+            builder.EntitySet<Comment>("Comments");
+            builder.EntitySet<Post>("Posts");
+            builder.EnableLowerCamelCase();
+
+            return builder.GetEdmModel();
+        }
+
     }
 }
