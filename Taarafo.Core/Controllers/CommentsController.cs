@@ -15,173 +15,173 @@ using Taarafo.Core.Services.Foundations.Comments;
 
 namespace Taarafo.Core.Controllers
 {
-	[ApiController]
-	[Route("api/[controller]")]
-	public class CommentsController : RESTFulController
-	{
-		private readonly ICommentService commentService;
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CommentsController : RESTFulController
+    {
+        private readonly ICommentService commentService;
 
-		public CommentsController(ICommentService commentService) =>
-			this.commentService = commentService;
+        public CommentsController(ICommentService commentService) =>
+            this.commentService = commentService;
 
-		[HttpPost]
-		public async ValueTask<ActionResult<Comment>> PostCommentAsync(Comment comment)
-		{
-			try
-			{
-				Comment addedComment =
-					await this.commentService.AddCommentAsync(comment);
+        [HttpPost]
+        public async ValueTask<ActionResult<Comment>> PostCommentAsync(Comment comment)
+        {
+            try
+            {
+                Comment addedComment =
+                    await this.commentService.AddCommentAsync(comment);
 
-				return Created(addedComment);
-			}
-			catch (CommentValidationException commentValidationException)
-			{
-				return BadRequest(commentValidationException.InnerException);
-			}
-			catch (CommentDependencyValidationException commentValidationException)
-				when (commentValidationException.InnerException is InvalidCommentReferenceException)
-			{
-				return FailedDependency(commentValidationException.InnerException);
-			}
-			catch (CommentDependencyValidationException commentDependencyValidationException)
-			   when (commentDependencyValidationException.InnerException is AlreadyExistsCommentException)
-			{
-				return Conflict(commentDependencyValidationException.InnerException);
-			}
-			catch (CommentDependencyException commentDependencyException)
-			{
-				return InternalServerError(commentDependencyException);
-			}
-			catch (CommentServiceException commentServiceException)
-			{
-				return InternalServerError(commentServiceException);
-			}
-		}
+                return Created(addedComment);
+            }
+            catch (CommentValidationException commentValidationException)
+            {
+                return BadRequest(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyValidationException commentValidationException)
+                when (commentValidationException.InnerException is InvalidCommentReferenceException)
+            {
+                return FailedDependency(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyValidationException commentDependencyValidationException)
+               when (commentDependencyValidationException.InnerException is AlreadyExistsCommentException)
+            {
+                return Conflict(commentDependencyValidationException.InnerException);
+            }
+            catch (CommentDependencyException commentDependencyException)
+            {
+                return InternalServerError(commentDependencyException);
+            }
+            catch (CommentServiceException commentServiceException)
+            {
+                return InternalServerError(commentServiceException);
+            }
+        }
 
         [EnableQuery]
         [HttpGet]
-        public ActionResult<IQueryable<Comment>> GetAllComments()
+        public ActionResult<IQueryable<Comment>> Get()
         {
             try
             {
                 IQueryable<Comment> retrievedComments =
                     this.commentService.RetrieveAllComments();
 
-				return Ok(retrievedComments);
-			}
-			catch (CommentDependencyException commentDependencyException)
-			{
-				return InternalServerError(commentDependencyException);
-			}
-			catch (CommentServiceException commentServiceException)
-			{
-				return InternalServerError(commentServiceException);
-			}
-		}
+                return Ok(retrievedComments);
+            }
+            catch (CommentDependencyException commentDependencyException)
+            {
+                return InternalServerError(commentDependencyException);
+            }
+            catch (CommentServiceException commentServiceException)
+            {
+                return InternalServerError(commentServiceException);
+            }
+        }
 
-		[HttpGet("{commentId}")]
-		public async ValueTask<ActionResult<Comment>> GetCommentByIdAsync(Guid commentId)
-		{
-			try
-			{
-				Comment comment = await this.commentService.RetrieveCommentByIdAsync(commentId);
+        [HttpGet("{commentId}")]
+        public async ValueTask<ActionResult<Comment>> GetCommentByIdAsync(Guid commentId)
+        {
+            try
+            {
+                Comment comment = await this.commentService.RetrieveCommentByIdAsync(commentId);
 
-				return Ok(comment);
-			}
-			catch (CommentValidationException commentValidationException)
-				when (commentValidationException.InnerException is NotFoundCommentException)
-			{
-				return NotFound(commentValidationException.InnerException);
-			}
-			catch (CommentValidationException commentValidationException)
-			{
-				return BadRequest(commentValidationException.InnerException);
-			}
-			catch (CommentDependencyException commentDependencyException)
-			{
-				return InternalServerError(commentDependencyException);
-			}
-			catch (CommentServiceException commentServiceException)
-			{
-				return InternalServerError(commentServiceException);
-			}
-		}
+                return Ok(comment);
+            }
+            catch (CommentValidationException commentValidationException)
+                when (commentValidationException.InnerException is NotFoundCommentException)
+            {
+                return NotFound(commentValidationException.InnerException);
+            }
+            catch (CommentValidationException commentValidationException)
+            {
+                return BadRequest(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyException commentDependencyException)
+            {
+                return InternalServerError(commentDependencyException);
+            }
+            catch (CommentServiceException commentServiceException)
+            {
+                return InternalServerError(commentServiceException);
+            }
+        }
 
-		[HttpPut]
-		public async ValueTask<ActionResult<Comment>> PutCommentAsync(Comment comment)
-		{
-			try
-			{
-				Comment modifiedComment =
-					await this.commentService.ModifyCommentAsync(comment);
+        [HttpPut]
+        public async ValueTask<ActionResult<Comment>> PutCommentAsync(Comment comment)
+        {
+            try
+            {
+                Comment modifiedComment =
+                    await this.commentService.ModifyCommentAsync(comment);
 
-				return Ok(modifiedComment);
-			}
-			catch (CommentValidationException commentValidationException)
-				when (commentValidationException.InnerException is NotFoundCommentException)
-			{
-				return NotFound(commentValidationException.InnerException);
-			}
-			catch (CommentValidationException commentValidationException)
-			{
-				return BadRequest(commentValidationException.InnerException);
-			}
-			catch (CommentDependencyValidationException commentValidationException)
-				when (commentValidationException.InnerException is InvalidCommentReferenceException)
-			{
-				return FailedDependency(commentValidationException.InnerException);
-			}
-			catch (CommentDependencyValidationException commentDependencyValidationException)
-			   when (commentDependencyValidationException.InnerException is AlreadyExistsCommentException)
-			{
-				return Conflict(commentDependencyValidationException.InnerException);
-			}
-			catch (CommentDependencyException commentDependencyException)
-			{
-				return InternalServerError(commentDependencyException);
-			}
-			catch (CommentServiceException commentServiceException)
-			{
-				return InternalServerError(commentServiceException);
-			}
-		}
+                return Ok(modifiedComment);
+            }
+            catch (CommentValidationException commentValidationException)
+                when (commentValidationException.InnerException is NotFoundCommentException)
+            {
+                return NotFound(commentValidationException.InnerException);
+            }
+            catch (CommentValidationException commentValidationException)
+            {
+                return BadRequest(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyValidationException commentValidationException)
+                when (commentValidationException.InnerException is InvalidCommentReferenceException)
+            {
+                return FailedDependency(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyValidationException commentDependencyValidationException)
+               when (commentDependencyValidationException.InnerException is AlreadyExistsCommentException)
+            {
+                return Conflict(commentDependencyValidationException.InnerException);
+            }
+            catch (CommentDependencyException commentDependencyException)
+            {
+                return InternalServerError(commentDependencyException);
+            }
+            catch (CommentServiceException commentServiceException)
+            {
+                return InternalServerError(commentServiceException);
+            }
+        }
 
-		[HttpDelete("{commentId}")]
-		public async ValueTask<ActionResult<Comment>> DeleteCommentByIdAsync(Guid commentId)
-		{
-			try
-			{
-				Comment deletedComment =
-					await this.commentService.RemoveCommentByIdAsync(commentId);
+        [HttpDelete("{commentId}")]
+        public async ValueTask<ActionResult<Comment>> DeleteCommentByIdAsync(Guid commentId)
+        {
+            try
+            {
+                Comment deletedComment =
+                    await this.commentService.RemoveCommentByIdAsync(commentId);
 
-				return Ok(deletedComment);
-			}
-			catch (CommentValidationException commentValidationException)
-				when (commentValidationException.InnerException is NotFoundCommentException)
-			{
-				return NotFound(commentValidationException.InnerException);
-			}
-			catch (CommentValidationException commentValidationException)
-			{
-				return BadRequest(commentValidationException.InnerException);
-			}
-			catch (CommentDependencyValidationException commentDependencyValidationException)
-				when (commentDependencyValidationException.InnerException is LockedCommentException)
-			{
-				return Locked(commentDependencyValidationException.InnerException);
-			}
-			catch (CommentDependencyValidationException commentDependencyValidationException)
-			{
-				return BadRequest(commentDependencyValidationException);
-			}
-			catch (CommentDependencyException commentDependencyException)
-			{
-				return InternalServerError(commentDependencyException);
-			}
-			catch (CommentServiceException commentServiceException)
-			{
-				return InternalServerError(commentServiceException);
-			}
-		}
-	}
+                return Ok(deletedComment);
+            }
+            catch (CommentValidationException commentValidationException)
+                when (commentValidationException.InnerException is NotFoundCommentException)
+            {
+                return NotFound(commentValidationException.InnerException);
+            }
+            catch (CommentValidationException commentValidationException)
+            {
+                return BadRequest(commentValidationException.InnerException);
+            }
+            catch (CommentDependencyValidationException commentDependencyValidationException)
+                when (commentDependencyValidationException.InnerException is LockedCommentException)
+            {
+                return Locked(commentDependencyValidationException.InnerException);
+            }
+            catch (CommentDependencyValidationException commentDependencyValidationException)
+            {
+                return BadRequest(commentDependencyValidationException);
+            }
+            catch (CommentDependencyException commentDependencyException)
+            {
+                return InternalServerError(commentDependencyException);
+            }
+            catch (CommentServiceException commentServiceException)
+            {
+                return InternalServerError(commentServiceException);
+            }
+        }
+    }
 }
