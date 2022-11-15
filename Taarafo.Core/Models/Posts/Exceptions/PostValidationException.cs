@@ -7,11 +7,11 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Posts.Exceptions
 {
-    public class PostValidationException : Xeption
-    {
-        public PostValidationException(Xeption innerException)
-            : base(message: "Post validation errors occurred, please try again.",
-                  innerException)
-        { }
-    }
+	public class PostValidationException : Xeption
+	{
+		public PostValidationException(Xeption innerException)
+			: base(message: "Post validation errors occurred, please try again.",
+				  innerException)
+		{ }
+	}
 }

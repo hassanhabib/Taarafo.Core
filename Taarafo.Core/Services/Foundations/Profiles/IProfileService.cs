@@ -10,13 +10,13 @@ using Taarafo.Core.Models.Profiles;
 
 namespace Taarafo.Core.Services.Foundations.Profiles
 {
-    public partial interface IProfileService
-    {
-        ValueTask<Profile> AddProfileAsync(Profile profile);
-        ValueTask<Profile> RetrieveProfileByIdAsync(Guid profileId);
-        IQueryable<Profile> RetrieveAllProfiles();
-        ValueTask<Profile> ModifyProfileAsync(Profile profile);
-        ValueTask<Profile> RemoveProfileByIdAsync(Guid profileId);
+	public partial interface IProfileService
+	{
+		ValueTask<Profile> AddProfileAsync(Profile profile);
+		ValueTask<Profile> RetrieveProfileByIdAsync(Guid profileId);
+		IQueryable<Profile> RetrieveAllProfiles();
+		ValueTask<Profile> ModifyProfileAsync(Profile profile);
+		ValueTask<Profile> RemoveProfileByIdAsync(Guid profileId);
 
-    }
+	}
 }

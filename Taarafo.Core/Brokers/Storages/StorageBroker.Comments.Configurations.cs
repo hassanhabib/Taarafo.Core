@@ -8,15 +8,15 @@ using Taarafo.Core.Models.Comments;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial class StorageBroker
-    {
-        private static void AddCommentConfigurations(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Comment>()
-                .HasOne(comment => comment.Post)
-                .WithMany(post => post.Comments)
-                .HasForeignKey(comment => comment.PostId)
-                .OnDelete(DeleteBehavior.NoAction);
-        }
-    }
+	public partial class StorageBroker
+	{
+		private static void AddCommentConfigurations(ModelBuilder modelBuilder)
+		{
+			modelBuilder.Entity<Comment>()
+				.HasOne(comment => comment.Post)
+				.WithMany(post => post.Comments)
+				.HasForeignKey(comment => comment.PostId)
+				.OnDelete(DeleteBehavior.NoAction);
+		}
+	}
 }

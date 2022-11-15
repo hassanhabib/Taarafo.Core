@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -14,137 +15,149 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 {
-    public partial class ProfileServiceTests
-    {
-        [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnRemoveWhenSqlExceptionOccursAndLogItAsync()
-        {
-            // given
-            Guid someProfileId = Guid.NewGuid();
-            SqlException sqlException = GetSqlException();
+	public partial class ProfileServiceTests
+	{
+		[Fact]
+		public async Task ShouldThrowCriticalDependencyExceptionOnRemoveWhenSqlExceptionOccursAndLogItAsync()
+		{
+			// given
+			Guid someProfileId = Guid.NewGuid();
+			SqlException sqlException = GetSqlException();
 
-            var failedProfileStorageException =
-                new FailedProfileStorageException(sqlException);
+			var failedProfileStorageException =
+				new FailedProfileStorageException(sqlException);
 
-            var expectedProfileDependencyException =
-                new ProfileDependencyException(failedProfileStorageException);
+			var expectedProfileDependencyException =
+				new ProfileDependencyException(failedProfileStorageException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectProfileByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(sqlException);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectProfileByIdAsync(It.IsAny<Guid>()))
+					.ThrowsAsync(sqlException);
 
-            // when
-            ValueTask<Profile> removeProfileByIdTask =
-                this.profileService.RemoveProfileByIdAsync(someProfileId);
+			// when
+			ValueTask<Profile> removeProfileByIdTask =
+				this.profileService.RemoveProfileByIdAsync(someProfileId);
 
-            // then
-            await Assert.ThrowsAsync<ProfileDependencyException>(() =>
-                removeProfileByIdTask.AsTask());
+			ProfileDependencyException actualProfileDependencyException =
+				await Assert.ThrowsAsync<ProfileDependencyException>(
+					removeProfileByIdTask.AsTask);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
-                    Times.Once);
+			// then
+			actualProfileDependencyException.Should()
+				.BeEquivalentTo(expectedProfileDependencyException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedProfileDependencyException))),
-                        Times.Once);
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
+					Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.DeleteProfileAsync(It.IsAny<Profile>()),
-                    Times.Never);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogCritical(It.Is(SameExceptionAs(
+					expectedProfileDependencyException))),
+						Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
+			this.storageBrokerMock.Verify(broker =>
+				broker.DeleteProfileAsync(It.IsAny<Profile>()),
+					Times.Never);
 
-        [Fact]
-        public async Task ShouldThrowDependencyValidationOnRemoveIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
-        {
-            // given
-            Guid someProfileId = Guid.NewGuid();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var databaseUpdateConcurrencyException =
-                new DbUpdateConcurrencyException();
+		[Fact]
+		public async Task ShouldThrowDependencyValidationOnRemoveIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+		{
+			// given
+			Guid someProfileId = Guid.NewGuid();
 
-            var lockedProfileException =
-                new LockedProfileException(databaseUpdateConcurrencyException);
+			var databaseUpdateConcurrencyException =
+				new DbUpdateConcurrencyException();
 
-            var expectedProfileDependencyValidationException =
-                new ProfileDependencyValidationException(lockedProfileException);
+			var lockedProfileException =
+				new LockedProfileException(databaseUpdateConcurrencyException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectProfileByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(databaseUpdateConcurrencyException);
+			var expectedProfileDependencyValidationException =
+				new ProfileDependencyValidationException(lockedProfileException);
 
-            // when
-            ValueTask<Profile> removeProfileByIdTask =
-                this.profileService.RemoveProfileByIdAsync(someProfileId);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectProfileByIdAsync(It.IsAny<Guid>()))
+					.ThrowsAsync(databaseUpdateConcurrencyException);
 
-            // then
-            await Assert.ThrowsAsync<ProfileDependencyValidationException>(() =>
-                removeProfileByIdTask.AsTask());
+			// when
+			ValueTask<Profile> removeProfileByIdTask =
+				this.profileService.RemoveProfileByIdAsync(someProfileId);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
-                    Times.Once);
+			ProfileDependencyValidationException actualProfileDependencyValidationException =
+				await Assert.ThrowsAsync<ProfileDependencyValidationException>(
+					removeProfileByIdTask.AsTask);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedProfileDependencyValidationException))),
-                        Times.Once);
+			// then
+			actualProfileDependencyValidationException.Should()
+				.BeEquivalentTo(expectedProfileDependencyValidationException);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.DeleteProfileAsync(It.IsAny<Profile>()),
-                    Times.Never);
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
+					Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedProfileDependencyValidationException))),
+						Times.Once);
 
-        [Fact]
-        public async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
-        {
-            // given
-            Guid someProfileId = Guid.NewGuid();
-            var serviceException = new Exception();
+			this.storageBrokerMock.Verify(broker =>
+				broker.DeleteProfileAsync(It.IsAny<Profile>()),
+					Times.Never);
 
-            var failedProfileServiceException =
-                new FailedProfileServiceException(serviceException);
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var expectedProfileServiceException =
-                new ProfileServiceException(failedProfileServiceException);
+		[Fact]
+		public async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
+		{
+			// given
+			Guid someProfileId = Guid.NewGuid();
+			var serviceException = new Exception();
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectProfileByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(serviceException);
+			var failedProfileServiceException =
+				new FailedProfileServiceException(serviceException);
 
-            // when
-            ValueTask<Profile> removeProfileByIdTask =
-                this.profileService.RemoveProfileByIdAsync(someProfileId);
+			var expectedProfileServiceException =
+				new ProfileServiceException(failedProfileServiceException);
 
-            // then
-            await Assert.ThrowsAsync<ProfileServiceException>(() =>
-                removeProfileByIdTask.AsTask());
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectProfileByIdAsync(It.IsAny<Guid>()))
+					.ThrowsAsync(serviceException);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
-                        Times.Once());
+			// when
+			ValueTask<Profile> removeProfileByIdTask =
+				this.profileService.RemoveProfileByIdAsync(someProfileId);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedProfileServiceException))),
-                        Times.Once);
+			ProfileServiceException actualProfileServiceException =
+				await Assert.ThrowsAsync<ProfileServiceException>(
+					removeProfileByIdTask.AsTask);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.DeleteProfileAsync(It.IsAny<Profile>()),
-                        Times.Never());
+			// then
+			actualProfileServiceException.Should()
+				.BeEquivalentTo(expectedProfileServiceException);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
+						Times.Once());
+
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedProfileServiceException))),
+						Times.Once);
+
+			this.storageBrokerMock.Verify(broker =>
+				broker.DeleteProfileAsync(It.IsAny<Profile>()),
+						Times.Never());
+
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }

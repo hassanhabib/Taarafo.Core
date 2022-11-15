@@ -8,8 +8,8 @@ using Taarafo.Core.Models.PostImpressions;
 
 namespace Taarafo.Core.Services.Foundations.PostImpressions
 {
-    public interface IPostImpressionService
-    {
-        ValueTask<PostImpression> AddPostImpressions(PostImpression postImpression);
-    }
+	public interface IPostImpressionService
+	{
+		ValueTask<PostImpression> AddPostImpressions(PostImpression postImpression);
+	}
 }

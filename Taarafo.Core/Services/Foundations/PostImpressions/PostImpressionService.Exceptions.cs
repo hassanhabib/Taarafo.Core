@@ -14,104 +14,104 @@ using Xeptions;
 
 namespace Taarafo.Core.Services.Foundations.PostImpressions
 {
-    public partial class PostImpressionService
-    {
-        private delegate ValueTask<PostImpression> ReturningPostImpressionFunction();
+	public partial class PostImpressionService
+	{
+		private delegate ValueTask<PostImpression> ReturningPostImpressionFunction();
 
-        private async ValueTask<PostImpression> TryCatch(ReturningPostImpressionFunction returningPostImpressionFunction)
-        {
-            try
-            {
-                return await returningPostImpressionFunction();
-            }
-            catch (NullPostImpressionException nullPostImpressionException)
-            {
-                throw CreateAndLogValidationException(nullPostImpressionException);
-            }
-            catch (InvalidPostImpressionException invalidPostImpressionException)
-            {
-                throw CreateAndLogValidationException(invalidPostImpressionException);
-            }
-            catch (SqlException sqlException)
-            {
-                var failedPostImpressionStorageException =
-                    new FailedPostImpressionStorageException(sqlException);
+		private async ValueTask<PostImpression> TryCatch(ReturningPostImpressionFunction returningPostImpressionFunction)
+		{
+			try
+			{
+				return await returningPostImpressionFunction();
+			}
+			catch (NullPostImpressionException nullPostImpressionException)
+			{
+				throw CreateAndLogValidationException(nullPostImpressionException);
+			}
+			catch (InvalidPostImpressionException invalidPostImpressionException)
+			{
+				throw CreateAndLogValidationException(invalidPostImpressionException);
+			}
+			catch (SqlException sqlException)
+			{
+				var failedPostImpressionStorageException =
+					new FailedPostImpressionStorageException(sqlException);
 
-                throw CreateAndLogCriticalDependencyException(failedPostImpressionStorageException);
-            }
-            catch (DuplicateKeyException duplicateKeyException)
-            {
-                var alreadyExistsPostImpressionException =
-                    new AlreadyExistsPostImpressionException(duplicateKeyException);
+				throw CreateAndLogCriticalDependencyException(failedPostImpressionStorageException);
+			}
+			catch (DuplicateKeyException duplicateKeyException)
+			{
+				var alreadyExistsPostImpressionException =
+					new AlreadyExistsPostImpressionException(duplicateKeyException);
 
-                throw CreateAndLogDependencyValidationException(alreadyExistsPostImpressionException);
-            }
-            catch (DbUpdateException databaseUpdateException)
-            {
-                var failedPostImpressionStorageException =
-                    new FailedPostImpressionStorageException(databaseUpdateException);
+				throw CreateAndLogDependencyValidationException(alreadyExistsPostImpressionException);
+			}
+			catch (DbUpdateException databaseUpdateException)
+			{
+				var failedPostImpressionStorageException =
+					new FailedPostImpressionStorageException(databaseUpdateException);
 
-                throw CreateAndLogDependencyException(failedPostImpressionStorageException);
-            }
-            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
-            {
-                var invalidPostImpressionReferenceException =
-                    new InvalidPostImpressionReferenceException(foreignKeyConstraintConflictException);
+				throw CreateAndLogDependencyException(failedPostImpressionStorageException);
+			}
+			catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+			{
+				var invalidPostImpressionReferenceException =
+					new InvalidPostImpressionReferenceException(foreignKeyConstraintConflictException);
 
-                throw CreateAndLogDependencyValidationException(invalidPostImpressionReferenceException);
-            }
-            catch (Exception exception)
-            {
-                var failedPostImpressionServiceException =
-                    new FailedPostImpressionServiceException(exception);
+				throw CreateAndLogDependencyValidationException(invalidPostImpressionReferenceException);
+			}
+			catch (Exception exception)
+			{
+				var failedPostImpressionServiceException =
+					new FailedPostImpressionServiceException(exception);
 
-                throw CreateAndLogServiceException(failedPostImpressionServiceException);
-            }
-        }
+				throw CreateAndLogServiceException(failedPostImpressionServiceException);
+			}
+		}
 
-        private PostImpressionValidationException CreateAndLogValidationException(Xeption exception)
-        {
-            var postImpressionValidationException =
-                new PostImpressionValidationException(exception);
+		private PostImpressionValidationException CreateAndLogValidationException(Xeption exception)
+		{
+			var postImpressionValidationException =
+				new PostImpressionValidationException(exception);
 
-            this.loggingBroker.LogError(postImpressionValidationException);
+			this.loggingBroker.LogError(postImpressionValidationException);
 
-            return postImpressionValidationException;
-        }
+			return postImpressionValidationException;
+		}
 
-        private PostImpressionDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
-        {
-            var postImpressionDependencyException = new PostImpressionDependencyException(exception);
-            this.loggingBroker.LogCritical(postImpressionDependencyException);
+		private PostImpressionDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
+		{
+			var postImpressionDependencyException = new PostImpressionDependencyException(exception);
+			this.loggingBroker.LogCritical(postImpressionDependencyException);
 
-            return postImpressionDependencyException;
-        }
+			return postImpressionDependencyException;
+		}
 
-        private PostImpressionDependencyValidationException CreateAndLogDependencyValidationException(
-            Xeption exception)
-        {
-            var postImpressionDependencyValidationException =
-                new PostImpressionDependencyValidationException(exception);
+		private PostImpressionDependencyValidationException CreateAndLogDependencyValidationException(
+			Xeption exception)
+		{
+			var postImpressionDependencyValidationException =
+				new PostImpressionDependencyValidationException(exception);
 
-            this.loggingBroker.LogError(postImpressionDependencyValidationException);
+			this.loggingBroker.LogError(postImpressionDependencyValidationException);
 
-            return postImpressionDependencyValidationException;
-        }
+			return postImpressionDependencyValidationException;
+		}
 
-        private PostImpressionDependencyException CreateAndLogDependencyException(Xeption exception)
-        {
-            var postImpressionDependencyException = new PostImpressionDependencyException(exception);
-            this.loggingBroker.LogError(postImpressionDependencyException);
+		private PostImpressionDependencyException CreateAndLogDependencyException(Xeption exception)
+		{
+			var postImpressionDependencyException = new PostImpressionDependencyException(exception);
+			this.loggingBroker.LogError(postImpressionDependencyException);
 
-            return postImpressionDependencyException;
-        }
+			return postImpressionDependencyException;
+		}
 
-        private PostImpressionServiceException CreateAndLogServiceException(Exception exception)
-        {
-            var postImpressionServiceException = new PostImpressionServiceException(exception);
-            this.loggingBroker.LogError(postImpressionServiceException);
+		private PostImpressionServiceException CreateAndLogServiceException(Exception exception)
+		{
+			var postImpressionServiceException = new PostImpressionServiceException(exception);
+			this.loggingBroker.LogError(postImpressionServiceException);
 
-            return postImpressionServiceException;
-        }
-    }
+			return postImpressionServiceException;
+		}
+	}
 }

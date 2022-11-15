@@ -12,61 +12,61 @@ using Taarafo.Core.Models.Profiles;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial class StorageBroker
-    {
-        public DbSet<Profile> Profiles { get; set; }
+	public partial class StorageBroker
+	{
+		public DbSet<Profile> Profiles { get; set; }
 
-        public async ValueTask<Profile> InsertProfileAsync(Profile profile)
-        {
-            using var broker = new StorageBroker(this.configuration);
+		public async ValueTask<Profile> InsertProfileAsync(Profile profile)
+		{
+			using var broker = new StorageBroker(this.configuration);
 
-            EntityEntry<Profile> profileEntityEntry =
-                await broker.Profiles.AddAsync(profile);
+			EntityEntry<Profile> profileEntityEntry =
+				await broker.Profiles.AddAsync(profile);
 
-            await broker.SaveChangesAsync();
+			await broker.SaveChangesAsync();
 
-            return profileEntityEntry.Entity;
-        }
+			return profileEntityEntry.Entity;
+		}
 
-        public IQueryable<Profile> SelectAllProfiles()
-        {
-            using var broker = new StorageBroker(this.configuration);
+		public IQueryable<Profile> SelectAllProfiles()
+		{
+			using var broker = new StorageBroker(this.configuration);
 
-            return broker.Profiles;
-        }
+			return broker.Profiles;
+		}
 
-        public async ValueTask<Profile> SelectProfileByIdAsync(Guid profileId)
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
+		public async ValueTask<Profile> SelectProfileByIdAsync(Guid profileId)
+		{
+			using var broker =
+				new StorageBroker(this.configuration);
 
-            return await broker.Profiles.FindAsync(profileId);
-        }
+			return await broker.Profiles.FindAsync(profileId);
+		}
 
-        public async ValueTask<Profile> UpdateProfileAsync(Profile profile)
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
+		public async ValueTask<Profile> UpdateProfileAsync(Profile profile)
+		{
+			using var broker =
+				new StorageBroker(this.configuration);
 
-            EntityEntry<Profile> profileEntityEntry =
-                broker.Profiles.Update(profile);
+			EntityEntry<Profile> profileEntityEntry =
+				broker.Profiles.Update(profile);
 
-            await broker.SaveChangesAsync();
+			await broker.SaveChangesAsync();
 
-            return profileEntityEntry.Entity;
-        }
+			return profileEntityEntry.Entity;
+		}
 
-        public async ValueTask<Profile> DeleteProfileAsync(Profile profile)
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
+		public async ValueTask<Profile> DeleteProfileAsync(Profile profile)
+		{
+			using var broker =
+				new StorageBroker(this.configuration);
 
-            EntityEntry<Profile> profileEntityEntry =
-                broker.Profiles.Remove(profile);
+			EntityEntry<Profile> profileEntityEntry =
+				broker.Profiles.Remove(profile);
 
-            await broker.SaveChangesAsync();
+			await broker.SaveChangesAsync();
 
-            return profileEntityEntry.Entity;
-        }
-    }
+			return profileEntityEntry.Entity;
+		}
+	}
 }
