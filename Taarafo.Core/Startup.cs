@@ -80,6 +80,8 @@ namespace Taarafo.Core
                         url: "/swagger/v1/swagger.json",
                         name: "Taarafo.Core v1");
                 });
+
+                app.UseODataRouteDebug();
             }
 
             app.UseHttpsRedirection();
