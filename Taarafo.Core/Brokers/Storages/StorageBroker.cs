@@ -6,6 +6,7 @@
 using EFxceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace Taarafo.Core.Brokers.Storages
 {
@@ -17,6 +18,10 @@ namespace Taarafo.Core.Brokers.Storages
 		{
 			this.configuration = configuration;
 			this.Database.Migrate();
+		}
+		public async ValueTask<T> DeleteProfileAsync()
+		{
+			var broker = await 
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
