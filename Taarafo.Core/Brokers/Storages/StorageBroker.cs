@@ -24,7 +24,6 @@ namespace Taarafo.Core.Brokers.Storages
 		private async ValueTask<T> InsertAsync<T>(T @object)
 		{
 			var broker = new StorageBroker(this.configuration);
-
 			broker.Entry(@object).State = EntityState.Added;
 			await broker.SaveChangesAsync();
 
