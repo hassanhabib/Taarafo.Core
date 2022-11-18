@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Threading.Tasks;
 using EFxceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,9 @@ namespace Taarafo.Core.Brokers.Storages
 			this.Database.Migrate();
 		}
 
+		private async ValueTask<T> SelectAsync<T>(params object[] objectIds) where T : class =>
+			await FindAsync<T>(objectIds);
+		
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			AddCommentConfigurations(modelBuilder);
