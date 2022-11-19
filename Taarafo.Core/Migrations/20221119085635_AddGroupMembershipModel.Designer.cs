@@ -12,7 +12,7 @@ using Taarafo.Core.Brokers.Storages;
 namespace Taarafo.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20221117080833_AddGroupMembershipModel")]
+    [Migration("20221119085635_AddGroupMembershipModel")]
     partial class AddGroupMembershipModel
     {
         /// <inheritdoc />
@@ -86,6 +86,33 @@ namespace Taarafo.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("Taarafo.Core.Models.GroupMemberships.GroupMembership", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("MembershipDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("ProfileId");
+
+                    b.ToTable("GroupMemberships");
                 });
 
             modelBuilder.Entity("Taarafo.Core.Models.GroupPosts.GroupPost", b =>
@@ -211,6 +238,25 @@ namespace Taarafo.Core.Migrations
                         .IsRequired();
 
                     b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("Taarafo.Core.Models.GroupMemberships.GroupMembership", b =>
+                {
+                    b.HasOne("Taarafo.Core.Models.Groups.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Taarafo.Core.Models.Profiles.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("Taarafo.Core.Models.GroupPosts.GroupPost", b =>

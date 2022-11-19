@@ -11,6 +11,7 @@ namespace Taarafo.Core.Models.GroupMemberships
 {
     public class GroupMembership
     {
+        public Guid Id { get; set; }
         public Guid ProfileId { get; set; }
         public Profile Profile { get; set; }
 
