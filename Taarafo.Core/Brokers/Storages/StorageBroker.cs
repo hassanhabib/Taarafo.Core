@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Threading.Tasks;
 using EFxceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,10 +19,11 @@ namespace Taarafo.Core.Brokers.Storages
 			this.configuration = configuration;
 			this.Database.Migrate();
 		}
-		public async ValueTask<T> DeleteAsync<T>(T @object)
+		
+		public async ValueTask<T> UpdateAsync<T>(T @object)
 		{
 			var broker = new StorageBroker(this.configuration);
-			broker.Entry(@object).State = EntityState.Deleted;
+			broker.Entry(@object).State = EntityState.Modified;
 			await broker.SaveChangesAsync();
 
 			return @object;
