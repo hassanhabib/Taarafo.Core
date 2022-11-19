@@ -26,8 +26,15 @@ namespace Taarafo.Core.Brokers.Storages
 			AddGroupPostConfigurations(modelBuilder);
 			AddPostImpressionConfigurations(modelBuilder);
 		}
-       
-		private async ValueTask<T> UpdateAsync<T>(T @object)
+
+        private IQueryable<T> SelectAll<T>() where T : class
+        {
+            var broker = new StorageBroker(this.configuration);
+
+            return broker.Set<T>();
+        }
+
+        private async ValueTask<T> UpdateAsync<T>(T @object)
         {
             var broker = new StorageBroker(this.configuration);
             broker.Entry(@object).State = EntityState.Modified;
