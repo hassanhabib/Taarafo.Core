@@ -24,13 +24,13 @@ namespace Taarafo.Core.Brokers.Storages
 			      await FindAsync<T>(objectIds);
        
 		private async ValueTask<T> UpdateAsync<T>(T @object)
-    {
+		{
             var broker = new StorageBroker(this.configuration);
             broker.Entry(@object).State = EntityState.Modified;
             await broker.SaveChangesAsync();
 
             return @object;
-    }
+        }
         
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -39,7 +39,7 @@ namespace Taarafo.Core.Brokers.Storages
 			AddPostImpressionConfigurations(modelBuilder);
 		}
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			string connectionString = this.configuration
 				.GetConnectionString(name: "DefaultConnection");
