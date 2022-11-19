@@ -38,20 +38,10 @@ namespace Taarafo.Core.Brokers.Storages
 		public async ValueTask<Profile> SelectProfileByIdAsync(Guid profileId) =>
 			await SelectAsync<Profile>(profileId);
 
-		public async ValueTask<Profile> UpdateProfileAsync(Profile profile)
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
+        public async ValueTask<Profile> UpdateProfileAsync(Profile profile) =>
+            await UpdateAsync(profile);
 
-			EntityEntry<Profile> profileEntityEntry =
-				broker.Profiles.Update(profile);
-
-			await broker.SaveChangesAsync();
-
-			return profileEntityEntry.Entity;
-		}
-
-		public async ValueTask<Profile> DeleteProfileAsync(Profile profile)
+        public async ValueTask<Profile> DeleteProfileAsync(Profile profile)
 		{
 			using var broker =
 				new StorageBroker(this.configuration);
