@@ -19,12 +19,16 @@ namespace Taarafo.Core.Brokers.Storages
 			this.configuration = configuration;
 			this.Database.Migrate();
 		}
-		public async ValueTask<T> DeleteProfileAsync()
-		{
-			var broker = await 
-		}
+        public async ValueTask<T> DeleteProfile<T>(T @object)
+        {
+            var broker = new StorageBroker(this.configuration);
+			broker.Entry(@object).State = EntityState.Deleted;
+			await SaveChangesAsync();
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+			return @object;
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			AddCommentConfigurations(modelBuilder);
 			AddGroupPostConfigurations(modelBuilder);

@@ -57,6 +57,6 @@ namespace Taarafo.Core.Brokers.Storages
 		}
 
 		public async ValueTask<Profile> DeleteProfileAsync(Profile profile) => 
-			await DeleteAsync(profile);
+			await DeleteProfile(profile);
 	}
 }
