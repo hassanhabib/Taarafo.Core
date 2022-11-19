@@ -19,7 +19,8 @@ namespace Taarafo.Core.Brokers.Storages
 			this.configuration = configuration;
 			this.Database.Migrate();
 		}
-        public async ValueTask<T> DeleteProfile<T>(T @object)
+
+        public async ValueTask<T> DeleteAsync<T>(T @object)
         {
             var broker = new StorageBroker(this.configuration);
 			broker.Entry(@object).State = EntityState.Deleted;
