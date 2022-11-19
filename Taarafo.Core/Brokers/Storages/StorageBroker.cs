@@ -30,14 +30,26 @@ namespace Taarafo.Core.Brokers.Storages
 			return @object;
 		}
 
+		private async ValueTask<T> SelectAsync<T>(params object[] objectIds) where T : class =>
+			await FindAsync<T>(objectIds);
+		
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			AddCommentConfigurations(modelBuilder);
 			AddGroupPostConfigurations(modelBuilder);
 			AddPostImpressionConfigurations(modelBuilder);
 		}
+       
+		private async ValueTask<T> UpdateAsync<T>(T @object)
+        {
+            var broker = new StorageBroker(this.configuration);
+            broker.Entry(@object).State = EntityState.Modified;
+            await broker.SaveChangesAsync();
 
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            return @object;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			string connectionString = this.configuration
 				.GetConnectionString(name: "DefaultConnection");
