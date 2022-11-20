@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
 using FluentAssertions;
@@ -33,13 +34,12 @@ namespace Taarafo.Core.Brokers.Storages
 		private async ValueTask<T> SelectAsync<T>(params object[] objectIds) where T : class =>
 			await FindAsync<T>(objectIds);
 		
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		private IQueryable<T> SelectAll<T>() where T : class
 		{
-			AddCommentConfigurations(modelBuilder);
-			AddGroupPostConfigurations(modelBuilder);
-			AddPostImpressionConfigurations(modelBuilder);
+			var broker =new StorageBroker(this.configuration);
+			return broker.Set<T>();
 		}
-       
+
 		private async ValueTask<T> UpdateAsync<T>(T @object)
         {
             var broker = new StorageBroker(this.configuration);
@@ -48,6 +48,13 @@ namespace Taarafo.Core.Brokers.Storages
 
             return @object;
         }
+
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			AddCommentConfigurations(modelBuilder);
+			AddGroupPostConfigurations(modelBuilder);
+			AddPostImpressionConfigurations(modelBuilder);
+		}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{

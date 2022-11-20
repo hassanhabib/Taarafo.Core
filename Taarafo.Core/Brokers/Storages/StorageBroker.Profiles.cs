@@ -28,13 +28,9 @@ namespace Taarafo.Core.Brokers.Storages
 			return profileEntityEntry.Entity;
 		}
 
-		public IQueryable<Profile> SelectAllProfiles()
-		{
-			using var broker = new StorageBroker(this.configuration);
-
-			return broker.Profiles;
-		}
-	
+		public IQueryable<Profile> SelectAllProfiles()=>
+            SelectAll<Profile>();
+		
 		public async ValueTask<Profile> SelectProfileByIdAsync(Guid profileId) =>
 			await SelectAsync<Profile>(profileId);
 
