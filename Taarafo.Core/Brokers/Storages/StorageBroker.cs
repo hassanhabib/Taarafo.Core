@@ -8,6 +8,7 @@ using EFxceptions;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace Taarafo.Core.Brokers.Storages
 {
