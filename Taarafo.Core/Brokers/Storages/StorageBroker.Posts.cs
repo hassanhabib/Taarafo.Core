@@ -16,18 +16,8 @@ namespace Taarafo.Core.Brokers.Storages
 	{
 		public DbSet<Post> Posts { get; set; }
 
-		public async ValueTask<Post> InsertPostAsync(Post post)
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
-
-			EntityEntry<Post> postEntityEntry =
-				await broker.Posts.AddAsync(post);
-
-			await broker.SaveChangesAsync();
-
-			return postEntityEntry.Entity;
-		}
+		public async ValueTask<Post> InsertPostAsync(Post post) =>
+			await InsertAsync(post);
 
 		public IQueryable<Post> SelectAllPosts()
 		{
