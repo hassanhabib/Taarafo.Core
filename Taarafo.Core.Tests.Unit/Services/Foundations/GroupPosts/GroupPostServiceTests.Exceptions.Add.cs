@@ -146,5 +146,47 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async void ShouldThrowDependencyValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+        {
+            //given
+            GroupPost someGroupPost = CreateRandomGroupPost();
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(exceptionMessage);
+
+            var invalidGroupPostReferenceException =
+                new InvalidGroupPostReferenceException(foreignKeyConstraintConflictException);
+
+            var expectedGroupPostDependencyValidationException =
+                new GroupPostDependencyValidationException(invalidGroupPostReferenceException);
+
+            //when
+            ValueTask<GroupPost> addGroupPostTask =
+                this.groupPostService.AddGroupPostAsync(someGroupPost);
+
+            GroupPostDependencyValidationException actualGroupPostDependencyValidationException =
+                await Assert.ThrowsAsync<GroupPostDependencyValidationException>(
+                    addGroupPostTask.AsTask);
+
+            //then
+            actualGroupPostDependencyValidationException.Should().BeEquivalentTo(
+                expectedGroupPostDependencyValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupPostAsync(It.IsAny<GroupPost>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupPostDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
