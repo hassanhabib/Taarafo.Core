@@ -192,5 +192,47 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+        {
+            //given
+            GroupPost someGroupPost = CreateRandomGroupPost();
+            var serviceException = new Exception();
+
+            var failedGroupPostServiceException =
+                new FailedGroupPostServiceException(serviceException);
+
+            var expectedGroupPostServiceException =
+                new GroupPostServiceException(failedGroupPostServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+               broker.InsertGroupPostAsync(someGroupPost))
+                   .Throws(serviceException);
+
+            //when
+            ValueTask<GroupPost> addGroupPostTask =
+                this.groupPostService.AddGroupPostAsync(someGroupPost);
+
+            GroupPostServiceException actualGroupPostServiceException =
+                await Assert.ThrowsAsync<GroupPostServiceException>(
+                    addGroupPostTask.AsTask);
+
+            //then
+            actualGroupPostServiceException.Should().BeEquivalentTo(
+                expectedGroupPostServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupPostAsync(It.IsAny<GroupPost>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupPostServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
