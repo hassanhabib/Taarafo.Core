@@ -44,5 +44,8 @@ namespace Taarafo.Core.Brokers.Storages
 
 			return await broker.Events.FindAsync(eventId);
 		}
+
+		public async ValueTask<Event> DeleteEventAsync(Event @event) =>
+			await DeleteAsync(@event);
 	}
 }
