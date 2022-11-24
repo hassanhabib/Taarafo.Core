@@ -60,7 +60,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 PostId = invalidGuid
             };
 
-            var invalidGrouPostException = 
+            var invalidGrouPostException =
                 new InvalidGroupPostException();
 
             invalidGrouPostException.AddData(
@@ -70,7 +70,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             invalidGrouPostException.AddData(
                 key: nameof(GroupPost.PostId),
                 values: "Id is required");
-            
+
             var expectedGroupPostValidationException =
                 new GroupPostValidationException(invalidGrouPostException);
 
