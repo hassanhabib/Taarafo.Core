@@ -6,11 +6,9 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Models.GroupPosts.Exceptions;
-using Taarafo.Core.Models.PostImpressions.Exceptions;
 using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
@@ -70,16 +68,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 values: "Id is required");
 
             invalidGrouPostException.AddData(
-                key: nameof(GroupPost.Group),
-                values: "Object is required");
-
-            invalidGrouPostException.AddData(
                 key: nameof(GroupPost.PostId),
                 values: "Id is required");
-
-            invalidGrouPostException.AddData(
-                key: nameof(GroupPost.Post),
-                values: "Object is required");
             
             var expectedGroupPostValidationException =
                 new GroupPostValidationException(invalidGrouPostException);

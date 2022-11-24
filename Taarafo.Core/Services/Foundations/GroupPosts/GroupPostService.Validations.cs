@@ -17,9 +17,7 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 
             Validate(
                 (Rule: IsInvalid(groupPost.GroupId), Parameter: nameof(GroupPost.GroupId)),
-                (Rule: IsInvalid(groupPost.Group), Parameter: nameof(GroupPost.Group)),
-                (Rule: IsInvalid(groupPost.PostId), Parameter: nameof(GroupPost.PostId)),
-                (Rule: IsInvalid(groupPost.Post), Parameter: nameof(GroupPost.Post)));
+                (Rule: IsInvalid(groupPost.PostId), Parameter: nameof(GroupPost.PostId)));
         }
 
         private static dynamic IsInvalid(Guid id) => new

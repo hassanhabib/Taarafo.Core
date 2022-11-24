@@ -16,6 +16,8 @@ using Taarafo.Core.Services.Foundations.GroupPosts;
 using Taarafo.Core.Services.Foundations.Groups;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Taarafo.Core.Models.Groups;
+using Taarafo.Core.Models.Posts;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 {
@@ -56,7 +58,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             var filler = new Filler<GroupPost>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().IgnoreIt();
+                .OnType<DateTimeOffset>().IgnoreIt()
+                .OnType<Group>().IgnoreIt()
+                .OnType<Post>().IgnoreIt();
 
             return filler;
         }
