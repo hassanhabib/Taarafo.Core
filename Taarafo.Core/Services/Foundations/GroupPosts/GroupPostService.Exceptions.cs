@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -54,12 +55,19 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 
                 throw CreateAndLogDependencyException(failedGroupPostStorageException);
             }
-            catch(ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
             {
                 var invalidGroupPostReferenceException =
                     new InvalidGroupPostReferenceException(foreignKeyConstraintConflictException);
 
                 throw CreateAndLogDependencyValidationException(invalidGroupPostReferenceException);
+            }
+            catch (Exception exception)
+            {
+                var failedGroupPostServiceException =
+                    new FailedGroupPostServiceException(exception);
+
+                throw CreateAndLogServiceException(failedGroupPostServiceException);
             }
         }
 
@@ -104,6 +112,14 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             this.loggingBroker.LogError(groupPostDependencyException);
 
             return groupPostDependencyException;
+        }
+
+        private GroupPostServiceException CreateAndLogServiceException(Exception exception)
+        {
+            var groupPostServiceException = new GroupPostServiceException(exception);
+            this.loggingBroker.LogError(groupPostServiceException);
+
+            return groupPostServiceException;
         }
     }
 }
