@@ -54,6 +54,13 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 
                 throw CreateAndLogDependencyException(failedGroupPostStorageException);
             }
+            catch(ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            {
+                var invalidGroupPostReferenceException =
+                    new InvalidGroupPostReferenceException(foreignKeyConstraintConflictException);
+
+                throw CreateAndLogDependencyValidationException(invalidGroupPostReferenceException);
+            }
         }
 
         private GroupPostValidationException CreateAndLogValidationException(

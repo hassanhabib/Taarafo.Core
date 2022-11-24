@@ -164,6 +164,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             var expectedGroupPostDependencyValidationException =
                 new GroupPostDependencyValidationException(invalidGroupPostReferenceException);
 
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertGroupPostAsync(someGroupPost))
+                    .Throws(foreignKeyConstraintConflictException);
+
             //when
             ValueTask<GroupPost> addGroupPostTask =
                 this.groupPostService.AddGroupPostAsync(someGroupPost);
