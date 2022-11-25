@@ -44,8 +44,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					modifyProfileTask.AsTask);
 
 			// then
-			actualProfileDependencyException.Should()
-				.BeEquivalentTo(expectedProfileDependencyException);
+			actualProfileDependencyException.Should().BeEquivalentTo(
+				expectedProfileDependencyException);
 
 			this.dateTimeBrokerMock.Verify(broker =>
 				broker.GetCurrentDateTimeOffset(),
@@ -107,8 +107,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					modifyProfileTask.AsTask);
 
 			// then
-			actualProfileDependencyValidationException.Should()
-				.BeEquivalentTo(profileDependencyValidationException);
+			actualProfileDependencyValidationException.Should().BeEquivalentTo(
+				profileDependencyValidationException);
 
 			this.dateTimeBrokerMock.Verify(broker =>
 				broker.GetCurrentDateTimeOffset(),
@@ -157,8 +157,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					modifyProfileTask.AsTask);
 
 			// then
-			actualProfileDependencyException.Should()
-				.BeEquivalentTo(expectedProfileDependencyException);
+			actualProfileDependencyException.Should().BeEquivalentTo(
+				expectedProfileDependencyException);
 
 			this.dateTimeBrokerMock.Verify(broker =>
 				broker.GetCurrentDateTimeOffset(),
@@ -208,8 +208,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					modifyProfileTask.AsTask);
 
 			// then
-			actualProfileDependencyValidationException.Should()
-				.BeEquivalentTo(expectedProfileDependencyValidationException);
+			actualProfileDependencyValidationException.Should().BeEquivalentTo(
+				expectedProfileDependencyValidationException);
 
 			this.dateTimeBrokerMock.Verify(broker =>
 				broker.GetCurrentDateTimeOffset(),
@@ -259,8 +259,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					modifyProfileTask.AsTask);
 
 			// then
-			actualProfileServiceException.Should()
-				.BeEquivalentTo(expectedProfileServiceException);
+			actualProfileServiceException.Should().BeEquivalentTo(
+				expectedProfileServiceException);
 
 			this.dateTimeBrokerMock.Verify(broker =>
 				broker.GetCurrentDateTimeOffset(),
