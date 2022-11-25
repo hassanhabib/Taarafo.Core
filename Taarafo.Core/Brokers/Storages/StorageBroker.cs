@@ -29,15 +29,8 @@ namespace Taarafo.Core.Brokers.Storages
             return @object;
         }
 
-        private async ValueTask<T> SelectAsync<T>(params object[] objectIds) where T : class =>
-            await FindAsync<T>(objectIds);
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            AddCommentConfigurations(modelBuilder);
-            AddGroupPostConfigurations(modelBuilder);
-            AddPostImpressionConfigurations(modelBuilder);
-        }
+		private async ValueTask<T> SelectAsync<T>(params object[] objectIds) where T : class =>
+			await FindAsync<T>(objectIds);
 
         private async ValueTask<T> UpdateAsync<T>(T @object)
         {
@@ -48,6 +41,13 @@ namespace Taarafo.Core.Brokers.Storages
             return @object;
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			AddCommentConfigurations(modelBuilder);
+			AddGroupPostConfigurations(modelBuilder);
+			AddPostImpressionConfigurations(modelBuilder);
+		}
+       
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             string connectionString = this.configuration
