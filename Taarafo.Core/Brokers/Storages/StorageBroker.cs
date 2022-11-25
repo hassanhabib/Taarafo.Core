@@ -33,7 +33,7 @@ namespace Taarafo.Core.Brokers.Storages
 		private async ValueTask<T> SelectAsync<T>(params object[] objectIds) where T : class =>
 			await FindAsync<T>(objectIds);
 
-    private async ValueTask<T> UpdateAsync<T>(T @object)
+		private async ValueTask<T> UpdateAsync<T>(T @object)
         {
             var broker = new StorageBroker(this.configuration);
             broker.Entry(@object).State = EntityState.Modified;
