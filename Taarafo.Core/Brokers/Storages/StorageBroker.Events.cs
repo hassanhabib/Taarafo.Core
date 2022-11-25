@@ -29,13 +29,8 @@ namespace Taarafo.Core.Brokers.Storages
 			return eventEntityEntry.Entity;
 		}
 
-		public IQueryable<Event> SelectAllEvents()
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
-
-			return broker.Events;
-		}
+		public IQueryable<Event> SelectAllEvents() =>
+			SelectAll<Event>();
 
 		public async ValueTask<Event> SelectEventByIdAsync(Guid eventId)
 		{
