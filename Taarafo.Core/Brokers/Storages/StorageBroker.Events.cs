@@ -22,14 +22,9 @@ namespace Taarafo.Core.Brokers.Storages
 		public IQueryable<Event> SelectAllEvents() =>
 			SelectAll<Event>();
 
-		public async ValueTask<Event> SelectEventByIdAsync(Guid eventId)
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
+		public async ValueTask<Event> SelectEventByIdAsync(Guid eventId) =>
+			await SelectAsync<Event>(eventId);
 
-			return await broker.Events.FindAsync(eventId);
-		}
-    
 		public async ValueTask<Event> UpdateEventAsync(Event @event) =>
 			await UpdateAsync(@event);
     		
