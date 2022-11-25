@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Groups.Exceptions;
@@ -34,8 +35,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 				this.groupService.RetrieveAllGroups();
 
 			// then
-			Assert.Throws<GroupDependencyException>(
-				retrieveAllGroupsAction);
+			GroupDependencyException actualGroupDependencyException = 
+				Assert.Throws<GroupDependencyException>((retrieveAllGroupsAction));
+
+			actualGroupDependencyException.Should().BeEquivalentTo(
+				expectedGroupDependencyException);
 
 			this.storageBrokerMock.Verify(broker =>
 				broker.SelectAllGroups(),
@@ -72,8 +76,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 				 this.groupService.RetrieveAllGroups();
 
 			//then
-			Assert.Throws<GroupServiceException>(
-				retrieveAllGroupsAction);
+		    GroupServiceException actualGroupServiceException = 
+				Assert.Throws<GroupServiceException>((retrieveAllGroupsAction));
+
+			actualGroupServiceException.Should().BeEquivalentTo(
+				expectedGroupServiceException);
 
 			this.storageBrokerMock.Verify(broker =>
 				broker.SelectAllGroups(),
