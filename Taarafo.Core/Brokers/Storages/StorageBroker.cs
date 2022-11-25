@@ -51,15 +51,14 @@ namespace Taarafo.Core.Brokers.Storages
 			AddGroupPostConfigurations(modelBuilder);
 			AddPostImpressionConfigurations(modelBuilder);
 		}
-       
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		{
-			string connectionString = this.configuration
-				.GetConnectionString(name: "DefaultConnection");
+        {
+            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            string connectionString = this.configuration.GetConnectionString(name: "DefaultConnection");
+            optionsBuilder.UseSqlServer(connectionString);
+        }
 
-			optionsBuilder.UseSqlServer(connectionString);
-		}
-
-		public override void Dispose() { }
+        public override void Dispose() { }
 	}
 }
