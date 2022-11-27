@@ -66,5 +66,7 @@ namespace Taarafo.Core.Brokers.Storages
             optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             optionsBuilder.UseSqlServer(connectionString);
         }
-	}
+
+        public override void Dispose() {}
+    }
 }
