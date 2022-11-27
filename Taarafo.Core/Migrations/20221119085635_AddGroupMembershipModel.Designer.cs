@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Taarafo.Core.Brokers.Storages;
 
@@ -11,9 +12,11 @@ using Taarafo.Core.Brokers.Storages;
 namespace Taarafo.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    partial class StorageBrokerModelSnapshot : ModelSnapshot
+    [Migration("20221119085635_AddGroupMembershipModel")]
+    partial class AddGroupMembershipModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -177,39 +180,6 @@ namespace Taarafo.Core.Migrations
                     b.ToTable("PostImpressions");
                 });
 
-            modelBuilder.Entity("Taarafo.Core.Models.PostReports.PostReport", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Details")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ReporterId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("ProfileId");
-
-                    b.ToTable("PostReports");
-                });
-
             modelBuilder.Entity("Taarafo.Core.Models.Posts.Post", b =>
                 {
                     b.Property<Guid>("Id")
@@ -238,9 +208,6 @@ namespace Taarafo.Core.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Avatar")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
@@ -324,23 +291,6 @@ namespace Taarafo.Core.Migrations
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Post");
-
-                    b.Navigation("Profile");
-                });
-
-            modelBuilder.Entity("Taarafo.Core.Models.PostReports.PostReport", b =>
-                {
-                    b.HasOne("Taarafo.Core.Models.Posts.Post", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Taarafo.Core.Models.Profiles.Profile", "Profile")
-                        .WithMany()
-                        .HasForeignKey("ProfileId");
 
                     b.Navigation("Post");
 
