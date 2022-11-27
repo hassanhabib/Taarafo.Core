@@ -39,7 +39,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 					retrieveAllPostsAction);
 
 			// then
-			actualPostDependencyException.Should().BeEquivalentTo(expectedPostDependencyException);
+			actualPostDependencyException.Should().BeEquivalentTo(
+				expectedPostDependencyException);
 
 			this.storageBrokerMock.Verify(broker =>
 				broker.SelectAllPosts(),

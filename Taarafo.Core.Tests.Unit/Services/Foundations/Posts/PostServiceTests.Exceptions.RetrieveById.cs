@@ -42,7 +42,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 					retrievePostByIdTask.AsTask);
 
 			// then
-			actaulPostDependencyException.Should().BeEquivalentTo(expectedPostDependencyException);
+			actaulPostDependencyException.Should().BeEquivalentTo(
+				expectedPostDependencyException);
 
 			this.storageBrokerMock.Verify(broker =>
 				broker.SelectPostByIdAsync(It.IsAny<Guid>()),

@@ -46,7 +46,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 					removePostByIdTask.AsTask);
 
 			// then
-			actualPostDependencyValidationException.Should().BeEquivalentTo(expectedPostDependencyValidationException);
+			actualPostDependencyValidationException.Should().BeEquivalentTo(
+				expectedPostDependencyValidationException);
 
 			this.storageBrokerMock.Verify(broker =>
 				broker.SelectPostByIdAsync(It.IsAny<Guid>()),
@@ -91,7 +92,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 					deletePostTask.AsTask);
 
 			// then
-			actualPostDependencyException.Should().BeEquivalentTo(expectedPostDependencyException);
+			actualPostDependencyException.Should().BeEquivalentTo(
+				expectedPostDependencyException);
 
 			this.storageBrokerMock.Verify(broker =>
 				broker.SelectPostByIdAsync(It.IsAny<Guid>()),
@@ -133,7 +135,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 					removePostByIdTask.AsTask);
 
 			// then
-			actualPostServiceException.Should().BeEquivalentTo(expectedPostServiceException);
+			actualPostServiceException.Should().BeEquivalentTo(
+				expectedPostServiceException);
 
 			this.storageBrokerMock.Verify(broker =>
 				broker.SelectPostByIdAsync(It.IsAny<Guid>()),

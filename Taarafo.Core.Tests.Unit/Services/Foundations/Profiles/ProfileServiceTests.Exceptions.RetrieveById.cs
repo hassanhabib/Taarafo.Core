@@ -42,7 +42,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					retrieveProfileByIdTask.AsTask);
 
 			// then
-			actaulProfileDependencyException.Should().BeEquivalentTo(expectedProfileDependencyException);
+			actaulProfileDependencyException.Should().BeEquivalentTo(
+				expectedProfileDependencyException);
 
 			this.storageBrokerMock.Verify(broker =>
 				broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
@@ -84,7 +85,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					retrieveProfileByIdTask.AsTask);
 
 			// then
-			actualProfileServiceException.Should().BeEquivalentTo(expectedProfileServiceException);
+			actualProfileServiceException.Should().BeEquivalentTo(
+				expectedProfileServiceException);
 
 			this.storageBrokerMock.Verify(broker =>
 				broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
