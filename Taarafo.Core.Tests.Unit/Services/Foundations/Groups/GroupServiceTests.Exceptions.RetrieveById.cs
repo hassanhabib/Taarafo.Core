@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Groups;
@@ -37,8 +38,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 				this.groupService.RetrieveGroupByIdAsync(someGroupId);
 
 			//then
-			await Assert.ThrowsAsync<GroupDependencyException>(() =>
-				retrieveGroupByIdTask.AsTask());
+			GroupDependencyException actualGroupDependencyException = 
+				 await Assert.ThrowsAsync<GroupDependencyException>(() =>
+					retrieveGroupByIdTask.AsTask());
+
+			actualGroupDependencyException.Should().BeEquivalentTo(
+				expectedGroupDependencyException);
 
 			this.storageBrokerMock.Verify(broker =>
 				broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
@@ -75,8 +80,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 				this.groupService.RetrieveGroupByIdAsync(someGroupId);
 
 			//then
-			await Assert.ThrowsAsync<GroupServiceException>(() =>
-				retrieveGroupByIdTask.AsTask());
+		    GroupServiceException actualGroupServiceException = 
+				 await Assert.ThrowsAsync<GroupServiceException>(() =>
+					retrieveGroupByIdTask.AsTask());
+
+			actualGroupServiceException.Should().BeEquivalentTo(
+				expectedGroupServiceException);
 
 			this.storageBrokerMock.Verify(broker =>
 				broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
