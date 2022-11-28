@@ -12,21 +12,12 @@ using Taarafo.Core.Models.Profiles;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-	public partial class StorageBroker
-	{
-		public DbSet<Profile> Profiles { get; set; }
+    public partial class StorageBroker
+    {
+        public DbSet<Profile> Profiles { get; set; }
 
-		public async ValueTask<Profile> InsertProfileAsync(Profile profile)
-		{
-			using var broker = new StorageBroker(this.configuration);
-
-			EntityEntry<Profile> profileEntityEntry =
-				await broker.Profiles.AddAsync(profile);
-
-			await broker.SaveChangesAsync();
-
-			return profileEntityEntry.Entity;
-		}
+        public async ValueTask<Profile> InsertProfileAsync(Profile profile) =>
+            await InsertAsync(profile);
 
 		public IQueryable<Profile> SelectAllProfiles()=>
             SelectAll<Profile>();
@@ -38,16 +29,16 @@ namespace Taarafo.Core.Brokers.Storages
             await UpdateAsync(profile);
 
         public async ValueTask<Profile> DeleteProfileAsync(Profile profile)
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
 
-			EntityEntry<Profile> profileEntityEntry =
-				broker.Profiles.Remove(profile);
+            EntityEntry<Profile> profileEntityEntry =
+                broker.Profiles.Remove(profile);
 
-			await broker.SaveChangesAsync();
+            await broker.SaveChangesAsync();
 
-			return profileEntityEntry.Entity;
-		}
-	}
+            return profileEntityEntry.Entity;
+        }
+    }
 }
