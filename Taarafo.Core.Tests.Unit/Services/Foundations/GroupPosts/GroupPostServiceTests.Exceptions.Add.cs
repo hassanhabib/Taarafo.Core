@@ -88,17 +88,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             actualGroupPostDependencyValidationException.Should().BeEquivalentTo(
                 expectedGroupPostDependencyValidationException);
 
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupPostAsync(someGroupPost),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupPostDependencyValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupPostAsync(someGroupPost),
-                    Times.Once);
-
-            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
