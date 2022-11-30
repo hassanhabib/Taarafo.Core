@@ -11,33 +11,33 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 {
-    public partial class GroupServiceTests
-    {
-        [Fact]
-        public async void ShouldRetrieveGroupByIdAsync()
-        {
-            //given
-            Group someGroup = CreateRandomGroup();
-            Group storageGroup = someGroup;
-            Group expectedGroup = storageGroup.DeepClone();
+	public partial class GroupServiceTests
+	{
+		[Fact]
+		public async void ShouldRetrieveGroupByIdAsync()
+		{
+			//given
+			Group someGroup = CreateRandomGroup();
+			Group storageGroup = someGroup;
+			Group expectedGroup = storageGroup.DeepClone();
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectGroupByIdAsync(someGroup.Id))
-                    .ReturnsAsync(storageGroup);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectGroupByIdAsync(someGroup.Id))
+					.ReturnsAsync(storageGroup);
 
-            //when
-            Group actualGroup =
-                await this.groupService.RetrieveGroupByIdAsync(someGroup.Id);
+			//when
+			Group actualGroup =
+				await this.groupService.RetrieveGroupByIdAsync(someGroup.Id);
 
-            //then
-            actualGroup.Should().BeEquivalentTo(expectedGroup);
+			//then
+			actualGroup.Should().BeEquivalentTo(expectedGroup);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupByIdAsync(someGroup.Id),
-                    Times.Once);
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectGroupByIdAsync(someGroup.Id),
+					Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }

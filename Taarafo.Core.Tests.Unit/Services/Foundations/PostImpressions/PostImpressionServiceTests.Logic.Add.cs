@@ -13,44 +13,44 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 {
-    public partial class PostImpressionServiceTests
-    {
-        [Fact]
-        public async Task ShouldAddPostImpressionAsync()
-        {
-            //given
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            PostImpression randomPostImpression = CreateRandomPostImpression(randomDateTime);
-            PostImpression inputPostImpression = randomPostImpression;
-            PostImpression storagePostImpression = inputPostImpression;
-            PostImpression expectedPostImpression = storagePostImpression.DeepClone();
+	public partial class PostImpressionServiceTests
+	{
+		[Fact]
+		public async Task ShouldAddPostImpressionAsync()
+		{
+			//given
+			DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+			PostImpression randomPostImpression = CreateRandomPostImpression(randomDateTime);
+			PostImpression inputPostImpression = randomPostImpression;
+			PostImpression storagePostImpression = inputPostImpression;
+			PostImpression expectedPostImpression = storagePostImpression.DeepClone();
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDateTime);
+			this.dateTimeBrokerMock.Setup(broker =>
+				broker.GetCurrentDateTimeOffset())
+					.Returns(randomDateTime);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.InsertPostImpressionAsync(inputPostImpression))
-                    .ReturnsAsync(storagePostImpression);
+			this.storageBrokerMock.Setup(broker =>
+				broker.InsertPostImpressionAsync(inputPostImpression))
+					.ReturnsAsync(storagePostImpression);
 
-            //when
-            PostImpression actualPostImpression = await this.postImpressionService
-                .AddPostImpressions(inputPostImpression);
+			//when
+			PostImpression actualPostImpression = await this.postImpressionService
+				.AddPostImpressions(inputPostImpression);
 
-            //then
-            actualPostImpression.Should().BeEquivalentTo(expectedPostImpression);
+			//then
+			actualPostImpression.Should().BeEquivalentTo(expectedPostImpression);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+			this.dateTimeBrokerMock.Verify(broker =>
+				broker.GetCurrentDateTimeOffset(),
+					Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostImpressionAsync(inputPostImpression),
-                    Times.Once);
+			this.storageBrokerMock.Verify(broker =>
+				broker.InsertPostImpressionAsync(inputPostImpression),
+					Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }

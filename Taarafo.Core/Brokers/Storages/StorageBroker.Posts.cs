@@ -12,63 +12,53 @@ using Taarafo.Core.Models.Posts;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial class StorageBroker
-    {
-        public DbSet<Post> Posts { get; set; }
+	public partial class StorageBroker
+	{
+		public DbSet<Post> Posts { get; set; }
 
-        public async ValueTask<Post> InsertPostAsync(Post post)
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
+		public async ValueTask<Post> InsertPostAsync(Post post) =>
+			await InsertAsync(post);
 
-            EntityEntry<Post> postEntityEntry =
-                await broker.Posts.AddAsync(post);
+		public IQueryable<Post> SelectAllPosts()
+		{
+			using var broker =
+				new StorageBroker(this.configuration);
 
-            await broker.SaveChangesAsync();
+			return broker.Posts;
+		}
 
-            return postEntityEntry.Entity;
-        }
+		public async ValueTask<Post> SelectPostByIdAsync(Guid postId)
+		{
+			using var broker =
+				new StorageBroker(this.configuration);
 
-        public IQueryable<Post> SelectAllPosts()
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
+			return await broker.Posts.FindAsync(postId);
+		}
 
-            return broker.Posts;
-        }
+		public async ValueTask<Post> UpdatePostAsync(Post post)
+		{
+			using var broker =
+				new StorageBroker(this.configuration);
 
-        public async ValueTask<Post> SelectPostByIdAsync(Guid postId)
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
+			EntityEntry<Post> postEntityEntry =
+				broker.Posts.Update(post);
 
-            return await broker.Posts.FindAsync(postId);
-        }
+			await broker.SaveChangesAsync();
 
-        public async ValueTask<Post> UpdatePostAsync(Post post)
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
+			return postEntityEntry.Entity;
+		}
 
-            EntityEntry<Post> postEntityEntry =
-                broker.Posts.Update(post);
+		public async ValueTask<Post> DeletePostAsync(Post post)
+		{
+			using var broker =
+				new StorageBroker(this.configuration);
 
-            await broker.SaveChangesAsync();
+			EntityEntry<Post> postEntityEntry =
+				broker.Posts.Remove(post);
 
-            return postEntityEntry.Entity;
-        }
+			await broker.SaveChangesAsync();
 
-        public async ValueTask<Post> DeletePostAsync(Post post)
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
-
-            EntityEntry<Post> postEntityEntry =
-                broker.Posts.Remove(post);
-
-            await broker.SaveChangesAsync();
-
-            return postEntityEntry.Entity;
-        }
-    }
+			return postEntityEntry.Entity;
+		}
+	}
 }

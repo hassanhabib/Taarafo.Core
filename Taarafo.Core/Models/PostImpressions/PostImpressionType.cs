@@ -5,10 +5,10 @@
 
 namespace Taarafo.Core.Models.PostImpressions
 {
-    public enum PostImpressionType
-    {
-        None,
-        Like,
-        Dislike
-    }
+	public enum PostImpressionType
+	{
+		None,
+		Like,
+		Dislike
+	}
 }

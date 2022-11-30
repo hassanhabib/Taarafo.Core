@@ -16,17 +16,8 @@ namespace Taarafo.Core.Brokers.Storages
     {
         public DbSet<Profile> Profiles { get; set; }
 
-        public async ValueTask<Profile> InsertProfileAsync(Profile profile)
-        {
-            using var broker = new StorageBroker(this.configuration);
-
-            EntityEntry<Profile> profileEntityEntry =
-                await broker.Profiles.AddAsync(profile);
-
-            await broker.SaveChangesAsync();
-
-            return profileEntityEntry.Entity;
-        }
+        public async ValueTask<Profile> InsertProfileAsync(Profile profile) =>
+            await InsertAsync(profile);
 
         public IQueryable<Profile> SelectAllProfiles()
         {
@@ -35,26 +26,11 @@ namespace Taarafo.Core.Brokers.Storages
             return broker.Profiles;
         }
 
-        public async ValueTask<Profile> SelectProfileByIdAsync(Guid profileId)
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
+        public async ValueTask<Profile> SelectProfileByIdAsync(Guid profileId) =>
+            await SelectAsync<Profile>(profileId);
 
-            return await broker.Profiles.FindAsync(profileId);
-        }
-
-        public async ValueTask<Profile> UpdateProfileAsync(Profile profile)
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
-
-            EntityEntry<Profile> profileEntityEntry =
-                broker.Profiles.Update(profile);
-
-            await broker.SaveChangesAsync();
-
-            return profileEntityEntry.Entity;
-        }
+        public async ValueTask<Profile> UpdateProfileAsync(Profile profile) =>
+            await UpdateAsync(profile);
 
         public async ValueTask<Profile> DeleteProfileAsync(Profile profile)
         {

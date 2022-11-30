@@ -12,37 +12,23 @@ using Taarafo.Core.Models.Events;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial class StorageBroker
-    {
-        public DbSet<Event> Events { get; set; }
+	public partial class StorageBroker
+	{
+		public DbSet<Event> Events { get; set; }
 
-        public async ValueTask<Event> InsertEventAsync(Event @event)
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
+		public async ValueTask<Event> InsertEventAsync(Event @event) =>
+			await InsertEventAsync(@event);
 
-            EntityEntry<Event> eventEntityEntry =
-                await broker.Events.AddAsync(@event);
+		public IQueryable<Event> SelectAllEvents() =>
+			SelectAll<Event>();
 
-            await broker.SaveChangesAsync();
+		public async ValueTask<Event> SelectEventByIdAsync(Guid eventId) =>
+			await SelectAsync<Event>(eventId);
 
-            return eventEntityEntry.Entity;
-        }
-
-        public IQueryable<Event> SelectAllEvents()
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
-
-            return broker.Events;
-        }
-
-        public async ValueTask<Event> SelectEventByIdAsync(Guid eventId)
-        {
-            using var broker =
-                new StorageBroker(this.configuration);
-
-            return await broker.Events.FindAsync(eventId);
-        }
-    }
+		public async ValueTask<Event> UpdateEventAsync(Event @event) =>
+			await UpdateAsync(@event);
+    		
+        public async ValueTask<Event> DeleteEventAsync(Event @event) =>
+			await DeleteAsync(@event);  
+	}
 }

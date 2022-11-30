@@ -7,10 +7,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Profiles.Exceptions
 {
-    public class ProfileDependencyException : Xeption
-    {
-        public ProfileDependencyException(Xeption innerException)
-            : base(message: "Profile dependency error occurred, contact support.", innerException)
-        { }
-    }
+	public class ProfileDependencyException : Xeption
+	{
+		public ProfileDependencyException(Xeption innerException)
+			: base(message: "Profile dependency error occurred, contact support.", innerException)
+		{ }
+	}
 }

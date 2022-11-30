@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Profiles.Exceptions
 {
-    public class FailedProfileStorageException : Xeption
-    {
-        public FailedProfileStorageException(Exception innerException)
-            : base(message: "Failed profile storage error occurred, contact support.", innerException)
-        { }
-    }
+	public class FailedProfileStorageException : Xeption
+	{
+		public FailedProfileStorageException(Exception innerException)
+			: base(message: "Failed profile storage error occurred, contact support.", innerException)
+		{ }
+	}
 }

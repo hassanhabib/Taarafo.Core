@@ -7,8 +7,8 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Acceptance.Brokers
 {
-    [CollectionDefinition(nameof(ApiTestCollection))]
-    public class ApiTestCollection : ICollectionFixture<ApiBroker>
-    {
-    }
+	[CollectionDefinition(nameof(ApiTestCollection))]
+	public class ApiTestCollection : ICollectionFixture<ApiBroker>
+	{
+	}
 }

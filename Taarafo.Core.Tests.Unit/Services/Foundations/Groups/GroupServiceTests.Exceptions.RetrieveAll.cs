@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Groups.Exceptions;
@@ -11,81 +12,87 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 {
-    public partial class GroupServiceTests
-    {
-        [Fact]
-        public void ShouldThrowCriticalDependencyExceptionOnRetrieveAllIfSqlErrorOccursAndLogIt()
-        {
-            // given
-            SqlException sqlException = GetSqlException();
+	public partial class GroupServiceTests
+	{
+		[Fact]
+		public void ShouldThrowCriticalDependencyExceptionOnRetrieveAllIfSqlErrorOccursAndLogIt()
+		{
+			// given
+			SqlException sqlException = GetSqlException();
 
-            var failedGroupStorageException =
-                new FailedGroupStorageException(sqlException);
+			var failedGroupStorageException =
+				new FailedGroupStorageException(sqlException);
 
-            var expectedGroupDependencyException =
-                new GroupDependencyException(failedGroupStorageException);
+			var expectedGroupDependencyException =
+				new GroupDependencyException(failedGroupStorageException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllGroups())
-                    .Throws(sqlException);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectAllGroups())
+					.Throws(sqlException);
 
-            // when
-            Action retrieveAllGroupsAction = () =>
-                this.groupService.RetrieveAllGroups();
+			// when
+			Action retrieveAllGroupsAction = () =>
+				this.groupService.RetrieveAllGroups();
 
-            // then
-            Assert.Throws<GroupDependencyException>(
-                retrieveAllGroupsAction);
+			// then
+			GroupDependencyException actualGroupDependencyException = 
+				Assert.Throws<GroupDependencyException>((retrieveAllGroupsAction));
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllGroups(),
-                    Times.Once);
+			actualGroupDependencyException.Should().BeEquivalentTo(
+				expectedGroupDependencyException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedGroupDependencyException))),
-                        Times.Once);
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectAllGroups(),
+					Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogCritical(It.Is(SameExceptionAs(
+					expectedGroupDependencyException))),
+						Times.Once);
 
-        [Fact]
-        public void ShouldThrowServiceExceptionOnRetrieveAllWhenServiceErrorOccursAndLogIt()
-        {
-            //given
-            string exceptionMessage = GetRandomMessage();
-            var serviceException = new Exception(exceptionMessage);
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var failedGroupServiceException =
-                new FailedGroupServiceException(serviceException);
+		[Fact]
+		public void ShouldThrowServiceExceptionOnRetrieveAllWhenServiceErrorOccursAndLogIt()
+		{
+			//given
+			string exceptionMessage = GetRandomMessage();
+			var serviceException = new Exception(exceptionMessage);
 
-            var expectedGroupServiceException =
-                new GroupServiceException(failedGroupServiceException);
+			var failedGroupServiceException =
+				new FailedGroupServiceException(serviceException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllGroups())
-                    .Throws(serviceException);
+			var expectedGroupServiceException =
+				new GroupServiceException(failedGroupServiceException);
 
-            //when
-            Action retrieveAllGroupsAction = () =>
-                 this.groupService.RetrieveAllGroups();
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectAllGroups())
+					.Throws(serviceException);
 
-            //then
-            Assert.Throws<GroupServiceException>(
-                retrieveAllGroupsAction);
+			//when
+			Action retrieveAllGroupsAction = () =>
+				 this.groupService.RetrieveAllGroups();
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllGroups(),
-                    Times.Once);
+			//then
+		    GroupServiceException actualGroupServiceException = 
+				Assert.Throws<GroupServiceException>((retrieveAllGroupsAction));
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedGroupServiceException))),
-                        Times.Once);
+			actualGroupServiceException.Should().BeEquivalentTo(
+				expectedGroupServiceException);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectAllGroups(),
+					Times.Once);
+
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedGroupServiceException))),
+						Times.Once);
+
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }

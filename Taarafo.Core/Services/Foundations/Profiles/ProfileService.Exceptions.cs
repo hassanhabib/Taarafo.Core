@@ -15,145 +15,145 @@ using Xeptions;
 
 namespace Taarafo.Core.Services.Foundations.Profiles
 {
-    public partial class ProfileService
-    {
-        private delegate ValueTask<Profile> ReturningProfileFunction();
-        private delegate IQueryable<Profile> ReturningProfilesFunction();
+	public partial class ProfileService
+	{
+		private delegate ValueTask<Profile> ReturningProfileFunction();
+		private delegate IQueryable<Profile> ReturningProfilesFunction();
 
-        private async ValueTask<Profile> TryCatch(ReturningProfileFunction returningProfileFunction)
-        {
-            try
-            {
-                return await returningProfileFunction();
-            }
-            catch (NullProfileException nullProfileException)
-            {
-                throw CreateAndLogValidationException(nullProfileException);
-            }
-            catch (InvalidProfileException invalidProfileException)
-            {
-                throw CreateAndLogValidationException(invalidProfileException);
-            }
-            catch (NotFoundProfileException notFoundProfileException)
-            {
-                throw CreateAndLogValidationException(notFoundProfileException);
-            }
-            catch (SqlException sqlException)
-            {
-                var failedProfileStorageException =
-                    new FailedProfileStorageException(sqlException);
+		private async ValueTask<Profile> TryCatch(ReturningProfileFunction returningProfileFunction)
+		{
+			try
+			{
+				return await returningProfileFunction();
+			}
+			catch (NullProfileException nullProfileException)
+			{
+				throw CreateAndLogValidationException(nullProfileException);
+			}
+			catch (InvalidProfileException invalidProfileException)
+			{
+				throw CreateAndLogValidationException(invalidProfileException);
+			}
+			catch (NotFoundProfileException notFoundProfileException)
+			{
+				throw CreateAndLogValidationException(notFoundProfileException);
+			}
+			catch (SqlException sqlException)
+			{
+				var failedProfileStorageException =
+					new FailedProfileStorageException(sqlException);
 
-                throw CreateAndLogCriticalDependencyException(failedProfileStorageException);
-            }
-            catch (DuplicateKeyException duplicateKeyException)
-            {
-                var alreadyExistProfileException =
-                    new AlreadyExistsProfileException(duplicateKeyException);
+				throw CreateAndLogCriticalDependencyException(failedProfileStorageException);
+			}
+			catch (DuplicateKeyException duplicateKeyException)
+			{
+				var alreadyExistProfileException =
+					new AlreadyExistsProfileException(duplicateKeyException);
 
-                throw CreateAndLogDependencyValidationException(alreadyExistProfileException);
-            }
-            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
-            {
-                var invalidProfileReferenceException =
-                    new InvalidProfileReferenceException(foreignKeyConstraintConflictException);
+				throw CreateAndLogDependencyValidationException(alreadyExistProfileException);
+			}
+			catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+			{
+				var invalidProfileReferenceException =
+					new InvalidProfileReferenceException(foreignKeyConstraintConflictException);
 
-                throw CreateAndLogDependencyValidationException(invalidProfileReferenceException);
-            }
+				throw CreateAndLogDependencyValidationException(invalidProfileReferenceException);
+			}
 
-            catch (DbUpdateConcurrencyException databaseUpdateConcurrencyException)
-            {
-                var lockedProfileException =
-                    new LockedProfileException(databaseUpdateConcurrencyException);
+			catch (DbUpdateConcurrencyException databaseUpdateConcurrencyException)
+			{
+				var lockedProfileException =
+					new LockedProfileException(databaseUpdateConcurrencyException);
 
-                throw CreateAndLogDependencyValidationException(lockedProfileException);
-            }
+				throw CreateAndLogDependencyValidationException(lockedProfileException);
+			}
 
-            catch (DbUpdateException databaseUpdateException)
-            {
-                var failedStorageProfileException =
-                    new FailedProfileStorageException(databaseUpdateException);
+			catch (DbUpdateException databaseUpdateException)
+			{
+				var failedStorageProfileException =
+					new FailedProfileStorageException(databaseUpdateException);
 
-                throw CreateAndLogDependencyException(failedStorageProfileException);
-            }
-            catch (Exception serviceException)
-            {
-                var failedServiceProfileException =
-                    new FailedProfileServiceException(serviceException);
+				throw CreateAndLogDependencyException(failedStorageProfileException);
+			}
+			catch (Exception serviceException)
+			{
+				var failedServiceProfileException =
+					new FailedProfileServiceException(serviceException);
 
-                throw CreateAndLogServiceException(failedServiceProfileException);
-            }
-        }
+				throw CreateAndLogServiceException(failedServiceProfileException);
+			}
+		}
 
-        private IQueryable<Profile> TryCatch(ReturningProfilesFunction returningProfilesFunction)
-        {
-            try
-            {
-                return returningProfilesFunction();
-            }
-            catch (SqlException sqlException)
-            {
-                var failedProfileStorageException =
-                    new FailedProfileStorageException(sqlException);
+		private IQueryable<Profile> TryCatch(ReturningProfilesFunction returningProfilesFunction)
+		{
+			try
+			{
+				return returningProfilesFunction();
+			}
+			catch (SqlException sqlException)
+			{
+				var failedProfileStorageException =
+					new FailedProfileStorageException(sqlException);
 
-                throw CreateAndLogCriticalDependencyException(failedProfileStorageException);
-            }
-            catch (Exception serviceException)
-            {
-                var failedProfileServiceException =
-                    new FailedProfileServiceException(serviceException);
+				throw CreateAndLogCriticalDependencyException(failedProfileStorageException);
+			}
+			catch (Exception serviceException)
+			{
+				var failedProfileServiceException =
+					new FailedProfileServiceException(serviceException);
 
-                throw CreateAndLogServiceException(failedProfileServiceException);
-            }
-        }
+				throw CreateAndLogServiceException(failedProfileServiceException);
+			}
+		}
 
-        private ProfileValidationException CreateAndLogValidationException(Xeption exception)
-        {
-            var profileValidationException =
-                new ProfileValidationException(exception);
+		private ProfileValidationException CreateAndLogValidationException(Xeption exception)
+		{
+			var profileValidationException =
+				new ProfileValidationException(exception);
 
-            this.loggingBroker.LogError(profileValidationException);
+			this.loggingBroker.LogError(profileValidationException);
 
-            return profileValidationException;
-        }
+			return profileValidationException;
+		}
 
-        private ProfileDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
-        {
-            var profileDependencyException =
-                new ProfileDependencyException(exception);
+		private ProfileDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
+		{
+			var profileDependencyException =
+				new ProfileDependencyException(exception);
 
-            this.loggingBroker.LogCritical(profileDependencyException);
+			this.loggingBroker.LogCritical(profileDependencyException);
 
-            return profileDependencyException;
-        }
+			return profileDependencyException;
+		}
 
-        private ProfileDependencyException CreateAndLogDependencyException(Xeption exception)
-        {
-            var profileDependencyException =
-                new ProfileDependencyException(exception);
+		private ProfileDependencyException CreateAndLogDependencyException(Xeption exception)
+		{
+			var profileDependencyException =
+				new ProfileDependencyException(exception);
 
-            this.loggingBroker.LogError(profileDependencyException);
+			this.loggingBroker.LogError(profileDependencyException);
 
-            return profileDependencyException;
-        }
+			return profileDependencyException;
+		}
 
-        private ProfileDependencyValidationException CreateAndLogDependencyValidationException(Xeption exception)
-        {
-            var profileDependencyValidationException =
-                new ProfileDependencyValidationException(exception);
+		private ProfileDependencyValidationException CreateAndLogDependencyValidationException(Xeption exception)
+		{
+			var profileDependencyValidationException =
+				new ProfileDependencyValidationException(exception);
 
-            this.loggingBroker.LogError(profileDependencyValidationException);
+			this.loggingBroker.LogError(profileDependencyValidationException);
 
-            return profileDependencyValidationException;
-        }
+			return profileDependencyValidationException;
+		}
 
-        private ProfileServiceException CreateAndLogServiceException(Xeption exception)
-        {
-            var profileServiceException =
-                new ProfileServiceException(exception);
+		private ProfileServiceException CreateAndLogServiceException(Xeption exception)
+		{
+			var profileServiceException =
+				new ProfileServiceException(exception);
 
-            this.loggingBroker.LogError(profileServiceException);
+			this.loggingBroker.LogError(profileServiceException);
 
-            return profileServiceException;
-        }
-    }
+			return profileServiceException;
+		}
+	}
 }

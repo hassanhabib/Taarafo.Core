@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Profiles.Exceptions;
@@ -11,82 +12,90 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 {
-    public partial class ProfileServiceTests
-    {
-        [Fact]
-        public void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
-        {
-            // given
-            SqlException sqlException = GetSqlException();
+	public partial class ProfileServiceTests
+	{
+		[Fact]
+		public void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
+		{
+			// given
+			SqlException sqlException = GetSqlException();
 
-            var failedProfileStorageException =
-                new FailedProfileStorageException(sqlException);
+			var failedProfileStorageException =
+				new FailedProfileStorageException(sqlException);
 
-            var expectedProfileDependencyException =
-                new ProfileDependencyException(failedProfileStorageException);
+			var expectedProfileDependencyException =
+				new ProfileDependencyException(failedProfileStorageException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllProfiles())
-                    .Throws(sqlException);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectAllProfiles())
+					.Throws(sqlException);
 
-            // when
-            Action retrieveAllProfileAction = () =>
-                this.profileService.RetrieveAllProfiles();
+			// when
+			Action retrieveAllProfileAction = () =>
+				this.profileService.RetrieveAllProfiles();
 
-            // then
-            Assert.Throws<ProfileDependencyException>(
-                retrieveAllProfileAction);
+			ProfileDependencyException actualProfileDependencyException =
+				Assert.Throws<ProfileDependencyException>(
+					retrieveAllProfileAction);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllProfiles());
+			// then
+			actualProfileDependencyException.Should()
+				.BeEquivalentTo(expectedProfileDependencyException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedProfileDependencyException))),
-                        Times.Once);
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectAllProfiles());
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogCritical(It.Is(SameExceptionAs(
+					expectedProfileDependencyException))),
+						Times.Once);
 
-        [Fact]
-        public void ShouldThrowServiceExceptionOnRetrieveAllWhenAllServiceErrorOccursAndLogIt()
-        {
-            // given
-            string exceptionMessage = GetRandomMessage();
-            var serviceException = new Exception(exceptionMessage);
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var faileProfileServiceException =
-                new FailedProfileServiceException(serviceException);
+		[Fact]
+		public void ShouldThrowServiceExceptionOnRetrieveAllWhenAllServiceErrorOccursAndLogIt()
+		{
+			// given
+			string exceptionMessage = GetRandomMessage();
+			var serviceException = new Exception(exceptionMessage);
 
-            var expectedProfileServiceException =
-                new ProfileServiceException(faileProfileServiceException);
+			var faileProfileServiceException =
+				new FailedProfileServiceException(serviceException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllProfiles())
-                    .Throws(serviceException);
+			var expectedProfileServiceException =
+				new ProfileServiceException(faileProfileServiceException);
 
-            // when
-            Action retrieveAllProfilesAction = () =>
-                this.profileService.RetrieveAllProfiles();
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectAllProfiles())
+					.Throws(serviceException);
 
-            // then
-            Assert.Throws<ProfileServiceException>(
-                retrieveAllProfilesAction);
+			// when
+			Action retrieveAllProfilesAction = () =>
+				this.profileService.RetrieveAllProfiles();
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllProfiles(),
-                    Times.Once);
+			ProfileServiceException actualProfileServiceException =
+				Assert.Throws<ProfileServiceException>(
+					retrieveAllProfilesAction);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedProfileServiceException))),
-                        Times.Once);
+			// then
+			actualProfileServiceException.Should().BeEquivalentTo(
+				expectedProfileServiceException);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectAllProfiles(),
+					Times.Once);
+
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedProfileServiceException))),
+						Times.Once);
+
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }

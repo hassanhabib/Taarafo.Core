@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Groups;
@@ -13,82 +14,90 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 {
-    public partial class GroupServiceTests
-    {
-        [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
-        {
-            //given
-            Guid someGroupId = Guid.NewGuid();
-            SqlException sqlException = GetSqlException();
+	public partial class GroupServiceTests
+	{
+		[Fact]
+		public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
+		{
+			//given
+			Guid someGroupId = Guid.NewGuid();
+			SqlException sqlException = GetSqlException();
 
-            var failedGroupStorageException =
-                new FailedGroupStorageException(sqlException);
+			var failedGroupStorageException =
+				new FailedGroupStorageException(sqlException);
 
-            var expectedGroupDependencyException =
-                new GroupDependencyException(failedGroupStorageException);
+			var expectedGroupDependencyException =
+				new GroupDependencyException(failedGroupStorageException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectGroupByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(sqlException);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectGroupByIdAsync(It.IsAny<Guid>()))
+					.ThrowsAsync(sqlException);
 
-            //when
-            ValueTask<Group> retrieveGroupByIdTask =
-                this.groupService.RetrieveGroupByIdAsync(someGroupId);
+			//when
+			ValueTask<Group> retrieveGroupByIdTask =
+				this.groupService.RetrieveGroupByIdAsync(someGroupId);
 
-            //then
-            await Assert.ThrowsAsync<GroupDependencyException>(() =>
-                retrieveGroupByIdTask.AsTask());
+			//then
+			GroupDependencyException actualGroupDependencyException = 
+				 await Assert.ThrowsAsync<GroupDependencyException>(() =>
+					retrieveGroupByIdTask.AsTask());
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
-                    Times.Once);
+			actualGroupDependencyException.Should().BeEquivalentTo(
+				expectedGroupDependencyException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedGroupDependencyException))),
-                        Times.Once);
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
+					Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogCritical(It.Is(SameExceptionAs(
+					expectedGroupDependencyException))),
+						Times.Once);
 
-        [Fact]
-        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
-        {
-            //given
-            Guid someGroupId = Guid.NewGuid();
-            var serviceException = new Exception();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var failedGroupServiceException =
-                new FailedGroupServiceException(serviceException);
+		[Fact]
+		public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+		{
+			//given
+			Guid someGroupId = Guid.NewGuid();
+			var serviceException = new Exception();
 
-            var expectedGroupServiceException =
-                new GroupServiceException(failedGroupServiceException);
+			var failedGroupServiceException =
+				new FailedGroupServiceException(serviceException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectGroupByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(serviceException);
+			var expectedGroupServiceException =
+				new GroupServiceException(failedGroupServiceException);
 
-            //when
-            ValueTask<Group> retrieveGroupByIdTask =
-                this.groupService.RetrieveGroupByIdAsync(someGroupId);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectGroupByIdAsync(It.IsAny<Guid>()))
+					.ThrowsAsync(serviceException);
 
-            //then
-            await Assert.ThrowsAsync<GroupServiceException>(() =>
-                retrieveGroupByIdTask.AsTask());
+			//when
+			ValueTask<Group> retrieveGroupByIdTask =
+				this.groupService.RetrieveGroupByIdAsync(someGroupId);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
-                    Times.Once);
+			//then
+		    GroupServiceException actualGroupServiceException = 
+				 await Assert.ThrowsAsync<GroupServiceException>(() =>
+					retrieveGroupByIdTask.AsTask());
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedGroupServiceException))),
-                        Times.Once);
+			actualGroupServiceException.Should().BeEquivalentTo(
+				expectedGroupServiceException);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
+					Times.Once);
+
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedGroupServiceException))),
+						Times.Once);
+
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }

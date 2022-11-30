@@ -7,11 +7,11 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Groups.Exceptions
 {
-    public class NullGroupException : Xeption
-    {
-        public NullGroupException()
-            : base(message: "Group is null.")
-        { }
-    }
+	public class NullGroupException : Xeption
+	{
+		public NullGroupException()
+			: base(message: "Group is null.")
+		{ }
+	}
 }
 

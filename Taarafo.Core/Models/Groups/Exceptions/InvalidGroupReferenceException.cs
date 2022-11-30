@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Groups.Exceptions
 {
-    public class InvalidGroupReferenceException : Xeption
-    {
-        public InvalidGroupReferenceException(Exception innerException)
-            : base(message: "Invalid group reference error occurred.", innerException)
-        { }
-    }
+	public class InvalidGroupReferenceException : Xeption
+	{
+		public InvalidGroupReferenceException(Exception innerException)
+			: base(message: "Invalid group reference error occurred.", innerException)
+		{ }
+	}
 }
