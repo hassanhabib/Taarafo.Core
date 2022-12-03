@@ -84,7 +84,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
                 throw CreateAndLogCriticalDependencyException(failedPostImpressionStorageException);
             }
-            catch(Exception serviceException)
+            catch (Exception serviceException)
             {
                 var failedPostImpressionServiceException =
                     new FailedPostImpressionServiceException(serviceException);

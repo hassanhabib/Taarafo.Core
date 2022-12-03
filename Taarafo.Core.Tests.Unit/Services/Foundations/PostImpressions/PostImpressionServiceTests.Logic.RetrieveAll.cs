@@ -22,8 +22,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             IQueryable<PostImpression> expectedPostImpressions = storagePostImpressions;
 
             this.storageBrokerMock.Setup(broker =>
-            broker.SelectAllPostImpressions())
-                .Returns(storagePostImpressions);
+                broker.SelectAllPostImpressions())
+                   .Returns(storagePostImpressions);
 
             //when
             IQueryable<PostImpression> actualPostImpressions =
