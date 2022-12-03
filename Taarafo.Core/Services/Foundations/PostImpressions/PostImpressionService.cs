@@ -37,6 +37,6 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
         });
 
         public IQueryable<PostImpression> RetrieveAllPostImpressions() =>
-            this.storageBroker.SelectAllPostImpressions();
+           TryCatch(() => this.storageBroker.SelectAllPostImpressions());
     }
 }
