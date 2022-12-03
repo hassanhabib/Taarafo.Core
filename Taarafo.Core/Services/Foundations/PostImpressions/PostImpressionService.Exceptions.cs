@@ -84,6 +84,13 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
                 throw CreateAndLogCriticalDependencyException(failedPostImpressionStorageException);
             }
+            catch(Exception serviceException)
+            {
+                var failedPostImpressionServiceException =
+                    new FailedPostImpressionServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedPostImpressionServiceException);
+            }
         }
 
         private PostImpressionValidationException CreateAndLogValidationException(Xeption exception)

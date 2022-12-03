@@ -55,8 +55,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             string exceptionMessage = GetRandomMessage();
             var serviceException = new Exception(exceptionMessage);
 
+            var failedPostImpressionServiceException =
+                new FailedPostImpressionServiceException(serviceException);
+
             var expectedPostImpressionServiceException =
-                new PostImpressionServiceException(serviceException);
+                new PostImpressionServiceException(failedPostImpressionServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllPostImpressions()).Throws(serviceException);
