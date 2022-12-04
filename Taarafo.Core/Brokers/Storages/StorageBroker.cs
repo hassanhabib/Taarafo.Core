@@ -37,8 +37,8 @@ namespace Taarafo.Core.Brokers.Storages
             return broker.Set<T>();
         }
 
-            private async ValueTask<T> SelectAsync<T>(params object[] objectIds) where T : class =>
-			await FindAsync<T>(objectIds);
+        private async ValueTask<T> SelectAsync<T>(params object[] objectIds) where T : class =>
+		    await FindAsync<T>(objectIds);
 
 		private async ValueTask<T> UpdateAsync<T>(T @object)
         {
