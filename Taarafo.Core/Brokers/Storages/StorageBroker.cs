@@ -30,10 +30,15 @@ namespace Taarafo.Core.Brokers.Storages
             return @object;
         }
 
-		private IQueryable<T> SelectAll<T>() where T : class => this.Set<T>();
+        private IQueryable<T> SelectAll<T>() where T : class
+        {
+            using var broker = new StorageBroker(this.configuration);
 
-		private async ValueTask<T> SelectAsync<T>(params object[] objectIds) where T : class =>
-			await FindAsync<T>(objectIds);
+            return broker.Set<T>();
+        }
+
+        private async ValueTask<T> SelectAsync<T>(params object[] objectIds) where T : class =>
+		    await FindAsync<T>(objectIds);
 
 		private async ValueTask<T> UpdateAsync<T>(T @object)
         {
