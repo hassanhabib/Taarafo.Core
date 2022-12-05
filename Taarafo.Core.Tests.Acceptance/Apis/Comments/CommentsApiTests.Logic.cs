@@ -13,40 +13,40 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
 {
-	public partial class CommentsApiTests
-	{
-		[Fact]
-		public async Task ShouldPostCommentAsync()
-		{
-			// given
-			Comment randomComment = await CreateRandomComment();
-			Comment inputComment = randomComment;
-			Comment expectedComment = inputComment;
+    public partial class CommentsApiTests
+    {
+        [Fact]
+        public async Task ShouldPostCommentAsync()
+        {
+            // given
+            Comment randomComment = await CreateRandomComment();
+            Comment inputComment = randomComment;
+            Comment expectedComment = inputComment;
 
-			// when 
-			await this.apiBroker.PostCommentAsync(inputComment);
+            // when 
+            await this.apiBroker.PostCommentAsync(inputComment);
 
-			Comment actualComment =
-				 await this.apiBroker.GetCommentByIdAsync(inputComment.Id);
-
-			// then
-			actualComment.Should().BeEquivalentTo(expectedComment);
-			await DeleteCommentAsync(actualComment);
-		}
-
-		[Fact]
-		public async Task ShouldGetAllCommentsAsync()
-		{
-			// given
-			List<Comment> randomComments = await CreateRandomCommentsAsync();
-			List<Comment> expectedComments = randomComments;
-
-			// when
-			List<Comment> actualComments = await this.apiBroker.GetAllCommentsAsync();
+            Comment actualComment =
+                 await this.apiBroker.GetCommentByIdAsync(inputComment.Id);
 
             // then
-            actualComments.Count.Should().BeGreaterThanOrEqualTo(expectedComments.Count);
-            actualComments.Count.Should().BeLessThanOrEqualTo(10);
+            actualComment.Should().BeEquivalentTo(expectedComment);
+            await DeleteCommentAsync(actualComment);
+        }
+
+        [Fact]
+        public async Task ShouldGetAllCommentsAsync()
+        {
+            // given
+            int pageSizeOnController = 10;
+            List<Comment> randomComments = await CreateRandomCommentsAsync();
+            List<Comment> expectedComments = randomComments;
+
+            // when
+            List<Comment> actualComments = await this.apiBroker.GetAllCommentsAsync();
+
+            // then
+            actualComments.Count.Should().BeLessThanOrEqualTo(pageSizeOnController);
 
             foreach (Comment expectedComment in expectedComments)
             {
@@ -59,58 +59,58 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
             }
         }
 
-		[Fact]
-		public async Task ShouldGetCommentByIdAsync()
-		{
-			// given
-			Comment randomComment = await PostRandomCommentAsync();
-			Comment expectedComment = randomComment;
+        [Fact]
+        public async Task ShouldGetCommentByIdAsync()
+        {
+            // given
+            Comment randomComment = await PostRandomCommentAsync();
+            Comment expectedComment = randomComment;
 
-			// when
-			Comment actualComment = await this.apiBroker.GetCommentByIdAsync(randomComment.Id);
+            // when
+            Comment actualComment = await this.apiBroker.GetCommentByIdAsync(randomComment.Id);
 
-			// then
-			actualComment.Should().BeEquivalentTo(expectedComment);
-			await this.apiBroker.DeleteCommentByIdAsync(actualComment.Id);
-		}
+            // then
+            actualComment.Should().BeEquivalentTo(expectedComment);
+            await this.apiBroker.DeleteCommentByIdAsync(actualComment.Id);
+        }
 
-		[Fact]
-		public async Task ShouldPutCommentAsync()
-		{
-			// given
-			Comment randomComment = await PostRandomCommentAsync();
-			Comment modifiedComment = UpdateCommentWithRandomValues(randomComment);
+        [Fact]
+        public async Task ShouldPutCommentAsync()
+        {
+            // given
+            Comment randomComment = await PostRandomCommentAsync();
+            Comment modifiedComment = UpdateCommentWithRandomValues(randomComment);
 
-			// when
-			await this.apiBroker.PutCommentAsync(modifiedComment);
+            // when
+            await this.apiBroker.PutCommentAsync(modifiedComment);
 
-			Comment actualComment = await this.apiBroker.GetCommentByIdAsync(randomComment.Id);
+            Comment actualComment = await this.apiBroker.GetCommentByIdAsync(randomComment.Id);
 
-			// then
-			actualComment.Should().BeEquivalentTo(modifiedComment);
-			await this.apiBroker.DeleteCommentByIdAsync(actualComment.Id);
-		}
+            // then
+            actualComment.Should().BeEquivalentTo(modifiedComment);
+            await this.apiBroker.DeleteCommentByIdAsync(actualComment.Id);
+        }
 
-		[Fact]
-		public async Task ShouldDeleteCommentAsync()
-		{
-			// given
-			Comment randomComment = await PostRandomCommentAsync();
-			Comment inputComment = randomComment;
-			Comment expectedComment = inputComment;
+        [Fact]
+        public async Task ShouldDeleteCommentAsync()
+        {
+            // given
+            Comment randomComment = await PostRandomCommentAsync();
+            Comment inputComment = randomComment;
+            Comment expectedComment = inputComment;
 
-			// when
-			Comment deletedComment =
-				await this.apiBroker.DeleteCommentByIdAsync(inputComment.Id);
+            // when
+            Comment deletedComment =
+                await this.apiBroker.DeleteCommentByIdAsync(inputComment.Id);
 
-			ValueTask<Comment> getCommentbyIdTask =
-				this.apiBroker.GetCommentByIdAsync(inputComment.Id);
+            ValueTask<Comment> getCommentbyIdTask =
+                this.apiBroker.GetCommentByIdAsync(inputComment.Id);
 
-			// then
-			deletedComment.Should().BeEquivalentTo(expectedComment);
+            // then
+            deletedComment.Should().BeEquivalentTo(expectedComment);
 
-			await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
-				getCommentbyIdTask.AsTask());
-		}
-	}
+            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+                getCommentbyIdTask.AsTask());
+        }
+    }
 }

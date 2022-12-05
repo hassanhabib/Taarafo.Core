@@ -13,41 +13,40 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Acceptance.Apis.Posts
 {
-	public partial class PostsApiTests
-	{
-		[Fact]
-		public async Task ShouldPostPostAsync()
-		{
-			// given
-			Post randomPost = CreateRandomPost();
-			Post inputPost = randomPost;
-			Post expectedPost = inputPost;
+    public partial class PostsApiTests
+    {
+        [Fact]
+        public async Task ShouldPostPostAsync()
+        {
+            // given
+            Post randomPost = CreateRandomPost();
+            Post inputPost = randomPost;
+            Post expectedPost = inputPost;
 
-			// when 
-			await this.apiBroker.PostPostAsync(inputPost);
+            // when 
+            await this.apiBroker.PostPostAsync(inputPost);
 
-			Post actualPost =
-				await this.apiBroker.GetPostByIdAsync(inputPost.Id);
-
-			// then
-			actualPost.Should().BeEquivalentTo(expectedPost);
-			await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
-		}
-
-		[Fact]
-		public async Task ShouldGetAllPostsAsync()
-		{
-			// given
-			List<Post> randomPosts = await CreateRandomPostedPostsAsync();
-
-			List<Post> expectedPosts = randomPosts;
-
-			// when
-			List<Post> actualPosts = await this.apiBroker.GetAllPostsAsync();
+            Post actualPost =
+                await this.apiBroker.GetPostByIdAsync(inputPost.Id);
 
             // then
-            actualPosts.Count.Should().BeGreaterThanOrEqualTo(expectedPosts.Count);
-            actualPosts.Count.Should().BeLessThanOrEqualTo(10);
+            actualPost.Should().BeEquivalentTo(expectedPost);
+            await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
+        }
+
+        [Fact]
+        public async Task ShouldGetAllPostsAsync()
+        {
+            // given
+            int pageSizeOnController = 10;
+            List<Post> randomPosts = await CreateRandomPostedPostsAsync();
+            List<Post> expectedPosts = randomPosts;
+
+            // when
+            List<Post> actualPosts = await this.apiBroker.GetAllPostsAsync();
+
+            // then
+            actualPosts.Count.Should().BeLessThanOrEqualTo(pageSizeOnController);
 
             foreach (Post expectedPost in expectedPosts)
             {
@@ -60,58 +59,58 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Posts
             }
         }
 
-		[Fact]
-		public async Task ShouldGetPostByIdAsync()
-		{
-			// given
-			Post randomPost = await PostRandomPostAsync();
-			Post expectedPost = randomPost;
+        [Fact]
+        public async Task ShouldGetPostByIdAsync()
+        {
+            // given
+            Post randomPost = await PostRandomPostAsync();
+            Post expectedPost = randomPost;
 
-			// when
-			Post actualPost = await this.apiBroker.GetPostByIdAsync(randomPost.Id);
+            // when
+            Post actualPost = await this.apiBroker.GetPostByIdAsync(randomPost.Id);
 
-			// then
-			actualPost.Should().BeEquivalentTo(expectedPost);
-			await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
-		}
+            // then
+            actualPost.Should().BeEquivalentTo(expectedPost);
+            await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
+        }
 
-		[Fact]
-		public async Task ShouldPutPostAsync()
-		{
-			// given
-			Post randomPost = await PostRandomPostAsync();
-			Post modifiedPost = UpdateRandomPost(randomPost);
+        [Fact]
+        public async Task ShouldPutPostAsync()
+        {
+            // given
+            Post randomPost = await PostRandomPostAsync();
+            Post modifiedPost = UpdateRandomPost(randomPost);
 
-			// when
-			await this.apiBroker.PutPostAsync(modifiedPost);
+            // when
+            await this.apiBroker.PutPostAsync(modifiedPost);
 
-			Post actualPost = await this.apiBroker.GetPostByIdAsync(randomPost.Id);
+            Post actualPost = await this.apiBroker.GetPostByIdAsync(randomPost.Id);
 
-			// then
-			actualPost.Should().BeEquivalentTo(modifiedPost);
-			await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
-		}
+            // then
+            actualPost.Should().BeEquivalentTo(modifiedPost);
+            await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
+        }
 
-		[Fact]
-		public async Task ShouldDeletePostAsync()
-		{
-			// given
-			Post randomPost = await PostRandomPostAsync();
-			Post inputPost = randomPost;
-			Post expectedPost = inputPost;
+        [Fact]
+        public async Task ShouldDeletePostAsync()
+        {
+            // given
+            Post randomPost = await PostRandomPostAsync();
+            Post inputPost = randomPost;
+            Post expectedPost = inputPost;
 
-			// when
-			Post deletedPost =
-				await this.apiBroker.DeletePostByIdAsync(inputPost.Id);
+            // when
+            Post deletedPost =
+                await this.apiBroker.DeletePostByIdAsync(inputPost.Id);
 
-			ValueTask<Post> getPostbyIdTask =
-				this.apiBroker.GetPostByIdAsync(inputPost.Id);
+            ValueTask<Post> getPostbyIdTask =
+                this.apiBroker.GetPostByIdAsync(inputPost.Id);
 
-			// then
-			deletedPost.Should().BeEquivalentTo(expectedPost);
+            // then
+            deletedPost.Should().BeEquivalentTo(expectedPost);
 
-			await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
-				getPostbyIdTask.AsTask());
-		}
-	}
+            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+                getPostbyIdTask.AsTask());
+        }
+    }
 }
