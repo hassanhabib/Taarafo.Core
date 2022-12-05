@@ -18,7 +18,9 @@ using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Posts;
 using Taarafo.Core.Services.Foundations.Comments;
+using Taarafo.Core.Services.Foundations.Groups;
 using Taarafo.Core.Services.Foundations.Posts;
+using Taarafo.Core.Services.Foundations.Profiles;
 
 namespace Taarafo.Core
 {
@@ -78,6 +80,8 @@ namespace Taarafo.Core
                         url: "/swagger/v1/swagger.json",
                         name: "Taarafo.Core v1");
                 });
+
+                app.UseODataRouteDebug();
             }
 
             app.UseHttpsRedirection();
@@ -90,6 +94,8 @@ namespace Taarafo.Core
         {
             services.AddTransient<ICommentService, CommentService>();
             services.AddTransient<IPostService, PostService>();
+            services.AddTransient<IProfileService, ProfileService>();
+            services.AddTransient<IGroupService, GroupService>();
         }
 
         private static void AddBrokers(IServiceCollection services)

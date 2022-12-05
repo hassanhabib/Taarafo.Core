@@ -7,8 +7,8 @@ using System;
 
 namespace Taarafo.Core.Brokers.DateTimes
 {
-    public interface IDateTimeBroker
-    {
-        DateTimeOffset GetCurrentDateTimeOffset();
-    }
+	public interface IDateTimeBroker
+	{
+		DateTimeOffset GetCurrentDateTimeOffset();
+	}
 }

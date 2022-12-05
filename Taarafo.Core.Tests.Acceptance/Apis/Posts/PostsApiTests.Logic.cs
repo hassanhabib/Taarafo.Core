@@ -13,37 +13,37 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Acceptance.Apis.Posts
 {
-    public partial class PostsApiTests
-    {
-        [Fact]
-        public async Task ShouldPostPostAsync()
-        {
-            // given
-            Post randomPost = CreateRandomPost();
-            Post inputPost = randomPost;
-            Post expectedPost = inputPost;
+	public partial class PostsApiTests
+	{
+		[Fact]
+		public async Task ShouldPostPostAsync()
+		{
+			// given
+			Post randomPost = CreateRandomPost();
+			Post inputPost = randomPost;
+			Post expectedPost = inputPost;
 
-            // when 
-            await this.apiBroker.PostPostAsync(inputPost);
+			// when 
+			await this.apiBroker.PostPostAsync(inputPost);
 
-            Post actualPost =
-                await this.apiBroker.GetPostByIdAsync(inputPost.Id);
+			Post actualPost =
+				await this.apiBroker.GetPostByIdAsync(inputPost.Id);
 
-            // then
-            actualPost.Should().BeEquivalentTo(expectedPost);
-            await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
-        }
+			// then
+			actualPost.Should().BeEquivalentTo(expectedPost);
+			await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
+		}
 
-        [Fact]
-        public async Task ShouldGetAllPostsAsync()
-        {
-            // given
-            List<Post> randomPosts = await CreateRandomPostedPostsAsync();
+		[Fact]
+		public async Task ShouldGetAllPostsAsync()
+		{
+			// given
+			List<Post> randomPosts = await CreateRandomPostedPostsAsync();
 
-            List<Post> expectedPosts = randomPosts;
+			List<Post> expectedPosts = randomPosts;
 
-            // when
-            List<Post> actualPosts = await this.apiBroker.GetAllPostsAsync();
+			// when
+			List<Post> actualPosts = await this.apiBroker.GetAllPostsAsync();
 
             // then
             actualPosts.Count.Should().BeGreaterThanOrEqualTo(expectedPosts.Count);
@@ -60,26 +60,58 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Posts
             }
         }
 
-        [Fact]
-        public async Task ShouldDeletePostAsync()
-        {
-            // given
-            Post randomPost = await PostRandomPostAsync();
-            Post inputPost = randomPost;
-            Post expectedPost = inputPost;
+		[Fact]
+		public async Task ShouldGetPostByIdAsync()
+		{
+			// given
+			Post randomPost = await PostRandomPostAsync();
+			Post expectedPost = randomPost;
 
-            // when
-            Post deletedPost =
-                await this.apiBroker.DeletePostByIdAsync(inputPost.Id);
+			// when
+			Post actualPost = await this.apiBroker.GetPostByIdAsync(randomPost.Id);
 
-            ValueTask<Post> getPostbyIdTask =
-                this.apiBroker.GetPostByIdAsync(inputPost.Id);
+			// then
+			actualPost.Should().BeEquivalentTo(expectedPost);
+			await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
+		}
 
-            // then
-            deletedPost.Should().BeEquivalentTo(expectedPost);
+		[Fact]
+		public async Task ShouldPutPostAsync()
+		{
+			// given
+			Post randomPost = await PostRandomPostAsync();
+			Post modifiedPost = UpdateRandomPost(randomPost);
 
-            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
-                getPostbyIdTask.AsTask());
-        }
-    }
+			// when
+			await this.apiBroker.PutPostAsync(modifiedPost);
+
+			Post actualPost = await this.apiBroker.GetPostByIdAsync(randomPost.Id);
+
+			// then
+			actualPost.Should().BeEquivalentTo(modifiedPost);
+			await this.apiBroker.DeletePostByIdAsync(actualPost.Id);
+		}
+
+		[Fact]
+		public async Task ShouldDeletePostAsync()
+		{
+			// given
+			Post randomPost = await PostRandomPostAsync();
+			Post inputPost = randomPost;
+			Post expectedPost = inputPost;
+
+			// when
+			Post deletedPost =
+				await this.apiBroker.DeletePostByIdAsync(inputPost.Id);
+
+			ValueTask<Post> getPostbyIdTask =
+				this.apiBroker.GetPostByIdAsync(inputPost.Id);
+
+			// then
+			deletedPost.Should().BeEquivalentTo(expectedPost);
+
+			await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+				getPostbyIdTask.AsTask());
+		}
+	}
 }

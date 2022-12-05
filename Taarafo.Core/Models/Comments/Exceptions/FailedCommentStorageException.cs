@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Comments.Exceptions
 {
-    public class FailedCommentStorageException : Xeption
-    {
-        public FailedCommentStorageException(Exception innerException)
-            : base(message: "Failed comment storage error occurred, contact support.", innerException)
-        { }
-    }
+	public class FailedCommentStorageException : Xeption
+	{
+		public FailedCommentStorageException(Exception innerException)
+			: base(message: "Failed comment storage error occurred, contact support.", innerException)
+		{ }
+	}
 }

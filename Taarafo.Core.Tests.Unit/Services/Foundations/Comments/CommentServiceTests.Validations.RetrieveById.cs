@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.Comments;
 using Taarafo.Core.Models.Comments.Exceptions;
@@ -12,83 +13,91 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 {
-    public partial class CommentServiceTests
-    {
-        [Fact]
-        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
-        {
-            // given
-            var invalidCommentId = Guid.Empty;
+	public partial class CommentServiceTests
+	{
+		[Fact]
+		public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
+		{
+			// given
+			var invalidCommentId = Guid.Empty;
 
-            var invalidCommentException =
-                new InvalidCommentException();
+			var invalidCommentException =
+				new InvalidCommentException();
 
-            invalidCommentException.AddData(
-                key: nameof(Comment.Id),
-                values: "Id is required");
+			invalidCommentException.AddData(
+				key: nameof(Comment.Id),
+				values: "Id is required");
 
-            var expectedCommentValidationException =
-                new CommentValidationException(invalidCommentException);
+			var expectedCommentValidationException =
+				new CommentValidationException(invalidCommentException);
 
-            // when
-            ValueTask<Comment> retrieveCommentByIdTask =
-                this.commentService.RetrieveCommentByIdAsync(invalidCommentId);
+			// when
+			ValueTask<Comment> retrieveCommentByIdTask =
+				this.commentService.RetrieveCommentByIdAsync(invalidCommentId);
 
-            // then
-            await Assert.ThrowsAsync<CommentValidationException>(() =>
-                retrieveCommentByIdTask.AsTask());
+			CommentValidationException actualCommentValidationException =
+			   await Assert.ThrowsAsync<CommentValidationException>(
+				   retrieveCommentByIdTask.AsTask);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedCommentValidationException))),
-                        Times.Once);
+			// then
+			actualCommentValidationException.Should().BeEquivalentTo(
+				expectedCommentValidationException);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
-                    Times.Never);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedCommentValidationException))),
+						Times.Once);
 
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
+					Times.Never);
 
-        [Fact]
-        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfCommentIsNotFoundAndLogItAsync()
-        {
-            //given
-            Guid someCommentId = Guid.NewGuid();
-            Comment noComment = null;
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var notFoundCommentException =
-                new NotFoundCommentException(someCommentId);
+		[Fact]
+		public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfCommentIsNotFoundAndLogItAsync()
+		{
+			//given
+			Guid someCommentId = Guid.NewGuid();
+			Comment noComment = null;
 
-            var expectedCommentValidationException =
-                new CommentValidationException(notFoundCommentException);
+			var notFoundCommentException =
+				new NotFoundCommentException(someCommentId);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectCommentByIdAsync(It.IsAny<Guid>()))
-                    .ReturnsAsync(noComment);
+			var expectedCommentValidationException =
+				new CommentValidationException(notFoundCommentException);
 
-            //when
-            ValueTask<Comment> retrieveCommentByIdTask =
-                this.commentService.RetrieveCommentByIdAsync(someCommentId);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectCommentByIdAsync(It.IsAny<Guid>()))
+					.ReturnsAsync(noComment);
 
-            //then
-            await Assert.ThrowsAsync<CommentValidationException>(() =>
-               retrieveCommentByIdTask.AsTask());
+			//when
+			ValueTask<Comment> retrieveCommentByIdTask =
+				this.commentService.RetrieveCommentByIdAsync(someCommentId);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
-                    Times.Once());
+			CommentValidationException actualCommentValidationException =
+			  await Assert.ThrowsAsync<CommentValidationException>(
+				  retrieveCommentByIdTask.AsTask);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedCommentValidationException))),
-                        Times.Once);
+			// then
+			actualCommentValidationException.Should().BeEquivalentTo(
+				expectedCommentValidationException);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
+					Times.Once());
+
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedCommentValidationException))),
+						Times.Once);
+
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }

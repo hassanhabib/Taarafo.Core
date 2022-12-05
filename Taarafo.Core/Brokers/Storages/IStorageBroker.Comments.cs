@@ -10,12 +10,12 @@ using Taarafo.Core.Models.Comments;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial interface IStorageBroker
-    {
-        ValueTask<Comment> InsertCommentAsync(Comment comment);
-        IQueryable<Comment> SelectAllComments();
-        ValueTask<Comment> SelectCommentByIdAsync(Guid commentId);
-        ValueTask<Comment> UpdateCommentAsync(Comment comment);
-        ValueTask<Comment> DeleteCommentAsync(Comment comment);
-    }
+	public partial interface IStorageBroker
+	{
+		ValueTask<Comment> InsertCommentAsync(Comment comment);
+		IQueryable<Comment> SelectAllComments();
+		ValueTask<Comment> SelectCommentByIdAsync(Guid commentId);
+		ValueTask<Comment> UpdateCommentAsync(Comment comment);
+		ValueTask<Comment> DeleteCommentAsync(Comment comment);
+	}
 }

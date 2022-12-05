@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Taarafo.Core.Tests.Acceptan
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Taarafo.Core.Infrastructure.Build", "Taarafo.Core.Infrastructure.Build\Taarafo.Core.Infrastructure.Build.csproj", "{8F563F23-5136-42F3-916A-C7CFDA0CF424}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Taarafo.Core.Infrastructure.Provision", "Taarafo.Core.Infrastructure.Provision\Taarafo.Core.Infrastructure.Provision.csproj", "{6FBC6ACD-BF6D-4434-9E73-368B2AC74FCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Taarafo.Core.Infrastructure.Provision", "Taarafo.Core.Infrastructure.Provision\Taarafo.Core.Infrastructure.Provision.csproj", "{6FBC6ACD-BF6D-4434-9E73-368B2AC74FCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

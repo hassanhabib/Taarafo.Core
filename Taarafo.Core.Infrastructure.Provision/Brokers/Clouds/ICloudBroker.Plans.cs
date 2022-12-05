@@ -9,10 +9,10 @@ using Microsoft.Azure.Management.ResourceManager.Fluent;
 
 namespace Taarafo.Core.Infrastructure.Provision.Brokers.Clouds
 {
-    public partial interface ICloudBroker
-    {
-        ValueTask<IAppServicePlan> CreatePlanAsync(
-            string planName,
-            IResourceGroup resourceGroup);
-    }
+	public partial interface ICloudBroker
+	{
+		ValueTask<IAppServicePlan> CreatePlanAsync(
+			string planName,
+			IResourceGroup resourceGroup);
+	}
 }

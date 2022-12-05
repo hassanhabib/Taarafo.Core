@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Comments.Exceptions;
@@ -11,80 +12,90 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 {
-    public partial class CommentServiceTests
-    {
-        [Fact]
-        public void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
-        {
-            // given
-            SqlException sqlException = GetSqlException();
+	public partial class CommentServiceTests
+	{
+		[Fact]
+		public void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
+		{
+			// given
+			SqlException sqlException = GetSqlException();
 
-            var failedStorageException =
-                new FailedCommentStorageException(sqlException);
+			var failedStorageException =
+				new FailedCommentStorageException(sqlException);
 
-            var expectedCommentDependencyException =
-                new CommentDependencyException(failedStorageException);
+			var expectedCommentDependencyException =
+				new CommentDependencyException(failedStorageException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllComments())
-                    .Throws(sqlException);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectAllComments())
+					.Throws(sqlException);
 
-            // when
-            Action retrieveAllCommentsAction = () =>
-                this.commentService.RetrieveAllComments();
+			// when
+			Action retrieveAllCommentsAction = () =>
+				this.commentService.RetrieveAllComments();
 
-            // then
-            Assert.Throws<CommentDependencyException>(
-                retrieveAllCommentsAction);
+			CommentDependencyException actualCommentDependencyException =
+				Assert.Throws<CommentDependencyException>(
+					retrieveAllCommentsAction);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllComments(),
-                    Times.Once);
+			// then
+			actualCommentDependencyException.Should().BeEquivalentTo(
+				expectedCommentDependencyException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedCommentDependencyException))),
-                        Times.Once);
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectAllComments(),
+					Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogCritical(It.Is(SameExceptionAs(
+					expectedCommentDependencyException))),
+						Times.Once);
 
-        [Fact]
-        public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
-        {
-            // given
-            string exceptionMessage = GetRandomMessage();
-            var serviceException = new Exception(exceptionMessage);
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var expectedCommentServiceException =
-                new CommentServiceException(serviceException);
+		[Fact]
+		public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+		{
+			// given
+			string exceptionMessage = GetRandomMessage();
+			var serviceException = new Exception(exceptionMessage);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllComments())
-                    .Throws(serviceException);
+			var failedCommentServiceException =
+				new FailedCommentServiceException(serviceException);
 
-            // when
-            Action retrieveAllCommentsAction = () =>
-                this.commentService.RetrieveAllComments();
+			var expectedCommentServiceException =
+				new CommentServiceException(failedCommentServiceException);
 
-            // then
-            Assert.Throws<CommentServiceException>(
-                retrieveAllCommentsAction);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectAllComments())
+					.Throws(serviceException);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllComments(),
-                    Times.Once);
+			// when
+			Action retrieveAllCommentsAction = () =>
+				this.commentService.RetrieveAllComments();
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedCommentServiceException))),
-                        Times.Once);
+			CommentServiceException actualCommentServiceException =
+				Assert.Throws<CommentServiceException>(retrieveAllCommentsAction);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			// then
+			actualCommentServiceException.Should()
+				.BeEquivalentTo(expectedCommentServiceException);
+
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectAllComments(),
+					Times.Once);
+
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedCommentServiceException))),
+						Times.Once);
+
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }

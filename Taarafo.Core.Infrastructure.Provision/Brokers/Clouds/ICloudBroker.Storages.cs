@@ -10,16 +10,16 @@ using Taarafo.Core.Infrastructure.Provision.Models.Storages;
 
 namespace Taarafo.Core.Infrastructure.Provision.Brokers.Clouds
 {
-    public partial interface ICloudBroker
-    {
-        ValueTask<ISqlServer> CreateSqlServerAsync(
-            string sqlServerName,
-            IResourceGroup resourceGroup);
+	public partial interface ICloudBroker
+	{
+		ValueTask<ISqlServer> CreateSqlServerAsync(
+			string sqlServerName,
+			IResourceGroup resourceGroup);
 
-        ValueTask<ISqlDatabase> CreateSqlDatabaseAsync(
-            string sqlDatabasename,
-            ISqlServer sqlServer);
+		ValueTask<ISqlDatabase> CreateSqlDatabaseAsync(
+			string sqlDatabasename,
+			ISqlServer sqlServer);
 
-        SqlDatabaseAccess GetAdminAccess();
-    }
+		SqlDatabaseAccess GetAdminAccess();
+	}
 }

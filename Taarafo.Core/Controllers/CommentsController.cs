@@ -60,7 +60,7 @@ namespace Taarafo.Core.Controllers
 
         [EnableQuery(PageSize = 10)]
         [HttpGet]
-        public ActionResult<IQueryable<Comment>> GetAllComments()
+        public ActionResult<IQueryable<Comment>> Get()
         {
             try
             {

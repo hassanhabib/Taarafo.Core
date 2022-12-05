@@ -8,14 +8,14 @@ using Taarafo.Core.Models.Posts;
 
 namespace Taarafo.Core.Models.Comments
 {
-    public class Comment
-    {
-        public Guid Id { get; set; }
-        public string Content { get; set; }
-        public DateTimeOffset CreatedDate { get; set; }
-        public DateTimeOffset UpdatedDate { get; set; }
+	public class Comment
+	{
+		public Guid Id { get; set; }
+		public string Content { get; set; }
+		public DateTimeOffset CreatedDate { get; set; }
+		public DateTimeOffset UpdatedDate { get; set; }
 
-        public Guid PostId { get; set; }
-        public Post Post { get; set; }
-    }
+		public Guid PostId { get; set; }
+		public Post Post { get; set; }
+	}
 }

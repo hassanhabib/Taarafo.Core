@@ -15,146 +15,149 @@ using Xeptions;
 
 namespace Taarafo.Core.Services.Foundations.Comments
 {
-    public partial class CommentService
-    {
-        private delegate ValueTask<Comment> ReturningCommentFunction();
-        private delegate IQueryable<Comment> ReturningCommentsFunction();
+	public partial class CommentService
+	{
+		private delegate ValueTask<Comment> ReturningCommentFunction();
+		private delegate IQueryable<Comment> ReturningCommentsFunction();
 
-        private async ValueTask<Comment> TryCatch(ReturningCommentFunction returningCommentFunction)
-        {
-            try
-            {
-                return await returningCommentFunction();
-            }
-            catch (NullCommentException nullCommentException)
-            {
-                throw CreateAndLogValidationException(nullCommentException);
-            }
-            catch (InvalidCommentException invalidCommentException)
-            {
-                throw CreateAndLogValidationException(invalidCommentException);
-            }
-            catch (SqlException sqlException)
-            {
-                var failedCommentStorageException =
-                    new FailedCommentStorageException(sqlException);
+		private async ValueTask<Comment> TryCatch(ReturningCommentFunction returningCommentFunction)
+		{
+			try
+			{
+				return await returningCommentFunction();
+			}
+			catch (NullCommentException nullCommentException)
+			{
+				throw CreateAndLogValidationException(nullCommentException);
+			}
+			catch (InvalidCommentException invalidCommentException)
+			{
+				throw CreateAndLogValidationException(invalidCommentException);
+			}
+			catch (SqlException sqlException)
+			{
+				var failedCommentStorageException =
+					new FailedCommentStorageException(sqlException);
 
-                throw CreateAndLogCriticalDependencyException(failedCommentStorageException);
-            }
-            catch (NotFoundCommentException notFoundCommentException)
-            {
-                throw CreateAndLogValidationException(notFoundCommentException);
-            }
-            catch (DuplicateKeyException duplicateKeyException)
-            {
-                var alreadyExistsCommentException =
-                    new AlreadyExistsCommentException(duplicateKeyException);
+				throw CreateAndLogCriticalDependencyException(failedCommentStorageException);
+			}
+			catch (NotFoundCommentException notFoundCommentException)
+			{
+				throw CreateAndLogValidationException(notFoundCommentException);
+			}
+			catch (DuplicateKeyException duplicateKeyException)
+			{
+				var alreadyExistsCommentException =
+					new AlreadyExistsCommentException(duplicateKeyException);
 
-                throw CreateAndLogDependencyValidationException(alreadyExistsCommentException);
-            }
-            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
-            {
-                var invalidCommentReferenceException =
-                    new InvalidCommentReferenceException(foreignKeyConstraintConflictException);
+				throw CreateAndLogDependencyValidationException(alreadyExistsCommentException);
+			}
+			catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+			{
+				var invalidCommentReferenceException =
+					new InvalidCommentReferenceException(foreignKeyConstraintConflictException);
 
-                throw CreateAndLogDependencyValidationException(invalidCommentReferenceException);
-            }
-            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
-            {
-                var lockedCommentException = new LockedCommentException(dbUpdateConcurrencyException);
+				throw CreateAndLogDependencyValidationException(invalidCommentReferenceException);
+			}
+			catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+			{
+				var lockedCommentException = new LockedCommentException(dbUpdateConcurrencyException);
 
-                throw CreateAndLogDependencyValidationException(lockedCommentException);
-            }
-            catch (DbUpdateException databaseUpdateException)
-            {
-                var failedCommentStorageException =
-                    new FailedCommentStorageException(databaseUpdateException);
+				throw CreateAndLogDependencyValidationException(lockedCommentException);
+			}
+			catch (DbUpdateException databaseUpdateException)
+			{
+				var failedCommentStorageException =
+					new FailedCommentStorageException(databaseUpdateException);
 
-                throw CreateAndLogDependecyException(failedCommentStorageException);
-            }
-            catch (Exception exception)
-            {
-                var failedCommentServiceException =
-                    new FailedCommentServiceException(exception);
+				throw CreateAndLogDependecyException(failedCommentStorageException);
+			}
+			catch (Exception exception)
+			{
+				var failedCommentServiceException =
+					new FailedCommentServiceException(exception);
 
-                throw CreateAndLogServiceException(failedCommentServiceException);
-            }
-        }
+				throw CreateAndLogServiceException(failedCommentServiceException);
+			}
+		}
 
-        private IQueryable<Comment> TryCatch(ReturningCommentsFunction returningCommentsFunction)
-        {
-            try
-            {
-                return returningCommentsFunction();
-            }
-            catch (SqlException sqlException)
-            {
-                var failedCommentStorageException =
-                    new FailedCommentStorageException(sqlException);
-                throw CreateAndLogCriticalDependencyException(failedCommentStorageException);
-            }
-            catch (Exception exception)
-            {
-                throw CreateAndLogServiceException(exception);
-            }
-        }
+		private IQueryable<Comment> TryCatch(ReturningCommentsFunction returningCommentsFunction)
+		{
+			try
+			{
+				return returningCommentsFunction();
+			}
+			catch (SqlException sqlException)
+			{
+				var failedCommentStorageException =
+					new FailedCommentStorageException(sqlException);
+				throw CreateAndLogCriticalDependencyException(failedCommentStorageException);
+			}
+			catch (Exception exception)
+			{
+				var failedCommentServiceException =
+					new FailedCommentServiceException(exception);
 
-        private CommentValidationException CreateAndLogValidationException(
-            Xeption exception)
-        {
-            var commentValidationException =
-                new CommentValidationException(exception);
+				throw CreateAndLogServiceException(failedCommentServiceException);
+			}
+		}
 
-            this.loggingBroker.LogError(commentValidationException);
+		private CommentValidationException CreateAndLogValidationException(
+			Xeption exception)
+		{
+			var commentValidationException =
+				new CommentValidationException(exception);
 
-            return commentValidationException;
-        }
+			this.loggingBroker.LogError(commentValidationException);
 
-        private CommentDependencyException CreateAndLogCriticalDependencyException(
-            Xeption exception)
-        {
-            var commentDependencyException = new CommentDependencyException(exception);
-            this.loggingBroker.LogCritical(commentDependencyException);
+			return commentValidationException;
+		}
 
-            return commentDependencyException;
-        }
+		private CommentDependencyException CreateAndLogCriticalDependencyException(
+			Xeption exception)
+		{
+			var commentDependencyException = new CommentDependencyException(exception);
+			this.loggingBroker.LogCritical(commentDependencyException);
 
-        private CommentDependencyValidationException CreateAndLogDependencyValidationException(
-        Xeption exception)
-        {
-            var commentDependencyValidationException =
-                new CommentDependencyValidationException(exception);
+			return commentDependencyException;
+		}
 
-            this.loggingBroker.LogError(commentDependencyValidationException);
+		private CommentDependencyValidationException CreateAndLogDependencyValidationException(
+		Xeption exception)
+		{
+			var commentDependencyValidationException =
+				new CommentDependencyValidationException(exception);
 
-            return commentDependencyValidationException;
-        }
+			this.loggingBroker.LogError(commentDependencyValidationException);
 
-        private CommentDependencyException CreateAndLogDependecyException(
-            Xeption exception)
-        {
-            var commentDependencyException = new CommentDependencyException(exception);
-            this.loggingBroker.LogError(commentDependencyException);
+			return commentDependencyValidationException;
+		}
 
-            return commentDependencyException;
-        }
+		private CommentDependencyException CreateAndLogDependecyException(
+			Xeption exception)
+		{
+			var commentDependencyException = new CommentDependencyException(exception);
+			this.loggingBroker.LogError(commentDependencyException);
 
-        private CommentServiceException CreateAndLogServiceException(
-            Xeption exception)
-        {
-            var commentServiceException = new CommentServiceException(exception);
-            this.loggingBroker.LogError(commentServiceException);
+			return commentDependencyException;
+		}
 
-            return commentServiceException;
-        }
+		private CommentServiceException CreateAndLogServiceException(
+			Xeption exception)
+		{
+			var commentServiceException = new CommentServiceException(exception);
+			this.loggingBroker.LogError(commentServiceException);
 
-        private CommentServiceException CreateAndLogServiceException(
-            Exception exception)
-        {
-            var commentServiceException = new CommentServiceException(exception);
-            this.loggingBroker.LogError(commentServiceException);
+			return commentServiceException;
+		}
 
-            return commentServiceException;
-        }
-    }
+		private CommentServiceException CreateAndLogServiceException(
+			Exception exception)
+		{
+			var commentServiceException = new CommentServiceException(exception);
+			this.loggingBroker.LogError(commentServiceException);
+
+			return commentServiceException;
+		}
+	}
 }

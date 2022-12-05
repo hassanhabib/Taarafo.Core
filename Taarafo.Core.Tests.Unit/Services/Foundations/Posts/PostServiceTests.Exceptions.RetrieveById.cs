@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.Posts;
@@ -13,84 +14,90 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
-    public partial class PostServiceTests
-    {
-        [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
-        {
-            // given
-            Guid someId = Guid.NewGuid();
-            SqlException sqlException = GetSqlException();
+	public partial class PostServiceTests
+	{
+		[Fact]
+		public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
+		{
+			// given
+			Guid someId = Guid.NewGuid();
+			SqlException sqlException = GetSqlException();
 
-            var failedPostStorageException =
-                new FailedPostStorageException(sqlException);
+			var failedPostStorageException =
+				new FailedPostStorageException(sqlException);
 
-            var expectedPostDependencyException =
-                new PostDependencyException(failedPostStorageException);
+			var expectedPostDependencyException =
+				new PostDependencyException(failedPostStorageException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(sqlException);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectPostByIdAsync(It.IsAny<Guid>()))
+					.ThrowsAsync(sqlException);
 
-            // when
-            ValueTask<Post> retrievePostByIdTask =
-                this.postService.RetrievePostByIdAsync(someId);
+			// when
+			ValueTask<Post> retrievePostByIdTask =
+				this.postService.RetrievePostByIdAsync(someId);
 
-            // then
-            await Assert.ThrowsAsync<PostDependencyException>(() =>
-                retrievePostByIdTask.AsTask());
+			PostDependencyException actaulPostDependencyException =
+				await Assert.ThrowsAsync<PostDependencyException>(
+					retrievePostByIdTask.AsTask);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostByIdAsync(It.IsAny<Guid>()),
-                    Times.Once);
+			// then
+			actaulPostDependencyException.Should().BeEquivalentTo(expectedPostDependencyException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedPostDependencyException))),
-                        Times.Once);
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectPostByIdAsync(It.IsAny<Guid>()),
+					Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogCritical(It.Is(SameExceptionAs(
+					expectedPostDependencyException))),
+						Times.Once);
 
-        [Fact]
-        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfDatabaseUpdateErrorOccursAndLogItAsync()
-        {
-            // given
-            Guid someId = Guid.NewGuid();
-            var serviceException = new Exception();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var failedPostServiceException =
-                new FailedPostServiceException(serviceException);
+		[Fact]
+		public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfDatabaseUpdateErrorOccursAndLogItAsync()
+		{
+			// given
+			Guid someId = Guid.NewGuid();
+			var serviceException = new Exception();
 
-            var expectedPostServiceException =
-                new PostServiceException(failedPostServiceException);
+			var failedPostServiceException =
+				new FailedPostServiceException(serviceException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(serviceException);
+			var expectedPostServiceException =
+				new PostServiceException(failedPostServiceException);
 
-            // when
-            ValueTask<Post> retrievePostByIdTask =
-                this.postService.RetrievePostByIdAsync(someId);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectPostByIdAsync(It.IsAny<Guid>()))
+					.ThrowsAsync(serviceException);
 
-            // then
-            await Assert.ThrowsAsync<PostServiceException>(() =>
-                retrievePostByIdTask.AsTask());
+			// when
+			ValueTask<Post> retrievePostByIdTask =
+				this.postService.RetrievePostByIdAsync(someId);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostByIdAsync(It.IsAny<Guid>()),
-                    Times.Once);
+			PostServiceException actualPostServiceException =
+				await Assert.ThrowsAsync<PostServiceException>(
+					retrievePostByIdTask.AsTask);
 
-            this.loggingBrokerMock.Verify(broker =>
-               broker.LogError(It.Is(SameExceptionAs(
-                   expectedPostServiceException))),
-                        Times.Once);
+			// then
+			actualPostServiceException.Should().BeEquivalentTo(expectedPostServiceException);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectPostByIdAsync(It.IsAny<Guid>()),
+					Times.Once);
+
+			this.loggingBrokerMock.Verify(broker =>
+			   broker.LogError(It.Is(SameExceptionAs(
+				   expectedPostServiceException))),
+						Times.Once);
+
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }

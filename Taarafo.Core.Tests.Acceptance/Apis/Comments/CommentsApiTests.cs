@@ -14,81 +14,100 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
 {
-    [Collection(nameof(ApiTestCollection))]
-    public partial class CommentsApiTests
-    {
-        private readonly ApiBroker apiBroker;
+	[Collection(nameof(ApiTestCollection))]
+	public partial class CommentsApiTests
+	{
+		private readonly ApiBroker apiBroker;
 
-        public CommentsApiTests(ApiBroker apiBroker) =>
-            this.apiBroker = apiBroker;
-        private async ValueTask<List<Comment>> CreateRandomCommentsAsync()
-        {
-            int randomNumber = GetRandomNumber();
-            var randomComments = new List<Comment>();
+		public CommentsApiTests(ApiBroker apiBroker) =>
+			this.apiBroker = apiBroker;
+		private async ValueTask<List<Comment>> CreateRandomCommentsAsync()
+		{
+			int randomNumber = GetRandomNumber();
+			var randomComments = new List<Comment>();
 
-            for (int i = 0; i < randomNumber; i++)
-            {
-                randomComments.Add(await PostRandomCommentAsync());
-            }
-            return randomComments;
-        }
+			for (int i = 0; i < randomNumber; i++)
+			{
+				randomComments.Add(await PostRandomCommentAsync());
+			}
+			return randomComments;
+		}
 
-        private int GetRandomNumber() =>
-            new IntRange(min: 2, max: 10).GetValue();
+		private int GetRandomNumber() =>
+			new IntRange(min: 2, max: 10).GetValue();
 
-        private async ValueTask<Comment> PostRandomCommentAsync()
-        {
-            Comment randomComment = await CreateRandomComment();
-            await this.apiBroker.PostCommentAsync(randomComment);
+		private async ValueTask<Comment> PostRandomCommentAsync()
+		{
+			Comment randomComment = await CreateRandomComment();
+			await this.apiBroker.PostCommentAsync(randomComment);
 
-            return randomComment;
-        }
+			return randomComment;
+		}
 
-        private async ValueTask<Comment> CreateRandomComment()
-        {
-            Post post = await PostRandomPostAsync();
-            DateTimeOffset now = DateTimeOffset.UtcNow;
-            var filler = new Filler<Comment>();
+		private async ValueTask<Comment> CreateRandomComment()
+		{
+			Post post = await PostRandomPostAsync();
+			DateTimeOffset now = DateTimeOffset.UtcNow;
+			var filler = new Filler<Comment>();
 
-            filler.Setup()
-                .OnProperty(comment => comment.CreatedDate).Use(now)
-                .OnProperty(comment => comment.UpdatedDate).Use(now)
-                .OnProperty(comment => comment.PostId).Use(post.Id);
+			filler.Setup()
+				.OnProperty(comment => comment.CreatedDate).Use(now)
+				.OnProperty(comment => comment.UpdatedDate).Use(now)
+				.OnProperty(comment => comment.PostId).Use(post.Id);
 
-            return filler.Create();
-        }
+			return filler.Create();
+		}
 
-        private async ValueTask<Post> PostRandomPostAsync()
-        {
-            Post randomPost = CreateRandomPost();
-            await this.apiBroker.PostPostAsync(randomPost);
+		private async ValueTask<Post> PostRandomPostAsync()
+		{
+			Post randomPost = CreateRandomPost();
+			await this.apiBroker.PostPostAsync(randomPost);
 
-            return randomPost;
-        }
+			return randomPost;
+		}
 
-        private static Post CreateRandomPost() =>
-            CreateRandomPostFiller().Create();
+		private static DateTimeOffset GetRandomDateTime() =>
+			new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static Filler<Post> CreateRandomPostFiller()
-        {
-            DateTimeOffset now = DateTimeOffset.UtcNow;
-            var filler = new Filler<Post>();
+		private static Comment UpdateCommentWithRandomValues(Comment inputComment)
+		{
+			DateTimeOffset now = DateTimeOffset.UtcNow;
 
-            filler.Setup()
-                .OnProperty(post => post.CreatedDate).Use(now)
-                .OnProperty(post => post.UpdatedDate).Use(now);
+			var filler = new Filler<Comment>();
 
-            return filler;
-        }
+			filler.Setup()
+				.OnProperty(comment => comment.Id).Use(inputComment.Id)
+				.OnProperty(comment => comment.PostId).Use(inputComment.PostId)
+				.OnProperty(comment => comment.CreatedDate).Use(inputComment.CreatedDate)
+				.OnProperty(comment => comment.UpdatedDate).Use(now)
+				.OnType<DateTimeOffset>().Use(GetRandomDateTime());
 
-        private async ValueTask<Comment> DeleteCommentAsync(Comment actualComment)
-        {
-            Comment deletedComment =
-                await apiBroker.DeleteCommentByIdAsync(actualComment.Id);
+			return filler.Create();
+		}
 
-            await apiBroker.DeletePostByIdAsync(actualComment.PostId);
+		private static Post CreateRandomPost() =>
+			CreateRandomPostFiller().Create();
 
-            return deletedComment;
-        }
-    }
+		private static Filler<Post> CreateRandomPostFiller()
+		{
+			DateTimeOffset now = DateTimeOffset.UtcNow;
+			var filler = new Filler<Post>();
+
+			filler.Setup()
+				.OnProperty(post => post.CreatedDate).Use(now)
+				.OnProperty(post => post.UpdatedDate).Use(now);
+
+			return filler;
+		}
+
+		private async ValueTask<Comment> DeleteCommentAsync(Comment actualComment)
+		{
+			Comment deletedComment =
+				await apiBroker.DeleteCommentByIdAsync(actualComment.Id);
+
+			await apiBroker.DeletePostByIdAsync(actualComment.PostId);
+
+			return deletedComment;
+		}
+	}
 }

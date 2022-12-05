@@ -15,132 +15,132 @@ using Xeptions;
 
 namespace Taarafo.Core.Services.Foundations.Posts
 {
-    public partial class PostService
-    {
-        private delegate IQueryable<Post> ReturningPostsFunction();
-        private delegate ValueTask<Post> ReturningPostFunction();
+	public partial class PostService
+	{
+		private delegate IQueryable<Post> ReturningPostsFunction();
+		private delegate ValueTask<Post> ReturningPostFunction();
 
-        private async ValueTask<Post> TryCatch(ReturningPostFunction returningPostFunction)
-        {
-            try
-            {
-                return await returningPostFunction();
-            }
-            catch (NullPostException nullPostException)
-            {
-                throw CreateAndLogValidationException(nullPostException);
-            }
-            catch (InvalidPostException invalidPostException)
-            {
-                throw CreateAndLogValidationException(invalidPostException);
-            }
-            catch (SqlException sqlException)
-            {
-                var failedPostStorageException =
-                    new FailedPostStorageException(sqlException);
+		private async ValueTask<Post> TryCatch(ReturningPostFunction returningPostFunction)
+		{
+			try
+			{
+				return await returningPostFunction();
+			}
+			catch (NullPostException nullPostException)
+			{
+				throw CreateAndLogValidationException(nullPostException);
+			}
+			catch (InvalidPostException invalidPostException)
+			{
+				throw CreateAndLogValidationException(invalidPostException);
+			}
+			catch (SqlException sqlException)
+			{
+				var failedPostStorageException =
+					new FailedPostStorageException(sqlException);
 
-                throw CreateAndLogCriticalDependencyException(failedPostStorageException);
-            }
-            catch (NotFoundPostException notFoundPostException)
-            {
-                throw CreateAndLogValidationException(notFoundPostException);
-            }
-            catch (DuplicateKeyException duplicateKeyException)
-            {
-                var alreadyExistsPostException =
-                    new AlreadyExistsPostException(duplicateKeyException);
+				throw CreateAndLogCriticalDependencyException(failedPostStorageException);
+			}
+			catch (NotFoundPostException notFoundPostException)
+			{
+				throw CreateAndLogValidationException(notFoundPostException);
+			}
+			catch (DuplicateKeyException duplicateKeyException)
+			{
+				var alreadyExistsPostException =
+					new AlreadyExistsPostException(duplicateKeyException);
 
-                throw CreateAndLogDependencyValidationException(alreadyExistsPostException);
-            }
-            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
-            {
-                var lockedPostException = new LockedPostException(dbUpdateConcurrencyException);
+				throw CreateAndLogDependencyValidationException(alreadyExistsPostException);
+			}
+			catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+			{
+				var lockedPostException = new LockedPostException(dbUpdateConcurrencyException);
 
-                throw CreateAndLogDependencyValidationException(lockedPostException);
-            }
-            catch (DbUpdateException databaseUpdateException)
-            {
-                var failedPostStorageException =
-                    new FailedPostStorageException(databaseUpdateException);
+				throw CreateAndLogDependencyValidationException(lockedPostException);
+			}
+			catch (DbUpdateException databaseUpdateException)
+			{
+				var failedPostStorageException =
+					new FailedPostStorageException(databaseUpdateException);
 
-                throw CreateAndLogDependencyException(failedPostStorageException);
-            }
-            catch (Exception exception)
-            {
-                var failedPostServiceException =
-                    new FailedPostServiceException(exception);
+				throw CreateAndLogDependencyException(failedPostStorageException);
+			}
+			catch (Exception exception)
+			{
+				var failedPostServiceException =
+					new FailedPostServiceException(exception);
 
-                throw CreateAndLogServiceException(failedPostServiceException);
-            }
-        }
+				throw CreateAndLogServiceException(failedPostServiceException);
+			}
+		}
 
-        private IQueryable<Post> TryCatch(ReturningPostsFunction returningPostsFunction)
-        {
-            try
-            {
-                return returningPostsFunction();
-            }
-            catch (SqlException sqlException)
-            {
-                var failedPostStorageException =
-                    new FailedPostStorageException(sqlException);
-                throw CreateAndLogCriticalDependencyException(failedPostStorageException);
-            }
-            catch (Exception exception)
-            {
-                var failedPostServiceException =
-                    new FailedPostServiceException(exception);
+		private IQueryable<Post> TryCatch(ReturningPostsFunction returningPostsFunction)
+		{
+			try
+			{
+				return returningPostsFunction();
+			}
+			catch (SqlException sqlException)
+			{
+				var failedPostStorageException =
+					new FailedPostStorageException(sqlException);
+				throw CreateAndLogCriticalDependencyException(failedPostStorageException);
+			}
+			catch (Exception exception)
+			{
+				var failedPostServiceException =
+					new FailedPostServiceException(exception);
 
-                throw CreateAndLogServiceException(failedPostServiceException);
-            }
-        }
+				throw CreateAndLogServiceException(failedPostServiceException);
+			}
+		}
 
-        private PostValidationException CreateAndLogValidationException(
-            Xeption exception)
-        {
-            var postValidationException =
-                new PostValidationException(exception);
+		private PostValidationException CreateAndLogValidationException(
+			Xeption exception)
+		{
+			var postValidationException =
+				new PostValidationException(exception);
 
-            this.loggingBroker.LogError(postValidationException);
+			this.loggingBroker.LogError(postValidationException);
 
-            return postValidationException;
-        }
+			return postValidationException;
+		}
 
-        private PostDependencyException CreateAndLogCriticalDependencyException(
-            Xeption exception)
-        {
-            var postDependencyException = new PostDependencyException(exception);
-            this.loggingBroker.LogCritical(postDependencyException);
+		private PostDependencyException CreateAndLogCriticalDependencyException(
+			Xeption exception)
+		{
+			var postDependencyException = new PostDependencyException(exception);
+			this.loggingBroker.LogCritical(postDependencyException);
 
-            return postDependencyException;
-        }
+			return postDependencyException;
+		}
 
-        private PostDependencyValidationException CreateAndLogDependencyValidationException(
-            Xeption exception)
-        {
-            var postDependencyValidationException =
-                new PostDependencyValidationException(exception);
+		private PostDependencyValidationException CreateAndLogDependencyValidationException(
+			Xeption exception)
+		{
+			var postDependencyValidationException =
+				new PostDependencyValidationException(exception);
 
-            this.loggingBroker.LogError(postDependencyValidationException);
+			this.loggingBroker.LogError(postDependencyValidationException);
 
-            return postDependencyValidationException;
-        }
+			return postDependencyValidationException;
+		}
 
-        private PostDependencyException CreateAndLogDependencyException(Xeption exception)
-        {
-            var postDependencyException = new PostDependencyException(exception);
-            this.loggingBroker.LogError(postDependencyException);
+		private PostDependencyException CreateAndLogDependencyException(Xeption exception)
+		{
+			var postDependencyException = new PostDependencyException(exception);
+			this.loggingBroker.LogError(postDependencyException);
 
-            return postDependencyException;
-        }
+			return postDependencyException;
+		}
 
-        private PostServiceException CreateAndLogServiceException(
-            Exception exception)
-        {
-            var postServiceException = new PostServiceException(exception);
-            this.loggingBroker.LogError(postServiceException);
+		private PostServiceException CreateAndLogServiceException(
+			Exception exception)
+		{
+			var postServiceException = new PostServiceException(exception);
+			this.loggingBroker.LogError(postServiceException);
 
-            return postServiceException;
-        }
-    }
+			return postServiceException;
+		}
+	}
 }

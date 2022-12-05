@@ -55,7 +55,7 @@ namespace Taarafo.Core.Controllers
 
         [EnableQuery(PageSize = 10)]
         [HttpGet]
-        public ActionResult<IQueryable<Post>> GetAllPosts()
+        public ActionResult<IQueryable<Post>> Get()
         {
             try
             {

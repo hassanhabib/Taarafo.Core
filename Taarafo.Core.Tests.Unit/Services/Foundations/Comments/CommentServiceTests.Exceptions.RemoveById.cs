@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -14,129 +15,140 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 {
-    public partial class CommentServiceTests
-    {
-        [Fact]
-        public async Task ShouldThrowDependencyValidationOnRemoveIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
-        {
-            // given
-            Guid someCommentId = Guid.NewGuid();
+	public partial class CommentServiceTests
+	{
+		[Fact]
+		public async Task ShouldThrowDependencyValidationOnRemoveIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+		{
+			// given
+			Guid someCommentId = Guid.NewGuid();
 
-            var databaseUpdateConcurrencyException =
-                new DbUpdateConcurrencyException();
+			var databaseUpdateConcurrencyException =
+				new DbUpdateConcurrencyException();
 
-            var lockedCommentException =
-                new LockedCommentException(databaseUpdateConcurrencyException);
+			var lockedCommentException =
+				new LockedCommentException(databaseUpdateConcurrencyException);
 
-            var expectedCommentDependencyValidationException =
-                new CommentDependencyValidationException(lockedCommentException);
+			var expectedCommentDependencyValidationException =
+				new CommentDependencyValidationException(lockedCommentException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectCommentByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(databaseUpdateConcurrencyException);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectCommentByIdAsync(It.IsAny<Guid>()))
+					.ThrowsAsync(databaseUpdateConcurrencyException);
 
-            // when
-            ValueTask<Comment> removeCommentByIdTask =
-                this.commentService.RemoveCommentByIdAsync(someCommentId);
+			// when
+			ValueTask<Comment> removeCommentByIdTask =
+				this.commentService.RemoveCommentByIdAsync(someCommentId);
 
-            // then
-            await Assert.ThrowsAsync<CommentDependencyValidationException>(() =>
-                removeCommentByIdTask.AsTask());
+			CommentDependencyValidationException actualCommentDependencyValidationException =
+				await Assert.ThrowsAsync<CommentDependencyValidationException>(
+					removeCommentByIdTask.AsTask);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
-                    Times.Once);
+			// then
+			actualCommentDependencyValidationException.Should().BeEquivalentTo(
+				expectedCommentDependencyValidationException);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedCommentDependencyValidationException))),
-                        Times.Once);
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
+					Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.DeleteCommentAsync(It.IsAny<Comment>()),
-                    Times.Never);
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedCommentDependencyValidationException))),
+						Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
+			this.storageBrokerMock.Verify(broker =>
+				broker.DeleteCommentAsync(It.IsAny<Comment>()),
+					Times.Never);
 
-        [Fact]
-        public async Task ShouldThrowDependencyExceptionOnDeleteWhenSqlExceptionOccursAndLogItAsync()
-        {
-            // given
-            Guid someCommentId = Guid.NewGuid();
-            SqlException sqlException = GetSqlException();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var failedCommentStorageException =
-                new FailedCommentStorageException(sqlException);
+		[Fact]
+		public async Task ShouldThrowDependencyExceptionOnDeleteWhenSqlExceptionOccursAndLogItAsync()
+		{
+			// given
+			Guid someCommentId = Guid.NewGuid();
+			SqlException sqlException = GetSqlException();
 
-            var expectedCommentDependencyException =
-                new CommentDependencyException(failedCommentStorageException);
+			var failedCommentStorageException =
+				new FailedCommentStorageException(sqlException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectCommentByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(sqlException);
+			var expectedCommentDependencyException =
+				new CommentDependencyException(failedCommentStorageException);
 
-            // when
-            ValueTask<Comment> deleteCommentTask =
-                this.commentService.RemoveCommentByIdAsync(someCommentId);
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectCommentByIdAsync(It.IsAny<Guid>()))
+					.ThrowsAsync(sqlException);
 
-            // then
-            await Assert.ThrowsAsync<CommentDependencyException>(() =>
-                deleteCommentTask.AsTask());
+			// when
+			ValueTask<Comment> deleteCommentTask =
+				this.commentService.RemoveCommentByIdAsync(someCommentId);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
-                    Times.Once);
+			CommentDependencyException actualCommentDependencyException =
+				await Assert.ThrowsAsync<CommentDependencyException>(
+					deleteCommentTask.AsTask);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedCommentDependencyException))),
-                        Times.Once);
+			// then
+			actualCommentDependencyException.Should().BeEquivalentTo(
+				expectedCommentDependencyException);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
+					Times.Once);
 
-        [Fact]
-        public async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
-        {
-            // given
-            Guid someCommentId = Guid.NewGuid();
-            var serviceException = new Exception();
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogCritical(It.Is(SameExceptionAs(
+					expectedCommentDependencyException))),
+						Times.Once);
 
-            var failedCommentServiceException =
-                new FailedCommentServiceException(serviceException);
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
 
-            var expectedCommentServiceException =
-                new CommentServiceException(failedCommentServiceException);
+		[Fact]
+		public async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
+		{
+			// given
+			Guid someCommentId = Guid.NewGuid();
+			var serviceException = new Exception();
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectCommentByIdAsync(It.IsAny<Guid>()))
-                    .ThrowsAsync(serviceException);
+			var failedCommentServiceException =
+				new FailedCommentServiceException(serviceException);
 
-            // when
-            ValueTask<Comment> removeCommentByIdTask =
-                this.commentService.RemoveCommentByIdAsync(someCommentId);
+			var expectedCommentServiceException =
+				new CommentServiceException(failedCommentServiceException);
 
-            // then
-            await Assert.ThrowsAsync<CommentServiceException>(() =>
-                removeCommentByIdTask.AsTask());
+			this.storageBrokerMock.Setup(broker =>
+				broker.SelectCommentByIdAsync(It.IsAny<Guid>()))
+					.ThrowsAsync(serviceException);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
-                        Times.Once());
+			// when
+			ValueTask<Comment> removeCommentByIdTask =
+				this.commentService.RemoveCommentByIdAsync(someCommentId);
 
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedCommentServiceException))),
-                        Times.Once);
+			CommentServiceException actualCommentServiceException =
+				await Assert.ThrowsAsync<CommentServiceException>(
+					removeCommentByIdTask.AsTask);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
-    }
+			// then
+			actualCommentServiceException.Should().BeEquivalentTo(expectedCommentServiceException);
+
+			this.storageBrokerMock.Verify(broker =>
+				broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
+						Times.Once());
+
+			this.loggingBrokerMock.Verify(broker =>
+				broker.LogError(It.Is(SameExceptionAs(
+					expectedCommentServiceException))),
+						Times.Once);
+
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+		}
+	}
 }
