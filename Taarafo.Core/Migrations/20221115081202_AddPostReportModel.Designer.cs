@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Taarafo.Core.Brokers.Storages;
 
@@ -11,9 +12,11 @@ using Taarafo.Core.Brokers.Storages;
 namespace Taarafo.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    partial class StorageBrokerModelSnapshot : ModelSnapshot
+    [Migration("20221115081202_AddPostReportModel")]
+    partial class AddPostReportModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,33 +86,6 @@ namespace Taarafo.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Events");
-                });
-
-            modelBuilder.Entity("Taarafo.Core.Models.GroupMemberships.GroupMembership", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("MembershipDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("ProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("ProfileId");
-
-                    b.ToTable("GroupMemberships");
                 });
 
             modelBuilder.Entity("Taarafo.Core.Models.GroupPosts.GroupPost", b =>
@@ -239,9 +215,6 @@ namespace Taarafo.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Avatar")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
@@ -271,25 +244,6 @@ namespace Taarafo.Core.Migrations
                         .IsRequired();
 
                     b.Navigation("Post");
-                });
-
-            modelBuilder.Entity("Taarafo.Core.Models.GroupMemberships.GroupMembership", b =>
-                {
-                    b.HasOne("Taarafo.Core.Models.Groups.Group", "Group")
-                        .WithMany()
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Taarafo.Core.Models.Profiles.Profile", "Profile")
-                        .WithMany()
-                        .HasForeignKey("ProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-
-                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("Taarafo.Core.Models.GroupPosts.GroupPost", b =>

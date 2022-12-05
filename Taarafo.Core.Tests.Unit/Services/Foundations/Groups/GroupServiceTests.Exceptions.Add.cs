@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -40,8 +41,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 				this.groupService.AddGroupAsync(someGroup);
 
 			// then
-			await Assert.ThrowsAsync<GroupDependencyException>(() =>
-				addGroupTask.AsTask());
+			GroupDependencyException actualGroupDependencyException = 
+				 await Assert.ThrowsAsync<GroupDependencyException>(() =>
+					addGroupTask.AsTask());
+
+			actualGroupDependencyException.Should().BeEquivalentTo(
+				expectedGroupDependencyException);
 
 			this.dateTimeBrokerMock.Verify(broker =>
 				broker.GetCurrentDateTimeOffset(),
@@ -75,7 +80,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 			var alreadyExistsGroupException =
 				new AlreadyExistsGroupException(duplicateKeyException);
 
-			var expectedGroupDependencyValidationException =
+			var expectedGroupDependencyException =
 				new GroupDependencyException(alreadyExistsGroupException);
 
 			this.dateTimeBrokerMock.Setup(broker =>
@@ -87,8 +92,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 				this.groupService.AddGroupAsync(alreadyExistsGroup);
 
 			// then
-			await Assert.ThrowsAsync<GroupDependencyException>(() =>
-				addGroupTask.AsTask());
+			GroupDependencyException actualGroupDependencyException = 
+				 await Assert.ThrowsAsync<GroupDependencyException>(() =>
+					addGroupTask.AsTask());
+
+			actualGroupDependencyException.Should().BeEquivalentTo(
+				expectedGroupDependencyException);
 
 			this.dateTimeBrokerMock.Verify(broker =>
 				broker.GetCurrentDateTimeOffset(),
@@ -100,7 +109,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
-					expectedGroupDependencyValidationException))),
+					expectedGroupDependencyException))),
 						Times.Once);
 
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -122,7 +131,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 			var invalidGroupReferenceException =
 				new InvalidGroupReferenceException(foreignKeyConstraintConflictException);
 
-			var expectedGroupDependencyValidationException =
+			var expectedGroupDependencyException =
 				new GroupDependencyException(invalidGroupReferenceException);
 
 			this.dateTimeBrokerMock.Setup(broker =>
@@ -134,8 +143,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 				this.groupService.AddGroupAsync(someGroup);
 
 			// then
-			await Assert.ThrowsAsync<GroupDependencyException>(() =>
-				addGroupTask.AsTask());
+			GroupDependencyException actualGroupDependencyException = 
+				 await Assert.ThrowsAsync<GroupDependencyException>(() =>
+					addGroupTask.AsTask());
+
+			actualGroupDependencyException.Should().BeEquivalentTo(
+				expectedGroupDependencyException);
 
 			this.dateTimeBrokerMock.Verify(broker =>
 				broker.GetCurrentDateTimeOffset(),
@@ -143,7 +156,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
-					expectedGroupDependencyValidationException))),
+					expectedGroupDependencyException))),
 						Times.Once);
 
 			this.storageBrokerMock.Verify(broker =>
@@ -179,8 +192,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 				this.groupService.AddGroupAsync(someGroup);
 
 			// then
-			await Assert.ThrowsAsync<GroupDependencyException>(() =>
-			   addGroupTask.AsTask());
+			GroupDependencyException actualGroupDependencyException = 
+				 await Assert.ThrowsAsync<GroupDependencyException>(() =>
+					addGroupTask.AsTask());
+
+			actualGroupDependencyException.Should().BeEquivalentTo(
+				expectedGroupDependencyException);
 
 			this.dateTimeBrokerMock.Verify(broker =>
 				broker.GetCurrentDateTimeOffset(),
@@ -222,8 +239,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 				this.groupService.AddGroupAsync(someGroup);
 
 			// then
-			await Assert.ThrowsAsync<GroupServiceException>(() =>
-				addGroupTask.AsTask());
+			GroupServiceException actualGroupServiceException = 
+				 await Assert.ThrowsAsync<GroupServiceException>(() =>
+					addGroupTask.AsTask());
+
+			actualGroupServiceException.Should().BeEquivalentTo(
+				expectedGroupServiceException);
 
 			this.dateTimeBrokerMock.Verify(broker =>
 				broker.GetCurrentDateTimeOffset(),

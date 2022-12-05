@@ -81,8 +81,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					retrieveAllProfilesAction);
 
 			// then
-			actualProfileServiceException.Should()
-				.BeEquivalentTo(expectedProfileServiceException);
+			actualProfileServiceException.Should().BeEquivalentTo(
+				expectedProfileServiceException);
 
 			this.storageBrokerMock.Verify(broker =>
 				broker.SelectAllProfiles(),

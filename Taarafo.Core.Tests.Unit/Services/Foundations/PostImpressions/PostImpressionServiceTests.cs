@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
@@ -61,6 +62,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
+
+        private static IQueryable<PostImpression> CreateRandomPostImpressions()
+        {
+            return CreatePostImpressionFiller(dates: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber()).AsQueryable();
+        }
 
         private static PostImpression CreateRandomPostImpression() =>
             CreatePostImpressionFiller(dates: GetRandomDateTimeOffset()).Create();
