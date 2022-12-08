@@ -28,9 +28,7 @@ namespace Taarafo.Core.Services.Foundations.Events
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Event> AddEventAsync(Event @event) 
-        {
-            throw new System.NotImplementedException();
-        }
+        public async ValueTask<Event> AddEventAsync(Event @event) =>
+            await storageBroker.InsertEventAsync(@event);
     }
 }

@@ -25,10 +25,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             Event storageEvent = inputEvent;
             Event expectedEvent = storageEvent.DeepClone();
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                .Returns(randomDate);
-
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertEventAsync(inputEvent))
                 .ReturnsAsync(storageEvent);
@@ -39,13 +35,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             //then
             actualEvent.Should().BeEquivalentTo(expectedEvent);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
-
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertEventAsync(inputEvent), Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
