@@ -4,7 +4,6 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
-using RESTFulSense.Models;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
