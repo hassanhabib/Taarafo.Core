@@ -42,7 +42,10 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
         public async ValueTask<PostImpression> RemovePostImpressionByIdAsync(Guid postId, Guid profileId)
         {
-            throw new NotImplementedException();
+            PostImpression somePostImpression =
+                await this.storageBroker.SelectPostImpressionByIdsAsync(postId, profileId);
+
+            return await this.storageBroker.DeletePostImpressionAsync(somePostImpression);
         }
     }
 }
