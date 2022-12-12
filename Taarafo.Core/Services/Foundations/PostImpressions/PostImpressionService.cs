@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
@@ -38,5 +39,10 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
         public IQueryable<PostImpression> RetrieveAllPostImpressions() =>
            TryCatch(() => this.storageBroker.SelectAllPostImpressions());
+
+        public async ValueTask<PostImpression> RemovePostImpressionByIdAsync(Guid postId, Guid profileId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
