@@ -40,6 +40,22 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             }
         }
 
+        private void ValidatePostImpressionIds(Guid postId, Guid profileId)
+        {
+            if (postId == default)
+            {
+                throw new InvalidPostImpressionException(
+                    parameterName: nameof(PostImpression.PostId),
+                    parameterValue: postId);
+            }
+            else if(profileId == default)
+            {
+                throw new InvalidPostImpressionException(
+                    parameterName:nameof(PostImpression.ProfileId),
+                    parameterValue: profileId);
+            }
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,

@@ -18,7 +18,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
     public partial class PostImpressionServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnRemoveIfIdIsInvalidAndLogItAsync()
+        public async Task ShouldThrowValidatonExceptionOnRemoveWhenProfileIdIsInvalidAndLogItAsync()
         {
             //given
             Guid randomPostId= Guid.NewGuid();
@@ -27,8 +27,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             Guid inputProfileId= randomProfileId;
 
             var invalidPostImpressionException = new InvalidPostImpressionException(
-                    parameterName:nameof(PostImpression.PostId),
-                    parameterValue:inputPostId);
+                    parameterName:nameof(PostImpression.ProfileId),
+                    parameterValue:inputProfileId);
 
             var expectedPostImpressionValidationException =
                 new PostImpressionValidationException(invalidPostImpressionException);
