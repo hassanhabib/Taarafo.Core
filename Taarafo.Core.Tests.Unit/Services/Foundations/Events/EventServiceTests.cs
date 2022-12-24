@@ -5,6 +5,8 @@
 
 using System;
 using System.Linq.Expressions;
+using System.Runtime.Serialization;
+using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -37,6 +39,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException)  =>
             actualException => actualException.SameExceptionAs(expectedException);
+
+        private static SqlException CreateSqlException() =>
+            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+        
+
         private static Event CreateRandomEvent() =>
             CreateEventFiller(GetRandomDateTimeOffset()).Create();
 
