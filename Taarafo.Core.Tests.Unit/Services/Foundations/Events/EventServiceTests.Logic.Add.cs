@@ -27,7 +27,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
 
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertEventAsync(inputEvent))
-                .ReturnsAsync(storageEvent);
+                    .ReturnsAsync(storageEvent);
 
             //when
             Event actualEvent = await this.eventService.AddEventAsync(inputEvent);
