@@ -25,6 +25,10 @@ namespace Taarafo.Core.Services.Foundations.Events
             {
                 throw CreateAndLogValidationException(nullEventException);
             }
+            catch(InvalidEventException invalidEventException)
+            {
+                throw CreateAndLogValidationException(invalidEventException);
+            }
         }
 
         private EventValidationException CreateAndLogValidationException(Xeption exception)

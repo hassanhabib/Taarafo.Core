@@ -32,7 +32,7 @@ namespace Taarafo.Core.Services.Foundations.Events
         public ValueTask<Event> AddEventAsync(Event @event) =>
         TryCatch(async () =>
         {
-            ValidateEventNotNull(@event);
+            ValidateEvent(@event);
 
             return await storageBroker.InsertEventAsync(@event);
         });
