@@ -5,6 +5,7 @@
 
 using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.Events;
 using Taarafo.Core.Models.Events.Exceptions;
 using Xeptions;
@@ -29,6 +30,13 @@ namespace Taarafo.Core.Services.Foundations.Events
             {
                 throw CreateAndLogValidationException(invalidEventException);
             }
+            catch(SqlException sqlException)
+            {
+                var failedEventStorageException =
+                    new FailedEventStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedEventStorageException);
+            }
         }
 
         private EventValidationException CreateAndLogValidationException(Xeption exception)
@@ -37,6 +45,14 @@ namespace Taarafo.Core.Services.Foundations.Events
             this.loggingBroker.LogError(eventValidationException);
 
             return eventValidationException;
+        }
+
+        private EventDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
+        {
+            var eventDependencyException = new EventDependencyException(exception);
+            this.loggingBroker.LogCritical(eventDependencyException);
+
+            return eventDependencyException;
         }
     }
 }

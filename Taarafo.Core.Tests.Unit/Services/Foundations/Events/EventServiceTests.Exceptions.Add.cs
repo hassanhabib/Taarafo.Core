@@ -27,10 +27,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             var expectedEventDependencyException =
                 new EventDependencyException(failedEventStorageException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(sqlException);
-
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertEventAsync(It.IsAny<Event>()))
+                    .ThrowsAsync(sqlException);
+                    
             //when
             ValueTask<Event> addEventTask = this.eventService.AddEventAsync(someEvent);
 
@@ -41,20 +41,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             //then
             actualEventDependencyException.Should().BeEquivalentTo(expectedEventDependencyException);
 
-            this.dateTimeBrokerMock.Verify(broker => 
-                 broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+            this.storageBrokerMock.Verify(broker => 
+                broker.InsertEventAsync(It.IsAny<Event>()), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedEventDependencyException))), Times.Once);
 
-            this.storageBrokerMock.Verify(broker => 
-                broker.InsertEventAsync(It.IsAny<Event>()), Times.Never);
-
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
