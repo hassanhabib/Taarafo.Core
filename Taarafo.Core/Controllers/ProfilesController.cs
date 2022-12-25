@@ -57,7 +57,7 @@ namespace Taarafo.Core.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IQueryable<Profile>> GetAllProfiless()
+        public ActionResult<IQueryable<Profile>> GetAllProfiles()
         {
             try
             {
