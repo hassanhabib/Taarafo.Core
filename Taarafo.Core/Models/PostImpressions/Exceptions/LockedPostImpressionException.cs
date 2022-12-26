@@ -11,7 +11,7 @@ namespace Taarafo.Core.Models.PostImpressions.Exceptions
     public class LockedPostImpressionException : Xeption
     {
         public LockedPostImpressionException(Exception innerException)
-        : base(message: "Locked post impression record exception, please try again later", innerException)
+            : base(message: "Locked post impression record exception, please try again later", innerException)
         { }
     }
 }

@@ -33,11 +33,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             //when
             ValueTask<PostImpression> removePostImpressionTask =
-                    this.postImpressionService.RemovePostImpressionByIdAsync(inputPostId, inputProfileId);
+                this.postImpressionService.RemovePostImpressionByIdAsync(inputPostId, inputProfileId);
+
+            PostImpressionValidationException actualPostImpressionValidationException =
+                await Assert.ThrowsAsync<PostImpressionValidationException>(
+                    removePostImpressionTask.AsTask);
 
             //then
-            await Assert.ThrowsAsync<PostImpressionValidationException>(() =>
-                removePostImpressionTask.AsTask());
+            actualPostImpressionValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -76,9 +80,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             //when
             ValueTask<PostImpression> removePostImpressionTask =
-                 this.postImpressionService.RemovePostImpressionByIdAsync(inputPostId, inputProfileId);
+                this.postImpressionService.RemovePostImpressionByIdAsync(inputPostId, inputProfileId);
+
+            PostImpressionValidationException actualPostImpressionValidationException =
+                await Assert.ThrowsAsync<PostImpressionValidationException>(
+                    removePostImpressionTask.AsTask);
 
             //then
+            actualPostImpressionValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionValidationException);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostImpressionValidationException))), Times.Once);
