@@ -7,7 +7,9 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
+using Taarafo.Core.Models.Comments.Exceptions;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
 using Xunit;
@@ -100,6 +102,57 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedPostImpressionDependencyException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationOnRemoveIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        {
+            //given
+            Guid somePostId= Guid.NewGuid();
+            Guid someProfileId= Guid.NewGuid();
+
+            var databaseUpdateConcurrencyException =
+                new DbUpdateConcurrencyException();
+
+            var lockedPostImpressionException =
+                new LockedPostImpressionException(databaseUpdateConcurrencyException);
+
+            var expectedPostImpressionDependencyValidationException =
+                new PostImpressionDependencyValidationException(lockedPostImpressionException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostImpressionByIdsAsync(
+                    It.IsAny<Guid>(),
+                    It.IsAny<Guid>()))
+                        .ThrowsAsync(databaseUpdateConcurrencyException);
+
+            //when
+            ValueTask<PostImpression> removePostImpressionByIdTask =
+                this.postImpressionService.RemovePostImpressionByIdAsync(somePostId, someProfileId);
+
+            PostImpressionDependencyValidationException actualPostImpressionDependencyValidationException =
+                await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(
+                    removePostImpressionByIdTask.AsTask);
+
+            //then
+            actualPostImpressionDependencyValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionDependencyValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+               broker.SelectPostImpressionByIdsAsync(
+                   It.IsAny<Guid>(),
+                   It.IsAny<Guid>()), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostImpressionDependencyValidationException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeletePostImpressionAsync(It.IsAny<PostImpression>()), Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
