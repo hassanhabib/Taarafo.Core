@@ -100,7 +100,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         public async Task ShouldThrowNotFoundExceptionOnRemoveIdsPostImpressionIsNotFoundAndLogItAsync()
         {
             //given
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            DateTimeOffset randomDateTime = GetRandomDateTime();
             PostImpression randomPostImpression = CreateRandomPostImpression(randomDateTime);
             Guid inputPostId = randomPostImpression.PostId;
             Guid inputProfile = randomPostImpression.ProfileId;
@@ -117,7 +117,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                     .ReturnsAsync(nullStoragePostImpression);
 
             //when
-            ValueTask<PostImpression> removePostImpressionTask=
+            ValueTask<PostImpression> removePostImpressionTask =
                 this.postImpressionService.RemovePostImpressionByIdAsync(inputPostId, inputProfile);
 
             PostImpressionValidationException actualPostImpressionValidationException =
@@ -142,7 +142,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-
         }
     }
 }

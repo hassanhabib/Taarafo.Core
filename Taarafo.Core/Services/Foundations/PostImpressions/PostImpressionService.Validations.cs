@@ -56,6 +56,14 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             }
         }
 
+        private static void ValidateStoragePostImpression(PostImpression maybePostImpression, Guid postId,Guid profileId)
+        {
+            if(maybePostImpression is null)
+            {
+                throw new NotFoundPostImpressionException(postId, profileId);
+            }
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,

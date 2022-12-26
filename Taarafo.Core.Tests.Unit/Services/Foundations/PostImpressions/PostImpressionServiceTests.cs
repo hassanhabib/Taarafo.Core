@@ -57,8 +57,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
+        private static DateTimeOffset GetRandomDateTime() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
         private static PostImpression CreateRandomPostImpression(DateTimeOffset dates) =>
             CreatePostImpressionFiller(dates).Create();
+
+        private PostImpression CreateRandomPostImpression()=>
+            CreatePostImpressionFiller(DateTimeOffset.UtcNow).Create();
 
         private static int GetRandomNumber() =>
             new IntRange(min: 1, max: 10).GetValue();
@@ -68,9 +74,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             return CreatePostImpressionFiller(dates: GetRandomDateTimeOffset())
                 .Create(count: GetRandomNumber()).AsQueryable();
         }
-
-        private static PostImpression CreateRandomPostImpression() =>
-            CreatePostImpressionFiller(dates: GetRandomDateTimeOffset()).Create();
 
         private static SqlException GetSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
