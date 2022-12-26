@@ -17,6 +17,51 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
     public partial class PostImpressionServiceTests
     {
         [Fact]
+        public async Task ShouldThrowServiceExceptionOnDeleteWhenExceptionOccursAndLogItAsync()
+        {
+            //given
+            Guid somePostId = Guid.NewGuid();
+            Guid someProfileId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedPostImpressionServiceException =
+                new FailedPostImpressionServiceException(serviceException);
+
+            var expectedPostImpressionServiceException =
+                new PostImpressionServiceException(failedPostImpressionServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostImpressionByIdsAsync(
+                    It.IsAny<Guid>(),
+                    It.IsAny<Guid>())).ThrowsAsync(serviceException);
+
+            //when
+            ValueTask<PostImpression> deletePostImpressionTask =
+                 this.postImpressionService.RemovePostImpressionByIdAsync(somePostId, someProfileId);
+
+            PostImpressionServiceException actualPostImpressionServiceException =
+                await Assert.ThrowsAsync<PostImpressionServiceException>(
+                    deletePostImpressionTask.AsTask);
+
+            //then
+            actualPostImpressionServiceException.Should().BeEquivalentTo(
+                expectedPostImpressionServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostImpressionByIdsAsync(
+                    It.IsAny<Guid>(),
+                    It.IsAny<Guid>()), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostImpressionServiceException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
         public async Task ShouldThrowDependencyExceptionOnDeleteWhenSqlExceptionOccursAndLogItAsync()
         {
             //given
