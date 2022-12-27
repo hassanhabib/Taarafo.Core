@@ -14,20 +14,26 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 {
     public class GroupPostService : IGroupPostService
     {
-        private IStorageBroker storageBroker;
-        private IDateTimeBroker dateTimeBroker;
-        private ILoggingBroker loggingBroker;
+        private readonly IStorageBroker storageBroker;
+        private readonly IDateTimeBroker dateTimeBroker;
+        private readonly ILoggingBroker loggingBroker;
 
-        public GroupPostService(IStorageBroker storageBroker, IDateTimeBroker dateTimeBroker, ILoggingBroker loggingBroker)
+        public GroupPostService(
+            IStorageBroker storageBroker,
+            IDateTimeBroker dateTimeBroker,
+            ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
             this.dateTimeBroker = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<GroupPost> RetrieveGroupPostByIdAsync(Guid groupPostId)
+        public async ValueTask<GroupPost> RetrieveGroupPostByIdAsync(Guid groupPostId)
         {
-            throw new NotImplementedException();
+            GroupPost maybeGroupPost = await this.storageBroker
+                 .SelectGroupPostByIdAsync(groupPostId);
+
+            return maybeGroupPost;
         }
     }
 }
