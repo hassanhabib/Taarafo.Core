@@ -7,12 +7,10 @@ using System;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.GroupPosts;
 
-namespace Taarafo.Core.Brokers.Storages
+namespace Taarafo.Core.Services.Foundations.GroupPosts
 {
-    public partial interface IStorageBroker
+    public interface IGroupPostService
     {
-        ValueTask<GroupPost> InsertGroupPostAsync(GroupPost groupPost);
-        ValueTask<GroupPost> SelectGroupPostByIdAsync(Guid groupPostId);
-        ValueTask<GroupPost> DeleteGroupPostAsync(GroupPost groupPost);
+        ValueTask<GroupPost> RetrieveGroupPostByIdAsync(Guid groupPostId);
     }
 }
