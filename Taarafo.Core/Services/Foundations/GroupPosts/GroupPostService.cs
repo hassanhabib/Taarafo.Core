@@ -36,6 +36,8 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             GroupPost maybeGroupPost =
             await storageBroker.SelectGroupPostByIdAsync(groupPostId);
 
+            ValidateStorageGroupPost(maybeGroupPost, groupPostId);
+
             return maybeGroupPost;
         });
     }

@@ -35,6 +35,14 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             invalidGroupPostException.ThrowIfContainsErrors();
         }
 
+        private void ValidateStorageGroupPost(GroupPost maybeGroupPost, Guid groupPostId)
+        {
+            if (maybeGroupPost is null)
+            {
+                throw new NotFoundGroupPostException(groupPostId);
+            }
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == default,
