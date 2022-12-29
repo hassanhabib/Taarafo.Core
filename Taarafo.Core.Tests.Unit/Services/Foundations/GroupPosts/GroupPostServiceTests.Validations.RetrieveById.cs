@@ -55,5 +55,45 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfTeamIsNotFoundAndLogItAsync()
+        {
+            //given
+            Guid someGroupPostId = Guid.NewGuid();
+            GroupPost noGroupPost = null;
+
+            var notFoundGroupPostException =
+                new NotFoundGroupPostException(someGroupPostId);
+
+            var expectedGroupPostValidationException =
+                new GroupPostValidationException(notFoundGroupPostException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noGroupPost);
+
+            //when
+            ValueTask<GroupPost> retrieveGroupPostByIdTask =
+                this.groupPostService.RetrieveGroupPostByIdAsync(someGroupPostId);
+
+            GroupPostValidationException actualGroupPostValidationException =
+                await Assert.ThrowsAsync<GroupPostValidationException>(
+                    retrieveGroupPostByIdTask.AsTask);
+
+            // then
+            actualGroupPostValidationException.Should().BeEquivalentTo(expectedGroupPostValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()), Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupPostValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
