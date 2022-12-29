@@ -31,7 +31,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 values: "Id is required");
 
             var expectedGroupPostValidationException = new
-                Models.GroupPosts.Exceptions.GroupPostValidationException(invalidGroupPostException);
+                GroupPostValidationException(invalidGroupPostException);
 
             // when
             ValueTask<GroupPost> retrieveGroupPostByIdTask =

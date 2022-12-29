@@ -7,9 +7,9 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.GroupPosts.Exceptions
 {
-    public class NullTicketException : Xeption
+    public class NullGroupPostException : Xeption
     {
-        public NullTicketException()
+        public NullGroupPostException()
             : base(message: "GroupPost is null.")
         { }
     }

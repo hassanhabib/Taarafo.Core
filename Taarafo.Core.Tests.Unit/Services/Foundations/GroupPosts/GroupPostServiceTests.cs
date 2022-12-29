@@ -38,11 +38,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedExceptoin) =>
             actualException => actualException.SameExceptionAs(expectedExceptoin);
 
-        private static GroupPost CreateRandomGroupPost() =>
-            CreateGroupPostFiller(dates: GetRandomDateTimeOffset()).Create();
-
         private static DateTimeOffset GetRandomDateTimeOffset() =>
-             new DateTimeRange(earliestDate: new DateTime()).GetValue();
+             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
+
+        private static GroupPost CreateRandomGroupPost() =>
+            CreateGroupPostFiller(GetRandomDateTimeOffset()).Create();
 
         public static Filler<GroupPost> CreateGroupPostFiller(DateTimeOffset dates)
         {

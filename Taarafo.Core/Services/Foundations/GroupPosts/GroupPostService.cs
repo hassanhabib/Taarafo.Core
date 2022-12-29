@@ -12,7 +12,7 @@ using Taarafo.Core.Models.GroupPosts;
 
 namespace Taarafo.Core.Services.Foundations.GroupPosts
 {
-    public class GroupPostService : IGroupPostService
+    public partial class GroupPostService : IGroupPostService
     {
         private readonly IStorageBroker storageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
@@ -28,12 +28,15 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<GroupPost> RetrieveGroupPostByIdAsync(Guid groupPostId)
+        public ValueTask<GroupPost> RetrieveGroupPostByIdAsync(Guid groupPostId) =>
+        TryCatch(async () =>
         {
-            GroupPost maybeGroupPost = await this.storageBroker
-                 .SelectGroupPostByIdAsync(groupPostId);
+            ValidateGroupPostId(groupPostId);
+
+            GroupPost maybeGroupPost =
+            await storageBroker.SelectGroupPostByIdAsync(groupPostId);
 
             return maybeGroupPost;
-        }
+        });
     }
 }
