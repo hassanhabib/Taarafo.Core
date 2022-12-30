@@ -40,25 +40,17 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             }
         }
 
-        private void ValidatePostImpressionIds(Guid postId, Guid profileId)
+        private static void ValidatePostImpressionOnRemove(Guid postId, Guid profileId)
         {
-            if (postId == default)
-            {
-                throw new InvalidPostImpressionException(
-                    parameterName: nameof(PostImpression.PostId),
-                    parameterValue: postId);
-            }
-            else if(profileId == default)
-            {
-                throw new InvalidPostImpressionException(
-                    parameterName:nameof(PostImpression.ProfileId),
-                    parameterValue: profileId);
-            }
+
+            Validate(
+                (Rule: IsInvalid(postId), Parameter: nameof(PostImpression.PostId)),
+                (Rule: IsInvalid(profileId), Parameter: nameof(PostImpression.ProfileId)));
         }
 
-        private static void ValidateStoragePostImpression(PostImpression maybePostImpression, Guid postId,Guid profileId)
+        private static void ValidateStoragePostImpression(PostImpression maybePostImpression, Guid postId, Guid profileId)
         {
-            if(maybePostImpression is null)
+            if (maybePostImpression is null)
             {
                 throw new NotFoundPostImpressionException(postId, profileId);
             }

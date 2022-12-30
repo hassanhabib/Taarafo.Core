@@ -19,14 +19,19 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         public async Task ShouldThrowValidatonExceptionOnRemoveWhenProfileIdIsInvalidAndLogItAsync()
         {
             //given
-            Guid randomPostId = Guid.NewGuid();
+            Guid randomPostId = default;
             Guid randomProfileId = default;
             Guid inputPostId = randomPostId;
             Guid inputProfileId = randomProfileId;
+            var invalidPostImpressionException = new InvalidPostImpressionException();
 
-            var invalidPostImpressionException = new InvalidPostImpressionException(
-                    parameterName: nameof(PostImpression.ProfileId),
-                    parameterValue: inputProfileId);
+            invalidPostImpressionException.AddData(
+                key: nameof(PostImpression.PostId),
+                values: "Id is required");
+
+            invalidPostImpressionException.AddData(
+                key: nameof(PostImpression.ProfileId),
+                values: "Id is required");
 
             var expectedPostImpressionValidationException =
                 new PostImpressionValidationException(invalidPostImpressionException);
@@ -56,51 +61,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             this.storageBrokerMock.Verify(broker =>
                 broker.DeletePostImpressionAsync(
                     It.IsAny<PostImpression>()), Times.Never);
-
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async Task ShouldThrowValidatonExceptionOnRemoveWhenPostIdIsInvalidAndLogItAsync()
-        {
-            //given
-            Guid randomProfileId = Guid.NewGuid();
-            Guid randomPostId = default;
-            Guid inputPostId = randomPostId;
-            Guid inputProfileId = randomProfileId;
-
-            var invalidPostImpressionException = new InvalidPostImpressionException(
-                parameterName: nameof(PostImpression.PostId),
-                parameterValue: inputPostId);
-
-            var expectedPostImpressionValidationException =
-                new PostImpressionValidationException(invalidPostImpressionException);
-
-            //when
-            ValueTask<PostImpression> removePostImpressionTask =
-                this.postImpressionService.RemovePostImpressionByIdAsync(inputPostId, inputProfileId);
-
-            PostImpressionValidationException actualPostImpressionValidationException =
-                await Assert.ThrowsAsync<PostImpressionValidationException>(
-                    removePostImpressionTask.AsTask);
-
-            //then
-            actualPostImpressionValidationException.Should().BeEquivalentTo(
-                expectedPostImpressionValidationException);
-
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionValidationException))), Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(It.IsAny<Guid>(), It.IsAny<Guid>()),
-                    Times.Never);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.DeletePostImpressionAsync(It.IsAny<PostImpression>()),
-                    Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();

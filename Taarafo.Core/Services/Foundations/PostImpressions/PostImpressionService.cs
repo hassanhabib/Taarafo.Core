@@ -43,7 +43,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
         public ValueTask<PostImpression> RemovePostImpressionByIdAsync(Guid postId, Guid profileId) =>
             TryCatch(async () =>
             {
-                ValidatePostImpressionIds(postId, profileId);
+                ValidatePostImpressionOnRemove(postId, profileId);
 
                 PostImpression somePostImpression =
                     await this.storageBroker.SelectPostImpressionByIdsAsync(postId, profileId);
