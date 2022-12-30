@@ -7,58 +7,27 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Taarafo.Core.Models.Posts;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-	public partial class StorageBroker
-	{
-		public DbSet<Post> Posts { get; set; }
+    public partial class StorageBroker
+    {
+        public DbSet<Post> Posts { get; set; }
 
-		public async ValueTask<Post> InsertPostAsync(Post post) =>
-			await InsertAsync(post);
+        public async ValueTask<Post> InsertPostAsync(Post post) =>
+            await InsertAsync(post);
 
-		public IQueryable<Post> SelectAllPosts()
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
+        public IQueryable<Post> SelectAllPosts() =>
+            SelectAll<Post>();
 
-			return broker.Posts;
-		}
+        public async ValueTask<Post> SelectPostByIdAsync(Guid postId) =>
+            await SelectAsync<Post>(postId);
 
-		public async ValueTask<Post> SelectPostByIdAsync(Guid postId)
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
+        public async ValueTask<Post> UpdatePostAsync(Post post) =>
+            await UpdateAsync(post);
 
-			return await broker.Posts.FindAsync(postId);
-		}
-
-		public async ValueTask<Post> UpdatePostAsync(Post post)
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
-
-			EntityEntry<Post> postEntityEntry =
-				broker.Posts.Update(post);
-
-			await broker.SaveChangesAsync();
-
-			return postEntityEntry.Entity;
-		}
-
-		public async ValueTask<Post> DeletePostAsync(Post post)
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
-
-			EntityEntry<Post> postEntityEntry =
-				broker.Posts.Remove(post);
-
-			await broker.SaveChangesAsync();
-
-			return postEntityEntry.Entity;
-		}
-	}
+        public async ValueTask<Post> DeletePostAsync(Post post) =>
+            await DeleteAsync(post);
+    }
 }
