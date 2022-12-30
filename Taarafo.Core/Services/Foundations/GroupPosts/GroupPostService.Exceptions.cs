@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.GroupPosts;
@@ -36,6 +37,21 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 
                 throw CreateAndLogCriticalDependencyException(failedGroupPostStorageException);
             }
+            catch (Exception serviceException)
+            {
+                var failedServiceGroupPostException =
+                    new FailedGroupPostServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedServiceGroupPostException);
+            }
+        }
+
+        private GroupPostServiceException CreateAndLogServiceException(Xeption exception)
+        {
+            var groupPostServiceException = new GroupPostServiceException(exception);
+            this.loggingBroker.LogError(groupPostServiceException);
+
+            return groupPostServiceException;
         }
 
         private GroupPostValidationException CreateAndLogValidationException(Xeption exception)
