@@ -13,6 +13,7 @@ namespace Taarafo.Core.Brokers.Storages
     {
         ValueTask<GroupPost> InsertGroupPostAsync(GroupPost groupPost);
         IQueryable<GroupPost> SelectAllGroupPosts();
+        ValueTask<GroupPost> UpdateGroupPostAsync(GroupPost groupPost);
         ValueTask<GroupPost> DeleteGroupPostAsync(GroupPost groupPost);
     }
 }
