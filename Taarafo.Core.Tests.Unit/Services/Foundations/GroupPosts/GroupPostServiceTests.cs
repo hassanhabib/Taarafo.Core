@@ -18,6 +18,7 @@ using Tynamix.ObjectFiller;
 using Xeptions;
 using Taarafo.Core.Models.Groups;
 using Taarafo.Core.Models.Posts;
+using System.Linq;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 {
@@ -41,8 +42,20 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         private static int GetRandomNumber() =>
             new IntRange(min: 1, max: 10).GetValue();
 
+        private static GroupPost CreateRandomGroupPost(DateTimeOffset dates) =>
+            CreateGroupPostFiller(dates).Create();
+
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+            new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
+
         private static GroupPost CreateRandomGroupPost() =>
-            CreateGroupPostFiller().Create();
+            CreateGroupPostFiller(GetRandomDateTimeOffset()).Create();
+
+        private static IQueryable<GroupPost> CreateRandomGroupPosts()
+        {
+            return CreateGroupPostFiller( GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber()).AsQueryable();
+        }
 
         private static SqlException GetSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
@@ -53,14 +66,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
 
-        private static Filler<GroupPost> CreateGroupPostFiller()
+        private static Filler<GroupPost> CreateGroupPostFiller(DateTimeOffset dates)
         {
             var filler = new Filler<GroupPost>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().IgnoreIt()
-                .OnType<Group>().IgnoreIt()
-                .OnType<Post>().IgnoreIt();
+                .OnType<DateTimeOffset>().Use(dates);
 
             return filler;
         }

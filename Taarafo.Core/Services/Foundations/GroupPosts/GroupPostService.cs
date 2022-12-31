@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
@@ -29,5 +30,8 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 
             return await this.storageBroker.InsertGroupPostAsync(groupPost);
         });
+
+        public IQueryable<GroupPost> RetrieveAllGroupPosts() =>
+            throw new System.NotImplementedException();
     }
 }
