@@ -43,7 +43,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                     removeGroupPostByIdTask.AsTask);
 
             // then
-            actualGroupPostValidationException.Should().BeEquivalentTo(expectedGroupPostValidationException);
+            actualGroupPostValidationException.Should()
+                .BeEquivalentTo(expectedGroupPostValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -84,7 +85,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                     removeGroupPostByIdTask.AsTask);
 
             // then
-            actualGroupPostValidationException.Should().BeEquivalentTo(expectedGroupPostValidationException);
+            actualGroupPostValidationException.Should()
+                .BeEquivalentTo(expectedGroupPostValidationException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()),

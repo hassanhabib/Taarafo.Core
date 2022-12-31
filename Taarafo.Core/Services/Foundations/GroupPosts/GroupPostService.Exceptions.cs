@@ -34,6 +34,10 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             {
                 throw CreateAndLogValidationException(invalidGroupPostException);
             }
+            catch (NotFoundGroupPostException notFoundGroupPostException)
+            {
+                throw CreateAndLogValidationException(notFoundGroupPostException);
+            }
             catch (SqlException sqlException)
             {
                 var failedGroupPostStorageException =
@@ -52,7 +56,8 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             }
             catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
-                var lockedGroupPostException = new LockedGroupPostException(dbUpdateConcurrencyException);
+                var lockedGroupPostException = 
+                    new LockedGroupPostException(dbUpdateConcurrencyException);
 
                 throw CreateAndDependencyValidationException(lockedGroupPostException);
             }
