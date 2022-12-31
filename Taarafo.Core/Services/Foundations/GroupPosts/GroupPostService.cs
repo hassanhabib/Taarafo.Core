@@ -44,6 +44,8 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             GroupPost maybeGroupPost = await this.storageBroker
                 .SelectGroupPostByIdAsync(groupPostId);
 
+            ValidateStorageGroupPostExists(maybeGroupPost, groupPostId);
+
             return await this.storageBroker.DeleteGroupPostAsync(maybeGroupPost);
         });
     }
