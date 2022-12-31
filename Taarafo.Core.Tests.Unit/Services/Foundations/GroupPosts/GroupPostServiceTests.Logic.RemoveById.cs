@@ -19,8 +19,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         public async Task ShouldRemoveGroupPostByIdAsync()
         {
             // given
-            Guid randomId = Guid.NewGuid();
-            Guid inputGroupPostId = randomId;
+            Guid randomGroupId = Guid.NewGuid();
+            Guid randomPostId = Guid.NewGuid();
+            Guid inputGroupId = randomGroupId;
+            Guid inputPostId = randomPostId;
             GroupPost randomGroupPost = CreateRandomGroupPost();
             GroupPost storageGroupPost = randomGroupPost;
             GroupPost expectedInputGroupPost = storageGroupPost;
@@ -28,7 +30,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             GroupPost expectedGroupPost = deletedGroupPost.DeepClone();
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectGroupPostByIdAsync(inputGroupPostId))
+                broker.SelectGroupPostByIdAsync(inputGroupId, inputPostId))
                     .ReturnsAsync(storageGroupPost);
 
             this.storageBrokerMock.Setup(broker =>
@@ -37,13 +39,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
             // when
             GroupPost actualGroupPost = await this.groupPostService
-                .RemoveGroupPostByIdAsync(inputGroupPostId);
+                .RemoveGroupPostByIdAsync(inputGroupId, inputPostId);
 
             // then
             actualGroupPost.Should().BeEquivalentTo(expectedGroupPost);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(inputGroupPostId), Times.Once);
+                broker.SelectGroupPostByIdAsync(inputGroupId, inputPostId), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.DeleteGroupPostAsync(expectedInputGroupPost), Times.Once);

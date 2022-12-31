@@ -21,7 +21,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         public async Task ShouldThrowDependencyValidationOnRemoveIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
         {
             // given
-            Guid someGroupPostId = Guid.NewGuid();
+            Guid groupId = Guid.NewGuid();
+            Guid postId = Guid.NewGuid();
 
             var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
 
@@ -32,12 +33,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 new GroupPostDependencyValidationException(lockedGroupPostException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()))
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>()))
                     .ThrowsAsync(databaseUpdateConcurrencyException);
 
             // when
             ValueTask<GroupPost> removeGroupPostByIdTask =
-                this.groupPostService.RemoveGroupPostByIdAsync(someGroupPostId);
+                this.groupPostService.RemoveGroupPostByIdAsync(groupId, postId);
 
             GroupPostDependencyValidationException actualGroupPostDependencyValidationException =
                 await Assert.ThrowsAsync<GroupPostDependencyValidationException>(
@@ -48,7 +49,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 expectedGroupPostDependencyValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()),
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -68,7 +69,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         public async Task ShouldThrowDependencyExceptionOnDeleteWhenSqlExceptionOccursAndLogItAsync()
         {
             // given
-            Guid someGroupPostId = Guid.NewGuid();
+            Guid groupId = Guid.NewGuid();
+            Guid postId = Guid.NewGuid();
             SqlException sqlException = GetSqlException();
 
             var failedGroupPostStorageException =
@@ -78,12 +80,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 new GroupPostDependencyException(failedGroupPostStorageException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()))
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>()))
                     .ThrowsAsync(sqlException);
 
             // when
             ValueTask<GroupPost> deleteGroupPostTask =
-                this.groupPostService.RemoveGroupPostByIdAsync(someGroupPostId);
+                this.groupPostService.RemoveGroupPostByIdAsync(groupId, postId);
 
             GroupPostDependencyException actualGroupPostDependencyException =
                 await Assert.ThrowsAsync<GroupPostDependencyException>(
@@ -94,7 +96,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 expectedGroupPostDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()),
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -110,7 +112,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         public async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
         {
             // given
-            Guid someGroupPostId = Guid.NewGuid();
+            Guid groupId = Guid.NewGuid();
+            Guid postId = Guid.NewGuid();
             var serviceException = new Exception();
 
             var failedGroupPostServiceException =
@@ -120,12 +123,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 new GroupPostServiceException(failedGroupPostServiceException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()))
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>()))
                     .ThrowsAsync(serviceException);
 
             // when
             ValueTask<GroupPost> removeGroupPostByIdTask =
-                this.groupPostService.RemoveGroupPostByIdAsync(someGroupPostId);
+                this.groupPostService.RemoveGroupPostByIdAsync(groupId, postId);
 
             GroupPostServiceException actualGroupPostServiceException =
                 await Assert.ThrowsAsync<GroupPostServiceException>(
@@ -136,7 +139,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 expectedGroupPostServiceException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()),
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>

@@ -10,8 +10,8 @@ namespace Taarafo.Core.Models.GroupPosts.Exceptions
 {
     public class NotFoundGroupPostException : Xeption
     {
-        public NotFoundGroupPostException(Guid groupPostId)
-            : base(message: $"Couldn't find groupPost with id: {groupPostId}.")
+        public NotFoundGroupPostException(Guid groupId, Guid postId)
+            : base(message: $"Couldn't find groupPost with id: {groupId}, {postId}.")
         { }
     }
 }

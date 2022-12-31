@@ -6,7 +6,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.GroupPosts;
@@ -26,27 +25,27 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
         }
 
         public ValueTask<GroupPost> AddGroupPostAsync(GroupPost groupPost) =>
-        TryCatch(async () =>
-        {
-            ValidateGroupPostOnAdd(groupPost);
+            TryCatch(async () =>
+            {
+                ValidateGroupPostOnAdd(groupPost);
 
-            return await this.storageBroker.InsertGroupPostAsync(groupPost);
-        });
+                return await this.storageBroker.InsertGroupPostAsync(groupPost);
+            });
 
         public IQueryable<GroupPost> RetrieveAllGroupPosts() =>
-        TryCatch(() => this.storageBroker.SelectAllGroupPosts());
+            TryCatch(() => this.storageBroker.SelectAllGroupPosts());
 
-        public ValueTask<GroupPost> RemoveGroupPostByIdAsync(Guid groupPostId) =>
-        TryCatch(async () =>
-        {
-            ValidateGroupPostId(groupPostId);
+        public ValueTask<GroupPost> RemoveGroupPostByIdAsync(Guid groupId, Guid postId) =>
+            TryCatch(async () =>
+            {
+                ValidateGroupPostId(groupId, postId);
 
-            GroupPost maybeGroupPost = await this.storageBroker
-                .SelectGroupPostByIdAsync(groupPostId);
+                GroupPost maybeGroupPost =
+                    await this.storageBroker.SelectGroupPostByIdAsync(groupId, postId);
 
-            ValidateStorageGroupPostExists(maybeGroupPost, groupPostId);
+                ValidateStorageGroupPostExists(maybeGroupPost, groupId, postId);
 
-            return await this.storageBroker.DeleteGroupPostAsync(maybeGroupPost);
-        });
+                return await this.storageBroker.DeleteGroupPostAsync(maybeGroupPost);
+            });
     }
 }
