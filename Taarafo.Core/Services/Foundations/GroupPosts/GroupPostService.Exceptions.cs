@@ -85,6 +85,12 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 
                 throw CreateAndLogCriticalDependencyException(failedGroupPostStorageException);
             }
+            catch (Exception serviceException)
+            {
+                var failedGroupPostServiceException = new FailedGroupPostServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedGroupPostServiceException);
+            }
         }
 
         private GroupPostValidationException CreateAndLogValidationException(
