@@ -4,21 +4,18 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
-using Microsoft.Data.SqlClient;
 using System.Runtime.Serialization;
+using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Services.Foundations.GroupPosts;
-using Taarafo.Core.Services.Foundations.Groups;
 using Tynamix.ObjectFiller;
 using Xeptions;
-using Taarafo.Core.Models.Groups;
-using Taarafo.Core.Models.Posts;
-using System.Linq;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 {
@@ -42,6 +39,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         private static int GetRandomNumber() =>
             new IntRange(min: 1, max: 10).GetValue();
 
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
+
         private static GroupPost CreateRandomGroupPost(DateTimeOffset dates) =>
             CreateGroupPostFiller(dates).Create();
 
@@ -53,13 +53,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
         private static IQueryable<GroupPost> CreateRandomGroupPosts()
         {
-            return CreateGroupPostFiller( GetRandomDateTimeOffset())
+            return CreateGroupPostFiller(GetRandomDateTimeOffset())
                 .Create(count: GetRandomNumber()).AsQueryable();
         }
 
         private static SqlException GetSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
-        
+
         private static string GetRandomMessage() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 

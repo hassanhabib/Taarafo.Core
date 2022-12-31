@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -17,6 +18,7 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
     public partial class GroupPostService
     {
         private delegate ValueTask<GroupPost> ReturningPostFuntion();
+        private delegate IQueryable<GroupPost> ReturningGroupPostsFunction();
 
         private async ValueTask<GroupPost> TryCatch(ReturningPostFuntion returningPostFuntion)
         {
@@ -68,6 +70,20 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
                     new FailedGroupPostServiceException(exception);
 
                 throw CreateAndLogServiceException(failedGroupPostServiceException);
+            }
+        }
+
+        private IQueryable<GroupPost> TryCatch(ReturningGroupPostsFunction returningGroupPostsFunction)
+        {
+            try
+            {
+                return returningGroupPostsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedGroupPostStorageException = new FailedGroupPostStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedGroupPostStorageException);
             }
         }
 

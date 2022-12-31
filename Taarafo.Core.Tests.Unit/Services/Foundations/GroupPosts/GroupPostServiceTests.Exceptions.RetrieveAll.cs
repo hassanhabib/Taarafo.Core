@@ -37,7 +37,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 Assert.Throws<GroupPostDependencyException>(retrieveAllGroupPostsAction);
 
             //then
-            actualGroupPostDependencyException.Should().BeEquivalentTo(expectedGroupPostDependencyException);
+            actualGroupPostDependencyException.Should().BeEquivalentTo(
+                expectedGroupPostDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllGroupPosts(), Times.Once);
@@ -45,6 +46,43 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedGroupPostDependencyException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ShouldThrowServiceExceptionOnRetrieveAllWhenAllServiceErrorOccursAndLogIt()
+        {
+            //given
+            string exceptionMessage = GetRandomString();
+            var serviceException = new Exception(exceptionMessage);
+
+            var failedGroupPostServiceException =
+                new FailedGroupPostServiceException(serviceException);
+
+            var expectedGroupPostServiceException =
+                new GroupPostServiceException(failedGroupPostServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAllGroupPosts()).Throws(serviceException);
+
+            //when
+            Action retrieveAllGroupPostAction = () =>
+                this.groupPostService.RetrieveAllGroupPosts();
+
+            GroupPostServiceException actualGroupPostServiceException =
+                Assert.Throws<GroupPostServiceException>(retrieveAllGroupPostAction);
+
+            //then
+            actualGroupPostServiceException.Should().BeEquivalentTo(expectedGroupPostServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllGroupPosts(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupPostServiceException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

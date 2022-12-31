@@ -32,6 +32,6 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
         });
 
         public IQueryable<GroupPost> RetrieveAllGroupPosts() =>
-            this.storageBroker.SelectAllGroupPosts();
+         TryCatch(() => this.storageBroker.SelectAllGroupPosts());
     }
 }
