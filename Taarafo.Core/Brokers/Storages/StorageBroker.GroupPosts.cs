@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,10 @@ namespace Taarafo.Core.Brokers.Storages
 
         public IQueryable<GroupPost> SelectAllGroupPosts() =>
             SelectAll<GroupPost>();
-
+        
+        public async ValueTask<GroupPost> SelectGroupPostByIdAsync(Guid groupPostId) =>
+            await SelectAsync<GroupPost>(groupPostId);
+            
         public async ValueTask<GroupPost> UpdateGroupPostAsync(GroupPost groupPost) =>
             await UpdateAsync(groupPost);
             
