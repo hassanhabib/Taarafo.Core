@@ -6,7 +6,7 @@
 using System;
 using Xeptions;
 
-namespace Tarteeb.Api.Models.Teams.Exceptions
+namespace Taarafo.Core.Models.GroupPosts.Exceptions
 {
     public class LockedGroupPostException : Xeption
     {

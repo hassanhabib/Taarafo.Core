@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Models.GroupPosts.Exceptions;
-using Tarteeb.Api.Models.Teams.Exceptions;
 using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
@@ -62,7 +61,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
