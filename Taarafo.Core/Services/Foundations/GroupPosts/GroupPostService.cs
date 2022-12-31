@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.GroupPosts;
@@ -35,7 +36,12 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
         public IQueryable<GroupPost> RetrieveAllGroupPosts() =>
         TryCatch(() => this.storageBroker.SelectAllGroupPosts());
 
-        public ValueTask<GroupPost> RemoveGroupPostByIdAsync(Guid groupPostId) =>
-            throw new NotImplementedException();
+        public async ValueTask<GroupPost> RemoveGroupPostByIdAsync(Guid groupPostId) 
+        {
+            GroupPost maybeGroupPost = await this.storageBroker
+                .SelectGroupPostByIdAsync(groupPostId);
+
+            return await this.storageBroker.DeleteGroupPostAsync(maybeGroupPost);
+        }
     }
 }
