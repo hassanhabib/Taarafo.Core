@@ -17,25 +17,10 @@ namespace Taarafo.Core.Brokers.Storages
         public async ValueTask<GroupPost> InsertGroupPostAsync(GroupPost groupPost) =>
             await InsertAsync(groupPost);
 
-			EntityEntry<GroupPost> groupPostEntityEntry =
-				await broker.GroupPosts.AddAsync(groupPost);
+        public IQueryable<GroupPost> SelectAllGroupPosts() =>
+            SelectAll<GroupPost>();
 
-			await broker.SaveChangesAsync();
-
-			return groupPostEntityEntry.Entity;
-		}
-
-		public async ValueTask<GroupPost> DeleteGroupPostAsync(GroupPost groupPost)
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
-
-			EntityEntry<GroupPost> groupPostEntityEntry =
-				broker.GroupPosts.Remove(groupPost);
-
-			await broker.SaveChangesAsync();
-
-			return groupPostEntityEntry.Entity;
-		}
-	}
+        public async ValueTask<GroupPost> DeleteGroupPostAsync(GroupPost groupPost) =>
+            await DeleteAsync(groupPost);
+    }
 }
