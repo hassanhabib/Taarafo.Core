@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Taarafo.Core.Models.GroupPosts;
@@ -58,6 +59,48 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.storageBrokerMock.Verify(broker =>
                 broker.DeleteGroupPostAsync(It.IsAny<GroupPost>()),
                     Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnDeleteWhenSqlExceptionOccursAndLogItAsync()
+        {
+            // given
+            Guid someGroupPostId = Guid.NewGuid();
+            SqlException sqlException = GetSqlException();
+
+            var failedGroupPostStorageException =
+                new FailedGroupPostStorageException(sqlException);
+
+            var expectedGroupPostDependencyException =
+                new GroupPostDependencyException(failedGroupPostStorageException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(sqlException);
+
+            // when
+            ValueTask<GroupPost> deleteGroupPostTask =
+                this.groupPostService.RemoveGroupPostByIdAsync(someGroupPostId);
+
+            GroupPostDependencyException actualGroupPostDependencyException =
+                await Assert.ThrowsAsync<GroupPostDependencyException>(
+                    deleteGroupPostTask.AsTask);
+
+            // then
+            actualGroupPostDependencyException.Should().BeEquivalentTo(
+                expectedGroupPostDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()), 
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedGroupPostDependencyException))), 
+                        Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
