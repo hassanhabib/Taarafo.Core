@@ -94,12 +94,54 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 expectedGroupPostDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()), 
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedGroupPostDependencyException))), 
+                    expectedGroupPostDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
+        {
+            // given
+            Guid someGroupPostId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedGroupPostServiceException =
+                new FailedGroupPostServiceException(serviceException);
+
+            var expectedGroupPostServiceException =
+                new GroupPostServiceException(failedGroupPostServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<GroupPost> removeGroupPostByIdTask =
+                this.groupPostService.RemoveGroupPostByIdAsync(someGroupPostId);
+
+            GroupPostServiceException actualGroupPostServiceException =
+                await Assert.ThrowsAsync<GroupPostServiceException>(
+                    removeGroupPostByIdTask.AsTask);
+
+            // then
+            actualGroupPostServiceException.Should().BeEquivalentTo(
+                expectedGroupPostServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupPostServiceException))),
                         Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
