@@ -40,15 +40,15 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
         public IQueryable<PostImpression> RetrieveAllPostImpressions() =>
            TryCatch(() => this.storageBroker.SelectAllPostImpressions());
 
-        public ValueTask<PostImpression> RemovePostImpressionByIdAsync(Guid postId, Guid profileId) =>
+        public ValueTask<PostImpression> RemovePostImpressionAsync(PostImpression postImpression) =>
             TryCatch(async () =>
             {
-                ValidatePostImpressionOnRemove(postId, profileId);
+                ValidatePostImpressionOnRemove(postImpression);
 
                 PostImpression somePostImpression =
-                    await this.storageBroker.SelectPostImpressionByIdsAsync(postId, profileId);
+                    await this.storageBroker.SelectPostImpressionByIdsAsync(postImpression.PostId, postImpression.ProfileId);
 
-                ValidateStoragePostImpression(somePostImpression,postId, profileId);
+                ValidateStoragePostImpression(somePostImpression,postImpression.PostId, postImpression.ProfileId);
 
                 return await this.storageBroker.DeletePostImpressionAsync(somePostImpression);
             });

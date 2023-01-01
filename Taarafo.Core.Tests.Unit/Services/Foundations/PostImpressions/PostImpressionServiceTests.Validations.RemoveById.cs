@@ -38,7 +38,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             //when
             ValueTask<PostImpression> removePostImpressionTask =
-                this.postImpressionService.RemovePostImpressionByIdAsync(inputPostId, inputProfileId);
+                this.postImpressionService.RemovePostImpressionAsync(inputPostId, inputProfileId);
 
             PostImpressionValidationException actualPostImpressionValidationException =
                 await Assert.ThrowsAsync<PostImpressionValidationException>(
@@ -89,7 +89,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             //when
             ValueTask<PostImpression> removePostImpressionTask =
-                this.postImpressionService.RemovePostImpressionByIdAsync(inputPostId, inputProfile);
+                this.postImpressionService.RemovePostImpressionAsync(inputPostId, inputProfile);
 
             PostImpressionValidationException actualPostImpressionValidationException =
                 await Assert.ThrowsAsync<PostImpressionValidationException>(
