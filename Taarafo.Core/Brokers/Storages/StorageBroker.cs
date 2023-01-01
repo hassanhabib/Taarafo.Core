@@ -52,7 +52,7 @@ namespace Taarafo.Core.Brokers.Storages
 		private async ValueTask<T> DeleteAsync<T>(T @object)
 		{
 			var broker = new StorageBroker(this.configuration);
-			broker.Entry(@object).State-= EntityState.Deleted;
+			broker.Entry(@object).State = EntityState.Deleted;
 			await broker.SaveChangesAsync();
 
 			return @object;
@@ -67,11 +67,11 @@ namespace Taarafo.Core.Brokers.Storages
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             string connectionString = this.configuration.GetConnectionString(name: "DefaultConnection");
+            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             optionsBuilder.UseSqlServer(connectionString);
         }
 
-        public override void Dispose() { }
-	}
+        public override void Dispose() {}
+    }
 }

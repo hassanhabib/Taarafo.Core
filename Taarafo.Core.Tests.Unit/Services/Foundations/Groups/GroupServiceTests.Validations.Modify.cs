@@ -26,7 +26,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
 			// when
 			ValueTask<Group> modifyGroupTask =
-				this.groupService.UpdateGroupAsync(nullGroup);
+				this.groupService.ModifyGroupAsync(nullGroup);
 
 			// then
 			await Assert.ThrowsAsync<GroupValidationException>(() =>
@@ -101,7 +101,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
 			// when
 			ValueTask<Group> updateGroupTask =
-				this.groupService.UpdateGroupAsync(invalidGroup);
+				this.groupService.ModifyGroupAsync(invalidGroup);
 
 			// then
 			await Assert.ThrowsAsync<GroupValidationException>(() =>
@@ -147,7 +147,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
 			// when
 			ValueTask<Group> updateGroupTask =
-				this.groupService.UpdateGroupAsync(invalidGroup);
+				this.groupService.ModifyGroupAsync(invalidGroup);
 
 			// then
 			await Assert.ThrowsAsync<GroupValidationException>(() =>
@@ -197,7 +197,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
 			// when
 			ValueTask<Group> modifyGroupTask =
-				this.groupService.UpdateGroupAsync(inputGroup);
+				this.groupService.ModifyGroupAsync(inputGroup);
 
 			// then
 			await Assert.ThrowsAsync<GroupValidationException>(() =>
@@ -252,7 +252,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
 			// when 
 			ValueTask<Group> modifyGroupTask =
-				this.groupService.UpdateGroupAsync(nonExistGroup);
+				this.groupService.ModifyGroupAsync(nonExistGroup);
 
 			// then
 			await Assert.ThrowsAsync<GroupValidationException>(() =>

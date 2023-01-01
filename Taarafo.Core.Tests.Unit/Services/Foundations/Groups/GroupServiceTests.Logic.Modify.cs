@@ -42,7 +42,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
 			// when
 			Group actualGroup =
-				await this.groupService.UpdateGroupAsync(inputGroup);
+				await this.groupService.ModifyGroupAsync(inputGroup);
 
 			// then
 			actualGroup.Should().BeEquivalentTo(expectedGroup);

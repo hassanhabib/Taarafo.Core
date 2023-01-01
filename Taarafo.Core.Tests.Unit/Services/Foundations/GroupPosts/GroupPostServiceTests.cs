@@ -4,20 +4,18 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
-using Microsoft.Data.SqlClient;
 using System.Runtime.Serialization;
+using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Services.Foundations.GroupPosts;
-using Taarafo.Core.Services.Foundations.Groups;
 using Tynamix.ObjectFiller;
 using Xeptions;
-using Taarafo.Core.Models.Groups;
-using Taarafo.Core.Models.Posts;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 {
@@ -41,26 +39,39 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         private static int GetRandomNumber() =>
             new IntRange(min: 1, max: 10).GetValue();
 
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
+
+        private static GroupPost CreateRandomGroupPost(DateTimeOffset dates) =>
+            CreateGroupPostFiller(dates).Create();
+
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+            new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
+
         private static GroupPost CreateRandomGroupPost() =>
-            CreateGroupPostFiller().Create();
+            CreateGroupPostFiller(GetRandomDateTimeOffset()).Create();
+
+        private static IQueryable<GroupPost> CreateRandomGroupPosts()
+        {
+            return CreateGroupPostFiller(GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber()).AsQueryable();
+        }
 
         private static SqlException GetSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
-        
+
         private static string GetRandomMessage() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
 
-        private static Filler<GroupPost> CreateGroupPostFiller()
+        private static Filler<GroupPost> CreateGroupPostFiller(DateTimeOffset dates)
         {
             var filler = new Filler<GroupPost>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().IgnoreIt()
-                .OnType<Group>().IgnoreIt()
-                .OnType<Post>().IgnoreIt();
+                .OnType<DateTimeOffset>().Use(dates);
 
             return filler;
         }
