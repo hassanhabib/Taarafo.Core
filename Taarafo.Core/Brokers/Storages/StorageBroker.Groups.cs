@@ -7,69 +7,27 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Taarafo.Core.Models.Groups;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-	public partial class StorageBroker
-	{
-		public DbSet<Group> Groups { get; set; }
+    public partial class StorageBroker
+    {
+        public DbSet<Group> Groups { get; set; }
 
-		public async ValueTask<Group> InsertGroupAsync(Group group)
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
+        public async ValueTask<Group> InsertGroupAsync(Group group) =>
+            await InsertAsync(group);
 
-			EntityEntry<Group> groupEntityEntry =
-				await broker.Groups.AddAsync(group);
+        public IQueryable<Group> SelectAllGroups() =>
+            SelectAll<Group>();
 
-			await broker.SaveChangesAsync();
+        public async ValueTask<Group> SelectGroupByIdAsync(Guid groupId) =>
+            await SelectAsync<Group>(groupId);
 
-			return groupEntityEntry.Entity;
-		}
+        public async ValueTask<Group> UpdateGroupAsync(Group group) =>
+            await UpdateAsync(group);
 
-		public IQueryable<Group> SelectAllGroups()
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
-
-			return broker.Groups;
-		}
-
-		public async ValueTask<Group> SelectGroupByIdAsync(Guid groupId)
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
-
-			return await broker.Groups.FindAsync(groupId);
-		}
-
-		public async ValueTask<Group> UpdateGroupAsync(Group group)
-		{
-			using var broker =
-				 new StorageBroker(this.configuration);
-
-			EntityEntry<Group> groupEntityEntry =
-				broker.Groups.Update(group);
-
-			await broker.SaveChangesAsync();
-
-			return groupEntityEntry.Entity;
-
-		}
-
-		public async ValueTask<Group> DeleteGroupAsync(Group group)
-		{
-			using var broker =
-				new StorageBroker(this.configuration);
-
-			EntityEntry<Group> groupEntityEntry =
-				broker.Groups.Remove(group);
-
-			await broker.SaveChangesAsync();
-
-			return groupEntityEntry.Entity;
-		}
-	}
+        public async ValueTask<Group> DeleteGroupAsync(Group group) =>
+            await DeleteAsync(group);
+    }
 }

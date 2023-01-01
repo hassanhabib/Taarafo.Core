@@ -37,22 +37,6 @@ namespace Taarafo.Core.Services.Foundations.Groups
 				return await this.storageBroker.InsertGroupAsync(group);
 			});
 
-		public IQueryable<Group> RetrieveAllGroups() =>
-			TryCatch(() => this.storageBroker.SelectAllGroups());
-
-		public ValueTask<Group> UpdateGroupAsync(Group group) =>
-			TryCatch(async () =>
-			{
-				ValidateGroupOnModify(group);
-
-				var maybeGroup =
-					await this.storageBroker.SelectGroupByIdAsync(group.Id);
-
-				ValidateStorageGroup(maybeGroup, group.Id);
-
-				return await this.storageBroker.UpdateGroupAsync(group);
-			});
-
 		public ValueTask<Group> RetrieveGroupByIdAsync(Guid groupId) =>
 			TryCatch(async () =>
 			{
@@ -64,6 +48,22 @@ namespace Taarafo.Core.Services.Foundations.Groups
 				ValidateStorageGroup(maybeGroup, groupId);
 
 				return maybeGroup;
+			});
+
+		public IQueryable<Group> RetrieveAllGroups() =>
+			TryCatch(() => this.storageBroker.SelectAllGroups());
+
+		public ValueTask<Group> ModifyGroupAsync(Group group) =>
+			TryCatch(async () =>
+			{
+				ValidateGroupOnModify(group);
+
+				var maybeGroup =
+					await this.storageBroker.SelectGroupByIdAsync(group.Id);
+
+				ValidateStorageGroup(maybeGroup, group.Id);
+
+				return await this.storageBroker.UpdateGroupAsync(group);
 			});
 
 		public ValueTask<Group> RemoveGroupByIdAsync(Guid groupId) =>

@@ -20,6 +20,19 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
                 (Rule: IsInvalid(groupPost.PostId), Parameter: nameof(GroupPost.PostId)));
         }
 
+        private void ValidateGroupPostId(Guid groupId, Guid postId) =>
+            Validate(
+                (Rule: IsInvalid(groupId), Parameter: nameof(GroupPost.GroupId)),
+                (Rule: IsInvalid(postId), Parameter: nameof(GroupPost.PostId)));
+
+        private static void ValidateStorageGroupPostExists(GroupPost maybeGroupPost, Guid groupId, Guid postId)
+        {
+            if (maybeGroupPost is null)
+            {
+                throw new NotFoundGroupPostException(groupId, postId);
+            }
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
