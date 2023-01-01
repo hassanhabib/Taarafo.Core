@@ -20,13 +20,13 @@ namespace Taarafo.Core.Brokers.Storages
 
         public IQueryable<GroupPost> SelectAllGroupPosts() =>
             SelectAll<GroupPost>();
-        
-        public async ValueTask<GroupPost> SelectGroupPostByIdAsync(Guid groupPostId) =>
-            await SelectAsync<GroupPost>(groupPostId);
-            
+
+        public async ValueTask<GroupPost> SelectGroupPostByIdAsync(Guid groupId, Guid postId) =>
+            await SelectAsync<GroupPost>(groupId, postId);
+
         public async ValueTask<GroupPost> UpdateGroupPostAsync(GroupPost groupPost) =>
             await UpdateAsync(groupPost);
-            
+
         public async ValueTask<GroupPost> DeleteGroupPostAsync(GroupPost groupPost) =>
             await DeleteAsync(groupPost);
     }

@@ -34,6 +34,10 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             {
                 throw CreateAndLogValidationException(invalidGroupPostException);
             }
+            catch (NotFoundGroupPostException notFoundGroupPostException)
+            {
+                throw CreateAndLogValidationException(notFoundGroupPostException);
+            }
             catch (SqlException sqlException)
             {
                 var failedGroupPostStorageException =
@@ -49,6 +53,13 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 
                 throw CreateAndLogDependencyValidationException(
                     alreadyExistsGroupPostException);
+            }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedGroupPostException = 
+                    new LockedGroupPostException(dbUpdateConcurrencyException);
+
+                throw CreateAndDependencyValidationException(lockedGroupPostException);
             }
             catch (DbUpdateException databaseUpdateException)
             {
@@ -142,6 +153,14 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             this.loggingBroker.LogError(groupPostServiceException);
 
             return groupPostServiceException;
+        }
+
+        private GroupPostDependencyValidationException CreateAndDependencyValidationException(Xeption exception)
+        {
+            var groupPostDependencyValidationException = new GroupPostDependencyValidationException(exception);
+            this.loggingBroker.LogError(groupPostDependencyValidationException);
+
+            return groupPostDependencyValidationException;
         }
     }
 }
