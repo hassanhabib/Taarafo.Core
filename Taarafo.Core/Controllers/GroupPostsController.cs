@@ -14,11 +14,11 @@ namespace Taarafo.Core.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class GrouPostsController : RESTFulController
+    public class GroupPostsController : RESTFulController
     {
         private readonly IGroupPostService groupPostService;
 
-        public GrouPostsController(IGroupPostService groupPostService) =>
+        public GroupPostsController(IGroupPostService groupPostService) =>
             this.groupPostService = groupPostService;
 
         [HttpPost]
@@ -42,11 +42,11 @@ namespace Taarafo.Core.Controllers
             }
             catch (GroupPostDependencyException groupPostDependencyException)
             {
-                return InternalServerError(groupPostDependencyException);
+                return InternalServerError(groupPostDependencyException.InnerException);
             }
             catch (GroupPostServiceException groupPostServiceException)
             {
-                return InternalServerError(groupPostServiceException);
+                return InternalServerError(groupPostServiceException.InnerException);
             }
         }
     }
