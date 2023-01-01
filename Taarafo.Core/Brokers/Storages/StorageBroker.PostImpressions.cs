@@ -37,12 +37,12 @@ namespace Taarafo.Core.Brokers.Storages
 			return broker.PostImpressions;
 		}
 
-		public async ValueTask<PostImpression> SelectPostImpressionByIdsAsync(Guid PostId, Guid ProfileId)
+		public async ValueTask<PostImpression> SelectPostImpressionAsync(PostImpression postImpression)
 		{
 			var broker =
 				new StorageBroker(this.configuration);
 
-			return await broker.PostImpressions.FindAsync(PostId, ProfileId);
+			return await broker.PostImpressions.FindAsync(postImpression);
 		}
 
 		public async ValueTask<PostImpression> UpdatePostImpressionAsync(PostImpression postImpression)
