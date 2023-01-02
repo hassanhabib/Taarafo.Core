@@ -5,16 +5,12 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Taarafo.Core.Models.PostReports;
+using Taarafo.Core.Models.Posts;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial class StorageBroker
+    public partial interface IStorageBroker
     {
-        public DbSet<PostReport> PostReports { get; set; }
-
-        public async ValueTask<PostReport> SelectPostReportByIdAsync(Guid postReportId) =>
-            await SelectAsync<PostReport>(postReportId);
+        ValueTask<Post> SelectPostReportByIdAsync(Guid postReportId);
     }
 }
