@@ -4,16 +4,12 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.PostReports;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial class StorageBroker
+    public partial interface IStorageBroker
     {
-        public DbSet<PostReport> PostReports { get; set; }
-
-        public async ValueTask<PostReport> UpdatePostReportAsync(PostReport postReport) =>
-            await UpdateAsync(postReport);
+        ValueTask<PostReport> UpdatePostReportAsync(PostReport postReport);
     }
 }
