@@ -23,7 +23,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
-        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly IGroupPostService groupPostService;
 
         public GroupPostServiceTests()
