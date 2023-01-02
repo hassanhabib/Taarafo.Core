@@ -4,16 +4,12 @@
 // ---------------------------------------------------------------
 
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.PostReports;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial class StorageBroker
+    public partial interface IStrorageBroker
     {
-        public DbSet<PostReport> PostReports { get; set; }
-
-        public IQueryable<PostReport> SelectAllPostReports() =>
-            SelectAll<PostReport>();
+        IQueryable<PostReport> SelectAllPostReports();
     }
 }
