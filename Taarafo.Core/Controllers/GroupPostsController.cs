@@ -35,8 +35,13 @@ namespace Taarafo.Core.Controllers
             {
                 return BadRequest(groupPostValidationException.InnerException);
             }
+            catch (GroupPostDependencyValidationException groupPostValidationException)
+                when (groupPostValidationException.InnerException is InvalidGroupPostReferenceException)
+            {
+                return FailedDependency(groupPostValidationException.InnerException);
+            }
             catch (GroupPostDependencyValidationException groupPostDependencyValidationException)
-               when (groupPostDependencyValidationException.InnerException is AlreadyExistsGroupPostException)
+                when (groupPostDependencyValidationException.InnerException is AlreadyExistsGroupPostException)
             {
                 return Conflict(groupPostDependencyValidationException.InnerException);
             }
