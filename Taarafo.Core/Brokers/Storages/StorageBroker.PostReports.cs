@@ -14,7 +14,7 @@ namespace Taarafo.Core.Brokers.Storages
     {
         public DbSet<PostReport> PostReports { get; set; }
 
-        public async ValueTask<PostReport> SelectPostReportByIdAsync(Guid postReportId) =>
-            await SelectAsync<PostReport>(postReportId);
+        public async ValueTask<PostReport> SelectPostReportByIdAsync(Guid postReportId, Guid PostId, Guid ReporterId) =>
+            await SelectAsync<PostReport>(postReportId,PostId,ReporterId);
     }
 }

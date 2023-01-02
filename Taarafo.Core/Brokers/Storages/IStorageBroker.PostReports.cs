@@ -11,6 +11,6 @@ namespace Taarafo.Core.Brokers.Storages
 {
     public partial interface IStorageBroker
     {
-        ValueTask<PostReport> SelectPostReportByIdAsync(Guid postReportId);
+        ValueTask<PostReport> SelectPostReportByIdAsync(Guid postReportId, Guid PostId, Guid ReporterId);
     }
 }
