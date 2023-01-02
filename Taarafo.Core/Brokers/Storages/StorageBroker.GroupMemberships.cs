@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.GroupMemberships;
@@ -15,5 +16,8 @@ namespace Taarafo.Core.Brokers.Storages
 
         public async ValueTask<GroupMembership> InsertGroupMembershipAsync(GroupMembership groupMembership) =>
            await InsertAsync(groupMembership);
+
+        public IQueryable<GroupMembership> SelectAllGroupMemberships() =>
+            SelectAll<GroupMembership>();
     }
 }
