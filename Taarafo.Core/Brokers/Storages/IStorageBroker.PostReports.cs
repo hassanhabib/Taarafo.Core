@@ -11,6 +11,7 @@ namespace Taarafo.Core.Brokers.Storages
 {
     public partial interface IStrorageBroker
     {
+        ValueTask<PostReport> InsertPostReportAsync(PostReport postReport);
         IQueryable<PostReport> SelectAllPostReports();
         ValueTask<PostReport> DeletePostReportAsync(PostReport postReport);
     }

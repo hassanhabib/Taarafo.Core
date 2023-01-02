@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Threading.Tasks;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,9 @@ namespace Taarafo.Core.Brokers.Storages
     public partial class StorageBroker
     {
         public DbSet<PostReport> PostReports { get; set; }
+
+        public async ValueTask<PostReport> InsertPostReportAsync(PostReport postReport) =>
+            await InsertAsync(postReport);
 
         public IQueryable<PostReport> SelectAllPostReports() =>
             SelectAll<PostReport>();
