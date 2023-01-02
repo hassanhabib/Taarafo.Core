@@ -5,12 +5,12 @@
 
 using System;
 using System.Threading.Tasks;
-using Taarafo.Core.Models.Posts;
+using Taarafo.Core.Models.PostReports;
 
 namespace Taarafo.Core.Brokers.Storages
 {
     public partial interface IStorageBroker
     {
-        ValueTask<Post> SelectPostReportByIdAsync(Guid postReportId);
+        ValueTask<PostReport> SelectPostReportByIdAsync(Guid postReportId);
     }
 }
