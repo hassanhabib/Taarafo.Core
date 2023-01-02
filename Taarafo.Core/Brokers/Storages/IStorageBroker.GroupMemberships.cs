@@ -4,16 +4,12 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.GroupMemberships;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial class StorageBroker
+    public partial interface IStorageBroker
     {
-        public DbSet<GroupMembership> GroupMemberships { get; set; }
-
-        public async ValueTask<GroupMembership> InsertGroupMembershipAsync(GroupMembership groupMembership) =>
-           await InsertAsync(groupMembership);
+        ValueTask<GroupMembership> InsertGroupMembershipAsync(GroupMembership groupMembership);
     }
 }
