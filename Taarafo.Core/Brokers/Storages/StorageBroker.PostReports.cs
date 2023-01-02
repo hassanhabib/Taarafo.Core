@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.PostReports;
 
@@ -15,5 +16,8 @@ namespace Taarafo.Core.Brokers.Storages
 
         public IQueryable<PostReport> SelectAllPostReports() =>
             SelectAll<PostReport>();
+
+        public async ValueTask<PostReport> DeletePostReportAsync(PostReport postReport)=>
+            await DeleteAsync(postReport);
     }
 }
