@@ -3,14 +3,12 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using Xeptions;
-
-namespace Taarafo.Core.Models.GroupPosts.Exceptions
+namespace Taarafo.Core.Models.GroupMemberships
 {
-    public class NullGroupPostException : Xeption
+    public enum GroupMembershipStatus
     {
-        public NullGroupPostException()
-            : base(message: "Group post is null.")
-        { }
+        Allowed,
+        Muted,
+        Banned
     }
 }

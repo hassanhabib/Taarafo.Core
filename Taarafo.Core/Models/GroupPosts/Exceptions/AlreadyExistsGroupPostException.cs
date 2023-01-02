@@ -3,14 +3,16 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using Xeptions;
 
 namespace Taarafo.Core.Models.GroupPosts.Exceptions
 {
-    public class InvalidGroupPostException : Xeption
+    public class AlreadyExistsGroupPostException : Xeption
     {
-        public InvalidGroupPostException()
-            : base(message: "Invalid group post. Please correct the errors and try again.")
+        public AlreadyExistsGroupPostException(Exception innerException)
+            : base(message: "Group post with the same id already exists.",
+                  innerException)
         { }
     }
 }

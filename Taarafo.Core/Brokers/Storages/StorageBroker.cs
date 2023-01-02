@@ -6,35 +6,39 @@
 using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-	public partial class StorageBroker : EFxceptionsContext, IStorageBroker
-	{
-		private readonly IConfiguration configuration;
+    public partial class StorageBroker : EFxceptionsContext, IStorageBroker
+    {
+        private readonly IConfiguration configuration;
 
-		public StorageBroker(IConfiguration configuration)
-		{
-			this.configuration = configuration;
-			this.Database.Migrate();
-		}
+        public StorageBroker(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+            this.Database.Migrate();
+        }
 
-		private async ValueTask<T> InsertAsync<T>(T @object)
-		{
-			var broker = new StorageBroker(this.configuration);
-			broker.Entry(@object).State = EntityState.Added;
-			await broker.SaveChangesAsync();
+        private async ValueTask<T> InsertAsync<T>(T @object)
+        {
+            var broker = new StorageBroker(this.configuration);
+            broker.Entry(@object).State = EntityState.Added;
+            await broker.SaveChangesAsync();
 
-			return @object;
-		}
+            return @object;
+        }
 
-		private IQueryable<T> SelectAll<T>() where T : class => this.Set<T>();
+        private IQueryable<T> SelectAll<T>() where T : class
+        {
+            using var broker = new StorageBroker(this.configuration);
 
-		private async ValueTask<T> SelectAsync<T>(params object[] objectIds) where T : class =>
-			await FindAsync<T>(objectIds);
+            return broker.Set<T>();
+        }
+
+        private async ValueTask<T> SelectAsync<T>(params object[] objectIds) where T : class =>
+		    await FindAsync<T>(objectIds);
 
 		private async ValueTask<T> UpdateAsync<T>(T @object)
         {
@@ -48,7 +52,7 @@ namespace Taarafo.Core.Brokers.Storages
 		private async ValueTask<T> DeleteAsync<T>(T @object)
 		{
 			var broker = new StorageBroker(this.configuration);
-			broker.Entry(@object).State-= EntityState.Deleted;
+			broker.Entry(@object).State = EntityState.Deleted;
 			await broker.SaveChangesAsync();
 
 			return @object;
@@ -63,11 +67,11 @@ namespace Taarafo.Core.Brokers.Storages
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             string connectionString = this.configuration.GetConnectionString(name: "DefaultConnection");
+            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             optionsBuilder.UseSqlServer(connectionString);
         }
 
-        public override void Dispose() { }
-	}
+        public override void Dispose() {}
+    }
 }

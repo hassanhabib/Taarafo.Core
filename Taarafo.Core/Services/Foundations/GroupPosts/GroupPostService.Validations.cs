@@ -11,11 +11,55 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 {
     public partial class GroupPostService
     {
-        public void ValidateGroupPostId(Guid groupPostId)
+        public static void ValidateGroupPostOnAdd(GroupPost groupPost)
         {
+            ValidateGroupPostIsNotNull(groupPost);
+
             Validate(
-                (Rule: IsInvalid(groupPostId), Parameter: nameof(GroupPost.GroupId)),
-                (Rule: IsInvalid(groupPostId), Parameter: nameof(GroupPost.PostId)));
+                (Rule: IsInvalid(groupPost.GroupId), Parameter: nameof(GroupPost.GroupId)),
+                (Rule: IsInvalid(groupPost.PostId), Parameter: nameof(GroupPost.PostId)));
+        }
+
+        public static void ValidateGroupPostOnRemove(GroupPost groupPost)
+        {
+            ValidateGroupPostIsNotNull(groupPost);
+
+            Validate(
+                (Rule: IsInvalid(groupPost.GroupId), Parameter: nameof(GroupPost.GroupId)),
+                (Rule: IsInvalid(groupPost.PostId), Parameter: nameof(GroupPost.PostId)));
+        }
+
+        private void ValidateGroupPostId(Guid groupId, Guid postId) =>
+            Validate(
+                (Rule: IsInvalid(groupId), Parameter: nameof(GroupPost.GroupId)),
+                (Rule: IsInvalid(postId), Parameter: nameof(GroupPost.PostId)));
+
+        private static void ValidateStorageGroupPostExists(GroupPost maybeGroupPost, Guid groupId, Guid postId)
+        {
+            if (maybeGroupPost is null)
+            {
+                throw new NotFoundGroupPostException(groupId, postId);
+            }
+        }
+
+        private static dynamic IsInvalid(Guid id) => new
+        {
+            Condition = id == default,
+            Message = "Id is required"
+        };
+
+        private static dynamic IsInvalid(object @object) => new
+        {
+            Condition = @object is null,
+            Message = "Object is required"
+        };
+
+        private static void ValidateGroupPostIsNotNull(GroupPost groupPost)
+        {
+            if (groupPost is null)
+            {
+                throw new NullGroupPostException();
+            }
         }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
@@ -35,18 +79,12 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             invalidGroupPostException.ThrowIfContainsErrors();
         }
 
-        private void ValidateStorageGroupPost(GroupPost maybeGroupPost, Guid groupPostId)
+        private void ValidateStorageGroupPost(GroupPost maybeGroupPost, Guid groupId, Guid postId)
         {
             if (maybeGroupPost is null)
             {
-                throw new NotFoundGroupPostException(groupPostId);
+                throw new NotFoundGroupPostException(groupId, postId);
             }
         }
-
-        private static dynamic IsInvalid(Guid id) => new
-        {
-            Condition = id == default,
-            Message = "Id is required"
-        };
     }
 }

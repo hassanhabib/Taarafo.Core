@@ -7,10 +7,11 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.GroupPosts.Exceptions
 {
-    public class InvalidGroupPostException : Xeption
+    public class GroupPostDependencyValidationException : Xeption
     {
-        public InvalidGroupPostException()
-            : base(message: "Invalid group post. Please correct the errors and try again.")
+        public GroupPostDependencyValidationException(Xeption innerException)
+            : base(message: "Group post dependency validation occurred, please try again.",
+                  innerException)
         { }
     }
 }

@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
@@ -40,16 +41,34 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedExceptoin) =>
             actualException => actualException.SameExceptionAs(expectedExceptoin);
 
+        private static int GetRandomNumber() =>
+            new IntRange(min: 1, max: 10).GetValue();
+
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
+
+        private static GroupPost CreateRandomGroupPost(DateTimeOffset dates) =>
+            CreateGroupPostFiller(dates).Create();
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
-             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
+            new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
 
         private static GroupPost CreateRandomGroupPost() =>
             CreateGroupPostFiller(GetRandomDateTimeOffset()).Create();
 
+        private static IQueryable<GroupPost> CreateRandomGroupPosts()
+        {
+            return CreateGroupPostFiller(GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber()).AsQueryable();
+        }
+
         private static SqlException GetSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
-        public static Filler<GroupPost> CreateGroupPostFiller(DateTimeOffset dates)
+        private static string GetRandomMessage() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
+
+        private static Filler<GroupPost> CreateGroupPostFiller(DateTimeOffset dates)
         {
             var filler = new Filler<GroupPost>();
 

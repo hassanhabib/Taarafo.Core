@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
@@ -19,69 +20,87 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 {
-	public partial class PostImpressionServiceTests
-	{
-		private readonly Mock<IStorageBroker> storageBrokerMock;
-		private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
-		private readonly Mock<ILoggingBroker> loggingBrokerMock;
-		private readonly IPostImpressionService postImpressionService;
+    public partial class PostImpressionServiceTests
+    {
+        private readonly Mock<IStorageBroker> storageBrokerMock;
+        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
+        private readonly Mock<ILoggingBroker> loggingBrokerMock;
+        private readonly IPostImpressionService postImpressionService;
 
-		public PostImpressionServiceTests()
-		{
-			this.storageBrokerMock = new Mock<IStorageBroker>();
-			this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
-			this.loggingBrokerMock = new Mock<ILoggingBroker>();
+        public PostImpressionServiceTests()
+        {
+            this.storageBrokerMock = new Mock<IStorageBroker>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
+            this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
-			this.postImpressionService = new PostImpressionService(
-				storageBroker: this.storageBrokerMock.Object,
-				dateTimeBroker: this.dateTimeBrokerMock.Object,
-				loggingBroker: this.loggingBrokerMock.Object);
-		}
+            this.postImpressionService = new PostImpressionService(
+                storageBroker: this.storageBrokerMock.Object,
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
+                loggingBroker: this.loggingBrokerMock.Object);
+        }
 
-		public static TheoryData MinutesBeforeOrAfter()
-		{
-			int randomNumber = GetRandomNumber();
-			int randomNegativeNumber = GetRandomNegativeNumber();
+        public static TheoryData MinutesBeforeOrAfter()
+        {
+            int randomNumber = GetRandomNumber();
+            int randomNegativeNumber = GetRandomNegativeNumber();
 
-			return new TheoryData<int>
-			{
-				randomNumber,
-				randomNegativeNumber
-			};
-		}
+            return new TheoryData<int>
+            {
+                randomNumber,
+                randomNegativeNumber
+            };
+        }
 
-		private static int GetRandomNegativeNumber() =>
-			-1 * new IntRange(min: 2, max: 10).GetValue();
+        public static T GetInvalidEnum<T>()
+        {
+            int randomNumber = GetRandomNumber();
 
-		private static DateTimeOffset GetRandomDateTimeOffset() =>
-			new DateTimeRange(earliestDate: new DateTime()).GetValue();
+            while (Enum.IsDefined(typeof(T), randomNumber))
+            {
+                randomNumber = GetRandomNumber();
+            }
 
-		private static PostImpression CreateRandomPostImpression(DateTimeOffset dates) =>
-			CreatePostImpressionFiller(dates).Create();
+            return (T)(object)randomNumber;
+        }
 
-		private static int GetRandomNumber() =>
-			new IntRange(min: 1, max: 10).GetValue();
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
 
-		private static PostImpression CreateRandomPostImpression() =>
-			CreatePostImpressionFiller(dates: GetRandomDateTimeOffset()).Create();
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-		private static SqlException GetSqlException() =>
-			(SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+        private static PostImpression CreateRandomPostImpression(DateTimeOffset dates) =>
+            CreatePostImpressionFiller(dates).Create();
 
-		private static string GetRandomMessage() =>
-			new MnemonicString(wordCount: GetRandomNumber()).GetValue();
+        private static int GetRandomNumber() =>
+            new IntRange(min: 1, max: 10).GetValue();
 
-		private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
-			actualException => actualException.SameExceptionAs(expectedException);
+        private static IQueryable<PostImpression> CreateRandomPostImpressions()
+        {
+            return CreatePostImpressionFiller(dates: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber()).AsQueryable();
+        }
 
-		private static Filler<PostImpression> CreatePostImpressionFiller(DateTimeOffset dates)
-		{
-			var filler = new Filler<PostImpression>();
+        private static PostImpression CreateRandomPostImpression() =>
+            CreatePostImpressionFiller(dates: GetRandomDateTimeOffset()).Create();
 
-			filler.Setup()
-				.OnType<DateTimeOffset>().Use(dates);
+        private static SqlException GetSqlException() =>
+            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
-			return filler;
-		}
-	}
+        private static string GetRandomMessage() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
+
+        private static Filler<PostImpression> CreatePostImpressionFiller(DateTimeOffset dates)
+        {
+            var filler = new Filler<PostImpression>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dates);
+
+            return filler;
+        }
+    }
 }

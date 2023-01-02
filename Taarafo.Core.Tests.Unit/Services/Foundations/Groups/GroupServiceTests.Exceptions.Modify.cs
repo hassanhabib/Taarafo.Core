@@ -37,7 +37,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
 			// when
 			ValueTask<Group> modifyGroupTask =
-				this.groupService.UpdateGroupAsync(randomGroup);
+				this.groupService.ModifyGroupAsync(randomGroup);
 
 			// then
 			GroupDependencyException actualGroupDependencyException = 
@@ -100,7 +100,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
 			// when
 			ValueTask<Group> modifyGroupTask =
-				this.groupService.UpdateGroupAsync(foreignKeyConflictedGroup);
+				this.groupService.ModifyGroupAsync(foreignKeyConflictedGroup);
 
 			// then
 			GroupDependencyException actualGroupDependencyException = 
@@ -150,7 +150,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
 			// when
 			ValueTask<Group> modifyGroupTask =
-				this.groupService.UpdateGroupAsync(randomGroup);
+				this.groupService.ModifyGroupAsync(randomGroup);
 
 			// then
 			GroupDependencyException actualGroupDependencyException = 
@@ -201,7 +201,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
 			// when
 			ValueTask<Group> modifyGroupTask =
-				this.groupService.UpdateGroupAsync(randomGroup);
+				this.groupService.ModifyGroupAsync(randomGroup);
 
 			// then
 			GroupDependencyException actualGroupDependencyException = 
@@ -252,7 +252,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
 			// when
 			ValueTask<Group> modifyGroupTask =
-				this.groupService.UpdateGroupAsync(randomGroup);
+				this.groupService.ModifyGroupAsync(randomGroup);
 
 			// then
 		    GroupServiceException actualGroupServiceException = 

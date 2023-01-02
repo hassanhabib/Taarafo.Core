@@ -3,14 +3,13 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using Xeptions;
+using Microsoft.EntityFrameworkCore;
+using Taarafo.Core.Models.GroupMemberships;
 
-namespace Taarafo.Core.Models.GroupPosts.Exceptions
+namespace Taarafo.Core.Brokers.Storages
 {
-    public class NullGroupPostException : Xeption
+    public partial class StorageBroker
     {
-        public NullGroupPostException()
-            : base(message: "Group post is null.")
-        { }
+        public DbSet<GroupMembership> GroupMemberships { get; set; }
     }
 }

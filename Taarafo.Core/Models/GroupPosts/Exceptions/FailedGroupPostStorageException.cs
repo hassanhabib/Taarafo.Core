@@ -11,7 +11,7 @@ namespace Taarafo.Core.Models.GroupPosts.Exceptions
     public class FailedGroupPostStorageException : Xeption
     {
         public FailedGroupPostStorageException(Exception innerException)
-            : base(message: "Failed grouppost storage error occurred, contact support.", innerException)
+            : base(message: "Failed group post storage error occurred, contact support.", innerException)
         { }
     }
 }

@@ -3,14 +3,15 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using Xeptions;
 
 namespace Taarafo.Core.Models.GroupPosts.Exceptions
 {
-    public class InvalidGroupPostException : Xeption
+    public class InvalidGroupPostReferenceException : Xeption
     {
-        public InvalidGroupPostException()
-            : base(message: "Invalid group post. Please correct the errors and try again.")
+        public InvalidGroupPostReferenceException(Exception innerException)
+            : base(message: "Invalid group post reference error occurred.", innerException)
         { }
     }
 }

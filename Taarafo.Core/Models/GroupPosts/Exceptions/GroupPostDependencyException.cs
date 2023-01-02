@@ -10,7 +10,7 @@ namespace Taarafo.Core.Models.GroupPosts.Exceptions
     public class GroupPostDependencyException : Xeption
     {
         public GroupPostDependencyException(Xeption innerException)
-            : base(message: "Grouppost dependency error occurred, contact support.", innerException)
+            : base(message: "Group post dependency validation occurred, please try again.", innerException)
         { }
     }
 }
