@@ -22,8 +22,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         public async Task ShouldThrowServiceExceptionOnDeleteWhenExceptionOccursAndLogItAsync()
         {
             //given
-            Guid somePostId = Guid.NewGuid();
-            Guid someProfileId = Guid.NewGuid();
+            PostImpression somePostImpression = CreateRandomPostImpression();
             var serviceException = new Exception();
 
             var failedPostImpressionServiceException =
@@ -39,7 +38,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             //when
             ValueTask<PostImpression> deletePostImpressionTask =
-                 this.postImpressionService.RemovePostImpressionAsync(somePostId, someProfileId);
+                 this.postImpressionService.RemovePostImpressionAsync(somePostImpression);
 
             PostImpressionServiceException actualPostImpressionServiceException =
                 await Assert.ThrowsAsync<PostImpressionServiceException>(
@@ -67,8 +66,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         public async Task ShouldThrowDependencyExceptionOnDeleteWhenSqlExceptionOccursAndLogItAsync()
         {
             //given
-            Guid somePostId = Guid.NewGuid();
-            Guid someProfileId = Guid.NewGuid();
+            PostImpression somePostImpression = CreateRandomPostImpression();
             SqlException sqlException = GetSqlException();
 
             var failedPostImpressionStorageException =
@@ -84,7 +82,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             //when
             ValueTask<PostImpression> deletePostImpressionTask =
-                this.postImpressionService.RemovePostImpressionAsync(somePostId, someProfileId);
+                this.postImpressionService.RemovePostImpressionAsync(somePostImpression);
 
             PostImpressionDependencyException actualPostImpressionDependencyException =
                 await Assert.ThrowsAsync<PostImpressionDependencyException>(
@@ -112,8 +110,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         public async Task ShouldThrowDependencyValidationOnRemoveIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
         {
             //given
-            Guid somePostId= Guid.NewGuid();
-            Guid someProfileId= Guid.NewGuid();
+            PostImpression somePostImpression = CreateRandomPostImpression();
 
             var databaseUpdateConcurrencyException =
                 new DbUpdateConcurrencyException();
@@ -132,7 +129,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             //when
             ValueTask<PostImpression> removePostImpressionByIdTask =
-                this.postImpressionService.RemovePostImpressionAsync(somePostId, someProfileId);
+                this.postImpressionService.RemovePostImpressionAsync(somePostImpression);
 
             PostImpressionDependencyValidationException actualPostImpressionDependencyValidationException =
                 await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(

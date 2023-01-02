@@ -38,7 +38,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             //when
             PostImpression actualPostImpression = await this.postImpressionService
-                .RemovePostImpressionAsync(inputPostId, inputProfileId);
+                .RemovePostImpressionAsync(randomPostImpression);
 
             //then
             actualPostImpression.Should().BeEquivalentTo(expectedPostImpression);
