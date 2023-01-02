@@ -17,7 +17,7 @@ namespace Taarafo.Core.Brokers.Storages
         public async ValueTask<GroupMembership> InsertGroupMembershipAsync(GroupMembership groupMembership) =>
             await InsertAsync(groupMembership);
 
-        public async ValueTask<GroupMembership> SelectGroupMembershipByIdAsync(Guid groupMembership) =>
-           await SelectAsync<GroupMembership>(groupMembership);
+        public async ValueTask<GroupMembership> SelectGroupMembershipByIdAsync(Guid id) =>
+           await SelectAsync<GroupMembership>(id);
     }
 }

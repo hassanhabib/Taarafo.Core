@@ -12,6 +12,6 @@ namespace Taarafo.Core.Brokers.Storages
     public partial interface IStorageBroker
     {
         ValueTask<GroupMembership> InsertGroupMembershipAsync(GroupMembership groupMembership);
-        ValueTask<GroupMembership> SelectGroupMembershipByIdAsync(Guid groupMembership);
+        ValueTask<GroupMembership> SelectGroupMembershipByIdAsync(Guid id);
     }
 }
