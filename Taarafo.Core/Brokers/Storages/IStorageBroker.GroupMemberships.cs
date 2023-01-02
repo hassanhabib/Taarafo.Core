@@ -3,15 +3,13 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System.Linq;
 using System.Threading.Tasks;
-using Taarafo.Core.Models.PostReports;
+using Taarafo.Core.Models.GroupMemberships;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial interface IStrorageBroker
+    public partial interface IStorageBroker
     {
-        IQueryable<PostReport> SelectAllPostReports();
-        ValueTask<PostReport> UpdatePostReportAsync(PostReport postReport);
+        ValueTask<GroupMembership> InsertGroupMembershipAsync(GroupMembership groupMembership);
     }
 }

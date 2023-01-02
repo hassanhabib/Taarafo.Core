@@ -3,11 +3,11 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 using Taarafo.Core.Models.GroupPosts;
-using Taarafo.Core.Models.GroupPosts.Exceptions;
 using Taarafo.Core.Models.GroupPosts.Exceptions;
 using Taarafo.Core.Services.Foundations.GroupPosts;
 
@@ -45,6 +45,44 @@ namespace Taarafo.Core.Controllers
                 when (groupPostDependencyValidationException.InnerException is AlreadyExistsGroupPostException)
             {
                 return Conflict(groupPostDependencyValidationException.InnerException);
+            }
+            catch (GroupPostDependencyException groupPostDependencyException)
+            {
+                return InternalServerError(groupPostDependencyException.InnerException);
+            }
+            catch (GroupPostServiceException groupPostServiceException)
+            {
+                return InternalServerError(groupPostServiceException.InnerException);
+            }
+        }
+
+        [HttpDelete("{groupPostId}")]
+        public async ValueTask<ActionResult<GroupPost>> DeleteGroupPostByIdAsync(Guid groupId, Guid postId)
+        {
+            try
+            {
+                GroupPost deletedGroupPost =
+                    await this.groupPostService.RemoveGroupPostByIdAsync(groupId, postId);
+
+                return Ok(deletedGroupPost);
+            }
+            catch (GroupPostValidationException groupPostValidationException)
+                when (groupPostValidationException.InnerException is NotFoundGroupPostException)
+            {
+                return NotFound(groupPostValidationException.InnerException);
+            }
+            catch (GroupPostValidationException groupPostValidationException)
+            {
+                return BadRequest(groupPostValidationException.InnerException);
+            }
+            catch (GroupPostDependencyValidationException groupPostDependencyValidationException)
+                when (groupPostDependencyValidationException.InnerException is LockedGroupPostException)
+            {
+                return Locked(groupPostDependencyValidationException.InnerException);
+            }
+            catch (GroupPostDependencyValidationException groupPostDependencyValidationException)
+            {
+                return BadRequest(groupPostDependencyValidationException.InnerException);
             }
             catch (GroupPostDependencyException groupPostDependencyException)
             {
