@@ -3,11 +3,11 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 using Taarafo.Core.Models.GroupPosts;
-using Taarafo.Core.Models.GroupPosts.Exceptions;
 using Taarafo.Core.Models.GroupPosts.Exceptions;
 using Taarafo.Core.Services.Foundations.GroupPosts;
 
@@ -45,6 +45,26 @@ namespace Taarafo.Core.Controllers
                 when (groupPostDependencyValidationException.InnerException is AlreadyExistsGroupPostException)
             {
                 return Conflict(groupPostDependencyValidationException.InnerException);
+            }
+            catch (GroupPostDependencyException groupPostDependencyException)
+            {
+                return InternalServerError(groupPostDependencyException.InnerException);
+            }
+            catch (GroupPostServiceException groupPostServiceException)
+            {
+                return InternalServerError(groupPostServiceException.InnerException);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<IQueryable<GroupPost>> GetAllGroupPosts()
+        {
+            try
+            {
+                IQueryable<GroupPost> retrievedGroupPosts =
+                    this.groupPostService.RetrieveAllGroupPosts();
+
+                return Ok(retrievedGroupPosts);
             }
             catch (GroupPostDependencyException groupPostDependencyException)
             {
