@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.PostReports;
 
@@ -15,5 +16,8 @@ namespace Taarafo.Core.Brokers.Storages
 
         public async ValueTask<PostReport> InsertPostReportAsync(PostReport postReport) =>
             await InsertAsync(postReport);
+
+        public IQueryable<PostReport> SelectAllPostReports() =>
+            SelectAll<PostReport>();
     }
 }
