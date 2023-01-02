@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Models.GroupPosts.Exceptions;
+using Taarafo.Core.Models.GroupPosts.Exceptions;
 using Taarafo.Core.Services.Foundations.GroupPosts;
 
 namespace Taarafo.Core.Controllers
@@ -35,10 +36,10 @@ namespace Taarafo.Core.Controllers
             {
                 return BadRequest(groupPostValidationException.InnerException);
             }
-            catch (GroupPostDependencyValidationException groupPostValidationException)
-                when (groupPostValidationException.InnerException is InvalidGroupPostReferenceException)
+            catch (GroupPostDependencyValidationException groupPostDependencyValidationException)
+                when (groupPostDependencyValidationException.InnerException is InvalidGroupPostReferenceException)
             {
-                return FailedDependency(groupPostValidationException.InnerException);
+                return FailedDependency(groupPostDependencyValidationException.InnerException);
             }
             catch (GroupPostDependencyValidationException groupPostDependencyValidationException)
                 when (groupPostDependencyValidationException.InnerException is AlreadyExistsGroupPostException)
