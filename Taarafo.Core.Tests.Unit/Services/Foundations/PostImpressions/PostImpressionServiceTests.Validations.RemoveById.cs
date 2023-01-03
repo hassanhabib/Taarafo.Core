@@ -19,7 +19,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         public async Task ShouldThrowValidatonExceptionOnRemoveIfIdIsInvalidAndLogItAsync()
         {
             //given
-            PostImpression randomPostImpression = CreateRandomPostImpression();
+            
+            PostImpression postImpression= new PostImpression();
             var invalidPostImpressionException = new InvalidPostImpressionException();
 
             invalidPostImpressionException.AddData(
@@ -35,7 +36,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             //when
             ValueTask<PostImpression> removePostImpressionTask =
-                this.postImpressionService.RemovePostImpressionAsync(randomPostImpression);
+                this.postImpressionService.RemovePostImpressionAsync(postImpression);
 
             PostImpressionValidationException actualPostImpressionValidationException =
                 await Assert.ThrowsAsync<PostImpressionValidationException>(
