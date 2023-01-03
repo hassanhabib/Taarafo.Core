@@ -6,13 +6,16 @@
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 using Taarafo.Core.Models.PostReports;
 
 namespace Taarafo.Core.Brokers.Storages
 {
     public partial interface IStrorageBroker
     {
+        ValueTask<PostReport> InsertPostReportAsync(PostReport postReport);
         IQueryable<PostReport> SelectAllPostReports();
         ValueTask<PostReport> SelectPostReportByIdAsync(Guid Id);
+        ValueTask<PostReport> DeletePostReportAsync(PostReport postReport);
     }
 }

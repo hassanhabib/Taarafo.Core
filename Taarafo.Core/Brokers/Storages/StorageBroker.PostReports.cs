@@ -15,10 +15,16 @@ namespace Taarafo.Core.Brokers.Storages
     {
         public DbSet<PostReport> PostReports { get; set; }
 
+        public async ValueTask<PostReport> InsertPostReportAsync(PostReport postReport) =>
+            await InsertAsync(postReport);
+
         public IQueryable<PostReport> SelectAllPostReports() =>
             SelectAll<PostReport>();
 
         public async ValueTask<PostReport> SelectPostReportByIdAsync(Guid id) =>
             await SelectAsync<PostReport>(id);
+
+        public async ValueTask<PostReport> DeletePostReportAsync(PostReport postReport)=>
+            await DeleteAsync(postReport);
     }
 }
