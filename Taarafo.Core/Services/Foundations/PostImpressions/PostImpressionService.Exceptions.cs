@@ -41,12 +41,23 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
                 throw CreateAndLogCriticalDependencyException(failedPostImpressionStorageException);
             }
+            catch(NotFoundPostImpressionException notFoundPostImpressionException)
+            {
+                throw CreateAndLogValidationException(notFoundPostImpressionException);
+            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsPostImpressionException =
                     new AlreadyExistsPostImpressionException(duplicateKeyException);
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsPostImpressionException);
+            }
+            catch(DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedPostImpressionException =
+                    new LockedPostImpressionException(dbUpdateConcurrencyException);
+
+                throw CreateAndLogDependencyValidationException(lockedPostImpressionException);
             }
             catch (DbUpdateException databaseUpdateException)
             {

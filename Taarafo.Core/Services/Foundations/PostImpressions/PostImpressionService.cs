@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
@@ -38,5 +39,18 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
         public IQueryable<PostImpression> RetrieveAllPostImpressions() =>
            TryCatch(() => this.storageBroker.SelectAllPostImpressions());
+
+        public ValueTask<PostImpression> RemovePostImpressionAsync(PostImpression postImpression) =>
+            TryCatch(async () =>
+            {
+                ValidatePostImpressionOnRemove(postImpression);
+
+                PostImpression somePostImpression =
+                    await this.storageBroker.SelectPostImpressionByIdsAsync(postImpression.PostId, postImpression.ProfileId);
+
+                ValidateStoragePostImpression(somePostImpression,postImpression.PostId, postImpression.ProfileId);
+
+                return await this.storageBroker.DeletePostImpressionAsync(somePostImpression);
+            });
     }
 }
