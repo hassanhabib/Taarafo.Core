@@ -4,7 +4,6 @@
 // ---------------------------------------------------------------
 
 using System;
-using System.Threading.Tasks;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.PostReports;

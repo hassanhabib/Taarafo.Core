@@ -27,7 +27,7 @@ namespace Taarafo.Core.Brokers.Storages
         public async ValueTask<PostReport> UpdatePostReportAsync(PostReport postReport) =>
             await UpdateAsync(postReport);
 
-        public async ValueTask<PostReport> DeletePostReportAsync(PostReport postReport)=>
+        public async ValueTask<PostReport> DeletePostReportAsync(PostReport postReport) =>
             await DeleteAsync(postReport);
     }
 }
