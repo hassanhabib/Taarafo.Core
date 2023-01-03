@@ -16,5 +16,6 @@ namespace Taarafo.Core.Brokers.Storages
         IQueryable<GroupMembership> SelectAllGroupMemberships();
         ValueTask<GroupMembership> SelectGroupMembershipByIdAsync(Guid id);
         ValueTask<GroupMembership> UpdateGroupMembershipAsync(GroupMembership groupMembership);
+        ValueTask<GroupMembership> DeleteGroupMembershipAsync(GroupMembership groupMembership);
     }
 }
