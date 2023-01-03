@@ -42,7 +42,10 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             {
                 ValidateGroupPostId(groupId, postId);
 
-                GroupPost maybeGroupPost = await this.storageBroker.SelectGroupPostByIdAsync(groupId, postId);
+                GroupPost maybeGroupPost =
+                    await this.storageBroker.SelectGroupPostByIdAsync(groupId, postId);
+
+                ValidateStorageGroupPost(maybeGroupPost, groupId, postId);
 
                 return maybeGroupPost;
             });
