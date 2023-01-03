@@ -3,11 +3,11 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System.Threading.Tasks;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.PostReports;
+using Microsoft.EntityFrameworkCore;
 
 namespace Taarafo.Core.Brokers.Storages
 {
@@ -21,10 +21,13 @@ namespace Taarafo.Core.Brokers.Storages
         public IQueryable<PostReport> SelectAllPostReports() =>
             SelectAll<PostReport>();
 
+        public async ValueTask<PostReport> SelectPostReportByIdAsync(Guid id) =>
+            await SelectAsync<PostReport>(id);
+
         public async ValueTask<PostReport> UpdatePostReportAsync(PostReport postReport) =>
             await UpdateAsync(postReport);
 
-        public async ValueTask<PostReport> DeletePostReportAsync(PostReport postReport)=>
+        public async ValueTask<PostReport> DeletePostReportAsync(PostReport postReport) =>
             await DeleteAsync(postReport);
     }
 }
