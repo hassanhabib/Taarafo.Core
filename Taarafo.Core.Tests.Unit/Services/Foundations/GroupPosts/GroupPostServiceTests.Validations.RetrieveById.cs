@@ -52,12 +52,54 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(),
-                    (It.IsAny<Guid>())),
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), (It.IsAny<Guid>())),
                         Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfTeamIsNotFoundAndLogItAsync()
+        {
+            //given
+            Guid someGroupId = Guid.NewGuid();
+            Guid somePostId = Guid.NewGuid();
+            GroupPost noGroupPost = null;
+
+            var notFoundGroupPostException =
+                new NotFoundGroupPostException(someGroupId, somePostId);
+
+            var expectedGroupPostValidationException =
+                new GroupPostValidationException(notFoundGroupPostException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGroupPostByIdAsync(someGroupId, somePostId))
+                    .ReturnsAsync(noGroupPost);
+
+            //when
+            ValueTask<GroupPost> retrieveGroupPostByIdTask =
+                this.groupPostService.RetrieveGroupPostByIdAsync(someGroupId, somePostId);
+
+            GroupPostValidationException actualGroupPostValidationException =
+                await Assert.ThrowsAsync<GroupPostValidationException>(
+                    retrieveGroupPostByIdTask.AsTask);
+
+            // then
+            actualGroupPostValidationException.Should().BeEquivalentTo(expectedGroupPostValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), (It.IsAny<Guid>())),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupPostValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
