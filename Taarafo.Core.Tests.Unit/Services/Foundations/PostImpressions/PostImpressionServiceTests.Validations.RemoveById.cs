@@ -50,9 +50,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                     expectedPostImpressionValidationException))), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<Guid>()),
+                broker.SelectPostImpressionByIdsAsync(postImpression.PostId,postImpression.ProfileId),
                         Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
