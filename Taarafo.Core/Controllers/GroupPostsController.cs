@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -45,6 +46,26 @@ namespace Taarafo.Core.Controllers
                 when (groupPostDependencyValidationException.InnerException is AlreadyExistsGroupPostException)
             {
                 return Conflict(groupPostDependencyValidationException.InnerException);
+            }
+            catch (GroupPostDependencyException groupPostDependencyException)
+            {
+                return InternalServerError(groupPostDependencyException.InnerException);
+            }
+            catch (GroupPostServiceException groupPostServiceException)
+            {
+                return InternalServerError(groupPostServiceException.InnerException);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<IQueryable<GroupPost>> GetAllGroupPosts()
+        {
+            try
+            {
+                IQueryable<GroupPost> retrievedGroupPosts =
+                    this.groupPostService.RetrieveAllGroupPosts();
+
+                return Ok(retrievedGroupPosts);
             }
             catch (GroupPostDependencyException groupPostDependencyException)
             {
