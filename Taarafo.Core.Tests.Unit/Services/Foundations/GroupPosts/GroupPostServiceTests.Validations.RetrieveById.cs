@@ -52,8 +52,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), (It.IsAny<Guid>())),
-                        Times.Never);
+                broker.SelectGroupPostByIdAsync(invalidGroupId, invalidPostId),
+                    Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -90,7 +90,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             actualGroupPostValidationException.Should().BeEquivalentTo(expectedGroupPostValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), (It.IsAny<Guid>())),
+               broker.SelectGroupPostByIdAsync(someGroupId, somePostId),
                     Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
