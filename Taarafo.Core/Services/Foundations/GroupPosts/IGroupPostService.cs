@@ -14,6 +14,7 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
     {
         ValueTask<GroupPost> AddGroupPostAsync(GroupPost groupPost);
         IQueryable<GroupPost> RetrieveAllGroupPosts();
+        ValueTask<GroupPost> RetrieveGroupPostByIdAsync(Guid groupId, Guid postId);
         ValueTask<GroupPost> RemoveGroupPostByIdAsync(Guid groupId, Guid postId);
     }
 }
