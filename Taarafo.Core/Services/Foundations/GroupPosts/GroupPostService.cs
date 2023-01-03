@@ -37,15 +37,15 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
                 return await this.storageBroker.InsertGroupPostAsync(groupPost);
             });
 
-        public async ValueTask<GroupPost> RetrieveGroupPostByIdAsync(Guid groupId, Guid postId)
-        {
-            ValidateGroupPostId(groupId, postId);
+        public ValueTask<GroupPost> RetrieveGroupPostByIdAsync(Guid groupId, Guid postId) =>
+            TryCatch(async () =>
+            {
+                ValidateGroupPostId(groupId, postId);
 
-            GroupPost maybeGroupPost =
-                await this.storageBroker.SelectGroupPostByIdAsync(groupId, postId);
+                GroupPost maybeGroupPost = await this.storageBroker.SelectGroupPostByIdAsync(groupId, postId);
 
-            return maybeGroupPost;
-        }
+                return maybeGroupPost;
+            });
 
         public IQueryable<GroupPost> RetrieveAllGroupPosts() =>
             TryCatch(() => this.storageBroker.SelectAllGroupPosts());
