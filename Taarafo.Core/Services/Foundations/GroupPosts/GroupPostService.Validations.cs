@@ -33,6 +33,14 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             }
         }
 
+        private void ValidateStorageGroupPost(GroupPost maybeGroupPost, Guid groupId, Guid postId)
+        {
+            if (maybeGroupPost is null)
+            {
+                throw new NotFoundGroupPostException(groupId, postId);
+            }
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
