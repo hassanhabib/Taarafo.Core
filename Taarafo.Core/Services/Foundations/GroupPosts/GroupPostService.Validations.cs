@@ -54,7 +54,7 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 
         private static void ValidateAginstStorageGroupPostOnModify(GroupPost inputGroupPost, GroupPost storageGroupPost)
         {
-            //ValidateStorageGroupPostExists(storageGroupPost, inputGroupPost.GroupId, inputGroupPost.PostId);
+            ValidateStorageGroupPostExists(storageGroupPost, inputGroupPost.GroupId, inputGroupPost.PostId);
 
             Validate(
             (Rule: IsNotSame(

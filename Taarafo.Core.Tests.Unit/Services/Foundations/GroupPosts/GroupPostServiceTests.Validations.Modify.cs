@@ -119,7 +119,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotSameAsCreatedDateAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
         {
             // given
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
@@ -311,6 +311,56 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.loggingBrokerMock.Verify(broker =>
                broker.LogError(It.Is(SameExceptionAs(
                    expectedGroupPostValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageUpdatedDateIsSameAsUpdatedDateAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            GroupPost randomGroupPost = CreateRandomModifyGroupPost(randomDateTime);
+            GroupPost invalidGroupPost = randomGroupPost;
+            GroupPost storageGroupPost = randomGroupPost.DeepClone();
+            invalidGroupPost.UpdatedDate = storageGroupPost.UpdatedDate;
+            Guid groupId = invalidGroupPost.GroupId;
+            Guid postId = invalidGroupPost.PostId;
+            var invalidGroupPostException = new InvalidGroupPostException();
+
+            invalidGroupPostException.AddData(
+            key: nameof(GroupPost.UpdatedDate),
+                values: $"Date is the same as {nameof(GroupPost.UpdatedDate)}");
+
+            var expectedGroupPostValidationException =
+                new GroupPostValidationException(invalidGroupPostException);
+
+            this.storageBrokerMock.Setup(broker =>
+               broker.SelectGroupPostByIdAsync(invalidGroupPost.GroupId,
+                   invalidGroupPost.PostId)).ReturnsAsync(storageGroupPost);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
+
+            // when
+            ValueTask<GroupPost> modifyGroupPostTask = this.groupPostService.ModifyGroupPostAsync(invalidGroupPost);
+            GroupPostValidationException actualGroupPostValidationException =
+               await Assert.ThrowsAsync<GroupPostValidationException>(modifyGroupPostTask.AsTask);
+
+            // then
+            actualGroupPostValidationException.Should().BeEquivalentTo(expectedGroupPostValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupPostByIdAsync(groupId, postId), Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupPostValidationException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
