@@ -47,6 +47,8 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
                 PostImpression maybePostImpression = await this.storageBroker.SelectPostImpressionByIdAsync(postId, profileId);
 
+                ValidateStoragePostImpression(maybePostImpression, postId, profileId);
+
                 return maybePostImpression;
             });
     }

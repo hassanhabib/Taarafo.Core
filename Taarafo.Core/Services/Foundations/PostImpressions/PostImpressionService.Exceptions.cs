@@ -34,6 +34,10 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             {
                 throw CreateAndLogValidationException(invalidPostImpressionException);
             }
+            catch (NotFoundPostImpressionException notFoundPostImpressionException)
+            {
+                throw CreateAndLogValidationException(notFoundPostImpressionException);
+            }
             catch (SqlException sqlException)
             {
                 var failedPostImpressionStorageException =
