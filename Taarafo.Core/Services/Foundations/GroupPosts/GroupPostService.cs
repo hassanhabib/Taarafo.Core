@@ -53,6 +53,9 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
         public IQueryable<GroupPost> RetrieveAllGroupPosts() =>
             TryCatch(() => this.storageBroker.SelectAllGroupPosts());
 
+        public ValueTask<GroupPost> ModifyGroupPostAsync(GroupPost groupPost) =>
+            throw new NotImplementedException();
+
         public ValueTask<GroupPost> RemoveGroupPostByIdAsync(Guid groupId, Guid postId) =>
             TryCatch(async () =>
             {

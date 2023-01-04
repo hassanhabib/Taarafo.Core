@@ -53,6 +53,20 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         private static GroupPost CreateRandomGroupPost() =>
             CreateGroupPostFiller(GetRandomDateTimeOffset()).Create();
 
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
+        private static GroupPost CreateRandomModifyGroupPost(DateTimeOffset dates)
+        {
+            int randomDaysInPast = GetRandomNegativeNumber();
+            GroupPost randomGroupPost = CreateRandomGroupPost(dates);
+
+            randomGroupPost.CreatedDate =
+                randomGroupPost.CreatedDate.AddDays(randomDaysInPast);
+
+            return randomGroupPost;
+        }
+
         private static IQueryable<GroupPost> CreateRandomGroupPosts()
         {
             return CreateGroupPostFiller(GetRandomDateTimeOffset())

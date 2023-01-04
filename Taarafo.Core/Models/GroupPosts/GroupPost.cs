@@ -16,5 +16,7 @@ namespace Taarafo.Core.Models.GroupPosts
 
 		public Guid PostId { get; set; }
 		public Post Post { get; set; }
-	}
+        public DateTimeOffset CreatedDate { get; set; }
+        public DateTimeOffset UpdatedDate { get; set; }
+    }
 }
