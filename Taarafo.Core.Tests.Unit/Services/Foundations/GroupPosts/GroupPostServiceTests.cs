@@ -56,6 +56,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             };
         }
 
+        private static SqlException CreateSqlException() =>
+            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+
         private static int GetRandomNumber() =>
             new IntRange(min: 1, max: 10).GetValue();
 
