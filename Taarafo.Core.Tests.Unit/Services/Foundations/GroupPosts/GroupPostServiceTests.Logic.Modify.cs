@@ -29,6 +29,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             Guid groupId = inputGroupPost.GroupId;
             Guid postId = inputGroupPost.PostId;
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset()).Returns(randomDate);
+
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupPostByIdAsync(groupId, postId))
                     .ReturnsAsync(storageGroupPost);
@@ -43,6 +46,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
             //then
             actualGroupPost.Should().BeEquivalentTo(exceptedGroupPost);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateGroupPostAsync(inputGroupPost), Times.Once);
