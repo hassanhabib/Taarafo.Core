@@ -45,13 +45,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             actualGroupPost.Should().BeEquivalentTo(exceptedGroupPost);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(groupId, postId), Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
                 broker.UpdateGroupPostAsync(inputGroupPost), Times.Once);
+            
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupPostByIdAsync(groupId, postId), Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
