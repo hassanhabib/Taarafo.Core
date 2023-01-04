@@ -54,7 +54,20 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 
         private static void ValidateAginstStorageGroupPostOnModify(GroupPost inputGroupPost, GroupPost storageGroupPost)
         {
-            ValidateStorageGroupPostExists(storageGroupPost, inputGroupPost.GroupId, inputGroupPost.PostId);
+            //ValidateStorageGroupPostExists(storageGroupPost, inputGroupPost.GroupId, inputGroupPost.PostId);
+
+            Validate(
+            (Rule: IsNotSame(
+                    firstDate: inputGroupPost.CreatedDate,
+                    secondDate: storageGroupPost.CreatedDate,
+                    secondDateName: nameof(GroupPost.CreatedDate)),
+                Parameter: nameof(GroupPost.CreatedDate)),
+
+            (Rule: IsSame(
+                        firstDate: inputGroupPost.UpdatedDate,
+                        secondDate: storageGroupPost.UpdatedDate,
+                        secondDateName: nameof(GroupPost.UpdatedDate)),
+                Parameter: nameof(GroupPost.UpdatedDate)));
         }
 
         private void ValidateStorageGroupPost(GroupPost maybeGroupPost, Guid groupId, Guid postId)
@@ -89,6 +102,15 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             {
                 Condition = firstDate == secondDate,
                 Message = $"Date is the same as {secondDateName}"
+            };
+
+        private static dynamic IsNotSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not same as {secondDateName}"
             };
 
         private dynamic IsNotRecent(DateTimeOffset date) => new
