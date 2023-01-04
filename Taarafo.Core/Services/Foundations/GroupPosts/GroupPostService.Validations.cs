@@ -4,10 +4,8 @@
 // ---------------------------------------------------------------
 
 using System;
-using Microsoft.Extensions.Hosting;
 using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Models.GroupPosts.Exceptions;
-using Taarafo.Core.Models.Posts;
 
 namespace Taarafo.Core.Services.Foundations.GroupPosts
 {
@@ -45,13 +43,18 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
                 (Rule: IsInvalid(groupPost.CreatedDate), Parameter: nameof(GroupPost.CreatedDate)),
                 (Rule: IsInvalid(groupPost.UpdatedDate), Parameter: nameof(GroupPost.UpdatedDate)),
                 (Rule: IsNotRecent(groupPost.UpdatedDate), Parameter: nameof(GroupPost.UpdatedDate)),
-              
+
                 (Rule: IsSame(
                     firstDate: groupPost.UpdatedDate,
                     secondDate: groupPost.CreatedDate,
                     secondDateName: nameof(GroupPost.CreatedDate)),
 
                 Parameter: nameof(GroupPost.UpdatedDate)));
+        }
+
+        private static void ValidateAginstStorageGroupPostOnModify(GroupPost inputGroupPost, GroupPost storageGroupPost)
+        {
+            ValidateStorageGroupPostExists(storageGroupPost, inputGroupPost.GroupId, inputGroupPost.PostId);
         }
 
         private void ValidateStorageGroupPost(GroupPost maybeGroupPost, Guid groupId, Guid postId)
