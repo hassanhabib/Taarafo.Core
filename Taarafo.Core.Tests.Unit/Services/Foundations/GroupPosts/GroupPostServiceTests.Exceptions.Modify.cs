@@ -119,5 +119,57 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnModifyIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        {
+            // given
+            int minutesInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            GroupPost randomGroupPost = CreateRandomGroupPost(randomDateTime);
+            GroupPost someGroupPost = randomGroupPost;
+            someGroupPost.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
+            Guid groupId = someGroupPost.GroupId;
+            Guid postId = someGroupPost.PostId;
+            var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
+
+            var lockedGroupPostException =
+                new LockedGroupPostException(databaseUpdateConcurrencyException);
+
+            var expectedGroupPostDependencyValidationException =
+                new GroupPostDependencyValidationException(lockedGroupPostException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGroupPostByIdAsync(groupId, postId))
+                    .ThrowsAsync(databaseUpdateConcurrencyException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
+
+            // when
+            ValueTask<GroupPost> modifyGroupPostTask =
+            this.groupPostService.ModifyGroupPostAsync(someGroupPost);
+            GroupPostDependencyValidationException actualGroupPostDependencyValidationException =
+                await Assert.ThrowsAsync<GroupPostDependencyValidationException>(
+                    modifyGroupPostTask.AsTask);
+
+            // then
+            actualGroupPostDependencyValidationException.Should().BeEquivalentTo(
+                expectedGroupPostDependencyValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupPostByIdAsync(groupId, postId), Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupPostDependencyValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
