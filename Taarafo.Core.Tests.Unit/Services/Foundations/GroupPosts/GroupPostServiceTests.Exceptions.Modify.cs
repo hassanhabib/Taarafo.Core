@@ -171,5 +171,56 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnModifyIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            int minuteInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            GroupPost randomGroupPost = CreateRandomGroupPost(randomDateTime);
+            GroupPost someGroupPost = randomGroupPost;
+            someGroupPost.CreatedDate = randomDateTime.AddMinutes(minuteInPast);
+            var serviceException = new Exception();
+
+            var failedGroupPostException =
+                new FailedGroupPostServiceException(serviceException);
+
+            var expectedGroupPostServiceException =
+                new GroupPostServiceException(failedGroupPostException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGroupPostByIdAsync(someGroupPost.GroupId, someGroupPost.PostId))
+                    .ThrowsAsync(serviceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
+
+            // when
+            ValueTask<GroupPost> modifyGroupPostTask =
+                this.groupPostService.ModifyGroupPostAsync(someGroupPost);
+
+            GroupPostServiceException actualGroupPostServiceException =
+                await Assert.ThrowsAsync<GroupPostServiceException>(
+                    modifyGroupPostTask.AsTask);
+
+            // then
+            actualGroupPostServiceException.Should().BeEquivalentTo(
+                expectedGroupPostServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupPostByIdAsync(someGroupPost.GroupId, someGroupPost.PostId), Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupPostServiceException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
