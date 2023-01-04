@@ -50,8 +50,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
         [Theory]
         [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
         public async Task ShouldThrowValidationExceptionOnModifyIfGroupPostIsInvalidAndLogItAsync(Guid invalidId)
         {
             // given 

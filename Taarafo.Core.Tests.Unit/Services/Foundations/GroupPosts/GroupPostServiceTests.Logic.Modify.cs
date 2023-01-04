@@ -48,7 +48,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             actualGroupPost.Should().BeEquivalentTo(exceptedGroupPost);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(), Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateGroupPostAsync(inputGroupPost), Times.Once);
