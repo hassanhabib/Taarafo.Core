@@ -39,20 +39,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
-        public static TheoryData<int> InvalidSeconds()
+        public static TheoryData MinutesBeforeOrAfter()
         {
-            int secondsInPast = -1 * new IntRange(
-                min: 60,
-                max: short.MaxValue).GetValue();
-
-            int secondsInFuture = new IntRange(
-                min: 0,
-                max: short.MaxValue).GetValue();
+            int randomNumber = GetRandomNumber();
+            int randomNegativeNumber = GetRandomNegativeNumber();
 
             return new TheoryData<int>
             {
-                secondsInPast,
-                secondsInFuture
+                randomNumber,
+                randomNegativeNumber
             };
         }
 
