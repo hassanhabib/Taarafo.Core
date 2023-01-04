@@ -54,7 +54,11 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             TryCatch(() => this.storageBroker.SelectAllGroupPosts());
 
         public ValueTask<GroupPost> ModifyGroupPostAsync(GroupPost groupPost) =>
-            this.storageBroker.UpdateGroupPostAsync(groupPost);
+            TryCatch(async () =>
+        {
+            ValidateGroupPostOnModify(groupPost);
+            return await this.storageBroker.UpdateGroupPostAsync(groupPost);
+        });
 
         public ValueTask<GroupPost> RemoveGroupPostByIdAsync(Guid groupId, Guid postId) =>
             TryCatch(async () =>

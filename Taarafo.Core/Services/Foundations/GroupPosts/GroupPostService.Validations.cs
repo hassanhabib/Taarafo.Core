@@ -33,6 +33,11 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             }
         }
 
+        private void ValidateGroupPostOnModify(GroupPost groupPost)
+        {
+            ValidateGroupPostIsNotNull(groupPost);
+        }
+
         private void ValidateStorageGroupPost(GroupPost maybeGroupPost, Guid groupId, Guid postId)
         {
             if (maybeGroupPost is null)
