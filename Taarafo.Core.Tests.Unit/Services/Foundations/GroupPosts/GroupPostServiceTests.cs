@@ -16,6 +16,7 @@ using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Services.Foundations.GroupPosts;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 {
@@ -36,6 +37,23 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 storageBroker: this.storageBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
+        }
+
+        public static TheoryData<int> InvalidSeconds()
+        {
+            int secondsInPast = -1 * new IntRange(
+                min: 60,
+                max: short.MaxValue).GetValue();
+
+            int secondsInFuture = new IntRange(
+                min: 0,
+                max: short.MaxValue).GetValue();
+
+            return new TheoryData<int>
+            {
+                secondsInPast,
+                secondsInFuture
+            };
         }
 
         private static int GetRandomNumber() =>
