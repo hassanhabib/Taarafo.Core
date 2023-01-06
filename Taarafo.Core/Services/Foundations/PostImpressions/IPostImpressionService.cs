@@ -14,6 +14,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
     {
         ValueTask<PostImpression> AddPostImpressions(PostImpression postImpression);
         IQueryable<PostImpression> RetrieveAllPostImpressions();
+        ValueTask<PostImpression> ModifyPostImpressionAsync(PostImpression postImpression);
         ValueTask<PostImpression> RemovePostImpressionAsync(PostImpression postImpression);
     }
 }

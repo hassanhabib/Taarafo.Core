@@ -40,6 +40,9 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
         public IQueryable<PostImpression> RetrieveAllPostImpressions() =>
            TryCatch(() => this.storageBroker.SelectAllPostImpressions());
 
+        public ValueTask<PostImpression> ModifyPostImpressionAsync(PostImpression postImpression)=>
+            throw new NotImplementedException();
+
         public ValueTask<PostImpression> RemovePostImpressionAsync(PostImpression postImpression) =>
             TryCatch(async () =>
             {
