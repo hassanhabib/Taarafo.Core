@@ -35,7 +35,13 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
         private static void ValidatePostImpressionOnModify(PostImpression postImpression)
         {
-             ValidatePostImpressionIsNotNull(postImpression);
+            ValidatePostImpressionIsNotNull(postImpression);
+
+            Validate(
+            (Rule: IsInvalid(postImpression.PostId), Parameter: nameof(PostImpression.PostId)),
+            (Rule: IsInvalid(postImpression.ProfileId), Parameter: nameof(PostImpression.ProfileId)),
+            (Rule: IsInvalid(postImpression.CreatedDate), Parameter: nameof(PostImpression.CreatedDate)),
+            (Rule: IsInvalid(postImpression.UpdatedDate), Parameter: nameof(PostImpression.UpdatedDate)));
         }
 
         private static void ValidatePostImpressionIsNotNull(PostImpression postImpression)
