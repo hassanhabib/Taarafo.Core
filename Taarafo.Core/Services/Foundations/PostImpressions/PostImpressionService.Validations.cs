@@ -33,6 +33,11 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                 (Rule: IsNotRecent(postImpression.CreatedDate), Parameter: nameof(PostImpression.CreatedDate)));
         }
 
+        private static void ValidatePostImpressionOnModify(PostImpression postImpression)
+        {
+             ValidatePostImpressionIsNotNull(postImpression);
+        }
+
         private static void ValidatePostImpressionIsNotNull(PostImpression postImpression)
         {
             if (postImpression is null)
