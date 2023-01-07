@@ -22,7 +22,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             PostImpression randomPostImpression = CreateRandomPostImpression(randomDateTime);
             PostImpression inputPostImpression = randomPostImpression;
-            PostImpression storagePostImpression -inputPostImpression;
+            PostImpression storagePostImpression = inputPostImpression;
             storagePostImpression.UpdatedDate = randomPostImpression.CreatedDate;
             PostImpression updatePostImpression = inputPostImpression;
             PostImpression expectedPostImpression = updatePostImpression.DeepClone();
@@ -30,10 +30,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             Guid profileId = inputPostImpression.ProfileId;
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdsAsync(postId, profileId)).Returns(storageBrokerMock);
+                broker.SelectPostImpressionByIdsAsync(postId, profileId)).ReturnsAsync(storagePostImpression);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.UpdatePostImpressionAsync(inputPostImpression)).Returns(updatePostImpression);
+                broker.UpdatePostImpressionAsync(inputPostImpression)).ReturnsAsync(updatePostImpression);
 
             //when
             PostImpression actualPostImpression =
@@ -43,10 +43,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             actualPostImpression.Should().BeEquivalentTo(expectedPostImpression);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(postId, profileId), Times.Once);
+                broker.UpdatePostImpressionAsync(inputPostImpression), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.UpdatePostImpressionAsync(inputPostImpression), Times.Once);
+                broker.SelectPostImpressionByIdsAsync(postId, profileId), Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
