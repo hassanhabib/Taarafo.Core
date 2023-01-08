@@ -54,6 +54,25 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             Parameter: nameof(PostImpression.UpdatedDate)));
         }
 
+        private static void ValidateAginstStoragePostImpressionOnModify(PostImpression inputPostImpression,PostImpression storagePostImpression)
+        {
+            ValidateStoragePostImpression(storagePostImpression, inputPostImpression.PostId,inputPostImpression.ProfileId);
+
+            Validate(
+                (Rule: IsNotSame(
+                    firstDate: inputPostImpression.CreatedDate,
+                    secondDate: inputPostImpression.CreatedDate,
+                    secondDateName: nameof(PostImpression.CreatedDate)),
+
+                 Parameter: nameof(PostImpression.CreatedDate)),
+                (Rule: IsSame(
+                    firstDate: inputPostImpression.UpdatedDate,
+                    secondDate: inputPostImpression.UpdatedDate,
+                    secondDateName: nameof(PostImpression.UpdatedDate)),
+
+                 Parameter: nameof(PostImpression.UpdatedDate)));   
+        }
+
         private static void ValidatePostImpressionIsNotNull(PostImpression postImpression)
         {
             if (postImpression is null)
