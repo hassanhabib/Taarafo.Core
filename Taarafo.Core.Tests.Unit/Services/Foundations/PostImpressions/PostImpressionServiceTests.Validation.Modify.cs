@@ -149,5 +149,53 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [MemberData(nameof(MinutesBeforeOrAfter))]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotRecentAndLogItAsync(int minuts)
+        {
+            //given
+            DateTimeOffset dateTime = GetRandomDateTimeOffset();
+            PostImpression randomPostImpression = CreateRandomPostImpression(dateTime);
+            PostImpression inputPostImpression = randomPostImpression;
+            inputPostImpression.UpdatedDate = dateTime.AddMinutes(minuts);
+            var invalidPostImpressionException = new InvalidPostImpressionException();
+
+            invalidPostImpressionException.AddData(
+                key: nameof(PostImpression.UpdatedDate),
+                values: "Date is not recent");
+
+            var expectedPostImpressionValidationException = 
+                new PostImpressionValidationException(invalidPostImpressionException);
+
+            dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset()).Returns(dateTime);
+
+            //when
+            ValueTask<PostImpression> modifyPostImpressionTask =
+                this.postImpressionService.ModifyPostImpressionAsync(inputPostImpression);
+
+            PostImpressionValidationException actualPostImpressionValidationException =
+                await Assert.ThrowsAsync<PostImpressionValidationException>(
+                    modifyPostImpressionTask.AsTask);
+
+            //then
+            actualPostImpressionValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostImpressionValidationException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostImpressionByIdsAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
