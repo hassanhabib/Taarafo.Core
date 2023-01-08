@@ -74,7 +74,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.UpdatedDate),
-                values: "Date is required");
+                 values: new[]
+                    {
+                        "Date is required",
+                        $"Date is the same as {nameof(PostImpression.CreatedDate)}"
+                    });
 
             var expectedPostImpressionValidationException =
                 new PostImpressionValidationException(invalidPostImpressionException);

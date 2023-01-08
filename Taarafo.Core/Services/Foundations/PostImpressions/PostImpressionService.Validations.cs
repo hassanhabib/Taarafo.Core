@@ -41,7 +41,14 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             (Rule: IsInvalid(postImpression.PostId), Parameter: nameof(PostImpression.PostId)),
             (Rule: IsInvalid(postImpression.ProfileId), Parameter: nameof(PostImpression.ProfileId)),
             (Rule: IsInvalid(postImpression.CreatedDate), Parameter: nameof(PostImpression.CreatedDate)),
-            (Rule: IsInvalid(postImpression.UpdatedDate), Parameter: nameof(PostImpression.UpdatedDate)));
+            (Rule: IsInvalid(postImpression.UpdatedDate), Parameter: nameof(PostImpression.UpdatedDate)),
+
+            (Rule: IsSame(
+                firstDate: postImpression.UpdatedDate,
+                secondDate: postImpression.CreatedDate,
+                secondDateName: nameof(postImpression.CreatedDate)),
+
+            Parameter: nameof(PostImpression.UpdatedDate)));
         }
 
         private static void ValidatePostImpressionIsNotNull(PostImpression postImpression)
@@ -92,6 +99,15 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             Condition = Enum.IsDefined(type) is false,
             Message = "Value is not recognized"
         };
+
+        private static dynamic IsSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
+            };
 
         private static dynamic IsNotSame(
             DateTimeOffset firstDate,
