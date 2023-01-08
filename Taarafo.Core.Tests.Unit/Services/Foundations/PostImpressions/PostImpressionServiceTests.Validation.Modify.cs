@@ -95,6 +95,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             actualPostValidationException.Should().BeEquivalentTo(
                 expectedPostImpressionValidationException);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostImpressionValidationException))), Times.Once);
@@ -136,6 +139,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             //then
             actualPostImpressionValidationException.Should().BeEquivalentTo(
                 expectedPostImpressionValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(

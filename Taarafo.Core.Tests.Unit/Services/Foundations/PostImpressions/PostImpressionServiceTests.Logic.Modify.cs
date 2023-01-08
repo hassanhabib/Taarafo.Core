@@ -29,6 +29,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             Guid postId = inputPostImpression.PostId;
             Guid profileId = inputPostImpression.ProfileId;
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
+
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostImpressionByIdsAsync(postId, profileId)).ReturnsAsync(storagePostImpression);
 
@@ -42,12 +45,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             //then
             actualPostImpression.Should().BeEquivalentTo(expectedPostImpression);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
+
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdatePostImpressionAsync(inputPostImpression), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostImpressionByIdsAsync(postId, profileId), Times.Never);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }

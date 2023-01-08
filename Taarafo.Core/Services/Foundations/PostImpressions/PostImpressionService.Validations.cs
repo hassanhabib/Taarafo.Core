@@ -4,6 +4,8 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Data;
+using System.Reflection.Metadata;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
 
@@ -33,7 +35,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                 (Rule: IsNotRecent(postImpression.CreatedDate), Parameter: nameof(PostImpression.CreatedDate)));
         }
 
-        private static void ValidatePostImpressionOnModify(PostImpression postImpression)
+        private void ValidatePostImpressionOnModify(PostImpression postImpression)
         {
             ValidatePostImpressionIsNotNull(postImpression);
 
@@ -42,6 +44,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             (Rule: IsInvalid(postImpression.ProfileId), Parameter: nameof(PostImpression.ProfileId)),
             (Rule: IsInvalid(postImpression.CreatedDate), Parameter: nameof(PostImpression.CreatedDate)),
             (Rule: IsInvalid(postImpression.UpdatedDate), Parameter: nameof(PostImpression.UpdatedDate)),
+            (Rule:IsNotRecent(postImpression.UpdatedDate),Parameter:nameof(PostImpression.UpdatedDate)),
 
             (Rule: IsSame(
                 firstDate: postImpression.UpdatedDate,
