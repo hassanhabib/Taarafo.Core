@@ -21,7 +21,7 @@ namespace Taarafo.Core.Brokers.Storages
         public IQueryable<PostImpression> SelectAllPostImpressions() =>
             SelectAll<PostImpression>();
 
-        public async ValueTask<PostImpression> SelectPostImpressionByIdsAsync(Guid postId, Guid profileId) =>
+        public async ValueTask<PostImpression> SelectPostImpressionByIdAsync(Guid postId, Guid profileId) =>
             await SelectAsync<PostImpression>(postId, profileId);
 
         public async ValueTask<PostImpression> UpdatePostImpressionAsync(PostImpression postImpression) =>

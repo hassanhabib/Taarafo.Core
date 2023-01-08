@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.PostImpressions;
 using Xunit;
@@ -15,42 +16,35 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
     public partial class PostImpressionServiceTests
     {
         [Fact]
-        public async Task ShouldRemovePostImpressionByIdAsync()
+        public async Task ShouldRetrieveGroupPostByIdAsync()
         {
-            //given
+            // given
             Guid randomPostId = Guid.NewGuid();
             Guid randomProfileId = Guid.NewGuid();
             Guid inputPostId = randomPostId;
             Guid inputProfileId = randomProfileId;
             PostImpression randomPostImpression = CreateRandomPostImpression();
-            randomPostImpression.PostId = inputPostId;
-            randomPostImpression.ProfileId = inputProfileId;
             PostImpression storagePostImpression = randomPostImpression;
-            PostImpression expectedPostImpression = storagePostImpression;
+            PostImpression expectedPostImpression = storagePostImpression.DeepClone();
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostImpressionByIdAsync(inputPostId, inputProfileId))
-                    .ReturnsAsync(expectedPostImpression);
+                    .ReturnsAsync(storagePostImpression);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.DeletePostImpressionAsync(storagePostImpression))
-                    .ReturnsAsync(expectedPostImpression);
+            // when
+            PostImpression actualPostImpression =
+                await this.postImpressionService.RetrievePostImpressionByIdAsync(inputPostId, inputProfileId);
 
-            //when
-            PostImpression actualPostImpression = await this.postImpressionService
-                .RemovePostImpressionAsync(randomPostImpression);
-
-            //then
+            // then
             actualPostImpression.Should().BeEquivalentTo(expectedPostImpression);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(inputPostId, inputProfileId), Times.Once());
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.DeletePostImpressionAsync(storagePostImpression), Times.Once());
+                broker.SelectPostImpressionByIdAsync(inputPostId, inputProfileId),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

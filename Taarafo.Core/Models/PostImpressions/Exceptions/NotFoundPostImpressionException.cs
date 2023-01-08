@@ -11,7 +11,7 @@ namespace Taarafo.Core.Models.PostImpressions.Exceptions
     public class NotFoundPostImpressionException : Xeption
     {
         public NotFoundPostImpressionException(Guid postId, Guid profileId)
-            : base(message: $"Couldn't find PostImpression with postId: " + $"{postId}" + $"and profileId:{profileId}.")
+           : base(message: $"Couldn't find post impression with id: {postId}, {profileId}.")
         { }
     }
 }

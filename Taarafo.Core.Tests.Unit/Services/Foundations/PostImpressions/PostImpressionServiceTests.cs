@@ -75,7 +75,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         private static PostImpression CreateRandomPostImpression(DateTimeOffset dates) =>
             CreatePostImpressionFiller(dates).Create();
 
-        private PostImpression CreateRandomPostImpression()=>
+        private PostImpression CreateRandomPostImpression() =>
             CreatePostImpressionFiller(DateTimeOffset.UtcNow).Create();
 
         private static int GetRandomNumber() =>
