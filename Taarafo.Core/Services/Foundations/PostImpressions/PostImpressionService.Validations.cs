@@ -56,7 +56,6 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
         private static void ValidateAginstStoragePostImpressionOnModify(PostImpression inputPostImpression,PostImpression storagePostImpression)
         {
-            ValidateStoragePostImpression(storagePostImpression, inputPostImpression.PostId,inputPostImpression.ProfileId);
 
             Validate(
                 (Rule: IsNotSame(
@@ -65,6 +64,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                     secondDateName: nameof(PostImpression.CreatedDate)),
 
                  Parameter: nameof(PostImpression.CreatedDate)),
+
                 (Rule: IsSame(
                     firstDate: inputPostImpression.UpdatedDate,
                     secondDate: storagePostImpression.UpdatedDate,
