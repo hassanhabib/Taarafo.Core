@@ -61,17 +61,18 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             Validate(
                 (Rule: IsNotSame(
                     firstDate: inputPostImpression.CreatedDate,
-                    secondDate: inputPostImpression.CreatedDate,
+                    secondDate: storagePostImpression.CreatedDate,
                     secondDateName: nameof(PostImpression.CreatedDate)),
 
                  Parameter: nameof(PostImpression.CreatedDate)),
                 (Rule: IsSame(
                     firstDate: inputPostImpression.UpdatedDate,
-                    secondDate: inputPostImpression.UpdatedDate,
+                    secondDate: storagePostImpression.UpdatedDate,
                     secondDateName: nameof(PostImpression.UpdatedDate)),
 
                  Parameter: nameof(PostImpression.UpdatedDate)));   
         }
+
 
         private static void ValidatePostImpressionIsNotNull(PostImpression postImpression)
         {
@@ -156,6 +157,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
             return timeDifference.Duration() > oneMinute;
         }
+
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
