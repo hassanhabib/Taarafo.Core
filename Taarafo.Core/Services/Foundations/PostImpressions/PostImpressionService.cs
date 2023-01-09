@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
@@ -39,12 +40,25 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
         public IQueryable<PostImpression> RetrieveAllPostImpressions() =>
            TryCatch(() => this.storageBroker.SelectAllPostImpressions());
 
+        public ValueTask<PostImpression> RetrievePostImpressionByIdAsync(Guid postId, Guid profileId) =>
+            TryCatch(async () =>
+            {
+                ValidatePostImpressionId(postId, profileId);
+
+                PostImpression maybePostImpression =
+                    await this.storageBroker.SelectPostImpressionByIdAsync(postId, profileId);
+
+                ValidateStoragePostImpression(maybePostImpression, postId, profileId);
+
+                return maybePostImpression;
+            });
+
         public ValueTask<PostImpression> ModifyPostImpressionAsync(PostImpression postImpression) =>
             TryCatch(async () =>
             {
                 ValidatePostImpressionOnModify(postImpression);
 
-                var maybePostImpression =await this.storageBroker.SelectPostImpressionByIdsAsync(
+                var maybePostImpression =await this.storageBroker.SelectPostImpressionByIdAsync(
                     postImpression.PostId, postImpression.ProfileId);
 
                 ValidateAginstStoragePostImpressionOnModify( postImpression, maybePostImpression);
@@ -58,7 +72,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                 ValidatePostImpressionOnRemove(postImpression);
 
                 PostImpression somePostImpression =
-                    await this.storageBroker.SelectPostImpressionByIdsAsync(postImpression.PostId, postImpression.ProfileId);
+                    await this.storageBroker.SelectPostImpressionByIdAsync(postImpression.PostId, postImpression.ProfileId);
 
                 ValidateStoragePostImpression(somePostImpression, postImpression.PostId, postImpression.ProfileId);
 

@@ -9,7 +9,6 @@ using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using Taarafo.Core.Models.Comments.Exceptions;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
 using Xunit;
@@ -32,7 +31,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 new PostImpressionServiceException(failedPostImpressionServiceException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdsAsync(
+                broker.SelectPostImpressionByIdAsync(
                     It.IsAny<Guid>(),
                     It.IsAny<Guid>())).ThrowsAsync(serviceException);
 
@@ -49,7 +48,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 expectedPostImpressionServiceException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(
+                broker.SelectPostImpressionByIdAsync(
                     It.IsAny<Guid>(),
                     It.IsAny<Guid>()), Times.Once);
 
@@ -76,7 +75,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 new PostImpressionDependencyException(failedPostImpressionStorageException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdsAsync(
+                broker.SelectPostImpressionByIdAsync(
                     It.IsAny<Guid>(),
                     It.IsAny<Guid>())).ThrowsAsync(sqlException);
 
@@ -93,7 +92,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 expectedPostImpressionDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(
+                broker.SelectPostImpressionByIdAsync(
                     It.IsAny<Guid>(),
                     It.IsAny<Guid>()), Times.Once);
 
@@ -122,7 +121,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 new PostImpressionDependencyValidationException(lockedPostImpressionException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdsAsync(
+                broker.SelectPostImpressionByIdAsync(
                     It.IsAny<Guid>(),
                     It.IsAny<Guid>()))
                         .ThrowsAsync(databaseUpdateConcurrencyException);
@@ -140,7 +139,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 expectedPostImpressionDependencyValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-               broker.SelectPostImpressionByIdsAsync(
+               broker.SelectPostImpressionByIdAsync(
                    It.IsAny<Guid>(),
                    It.IsAny<Guid>()), Times.Once);
 

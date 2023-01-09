@@ -149,7 +149,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                     expectedPostImpressionValidationException))), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(
+                broker.SelectPostImpressionByIdAsync(
                     invalidPostImpression.PostId, invalidPostImpression.ProfileId), Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -198,7 +198,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                     expectedPostImpressionValidationException))), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+                broker.SelectPostImpressionByIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -225,7 +225,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 new PostImpressionValidationException(notFoundPostImpressionException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdsAsync(nonExistPostImpression.PostId,
+                broker.SelectPostImpressionByIdAsync(nonExistPostImpression.PostId,
                     nonExistPostImpression.ProfileId)).ReturnsAsync(nullPostImpression);
 
             this.dateTimeBrokerMock.Setup(broker =>
@@ -243,7 +243,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 expectedPostImpressionValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(
+                broker.SelectPostImpressionByIdAsync(
                     nonExistPostImpression.PostId,
                     nonExistPostImpression.ProfileId), Times.Once);
 
@@ -285,7 +285,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 new PostImpressionValidationException(invalidPostImpressionException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdsAsync(postId, profileId))
+                broker.SelectPostImpressionByIdAsync(postId, profileId))
                     .ReturnsAsync(storagePostImpression);
 
             this.dateTimeBrokerMock.Setup(broker =>
@@ -303,7 +303,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 expectedPostImpressionValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(invalidPostImpression.PostId,
+                broker.SelectPostImpressionByIdAsync(invalidPostImpression.PostId,
                     invalidPostImpression.ProfileId), Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -337,7 +337,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 new PostImpressionValidationException(invalidPostImpressionException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdsAsync(
+                broker.SelectPostImpressionByIdAsync(
                     invalidPostImpression.PostId, invalidPostImpression.ProfileId)).ReturnsAsync(storagePostImpression);
 
             this.dateTimeBrokerMock.Setup(broker =>
@@ -362,7 +362,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                     expectedPostImpressionValidationException))), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(
+                broker.SelectPostImpressionByIdAsync(
                     invalidPostImpression.PostId, invalidPostImpression.ProfileId), Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

@@ -38,7 +38,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.GetCurrentDateTimeOffset()).Throws(sqlException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdsAsync(postId, profileId)).Throws(sqlException);
+                broker.SelectPostImpressionByIdAsync(postId, profileId)).Throws(sqlException);
 
             //when
             ValueTask<PostImpression> modifyPostImpression =
@@ -57,7 +57,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.LogCritical(It.Is(SameExceptionAs(expectedPostImpressionDependencyException))), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(postId, profileId), Times.Never);
+                broker.SelectPostImpressionByIdAsync(postId, profileId), Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdatePostImpressionAsync(somePostImpression), Times.Never);
@@ -90,7 +90,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdsAsync(postId, profileId)).ThrowsAsync(databaseUpdateException);
+                broker.SelectPostImpressionByIdAsync(postId, profileId)).ThrowsAsync(databaseUpdateException);
 
             //when
             ValueTask<PostImpression> modifyPostImpression =
@@ -104,8 +104,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 expectedPostImpressionDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(postId, profileId), Times.Once);
-
+                broker.SelectPostImpressionByIdAsync(postId, profileId), Times.Once);
+                
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(), Times.Once);
 
@@ -138,7 +138,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 new PostImpressionDependencyValidationException(lockedPostImpressionException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdsAsync(postId, profileId))
+                broker.SelectPostImpressionByIdAsync(postId, profileId))
                     .ThrowsAsync(databaseUpdateConcurrencyException);
 
             this.dateTimeBrokerMock.Setup(broker =>
@@ -156,7 +156,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 expectedPostImpressionDependencyValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(postId, profileId), Times.Once);
+                broker.SelectPostImpressionByIdAsync(postId, profileId), Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(), Times.Once);
@@ -189,8 +189,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             var expectedPostImpressionServiceException =
                 new PostImpressionServiceException(failedPostImpressionService);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdsAsync(postId, profileId)).ThrowsAsync(serviceException);
+            this.storageBrokerMock.Setup(broker =>  
+                broker.SelectPostImpressionByIdAsync(postId, profileId)).ThrowsAsync(serviceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
@@ -210,7 +210,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.GetCurrentDateTimeOffset(), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(postId, profileId), Times.Once);
+                broker.SelectPostImpressionByIdAsync(postId, profileId), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(

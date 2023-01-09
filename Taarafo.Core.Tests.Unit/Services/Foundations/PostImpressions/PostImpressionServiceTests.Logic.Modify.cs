@@ -33,7 +33,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdsAsync(postId, profileId))
+                broker.SelectPostImpressionByIdAsync(postId, profileId))
                     .ReturnsAsync(storagePostImpression);
 
             this.storageBrokerMock.Setup(broker =>
@@ -51,7 +51,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.GetCurrentDateTimeOffset(), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdsAsync(postId, profileId), Times.Once);
+                broker.SelectPostImpressionByIdAsync(postId, profileId), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdatePostImpressionAsync(inputPostImpression), Times.Once);

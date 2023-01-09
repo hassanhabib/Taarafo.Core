@@ -74,6 +74,10 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                  Parameter: nameof(PostImpression.UpdatedDate)));   
         }
 
+        private void ValidatePostImpressionId(Guid postId, Guid profileId) =>
+            Validate(
+                (Rule: IsInvalid(postId), Parameter: nameof(PostImpression.PostId)),
+                (Rule: IsInvalid(profileId), Parameter: nameof(PostImpression.ProfileId)));
 
         private static void ValidatePostImpressionIsNotNull(PostImpression postImpression)
         {
