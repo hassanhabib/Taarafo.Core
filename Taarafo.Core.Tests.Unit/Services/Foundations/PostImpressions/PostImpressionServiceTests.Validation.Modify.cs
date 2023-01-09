@@ -326,7 +326,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             PostImpression randomPostImpression = CreateRandomModifyPostImpression(randomDateTime);
             PostImpression invalidPostImpression = randomPostImpression;
             PostImpression storagePostImpression = invalidPostImpression.DeepClone();
-            invalidPostImpression.UpdatedDate=storagePostImpression.UpdatedDate;
+            invalidPostImpression.UpdatedDate = storagePostImpression.UpdatedDate;
             var invalidPostImpressionException = new InvalidPostImpressionException();
 
             invalidPostImpressionException.AddData(
@@ -340,7 +340,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.SelectPostImpressionByIdsAsync(
                     invalidPostImpression.PostId, invalidPostImpression.ProfileId)).ReturnsAsync(storagePostImpression);
 
-            this.dateTimeBrokerMock.Setup(broker=>
+            this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
 
             //when

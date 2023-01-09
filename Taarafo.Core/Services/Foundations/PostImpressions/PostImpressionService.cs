@@ -44,9 +44,9 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             {
                 ValidatePostImpressionOnModify(postImpression);
 
-                var maybePostImpression =
-                await this.storageBroker.SelectPostImpressionByIdsAsync(
+                var maybePostImpression =await this.storageBroker.SelectPostImpressionByIdsAsync(
                     postImpression.PostId, postImpression.ProfileId);
+
                 ValidateStoragePostImpression(maybePostImpression,postImpression.PostId,postImpression.ProfileId);
                 ValidateAginstStoragePostImpressionOnModify( postImpression, maybePostImpression);
 
