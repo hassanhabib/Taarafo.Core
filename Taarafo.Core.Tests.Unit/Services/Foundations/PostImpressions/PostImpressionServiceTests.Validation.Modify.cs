@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
@@ -252,6 +253,65 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostImpressionValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageCreatedDateNotSameAsCreatedDateAndLogItAsync()
+        {
+            //given
+            int randomNumber = GetRandomNumber();
+            int randomMinutes = randomNumber;
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            PostImpression randomPostImpression = CreateRandomModifyPostImpression(randomDateTime);
+            PostImpression invalidPostImpression = randomPostImpression.DeepClone();
+            PostImpression storagePostImpression = randomPostImpression.DeepClone();
+            storagePostImpression.CreatedDate = storagePostImpression.CreatedDate.AddMinutes(randomMinutes);
+            storagePostImpression.UpdatedDate = storagePostImpression.UpdatedDate.AddMinutes(randomMinutes);
+            Guid postId = invalidPostImpression.PostId;
+            Guid profileId = invalidPostImpression.ProfileId;
+
+            var invalidPostImpressionException =
+                new InvalidPostImpressionException();
+
+            invalidPostImpressionException.AddData(
+                key: nameof(PostImpression.CreatedDate),
+                values: $"Date is not the same as {nameof(PostImpression.CreatedDate)}");
+
+            var expectedPostImpressionValidationException =
+                new PostImpressionValidationException(invalidPostImpressionException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostImpressionByIdsAsync(postId, profileId))
+                    .ReturnsAsync(storagePostImpression);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
+
+            //when
+            ValueTask<PostImpression> modifyPostImpressionTask =
+                this.postImpressionService.ModifyPostImpressionAsync(invalidPostImpression);
+
+            PostImpressionValidationException actualPostImpressionValidationException =
+                await Assert.ThrowsAsync<PostImpressionValidationException>(modifyPostImpressionTask.AsTask);
+
+            //then
+            actualPostImpressionValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostImpressionByIdsAsync(invalidPostImpression.PostId,
+                    invalidPostImpression.ProfileId), Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogError(It.Is(SameExceptionAs(
+                   expectedPostImpressionValidationException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

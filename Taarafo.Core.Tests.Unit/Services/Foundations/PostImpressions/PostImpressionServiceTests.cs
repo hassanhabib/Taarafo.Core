@@ -75,6 +75,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         private static PostImpression CreateRandomPostImpression(DateTimeOffset dates) =>
             CreatePostImpressionFiller(dates).Create();
 
+        private static PostImpression CreateRandomModifyPostImpression(DateTimeOffset dates)
+        {
+            int randomDaysInPast = GetRandomNegativeNumber();
+            PostImpression randomPostImpression = CreateRandomPostImpression(dates);
+
+            randomPostImpression.CreatedDate= randomPostImpression.CreatedDate
+                .AddDays(randomDaysInPast);
+
+            return randomPostImpression;
+        }
+
         private PostImpression CreateRandomPostImpression()=>
             CreatePostImpressionFiller(DateTimeOffset.UtcNow).Create();
 
