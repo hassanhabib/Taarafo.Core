@@ -51,6 +51,23 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             };
         }
 
+        public static TheoryData<int> InvalidSeconds()
+        {
+            int secondsInPast = -1 * new IntRange(
+                min: 60,
+                max: short.MaxValue).GetValue();
+
+            int secondsInFuture = new IntRange(
+                min: 0,
+                max: short.MaxValue).GetValue();
+
+            return new TheoryData<int>
+            {
+                secondsInPast,
+                secondsInFuture
+            };
+        }
+
         public static T GetInvalidEnum<T>()
         {
             int randomNumber = GetRandomNumber();

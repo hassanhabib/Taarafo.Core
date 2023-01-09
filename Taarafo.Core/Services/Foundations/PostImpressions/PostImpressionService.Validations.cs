@@ -56,6 +56,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
 
         private static void ValidateAginstStoragePostImpressionOnModify(PostImpression inputPostImpression,PostImpression storagePostImpression)
         {
+            ValidateStoragePostImpression(storagePostImpression, inputPostImpression.PostId, inputPostImpression.ProfileId);
 
             Validate(
                 (Rule: IsNotSame(

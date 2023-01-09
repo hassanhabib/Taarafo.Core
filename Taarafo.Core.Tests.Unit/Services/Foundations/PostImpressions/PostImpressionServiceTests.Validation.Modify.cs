@@ -158,7 +158,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         }
 
         [Theory]
-        [MemberData(nameof(MinutesBeforeOrAfter))]
+        [MemberData(nameof(InvalidSeconds))]
         public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotRecentAndLogItAsync(int minuts)
         {
             //given
