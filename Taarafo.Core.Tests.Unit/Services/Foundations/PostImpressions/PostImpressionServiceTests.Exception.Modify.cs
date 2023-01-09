@@ -4,9 +4,6 @@
 // ---------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
@@ -28,33 +25,33 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             PostImpression randomPostImpression = CreateRandomModifyPostImpression(randomDateTime);
             PostImpression somePostImpression = randomPostImpression;
             Guid postId = somePostImpression.PostId;
-            Guid profileId= somePostImpression.ProfileId;
+            Guid profileId = somePostImpression.ProfileId;
             SqlException sqlException = GetSqlException();
 
-            var failedPostImpressionStorageException = 
+            var failedPostImpressionStorageException =
                 new FailedPostImpressionStorageException(sqlException);
 
             var expectedPostDependencyException =
-                new PostDependencyException(failedPostImpressionStorageException);
+                new PostImpressionDependencyException(failedPostImpressionStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset()).Throws(sqlException);
 
-            this.storageBrokerMock.Setup(broker=>
-                broker.SelectPostImpressionByIdsAsync(postId,profileId)).Throws(sqlException);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostImpressionByIdsAsync(postId, profileId)).Throws(sqlException);
 
             //when
             ValueTask<PostImpression> modifyPostImpression =
                 this.postImpressionService.ModifyPostImpressionAsync(somePostImpression);
 
-            PostDependencyException actualPostDependencyException =
-                await Assert.ThrowsAsync<PostDependencyException>(modifyPostImpression.AsTask);
+            PostImpressionDependencyException actualPostDependencyException =
+                await Assert.ThrowsAsync<PostImpressionDependencyException>(modifyPostImpression.AsTask);
 
             //then
             actualPostDependencyException.Should().BeEquivalentTo(actualPostDependencyException);
 
-            this.dateTimeBrokerMock.Verify(broker=>
-                broker.GetCurrentDateTimeOffset(),Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(expectedPostDependencyException))), Times.Once);
