@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
@@ -29,6 +30,13 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
             {
                 throw CreateAndLogDependencyException(postImpressionServiceException);
             }
+            catch (Exception exception)
+            {
+                var failedPostImpressionProcessingServiceException =
+                    new FailedPostImpressionProcessingServiceException(exception);
+
+                throw CreateAndLogServiceException(failedPostImpressionProcessingServiceException);
+            }
         }
 
         private PostImpressionProcessingDependencyException CreateAndLogDependencyException(Xeption exception)
@@ -39,6 +47,16 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
             this.loggingBroker.LogError(postImpressionProcessingDependencyException);
 
             return postImpressionProcessingDependencyException;
+        }
+
+        private PostImpressionProcessingServiceException CreateAndLogServiceException(Xeption exception)
+        {
+            var postImpressionProcessingServiceException =
+                new PostImpressionProcessingServiceException(exception);
+
+            this.loggingBroker.LogError(postImpressionProcessingServiceException);
+
+            return postImpressionProcessingServiceException;
         }
     }
 }
