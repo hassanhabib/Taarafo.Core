@@ -35,15 +35,15 @@ namespace Taarafo.Core.Controllers
             {
                 return BadRequest(groupValidationException.InnerException);
             }
-            catch (GroupDependencyException groupDependencyException)
-                when (groupDependencyException.InnerException is InvalidGroupReferenceException)
+            catch (GroupDependencyValidationException groupDependencyValidationException)
+                when (groupDependencyValidationException.InnerException is InvalidGroupReferenceException)
             {
-                return FailedDependency(groupDependencyException.InnerException);
+                return FailedDependency(groupDependencyValidationException.InnerException);
             }
-            catch (GroupDependencyException groupDependencyException)
-                when (groupDependencyException.InnerException is AlreadyExistsGroupException)
+            catch (GroupDependencyValidationException groupDependencyValidationException)
+                when (groupDependencyValidationException.InnerException is AlreadyExistsGroupException)
             {
-                return Conflict(groupDependencyException.InnerException);
+                return Conflict(groupDependencyValidationException.InnerException);
             }
             catch (GroupDependencyException groupDependencyException)
             {
