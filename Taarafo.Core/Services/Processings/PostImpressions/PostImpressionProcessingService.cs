@@ -24,6 +24,6 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
         }
 
         public IQueryable<PostImpression> RetrieveAllPostImpressionsAsync() =>
-            TryCatch(()=>this.postImpressionService.RetrieveAllPostImpressions());
+            TryCatch(() => this.postImpressionService.RetrieveAllPostImpressions());
     }
 }
