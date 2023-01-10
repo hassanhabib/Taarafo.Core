@@ -19,13 +19,11 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
             IPostImpressionService postImpressionService,
             ILoggingBroker loggingBroker)
         {
-            this.postImpressionService =postImpressionService;
+            this.postImpressionService = postImpressionService;
             this.loggingBroker = loggingBroker;
         }
 
-        public IQueryable<PostImpression> RetrieveAllPostImpressionsAsync()
-        {
-            throw new System.NotImplementedException();
-        }
+        public IQueryable<PostImpression> RetrieveAllPostImpressionsAsync() =>
+            this.postImpressionService.RetrieveAllPostImpressions();
     }
 }

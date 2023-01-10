@@ -36,7 +36,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
-        private static DateTimeOffset GetRandomDateTimeOffset()=>
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
         private static Filler<PostImpression> CreatePostImpressionFiller()

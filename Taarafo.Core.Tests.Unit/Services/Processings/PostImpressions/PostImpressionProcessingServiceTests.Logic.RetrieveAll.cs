@@ -3,13 +3,8 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
-using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.PostImpressions;
 using Xunit;
@@ -26,12 +21,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
             IQueryable<PostImpression> storagePostImpressions = randomPostImpressions;
             IQueryable<PostImpression> expectedPostImpressions = storagePostImpressions;
 
-            this.postImpressionServiceMock.Setup(service=>
+            this.postImpressionServiceMock.Setup(service =>
                 service.RetrieveAllPostImpressions())
                     .Returns(expectedPostImpressions);
 
             //when
-            IQueryable<PostImpression> actualPostImpression=
+            IQueryable<PostImpression> actualPostImpression =
                 this.postImpressionProcessingService.RetrieveAllPostImpressionsAsync();
 
             //then
