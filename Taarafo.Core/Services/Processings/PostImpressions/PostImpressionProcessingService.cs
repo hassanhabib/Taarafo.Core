@@ -10,7 +10,7 @@ using Taarafo.Core.Services.Foundations.PostImpressions;
 
 namespace Taarafo.Core.Services.Processings.PostImpressions
 {
-    public class PostImpressionProcessingService : IPostImpressionProcessingService
+    public partial class PostImpressionProcessingService : IPostImpressionProcessingService
     {
         private readonly IPostImpressionService postImpressionService;
         private readonly ILoggingBroker loggingBroker;

@@ -5,12 +5,17 @@
 
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using Moq;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Models.PostImpressions;
+using Taarafo.Core.Models.PostImpressions.Exceptions;
+using Taarafo.Core.Models.Posts.Exceptions;
 using Taarafo.Core.Services.Foundations.PostImpressions;
 using Taarafo.Core.Services.Processings.PostImpressions;
 using Tynamix.ObjectFiller;
+using Xeptions;
+using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
 {
@@ -33,8 +38,27 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
         private IQueryable<PostImpression> CreateRandomPostImpressions() =>
             CreatePostImpressionFiller().Create(count: GetRandomNumber()).AsQueryable();
 
+        public static TheoryData DependencyExceptions()
+        {
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PostImpressionDependencyException(innerException),
+                new PostImpressionServiceException(innerException)
+            };
+        }
+
+        private static string GetRandomMessage() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
+
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
