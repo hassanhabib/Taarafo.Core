@@ -40,11 +40,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             ValueTask<Group> addGroupTask =
                 this.groupService.AddGroupAsync(someGroup);
 
-            // then
             GroupDependencyException actualGroupDependencyException =
-                 await Assert.ThrowsAsync<GroupDependencyException>(() =>
-                    addGroupTask.AsTask());
+                 await Assert.ThrowsAsync<GroupDependencyException>(
+                    addGroupTask.AsTask);
 
+            // then
             actualGroupDependencyException.Should().BeEquivalentTo(
                 expectedGroupDependencyException);
 
@@ -91,11 +91,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             ValueTask<Group> addGroupTask =
                 this.groupService.AddGroupAsync(alreadyExistsGroup);
 
-            // then
             GroupDependencyValidationException actualGroupDependencyValidationException =
-                 await Assert.ThrowsAsync<GroupDependencyValidationException>(() =>
-                    addGroupTask.AsTask());
+                 await Assert.ThrowsAsync<GroupDependencyValidationException>(
+                    addGroupTask.AsTask);
 
+            // then
             actualGroupDependencyValidationException.Should().BeEquivalentTo(
                 expectedGroupDependencyValidationException);
 
@@ -142,11 +142,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             ValueTask<Group> addGroupTask =
                 this.groupService.AddGroupAsync(someGroup);
 
-            // then
             GroupDependencyValidationException actualGroupDependencyValidationException =
-                 await Assert.ThrowsAsync<GroupDependencyValidationException>(() =>
-                    addGroupTask.AsTask());
+                 await Assert.ThrowsAsync<GroupDependencyValidationException>(
+                     addGroupTask.AsTask);
 
+            // then
             actualGroupDependencyValidationException.Should().BeEquivalentTo(
                 expectedGroupDependencyValidationException);
 
@@ -191,11 +191,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             ValueTask<Group> addGroupTask =
                 this.groupService.AddGroupAsync(someGroup);
 
-            // then
             GroupDependencyException actualGroupDependencyException =
-                 await Assert.ThrowsAsync<GroupDependencyException>(() =>
-                    addGroupTask.AsTask());
+                 await Assert.ThrowsAsync<GroupDependencyException>(
+                     addGroupTask.AsTask);
 
+            // then
             actualGroupDependencyException.Should().BeEquivalentTo(
                 expectedGroupDependencyException);
 
@@ -238,11 +238,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             ValueTask<Group> addGroupTask =
                 this.groupService.AddGroupAsync(someGroup);
 
-            // then
             GroupServiceException actualGroupServiceException =
-                 await Assert.ThrowsAsync<GroupServiceException>(() =>
-                    addGroupTask.AsTask());
+                 await Assert.ThrowsAsync<GroupServiceException>(
+                     addGroupTask.AsTask);
 
+            // then
             actualGroupServiceException.Should().BeEquivalentTo(
                 expectedGroupServiceException);
 

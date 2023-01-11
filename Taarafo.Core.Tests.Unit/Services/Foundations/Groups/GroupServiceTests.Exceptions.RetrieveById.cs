@@ -37,11 +37,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 			ValueTask<Group> retrieveGroupByIdTask =
 				this.groupService.RetrieveGroupByIdAsync(someGroupId);
 
-			//then
 			GroupDependencyException actualGroupDependencyException = 
-				 await Assert.ThrowsAsync<GroupDependencyException>(() =>
-					retrieveGroupByIdTask.AsTask());
+				 await Assert.ThrowsAsync<GroupDependencyException>(
+					retrieveGroupByIdTask.AsTask);
 
+			//then
 			actualGroupDependencyException.Should().BeEquivalentTo(
 				expectedGroupDependencyException);
 
@@ -79,11 +79,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 			ValueTask<Group> retrieveGroupByIdTask =
 				this.groupService.RetrieveGroupByIdAsync(someGroupId);
 
-			//then
 		    GroupServiceException actualGroupServiceException = 
-				 await Assert.ThrowsAsync<GroupServiceException>(() =>
-					retrieveGroupByIdTask.AsTask());
+				 await Assert.ThrowsAsync<GroupServiceException>(
+					 retrieveGroupByIdTask.AsTask);
 
+			//then
 			actualGroupServiceException.Should().BeEquivalentTo(
 				expectedGroupServiceException);
 

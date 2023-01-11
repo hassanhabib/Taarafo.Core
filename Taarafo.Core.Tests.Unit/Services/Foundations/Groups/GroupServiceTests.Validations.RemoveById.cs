@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.Groups;
 using Taarafo.Core.Models.Groups.Exceptions;
@@ -34,11 +35,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 			ValueTask<Group> removeGroupByIdTask =
 				this.groupService.RemoveGroupByIdAsync(invalidGroupId);
 
-			// then
-			await Assert.ThrowsAsync<GroupValidationException>(() =>
-				removeGroupByIdTask.AsTask());
+            GroupValidationException actualGroupValidationException =
+               await Assert.ThrowsAsync<GroupValidationException>(
+                   removeGroupByIdTask.AsTask);
 
-			this.loggingBrokerMock.Verify(broker =>
+			// then
+			actualGroupValidationException.Should().BeEquivalentTo(
+				expectedGroupValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedGroupValidationException))),
 						Times.Once);
@@ -77,9 +82,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 			ValueTask<Group> removeGroupByIdTask =
 				this.groupService.RemoveGroupByIdAsync(inputGroupId);
 
+            GroupValidationException actualGroupValidationException =
+               await Assert.ThrowsAsync<GroupValidationException>(
+                   removeGroupByIdTask.AsTask);
+
 			// then
-			await Assert.ThrowsAsync<GroupValidationException>(() =>
-				removeGroupByIdTask.AsTask());
+			actualGroupValidationException.Should().BeEquivalentTo(
+				expectedGroupValidationException);
 
 			this.storageBrokerMock.Verify(broker =>
 				broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
