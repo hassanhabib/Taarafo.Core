@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.Processings.PostImpressions.Exceptions;
 using Xeptions;
@@ -32,9 +33,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
             Action retrieveAllPostImpressionAction = () =>
                 this.postImpressionProcessingService.RetrieveAllPostImpressionsAsync();
 
+            PostImpressionProcessingDependencyException actualPostImpressionProcessingDependencyException =
+                Assert.Throws<PostImpressionProcessingDependencyException>(retrieveAllPostImpressionAction);
+
             //then
-            Assert.Throws<PostImpressionProcessingDependencyException>(
-                retrieveAllPostImpressionAction);
+            actualPostImpressionProcessingDependencyException.Should().BeEquivalentTo(
+                expectedPostImpressionProcessingDependencyException);
 
             this.postImpressionServiceMock.Verify(service =>
                 service.RetrieveAllPostImpressions(), Times.Once);
@@ -67,8 +71,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
             Action retrieveAllPostImpressionAction = () =>
                 this.postImpressionProcessingService.RetrieveAllPostImpressionsAsync();
 
+            PostImpressionProcessingServiceException actualPostImpressionProcessingDependencyException =
+                Assert.Throws<PostImpressionProcessingServiceException>(retrieveAllPostImpressionAction);
+
             //then
-            Assert.Throws<PostImpressionProcessingServiceException>(retrieveAllPostImpressionAction);
+            actualPostImpressionProcessingDependencyException.Should().BeEquivalentTo(
+                expectedPostImpressionProcessingServiceException);
 
             this.postImpressionServiceMock.Verify(service =>
                 service.RetrieveAllPostImpressions(), Times.Once);
