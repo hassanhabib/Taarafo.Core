@@ -10,7 +10,7 @@ using Taarafo.Core.Services.Foundations.PostImpressions;
 
 namespace Taarafo.Core.Services.Processings.PostImpressions
 {
-    public class PostImpressionProcessingService : IPostImpressionProcessingService
+    public partial class PostImpressionProcessingService : IPostImpressionProcessingService
     {
         private readonly IPostImpressionService postImpressionService;
         private readonly ILoggingBroker loggingBroker;
@@ -24,7 +24,11 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
         }
 
         public ValueTask<PostImpression> UpsertPostImpressionAsync(PostImpression postImpression) =>
-            throw new System.NotImplementedException();
+             TryCatch(async () =>
+             {
+                 this.postImpressionService.RetrieveAllPostImpressions();
 
+                 return await this.postImpressionService.AddPostImpressions(postImpression);
+             });
     }
 }
