@@ -163,7 +163,6 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             return timeDifference.Duration() > oneMinute;
         }
 
-
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidPostImpressionException = new InvalidPostImpressionException();

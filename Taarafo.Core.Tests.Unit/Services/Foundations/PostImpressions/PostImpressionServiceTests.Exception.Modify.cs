@@ -110,8 +110,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.GetCurrentDateTimeOffset(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(expectedPostImpressionDependencyException))), Times.Once);
-
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostImpressionDependencyException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
