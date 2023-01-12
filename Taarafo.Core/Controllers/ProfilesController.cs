@@ -82,7 +82,8 @@ namespace Taarafo.Core.Controllers
         {
             try
             {
-                Profile deleteProfile = await this.profileService.RemoveProfileByIdAsync(profileId);
+                Profile deleteProfile = 
+                    await this.profileService.RemoveProfileByIdAsync(profileId);
 
                 return Ok(deleteProfile);
             }
