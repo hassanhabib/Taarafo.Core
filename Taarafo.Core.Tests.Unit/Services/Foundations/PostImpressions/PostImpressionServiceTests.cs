@@ -97,13 +97,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             int randomDaysInPast = GetRandomNegativeNumber();
             PostImpression randomPostImpression = CreateRandomPostImpression(dates);
 
-            randomPostImpression.CreatedDate= randomPostImpression.CreatedDate
+            randomPostImpression.CreatedDate = randomPostImpression.CreatedDate
                 .AddDays(randomDaysInPast);
 
             return randomPostImpression;
         }
 
-        private PostImpression CreateRandomPostImpression()=>
+        private PostImpression CreateRandomPostImpression() =>
             CreatePostImpressionFiller(DateTimeOffset.UtcNow).Create();
 
         private static int GetRandomNumber() =>
