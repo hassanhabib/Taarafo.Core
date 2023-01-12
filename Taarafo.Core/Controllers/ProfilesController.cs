@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -69,6 +70,43 @@ namespace Taarafo.Core.Controllers
             catch (ProfileDependencyException profileDependencyException)
             {
                 return InternalServerError(profileDependencyException);
+            }
+            catch (ProfileServiceException profileServiceException)
+            {
+                return InternalServerError(profileServiceException);
+            }
+        }
+
+        [HttpDelete("profileId")]
+        public async ValueTask<ActionResult<Profile>> DeleteProfileByIdAsync(Guid profileId)
+        {
+            try
+            {
+                Profile deleteProfile = await this.profileService.RemoveProfileByIdAsync(profileId);
+
+                return Ok(deleteProfile);
+            }
+            catch (ProfileValidationException profileValidationException)
+                when (profileValidationException.InnerException is NotFoundProfileException)
+            {
+                return NotFound(profileValidationException.InnerException);
+            }
+            catch (ProfileValidationException profileValidationException)
+            {
+                return BadRequest(profileValidationException.InnerException);
+            }
+            catch (ProfileDependencyValidationException profileDependencyValidationException)
+                when (profileDependencyValidationException.InnerException is LockedProfileException)
+            {
+                return Locked(profileDependencyValidationException.InnerException);
+            }
+            catch (ProfileDependencyValidationException profileDependencyValidationException)
+            {
+                return BadRequest(profileDependencyValidationException.InnerException);
+            }
+            catch (ProfileDependencyException profileDependencyException)
+            {
+                return InternalServerError(profileDependencyException.InnerException);
             }
             catch (ProfileServiceException profileServiceException)
             {
