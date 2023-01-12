@@ -35,7 +35,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 				this.groupService.RetrieveAllGroups();
 
 			GroupDependencyException actualGroupDependencyException = 
-				Assert.Throws<GroupDependencyException>((retrieveAllGroupsAction));
+				Assert.Throws<GroupDependencyException>(retrieveAllGroupsAction);
 
 			// then
 			actualGroupDependencyException.Should().BeEquivalentTo(
@@ -76,7 +76,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 				 this.groupService.RetrieveAllGroups();
 
 		    GroupServiceException actualGroupServiceException = 
-				Assert.Throws<GroupServiceException>((retrieveAllGroupsAction));
+				Assert.Throws<GroupServiceException>(retrieveAllGroupsAction);
 
 			//then
 			actualGroupServiceException.Should().BeEquivalentTo(
