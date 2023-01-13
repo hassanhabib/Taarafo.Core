@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq.Expressions;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -11,6 +12,7 @@ using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.GroupMemberships;
 using Taarafo.Core.Services.Foundations.GroupMemberships;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
 {
@@ -38,6 +40,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
 
         private static GroupMembership CreateRandomGroupMembership() =>
             CreateGroupMembershipFiller(GetRandomDateTimeOffset()).Create();
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+           actualException => actualException.SameExceptionAs(expectedException);
 
         private static Filler<GroupMembership> CreateGroupMembershipFiller(DateTimeOffset dates)
         {
