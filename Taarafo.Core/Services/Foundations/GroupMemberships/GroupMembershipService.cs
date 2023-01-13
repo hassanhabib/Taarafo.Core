@@ -24,7 +24,7 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<GroupMembership> AddGroupMembershipAsync(GroupMembership groupMembership) =>
-            throw new System.NotImplementedException();
+        public async ValueTask<GroupMembership> AddGroupMembershipAsync(GroupMembership groupMembership) =>
+            await this.storageBroker.InsertGroupMembershipAsync(groupMembership);
     }
 }
