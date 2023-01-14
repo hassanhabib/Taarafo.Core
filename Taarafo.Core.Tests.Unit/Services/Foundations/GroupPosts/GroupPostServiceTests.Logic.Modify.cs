@@ -23,7 +23,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             GroupPost randomGroupPost = CreateRandomModifyGroupPost(randomDate);
             GroupPost inputGroupPost = randomGroupPost;
             GroupPost storageGroupPost = inputGroupPost.DeepClone();
-            storageGroupPost.UpdatedDate = randomGroupPost.CreatedDate;
             GroupPost updatedGroupPost = inputGroupPost;
             GroupPost exceptedGroupPost = updatedGroupPost.DeepClone();
             Guid groupId = inputGroupPost.GroupId;
@@ -47,16 +46,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             //then
             actualGroupPost.Should().BeEquivalentTo(exceptedGroupPost);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
-
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateGroupPostAsync(inputGroupPost), Times.Once);
             
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectGroupPostByIdAsync(groupId, postId), Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }

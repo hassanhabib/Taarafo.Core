@@ -39,35 +39,7 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 
             Validate(
                 (Rule: IsInvalid(groupPost.GroupId), Parameter: nameof(GroupPost.GroupId)),
-                (Rule: IsInvalid(groupPost.PostId), Parameter: nameof(GroupPost.PostId)),
-                (Rule: IsInvalid(groupPost.CreatedDate), Parameter: nameof(GroupPost.CreatedDate)),
-                (Rule: IsInvalid(groupPost.UpdatedDate), Parameter: nameof(GroupPost.UpdatedDate)),
-                (Rule: IsNotRecent(groupPost.UpdatedDate), Parameter: nameof(GroupPost.UpdatedDate)),
-
-                (Rule: IsSame(
-                    firstDate: groupPost.UpdatedDate,
-                    secondDate: groupPost.CreatedDate,
-                    secondDateName: nameof(GroupPost.CreatedDate)),
-
-                Parameter: nameof(GroupPost.UpdatedDate)));
-        }
-
-        private static void ValidateAginstStorageGroupPostOnModify(GroupPost inputGroupPost, GroupPost storageGroupPost)
-        {
-            ValidateStorageGroupPostExists(storageGroupPost, inputGroupPost.GroupId, inputGroupPost.PostId);
-
-            Validate(
-            (Rule: IsNotSame(
-                    firstDate: inputGroupPost.CreatedDate,
-                    secondDate: storageGroupPost.CreatedDate,
-                    secondDateName: nameof(GroupPost.CreatedDate)),
-                Parameter: nameof(GroupPost.CreatedDate)),
-
-            (Rule: IsSame(
-                        firstDate: inputGroupPost.UpdatedDate,
-                        secondDate: storageGroupPost.UpdatedDate,
-                        secondDateName: nameof(GroupPost.UpdatedDate)),
-                Parameter: nameof(GroupPost.UpdatedDate)));
+                (Rule: IsInvalid(groupPost.PostId), Parameter: nameof(GroupPost.PostId)));
         }
 
         private void ValidateStorageGroupPost(GroupPost maybeGroupPost, Guid groupId, Guid postId)
@@ -94,38 +66,6 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             Condition = date == default,
             Message = "Value is required"
         };
-
-        private static dynamic IsSame(
-            DateTimeOffset firstDate,
-            DateTimeOffset secondDate,
-            string secondDateName) => new
-            {
-                Condition = firstDate == secondDate,
-                Message = $"Date is the same as {secondDateName}"
-            };
-
-        private static dynamic IsNotSame(
-            DateTimeOffset firstDate,
-            DateTimeOffset secondDate,
-            string secondDateName) => new
-            {
-                Condition = firstDate != secondDate,
-                Message = $"Date is not same as {secondDateName}"
-            };
-
-        private dynamic IsNotRecent(DateTimeOffset date) => new
-        {
-            Condition = IsDateNotRecent(date),
-            Message = "Date is not recent"
-        };
-
-        private bool IsDateNotRecent(DateTimeOffset date)
-        {
-            DateTimeOffset currentDateTime = this.dateTimeBrokerMock.GetCurrentDateTimeOffset();
-            TimeSpan timeDifference = currentDateTime.Subtract(date);
-
-            return timeDifference.TotalSeconds is > 60 or < 0;
-        }
 
         private static void ValidateGroupPostIsNotNull(GroupPost groupPost)
         {

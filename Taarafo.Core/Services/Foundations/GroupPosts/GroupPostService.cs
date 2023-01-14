@@ -62,7 +62,7 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
                     await this.storageBroker.SelectGroupPostByIdAsync(
                         groupPost.GroupId, groupPost.PostId);
 
-                ValidateAginstStorageGroupPostOnModify(inputGroupPost: groupPost, storageGroupPost: maybeGrouPost);
+                ValidateStorageGroupPostExists(maybeGrouPost, groupPost.GroupId, groupPost.PostId);
 
                 return await this.storageBroker.UpdateGroupPostAsync(groupPost);
             });

@@ -34,8 +34,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             var expectedGroupPostDependencyException =
                 new GroupPostDependencyException(failedGroupPostStorageException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset()).Throws(sqlException);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGroupPostByIdAsync(groupId, postId))
+                    .Throws(sqlException);
 
             // when
             ValueTask<GroupPost> modifyGroupPostTask =
@@ -49,20 +50,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             actualGroupPostDependencyException.Should().BeEquivalentTo(
                 expectedGroupPostDependencyException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedGroupPostDependencyException))), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(groupId, postId), Times.Never);
+                broker.SelectGroupPostByIdAsync(groupId, postId), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateGroupPostAsync(someGroupPost), Times.Never);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
@@ -77,7 +74,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             GroupPost someGroupPost = randomGroupPost;
             Guid groupId = someGroupPost.GroupId;
             Guid postId = someGroupPost.PostId;
-            someGroupPost.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
             var databaseUpdateException = new DbUpdateException();
 
             var failedGroupPostException =
@@ -89,9 +85,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupPostByIdAsync(groupId, postId))
                     .ThrowsAsync(databaseUpdateException);
-
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
 
             // when
             ValueTask<GroupPost> modifyGroupPostTask =
@@ -108,15 +101,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectGroupPostByIdAsync(groupId, postId), Times.Once);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupPostDependencyException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
@@ -128,7 +117,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             GroupPost randomGroupPost = CreateRandomGroupPost(randomDateTime);
             GroupPost someGroupPost = randomGroupPost;
-            someGroupPost.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
             Guid groupId = someGroupPost.GroupId;
             Guid postId = someGroupPost.PostId;
             var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
@@ -142,9 +130,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupPostByIdAsync(groupId, postId))
                     .ThrowsAsync(databaseUpdateConcurrencyException);
-
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
 
             // when
             ValueTask<GroupPost> modifyGroupPostTask =
@@ -160,15 +145,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectGroupPostByIdAsync(groupId, postId), Times.Once);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupPostDependencyValidationException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
@@ -180,7 +161,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             GroupPost randomGroupPost = CreateRandomGroupPost(randomDateTime);
             GroupPost someGroupPost = randomGroupPost;
-            someGroupPost.CreatedDate = randomDateTime.AddMinutes(minuteInPast);
             var serviceException = new Exception();
 
             var failedGroupPostException =
@@ -192,9 +172,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupPostByIdAsync(someGroupPost.GroupId, someGroupPost.PostId))
                     .ThrowsAsync(serviceException);
-
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
 
             // when
             ValueTask<GroupPost> modifyGroupPostTask =
@@ -211,15 +188,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectGroupPostByIdAsync(someGroupPost.GroupId, someGroupPost.PostId), Times.Once);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupPostServiceException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
