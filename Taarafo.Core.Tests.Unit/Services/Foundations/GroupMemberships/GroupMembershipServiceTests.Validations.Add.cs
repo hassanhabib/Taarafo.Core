@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -45,6 +46,53 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfGroupMembershipIsInvalidAndLogItAsync()
+        {
+            // given
+            Guid invalidGuid = Guid.Empty;
+
+            var invalidGroupMembership = new GroupMembership
+            {
+                GroupId = invalidGuid,
+                ProfileId = invalidGuid
+            };
+
+            var inalidGroupMembershipException =
+                new InvalidGroupMembershipException();
+
+            inalidGroupMembershipException.AddData(
+                key: nameof(GroupMembership.GroupId),
+                values: "Id is required");
+
+            var expectedGroupMembershipValidationException =
+                new GroupMembershipValidationException(inalidGroupMembershipException);
+
+            //when
+            ValueTask<GroupMembership> addGroupMembershipTask =
+                this.groupMembershipService.AddGroupMembershipAsync(invalidGroupMembership);
+
+            GroupMembershipValidationException actualGroupMembershipValidationException =
+                await Assert.ThrowsAsync<GroupMembershipValidationException>(
+                    addGroupMembershipTask.AsTask);
+
+            //then
+            actualGroupMembershipValidationException.Should().BeEquivalentTo(
+                expectedGroupMembershipValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupMembershipAsync(invalidGroupMembership),
+                    Times.Never());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupMembershipValidationException))),
+                        Times.Once());
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
