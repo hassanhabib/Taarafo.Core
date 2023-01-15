@@ -11,7 +11,7 @@ using Taarafo.Core.Models.GroupMemberships;
 
 namespace Taarafo.Core.Services.Foundations.GroupMemberships
 {
-    public class GroupMembershipService : IGroupMembershipService
+    public partial class GroupMembershipService : IGroupMembershipService
     {
         private IStorageBroker storageBroker;
         private IDateTimeBroker dateTimeBroker;
@@ -24,7 +24,12 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<GroupMembership> AddGroupMembershipAsync(GroupMembership groupMembership) =>
-            await this.storageBroker.InsertGroupMembershipAsync(groupMembership);
+        public ValueTask<GroupMembership> AddGroupMembershipAsync(GroupMembership groupMembership) =>
+        TryCatch(async () =>
+        {
+            ValidateGroupMembershipOnAdd(groupMembership);
+
+            return await this.storageBroker.InsertGroupMembershipAsync(groupMembership);
+        });
     }
 }
