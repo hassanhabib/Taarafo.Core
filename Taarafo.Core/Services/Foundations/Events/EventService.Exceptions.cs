@@ -3,11 +3,11 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.Events;
 using Taarafo.Core.Models.Events.Exceptions;
-using Taarafo.Core.Models.Posts.Exceptions;
 using Xeptions;
 
 namespace Taarafo.Core.Services.Foundations.Events
@@ -28,6 +28,13 @@ namespace Taarafo.Core.Services.Foundations.Events
 
                 throw CreateAndLogCriticalDependencyException(failedEventStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedEventServiceException =
+                    new FailedEventServiceException(exception);
+
+                throw CreateAndLogServiceException(failedEventServiceException);
+            }
         }
 
         private EventDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
@@ -36,6 +43,14 @@ namespace Taarafo.Core.Services.Foundations.Events
             this.loggingBroker.LogCritical(eventDependencyException);
 
             return eventDependencyException;
+        }
+
+        private EventServiceException CreateAndLogServiceException(Xeption exception)
+        {
+            var eventServiceException = new EventServiceException(exception);
+            this.loggingBroker.LogError(eventServiceException);
+
+            return eventServiceException;
         }
     }
 }
