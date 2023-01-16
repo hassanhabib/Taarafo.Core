@@ -27,9 +27,7 @@ namespace Taarafo.Core.Services.Foundations.Events
             this.loggingBroker = loggingBroker;
         }
 
-        public IQueryable<Event> RetrieveAllEvents()
-        {
-            throw new System.NotImplementedException();
-        }
+        public IQueryable<Event> RetrieveAllEvents() =>
+            this.storageBroker.SelectAllEvents();
     }
 }
