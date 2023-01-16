@@ -53,6 +53,19 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                 return maybePostImpression;
             });
 
+        public ValueTask<PostImpression> ModifyPostImpressionAsync(PostImpression postImpression) =>
+            TryCatch(async () =>
+            {
+                ValidatePostImpressionOnModify(postImpression);
+
+                var maybePostImpression = await this.storageBroker.SelectPostImpressionByIdAsync(
+                    postImpression.PostId, postImpression.ProfileId);
+
+                ValidateAginstStoragePostImpressionOnModify(postImpression, maybePostImpression);
+
+                return await this.storageBroker.UpdatePostImpressionAsync(postImpression);
+            });
+
         public ValueTask<PostImpression> RemovePostImpressionAsync(PostImpression postImpression) =>
             TryCatch(async () =>
             {

@@ -51,6 +51,23 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             };
         }
 
+        public static TheoryData<int> InvalidSeconds()
+        {
+            int secondsInPast = -1 * new IntRange(
+                min: 60,
+                max: short.MaxValue).GetValue();
+
+            int secondsInFuture = new IntRange(
+                min: 0,
+                max: short.MaxValue).GetValue();
+
+            return new TheoryData<int>
+            {
+                secondsInPast,
+                secondsInFuture
+            };
+        }
+
         public static T GetInvalidEnum<T>()
         {
             int randomNumber = GetRandomNumber();
@@ -74,6 +91,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
         private static PostImpression CreateRandomPostImpression(DateTimeOffset dates) =>
             CreatePostImpressionFiller(dates).Create();
+
+        private static PostImpression CreateRandomModifyPostImpression(DateTimeOffset dates)
+        {
+            int randomDaysInPast = GetRandomNegativeNumber();
+            PostImpression randomPostImpression = CreateRandomPostImpression(dates);
+
+            randomPostImpression.CreatedDate = randomPostImpression.CreatedDate
+                .AddDays(randomDaysInPast);
+
+            return randomPostImpression;
+        }
 
         private PostImpression CreateRandomPostImpression() =>
             CreatePostImpressionFiller(DateTimeOffset.UtcNow).Create();
