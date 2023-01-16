@@ -41,6 +41,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
         private static SqlException CreateSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
+        private static string GetRandomMessage() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
+
         private static Event CreateRandomEvent(DateTimeOffset dates) =>
             CreateEventFiller(dates).Create();
 
