@@ -28,6 +28,6 @@ namespace Taarafo.Core.Services.Foundations.Events
         }
 
         public IQueryable<Event> RetrieveAllEvents() =>
-            this.storageBroker.SelectAllEvents();
+            TryCatch(() => this.storageBroker.SelectAllEvents());
     }
 }

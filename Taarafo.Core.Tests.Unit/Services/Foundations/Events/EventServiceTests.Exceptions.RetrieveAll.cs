@@ -19,10 +19,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
         {
             // given
             SqlException sqlException = CreateSqlException();
-            var failedEventServiceException = new FailedEventServiceException(sqlException);
+            var failedEventStorageException =
+                new FailedEventStorageException(sqlException);
 
             var expectedEventDependencyException =
-                new EventDependencyException(failedEventServiceException);
+                new EventDependencyException(failedEventStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllEvents()).Throws(sqlException);
