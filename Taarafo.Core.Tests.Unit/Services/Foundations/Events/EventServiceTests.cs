@@ -5,6 +5,9 @@
 
 using System;
 using System.Linq;
+using System.Linq.Expressions;
+using Microsoft.Data.SqlClient;
+using System.Runtime.Serialization;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -12,6 +15,7 @@ using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.Events;
 using Taarafo.Core.Services.Foundations.Events;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
 {
@@ -34,6 +38,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
+        private static SqlException CreateSqlException() =>
+            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+
         private static Event CreateRandomEvent(DateTimeOffset dates) =>
             CreateEventFiller(dates).Create();
 
@@ -48,6 +55,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             return CreateEventFiller(dates: GetRandomDateTimeOffset())
                 .Create(count: GetRandomNumber()).AsQueryable();
         }
+
+        private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedExceptoin) =>
+            actualException => actualException.SameExceptionAs(expectedExceptoin);
 
         private static Filler<Event> CreateEventFiller(DateTimeOffset dates)
         {
