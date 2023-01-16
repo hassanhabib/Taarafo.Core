@@ -5,8 +5,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
+using Microsoft.AspNetCore.Mvc;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
 using Taarafo.Core.Services.Foundations.Profiles;
