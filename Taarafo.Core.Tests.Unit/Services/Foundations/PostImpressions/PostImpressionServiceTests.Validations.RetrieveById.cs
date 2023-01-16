@@ -44,7 +44,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                     retrievePostImpressionByIdTask.AsTask);
 
             // then
-            actualPostImpressionValidationException.Should().BeEquivalentTo(expectedPostImpressionValidationException);
+            actualPostImpressionValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -87,7 +88,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                     retrievePostImpressionByIdTask.AsTask);
 
             // then
-            actualPostImpressionValidationException.Should().BeEquivalentTo(expectedPostImpressionValidationException);
+            actualPostImpressionValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionValidationException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostImpressionByIdAsync(somePostId, someProfileId),

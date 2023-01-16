@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
@@ -32,9 +33,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             Action retrieveAllPostImpressions = () =>
                 this.postImpressionService.RetrieveAllPostImpressions();
 
+            PostImpressionDependencyException actualPostImpressionDependencyException =
+                Assert.Throws<PostImpressionDependencyException>(retrieveAllPostImpressions);
+           
             //then
-            Assert.Throws<PostImpressionDependencyException>(
-                retrieveAllPostImpressions);
+            actualPostImpressionDependencyException.Should().BeEquivalentTo(
+                expectedPostImpressionDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
                broker.SelectAllPostImpressions(), Times.Once);
@@ -68,9 +72,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             Action retrieveAllPostImpressionsAction = () =>
                 this.postImpressionService.RetrieveAllPostImpressions();
 
+            PostImpressionServiceException actualPostImpressionServiceException = 
+                Assert.Throws<PostImpressionServiceException>(retrieveAllPostImpressionsAction);
+
             //then
-            Assert.Throws<PostImpressionServiceException>(
-                retrieveAllPostImpressionsAction);
+            actualPostImpressionServiceException.Should().BeEquivalentTo(
+                expectedPostImpressionServiceException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllPostImpressions(), Times.Once);
