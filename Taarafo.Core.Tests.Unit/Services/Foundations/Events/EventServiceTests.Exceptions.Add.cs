@@ -54,7 +54,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnAddIfDuplicateKeyErrorOccursAndLogItAsync()
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfEventAlreadyExistsOccursAndLogItAsync()
         {
             //given
             Event someEvent = CreateRandomEvent();
