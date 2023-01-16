@@ -184,7 +184,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         {
             // given
             DateTimeOffset randomDateTime =
-                GetRandomDateTimeOffset();
+                GetRandomDateTime();
 
             DateTimeOffset invalidDateTime =
                 randomDateTime.AddMinutes(minutesBeforeOrAfter);

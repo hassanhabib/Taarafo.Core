@@ -4,6 +4,8 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Data;
+using System.Reflection.Metadata;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
 
@@ -31,6 +33,45 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                 Parameter: nameof(PostImpression.UpdatedDate)),
 
                 (Rule: IsNotRecent(postImpression.CreatedDate), Parameter: nameof(PostImpression.CreatedDate)));
+        }
+
+        private void ValidatePostImpressionOnModify(PostImpression postImpression)
+        {
+            ValidatePostImpressionIsNotNull(postImpression);
+
+            Validate(
+                (Rule: IsInvalid(postImpression.PostId), Parameter: nameof(PostImpression.PostId)),
+                (Rule: IsInvalid(postImpression.ProfileId), Parameter: nameof(PostImpression.ProfileId)),
+                (Rule: IsInvalid(postImpression.CreatedDate), Parameter: nameof(PostImpression.CreatedDate)),
+                (Rule: IsInvalid(postImpression.UpdatedDate), Parameter: nameof(PostImpression.UpdatedDate)),
+                (Rule:IsNotRecent(postImpression.UpdatedDate),Parameter:nameof(PostImpression.UpdatedDate)),
+
+                (Rule: IsSame(
+                firstDate: postImpression.UpdatedDate,
+                secondDate: postImpression.CreatedDate,
+                secondDateName: nameof(postImpression.CreatedDate)),
+
+                Parameter: nameof(PostImpression.UpdatedDate)));
+        }
+
+        private static void ValidateAginstStoragePostImpressionOnModify(PostImpression inputPostImpression,PostImpression storagePostImpression)
+        {
+            ValidateStoragePostImpression(storagePostImpression, inputPostImpression.PostId, inputPostImpression.ProfileId);
+
+            Validate(
+                (Rule: IsNotSame(
+                    firstDate: inputPostImpression.CreatedDate,
+                    secondDate: storagePostImpression.CreatedDate,
+                    secondDateName: nameof(PostImpression.CreatedDate)),
+
+                 Parameter: nameof(PostImpression.CreatedDate)),
+
+                (Rule: IsSame(
+                    firstDate: inputPostImpression.UpdatedDate,
+                    secondDate: storagePostImpression.UpdatedDate,
+                    secondDateName: nameof(PostImpression.UpdatedDate)),
+
+                 Parameter: nameof(PostImpression.UpdatedDate)));   
         }
 
         private void ValidatePostImpressionId(Guid postId, Guid profileId) =>
@@ -86,6 +127,15 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             Condition = Enum.IsDefined(type) is false,
             Message = "Value is not recognized"
         };
+
+        private static dynamic IsSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
+            };
 
         private static dynamic IsNotSame(
             DateTimeOffset firstDate,

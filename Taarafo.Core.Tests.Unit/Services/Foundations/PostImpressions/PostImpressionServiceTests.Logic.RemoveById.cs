@@ -51,6 +51,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
