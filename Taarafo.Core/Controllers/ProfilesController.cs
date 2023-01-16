@@ -104,5 +104,43 @@ namespace Taarafo.Core.Controllers
                 return InternalServerError(profileServiceException.InnerException);
             }
         }
+
+        [HttpDelete("profileId")]
+        public async ValueTask<ActionResult<Profile>> DeleteProfileByIdAsync(Guid profileId)
+        {
+            try
+            {
+                Profile deleteProfile = 
+                    await this.profileService.RemoveProfileByIdAsync(profileId);
+
+                return Ok(deleteProfile);
+            }
+            catch (ProfileValidationException profileValidationException)
+                when (profileValidationException.InnerException is NotFoundProfileException)
+            {
+                return NotFound(profileValidationException.InnerException);
+            }
+            catch (ProfileValidationException profileValidationException)
+            {
+                return BadRequest(profileValidationException.InnerException);
+            }
+            catch (ProfileDependencyValidationException profileDependencyValidationException)
+                when (profileDependencyValidationException.InnerException is LockedProfileException)
+            {
+                return Locked(profileDependencyValidationException.InnerException);
+            }
+            catch (ProfileDependencyValidationException profileDependencyValidationException)
+            {
+                return BadRequest(profileDependencyValidationException.InnerException);
+            }
+            catch (ProfileDependencyException profileDependencyException)
+            {
+                return InternalServerError(profileDependencyException.InnerException);
+            }
+            catch (ProfileServiceException profileServiceException)
+            {
+                return InternalServerError(profileServiceException);
+            }
+        }
     }
 }
