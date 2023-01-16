@@ -105,6 +105,40 @@ namespace Taarafo.Core.Controllers
             }
         }
 
+        [HttpPut]
+        public async ValueTask<ActionResult<Profile>> PutProfileAsync(Profile profile)
+        {
+            try
+            {
+                Profile modifiedProfile =
+                    await this.profileService.ModifyProfileAsync(profile);
+
+                return Ok(modifiedProfile);
+            }
+            catch (ProfileValidationException profileValidationException)
+                when (profileValidationException.InnerException is NotFoundProfileException)
+            {
+                return NotFound(profileValidationException.InnerException);
+            }
+            catch (ProfileValidationException profileValidationException)
+            {
+                return BadRequest(profileValidationException.InnerException);
+            }
+            catch (ProfileDependencyValidationException profileDependencyValidationException)
+                when (profileDependencyValidationException.InnerException is InvalidProfileException)
+            {
+                return FailedDependency(profileDependencyValidationException.InnerException);
+            }
+            catch (ProfileDependencyValidationException profileDependencyValidationException)
+            {
+                return InternalServerError(profileDependencyValidationException.InnerException);
+            }
+            catch (ProfileServiceException profileServiceException)
+            {
+                return InternalServerError(profileServiceException.InnerException);
+            }
+        }
+
         [HttpDelete("profileId")]
         public async ValueTask<ActionResult<Profile>> DeleteProfileByIdAsync(Guid profileId)
         {
@@ -140,40 +174,6 @@ namespace Taarafo.Core.Controllers
             catch (ProfileServiceException profileServiceException)
             {
                 return InternalServerError(profileServiceException);
-            }
-        }
-
-        [HttpPut]
-        public async ValueTask<ActionResult<Profile>> PutProfileAsync(Profile profile)
-        {
-            try
-            {
-                Profile modifiedProfile =
-                    await this.profileService.ModifyProfileAsync(profile);
-
-                return Ok(modifiedProfile);
-            }
-            catch (ProfileValidationException profileValidationException)
-                when (profileValidationException.InnerException is NotFoundProfileException)
-            {
-                return NotFound(profileValidationException.InnerException);
-            }
-            catch (ProfileValidationException profileValidationException)
-            {
-                return BadRequest(profileValidationException.InnerException);
-            }
-            catch (ProfileDependencyValidationException profileDependencyValidationException)
-                when (profileDependencyValidationException.InnerException is InvalidProfileException)
-            {
-                return FailedDependency(profileDependencyValidationException.InnerException);
-            }
-            catch (ProfileDependencyValidationException profileDependencyValidationException)
-            {
-                return InternalServerError(profileDependencyValidationException.InnerException);
-            }
-            catch (ProfileServiceException profileServiceException)
-            {
-                return InternalServerError(profileServiceException.InnerException);
             }
         }
     }
