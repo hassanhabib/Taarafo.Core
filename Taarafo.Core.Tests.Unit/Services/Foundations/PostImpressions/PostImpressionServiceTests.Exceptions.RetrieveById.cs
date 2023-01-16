@@ -83,10 +83,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 this.postImpressionService.RetrievePostImpressionByIdAsync(somePostId, someProfileId);
 
             PostImpressionServiceException actualPostImpressionServiceException =
-                 await Assert.ThrowsAsync<PostImpressionServiceException>(retrievePostImpressionByIdTask.AsTask);
+                 await Assert.ThrowsAsync<PostImpressionServiceException>(
+                     retrievePostImpressionByIdTask.AsTask);
 
             //then
-            actualPostImpressionServiceException.Should().BeEquivalentTo(expectedPostImpressionServiceException);
+            actualPostImpressionServiceException.Should().BeEquivalentTo(
+                expectedPostImpressionServiceException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostImpressionByIdAsync(It.IsAny<Guid>(), (It.IsAny<Guid>())),

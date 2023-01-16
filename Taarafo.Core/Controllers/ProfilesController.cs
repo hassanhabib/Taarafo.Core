@@ -77,6 +77,34 @@ namespace Taarafo.Core.Controllers
             }
         }
 
+        [HttpGet("profileId")]
+        public async ValueTask<ActionResult<Profile>> GetPostByIdAsync(Guid profileId)
+        {
+            try
+            {
+                Profile profile = await this.profileService.RetrieveProfileByIdAsync(profileId);
+
+                return Ok(profile);
+            }
+            catch (ProfileValidationException profileValidationException)
+                when (profileValidationException.InnerException is NotFoundProfileException)
+            {
+                return NotFound(profileValidationException.InnerException);
+            }
+            catch (ProfileValidationException profileValidationException)
+            {
+                return BadRequest(profileValidationException.InnerException);
+            }
+            catch (ProfileDependencyException profileDependencyException)
+            {
+                return InternalServerError(profileDependencyException.InnerException);
+            }
+            catch (ProfileServiceException profileServiceException)
+            {
+                return InternalServerError(profileServiceException.InnerException);
+            }
+        }
+
         [HttpDelete("profileId")]
         public async ValueTask<ActionResult<Profile>> DeleteProfileByIdAsync(Guid profileId)
         {

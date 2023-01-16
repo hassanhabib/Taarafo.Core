@@ -39,11 +39,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             ValueTask<Group> modifyGroupTask =
                 this.groupService.ModifyGroupAsync(randomGroup);
 
-            // then
             GroupDependencyException actualGroupDependencyException =
-                 await Assert.ThrowsAsync<GroupDependencyException>(() =>
-                    modifyGroupTask.AsTask());
+                 await Assert.ThrowsAsync<GroupDependencyException>(
+                    modifyGroupTask.AsTask);
 
+            // then
             actualGroupDependencyException.Should().BeEquivalentTo(
                 expectedGroupDependencyException);
 
@@ -102,11 +102,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             ValueTask<Group> modifyGroupTask =
                 this.groupService.ModifyGroupAsync(foreignKeyConflictedGroup);
 
-            // then
             GroupDependencyValidationException actualGroupDependencyValidationException =
-                 await Assert.ThrowsAsync<GroupDependencyValidationException>(() =>
-                    modifyGroupTask.AsTask());
+                 await Assert.ThrowsAsync<GroupDependencyValidationException>(
+                    modifyGroupTask.AsTask);
 
+            // then
             actualGroupDependencyValidationException.Should().BeEquivalentTo(
                 expectedGroupDependencyValidationException);
 
@@ -152,11 +152,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             ValueTask<Group> modifyGroupTask =
                 this.groupService.ModifyGroupAsync(randomGroup);
 
-            // then
             GroupDependencyException actualGroupDependencyException =
-                 await Assert.ThrowsAsync<GroupDependencyException>(() =>
-                    modifyGroupTask.AsTask());
+                 await Assert.ThrowsAsync<GroupDependencyException>(
+                     modifyGroupTask.AsTask);
 
+            // then
             actualGroupDependencyException.Should().BeEquivalentTo(
                 expectedGroupDependencyException);
 
@@ -203,11 +203,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             ValueTask<Group> modifyGroupTask =
                 this.groupService.ModifyGroupAsync(randomGroup);
 
-            // then
             GroupDependencyValidationException actualGroupDependencyValidationException =
-                 await Assert.ThrowsAsync<GroupDependencyValidationException>(() =>
-                    modifyGroupTask.AsTask());
+                 await Assert.ThrowsAsync<GroupDependencyValidationException>(
+                     modifyGroupTask.AsTask);
 
+            // then
             actualGroupDependencyValidationException.Should().BeEquivalentTo(
                 expectedGroupDependencyValidationException);
 
@@ -254,11 +254,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             ValueTask<Group> modifyGroupTask =
                 this.groupService.ModifyGroupAsync(randomGroup);
 
-            // then
             GroupServiceException actualGroupServiceException =
-                 await Assert.ThrowsAsync<GroupServiceException>(() =>
-                    modifyGroupTask.AsTask());
+                 await Assert.ThrowsAsync<GroupServiceException>(
+                     modifyGroupTask.AsTask);
 
+            // then
             actualGroupServiceException.Should().BeEquivalentTo(
                 expectedGroupServiceException);
 
