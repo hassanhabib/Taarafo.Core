@@ -40,18 +40,18 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
             ValidatePostImpressionIsNotNull(postImpression);
 
             Validate(
-            (Rule: IsInvalid(postImpression.PostId), Parameter: nameof(PostImpression.PostId)),
-            (Rule: IsInvalid(postImpression.ProfileId), Parameter: nameof(PostImpression.ProfileId)),
-            (Rule: IsInvalid(postImpression.CreatedDate), Parameter: nameof(PostImpression.CreatedDate)),
-            (Rule: IsInvalid(postImpression.UpdatedDate), Parameter: nameof(PostImpression.UpdatedDate)),
-            (Rule:IsNotRecent(postImpression.UpdatedDate),Parameter:nameof(PostImpression.UpdatedDate)),
+                (Rule: IsInvalid(postImpression.PostId), Parameter: nameof(PostImpression.PostId)),
+                (Rule: IsInvalid(postImpression.ProfileId), Parameter: nameof(PostImpression.ProfileId)),
+                (Rule: IsInvalid(postImpression.CreatedDate), Parameter: nameof(PostImpression.CreatedDate)),
+                (Rule: IsInvalid(postImpression.UpdatedDate), Parameter: nameof(PostImpression.UpdatedDate)),
+                (Rule:IsNotRecent(postImpression.UpdatedDate),Parameter:nameof(PostImpression.UpdatedDate)),
 
-            (Rule: IsSame(
+                (Rule: IsSame(
                 firstDate: postImpression.UpdatedDate,
                 secondDate: postImpression.CreatedDate,
                 secondDateName: nameof(postImpression.CreatedDate)),
 
-            Parameter: nameof(PostImpression.UpdatedDate)));
+                Parameter: nameof(PostImpression.UpdatedDate)));
         }
 
         private static void ValidateAginstStoragePostImpressionOnModify(PostImpression inputPostImpression,PostImpression storagePostImpression)
