@@ -16,6 +16,7 @@ using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Services.Foundations.GroupPosts;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 {
@@ -38,6 +39,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
+        public static TheoryData MinutesBeforeOrAfter()
+        {
+            int randomNumber = GetRandomNumber();
+            int randomNegativeNumber = GetRandomNegativeNumber();
+
+            return new TheoryData<int>
+            {
+                randomNumber,
+                randomNegativeNumber
+            };
+        }
+
+        private static SqlException CreateSqlException() =>
+            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+
         private static int GetRandomNumber() =>
             new IntRange(min: 1, max: 10).GetValue();
 
@@ -52,6 +68,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
         private static GroupPost CreateRandomGroupPost() =>
             CreateGroupPostFiller(GetRandomDateTimeOffset()).Create();
+
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
+        private static GroupPost CreateRandomModifyGroupPost(DateTimeOffset dates)
+        {
+            int randomDaysInPast = GetRandomNegativeNumber();
+            GroupPost randomGroupPost = CreateRandomGroupPost(dates);           
+            return randomGroupPost;
+        }
 
         private static IQueryable<GroupPost> CreateRandomGroupPosts()
         {
