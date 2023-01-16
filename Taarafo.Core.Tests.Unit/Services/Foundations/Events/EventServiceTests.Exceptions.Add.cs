@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -47,6 +48,44 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedEventDependencyException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfDuplicateKeyErrorOccursAndLogItAsync()
+        {
+            //given
+            Event someEvent = CreateRandomEvent();
+            string someMessage = GetRandomString();
+            var duplicateKeyException = new DuplicateKeyException(someMessage);
+
+            var alreadyExistsEventException = new AlreadyExistsEventException(duplicateKeyException);
+
+            var expectedDependencyValidationException =
+               new EventDependencyValidationException(alreadyExistsEventException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertEventAsync(It.IsAny<Event>()))
+                    .ThrowsAsync(duplicateKeyException);
+
+            //when
+            ValueTask<Event> addEventTask = this.eventService.AddEventAsync(someEvent);
+
+            EventDependencyValidationException actualEvenDependencyValidationException =
+                await Assert.ThrowsAsync<EventDependencyValidationException>(addEventTask.AsTask);
+
+            //then
+            actualEvenDependencyValidationException.Should()
+                .BeEquivalentTo(expectedDependencyValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertEventAsync(It.IsAny<Event>()), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedDependencyValidationException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
