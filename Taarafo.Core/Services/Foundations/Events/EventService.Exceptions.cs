@@ -5,6 +5,7 @@
 
 using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.Events;
 using Taarafo.Core.Models.Events.Exceptions;
@@ -37,6 +38,23 @@ namespace Taarafo.Core.Services.Foundations.Events
 
                 throw CreateAndLogCriticalDependencyException(failedEventStorageException);
             }
+            catch(DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsEventException = new AlreadyExistsEventException(duplicateKeyException);
+
+                throw CreateAndLogDependencyValidationException(alreadyExistsEventException);
+            }
+        }
+
+        private EventDependencyValidationException CreateAndLogDependencyValidationException(
+            Xeption exception)
+        {
+            var eventDependencyValidationException =
+                                new EventDependencyValidationException(exception);
+
+            this.loggingBroker.LogError(eventDependencyValidationException);
+
+            return eventDependencyValidationException;
         }
 
         private EventValidationException CreateAndLogValidationException(Xeption exception)
