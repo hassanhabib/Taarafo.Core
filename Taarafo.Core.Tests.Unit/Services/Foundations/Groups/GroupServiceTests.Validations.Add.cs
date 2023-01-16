@@ -9,6 +9,7 @@ using FluentAssertions;
 using Moq;
 using Taarafo.Core.Models.Groups;
 using Taarafo.Core.Models.Groups.Exceptions;
+using Taarafo.Core.Models.PostImpressions.Exceptions;
 using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
@@ -31,9 +32,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 			ValueTask<Group> addGroupTask =
 				this.groupService.AddGroupAsync(nullGroup);
 
+            GroupValidationException actualGroupValidationException =
+				await Assert.ThrowsAsync<GroupValidationException>(
+					addGroupTask.AsTask);
+
 			// then
-			await Assert.ThrowsAsync<GroupValidationException>(() =>
-				addGroupTask.AsTask());
+			actualGroupValidationException.Should().BeEquivalentTo(
+				expectedGroupValidationException);
 
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
@@ -89,11 +94,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 			ValueTask<Group> addGroupTask =
 				this.groupService.AddGroupAsync(invalidGroup);
 
-			// then
-			await Assert.ThrowsAsync<GroupValidationException>(() =>
-				addGroupTask.AsTask());
+            GroupValidationException actualGroupValidationException =
+                await Assert.ThrowsAsync<GroupValidationException>(
+                    addGroupTask.AsTask);
 
-			this.loggingBrokerMock.Verify(broker =>
+			// then
+			actualGroupValidationException.Should().BeEquivalentTo(
+				expectedGroupValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedGroupValidationException))),
 						Times.Once);
@@ -135,12 +144,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 			ValueTask<Group> addGroupTask =
 				this.groupService.AddGroupAsync(invalidGroup);
 
-			GroupValidationException actialGroupValidationException =
-				await Assert.ThrowsAsync<GroupValidationException>(() =>
-					addGroupTask.AsTask());
+			GroupValidationException actualGroupValidationException =
+				await Assert.ThrowsAsync<GroupValidationException>(
+					addGroupTask.AsTask);
 
 			// then
-			actialGroupValidationException.Should()
+			actualGroupValidationException.Should()
 				.BeEquivalentTo(expectedGroupValidationException);
 
 			this.dateTimeBrokerMock.Verify(broker =>
@@ -194,13 +203,17 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 			ValueTask<Group> addGroupTask =
 				this.groupService.AddGroupAsync(invalidGroup);
 
-			// then
-			await Assert.ThrowsAsync<GroupValidationException>(() =>
-			   addGroupTask.AsTask());
+            GroupValidationException actualGroupValidationException =
+                await Assert.ThrowsAsync<GroupValidationException>(
+                    addGroupTask.AsTask);
+
+            // then
+            actualGroupValidationException.Should().BeEquivalentTo(
+				expectedGroupValidationException);
 
 			this.dateTimeBrokerMock.Verify(broker =>
 				broker.GetCurrentDateTimeOffset(),
-					Times.Once());
+					Times.Once);
 
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(

@@ -13,55 +13,55 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 {
-	public partial class GroupServiceTests
-	{
-		[Fact]
-		public async Task ShouldUpdateGroupAsync()
-		{
-			// given
-			DateTimeOffset randomDate = GetRandomDateTimeOffset();
-			Group randomGroup = CreateRandomGroup(randomDate);
-			Group inputGroup = randomGroup;
-			inputGroup.UpdatedDate = randomDate.AddMinutes(1);
-			Group storageGroup = inputGroup;
-			Group updatedGroup = inputGroup;
-			Group expectedGroup = updatedGroup.DeepClone();
-			Guid inputGroupId = inputGroup.Id;
+    public partial class GroupServiceTests
+    {
+        [Fact]
+        public async Task ShouldUpdateGroupAsync()
+        {
+            // given
+            DateTimeOffset randomDate = GetRandomDateTimeOffset();
+            Group randomGroup = CreateRandomGroup(randomDate);
+            Group inputGroup = randomGroup;
+            inputGroup.UpdatedDate = randomDate.AddMinutes(1);
+            Group storageGroup = inputGroup;
+            Group updatedGroup = inputGroup;
+            Group expectedGroup = updatedGroup.DeepClone();
+            Guid inputGroupId = inputGroup.Id;
 
-			this.dateTimeBrokerMock.Setup(broker =>
-				broker.GetCurrentDateTimeOffset())
-					.Returns(randomDate);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDate);
 
-			this.storageBrokerMock.Setup(broker =>
-				broker.SelectGroupByIdAsync(inputGroupId))
-						.ReturnsAsync(storageGroup);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGroupByIdAsync(inputGroupId))
+                        .ReturnsAsync(storageGroup);
 
-			this.storageBrokerMock.Setup(broker =>
-				broker.UpdateGroupAsync(inputGroup))
-						.ReturnsAsync(updatedGroup);
+            this.storageBrokerMock.Setup(broker =>
+                broker.UpdateGroupAsync(inputGroup))
+                        .ReturnsAsync(updatedGroup);
 
-			// when
-			Group actualGroup =
-				await this.groupService.ModifyGroupAsync(inputGroup);
+            // when
+            Group actualGroup =
+                await this.groupService.ModifyGroupAsync(inputGroup);
 
-			// then
-			actualGroup.Should().BeEquivalentTo(expectedGroup);
+            // then
+            actualGroup.Should().BeEquivalentTo(expectedGroup);
 
-			this.dateTimeBrokerMock.Verify(broker =>
-				broker.GetCurrentDateTimeOffset(),
-					Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectGroupByIdAsync(inputGroupId),
-					Times.Once);
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectGroupByIdAsync(inputGroupId),
+                    Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateGroupAsync(inputGroup),
-					Times.Once);
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateGroupAsync(inputGroup),
+                    Times.Once);
 
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
-	}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+    }
 }
