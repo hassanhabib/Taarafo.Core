@@ -6,8 +6,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
+using Microsoft.AspNetCore.Mvc;
 using Taarafo.Core.Models.Profiles;
 using Taarafo.Core.Models.Profiles.Exceptions;
 using Taarafo.Core.Services.Foundations.Profiles;
@@ -98,6 +98,40 @@ namespace Taarafo.Core.Controllers
             catch (ProfileDependencyException profileDependencyException)
             {
                 return InternalServerError(profileDependencyException.InnerException);
+            }
+            catch (ProfileServiceException profileServiceException)
+            {
+                return InternalServerError(profileServiceException.InnerException);
+            }
+        }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Profile>> PutProfileAsync(Profile profile)
+        {
+            try
+            {
+                Profile modifiedProfile =
+                    await this.profileService.ModifyProfileAsync(profile);
+
+                return Ok(modifiedProfile);
+            }
+            catch (ProfileValidationException profileValidationException)
+                when (profileValidationException.InnerException is NotFoundProfileException)
+            {
+                return NotFound(profileValidationException.InnerException);
+            }
+            catch (ProfileValidationException profileValidationException)
+            {
+                return BadRequest(profileValidationException.InnerException);
+            }
+            catch (ProfileDependencyValidationException profileDependencyValidationException)
+                when (profileDependencyValidationException.InnerException is InvalidProfileException)
+            {
+                return FailedDependency(profileDependencyValidationException.InnerException);
+            }
+            catch (ProfileDependencyValidationException profileDependencyValidationException)
+            {
+                return InternalServerError(profileDependencyValidationException.InnerException);
             }
             catch (ProfileServiceException profileServiceException)
             {
