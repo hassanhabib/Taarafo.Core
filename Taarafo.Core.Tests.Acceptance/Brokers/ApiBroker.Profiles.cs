@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Taarafo.Core.Models.Profiles;
+using Taarafo.Core.Tests.Acceptance.Models.Profiles;
 
 namespace Taarafo.Core.Tests.Acceptance.Brokers
 {
