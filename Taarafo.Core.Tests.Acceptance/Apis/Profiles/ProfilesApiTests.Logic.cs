@@ -5,7 +5,6 @@
 
 using System.Threading.Tasks;
 using FluentAssertions;
-using Force.DeepCloner;
 using Taarafo.Core.Tests.Acceptance.Models.Profiles;
 using Xunit;
 
@@ -19,7 +18,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
             //given
             Profile randomProfile = CreateRandomProfile();
             Profile inputProfile = randomProfile;
-            Profile expectedProfile = inputProfile.DeepClone();
+            Profile expectedProfile = inputProfile;
 
             //when
             await this.apiBroker.PostProfilesAsync(inputProfile);

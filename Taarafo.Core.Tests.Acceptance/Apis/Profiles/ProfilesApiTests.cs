@@ -30,8 +30,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
 
             filler.Setup()
                 .OnProperty(profile => profile.CreatedDate).Use(now)
-                .OnProperty(profile => profile.UpdatedDate).Use(now);
-                
+                .OnProperty(profile => profile.UpdatedDate).Use(now); 
 
             return filler;
         }
