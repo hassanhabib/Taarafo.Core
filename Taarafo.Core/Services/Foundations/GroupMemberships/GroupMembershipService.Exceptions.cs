@@ -24,6 +24,10 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
             {
                 throw CreateAndLogValidationException(nullGroupMembershipException);
             }
+            catch (InvalidGroupMembershipException invalidGroupMembershipException)
+            {
+                throw CreateAndLogValidationException(invalidGroupMembershipException);
+            }
         }
 
         private GroupMembershipValidationException CreateAndLogValidationException(

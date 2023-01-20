@@ -64,8 +64,20 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                 new InvalidGroupMembershipException();
 
             inalidGroupMembershipException.AddData(
+                key: nameof(GroupMembership.Id),
+                values: "Id is required");
+
+            inalidGroupMembershipException.AddData(
                 key: nameof(GroupMembership.GroupId),
                 values: "Id is required");
+
+            inalidGroupMembershipException.AddData(
+                key: nameof(GroupMembership.ProfileId),
+                values: "Id is required");
+
+            inalidGroupMembershipException.AddData(
+                key: nameof(GroupMembership.MembershipDate),
+                values: "Date is required");
 
             var expectedGroupMembershipValidationException =
                 new GroupMembershipValidationException(inalidGroupMembershipException);
@@ -82,14 +94,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
             actualGroupMembershipValidationException.Should().BeEquivalentTo(
                 expectedGroupMembershipValidationException);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupMembershipAsync(invalidGroupMembership),
-                    Times.Never());
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupMembershipValidationException))),
                         Times.Once());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupMembershipAsync(invalidGroupMembership),
+                    Times.Never());
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
