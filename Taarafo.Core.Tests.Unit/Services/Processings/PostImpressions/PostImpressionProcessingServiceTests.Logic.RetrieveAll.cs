@@ -27,7 +27,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
 
             //when
             IQueryable<PostImpression> actualPostImpression =
-                this.postImpressionProcessingService.RetrieveAllPostImpressionsAsync();
+                this.postImpressionProcessingService.RetrieveAllPostImpressions();
 
             //then
             actualPostImpression.Should().BeEquivalentTo(expectedPostImpressions);
