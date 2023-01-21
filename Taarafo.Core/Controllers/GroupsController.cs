@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -52,6 +53,26 @@ namespace Taarafo.Core.Controllers
             catch (GroupServiceException groupServiceException)
             {
                 return InternalServerError(groupServiceException);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<IQueryable<Group>> GetAllGroups()
+        {
+            try
+            {
+                IQueryable<Group> retrievedGroups =
+                    this.groupService.RetrieveAllGroups();
+
+                return Ok(retrievedGroups);
+            }
+            catch (GroupDependencyException groupDependencyException)
+            {
+                return InternalServerError(groupDependencyException.InnerException);
+            }
+            catch (GroupServiceException groupServiceException)
+            {
+                return InternalServerError(groupServiceException.InnerException);
             }
         }
     }
