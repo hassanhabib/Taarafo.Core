@@ -14,11 +14,11 @@ using Xunit;
 namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
 {
     [Collection(nameof(ApiTestCollection))]
-    public partial class ProfileApiTests
+    public partial class ProfilesApiTests
     {
         private readonly ApiBroker apiBroker;
 
-        public ProfileApiTests(ApiBroker apiBroker) =>
+        public ProfilesApiTests(ApiBroker apiBroker) =>
             this.apiBroker = apiBroker;
 
         private async ValueTask<List<Profile>> CreateRandomProfilesAsync()

@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
 {
-    public partial class ProfileApiTests
+    public partial class ProfilesApiTests
     {
         [Fact]
         public async Task ShouldGetAllProfileAsync()
