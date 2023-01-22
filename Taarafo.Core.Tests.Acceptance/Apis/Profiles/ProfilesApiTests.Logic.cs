@@ -30,5 +30,20 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
             actualProfile.Should().BeEquivalentTo(expectedProfile);
             await this.apiBroker.DeleteProfileByIdAsync(actualProfile.Id);
         }
+
+        [Fact]
+        public async Task ShouldGetProfileByIdAsync()
+        {
+            //given
+            Profile randomProfile = await PostRandomProfileAsync();
+            Profile expectedProfile = randomProfile;
+
+            //when
+            Profile actualProfile = await this.apiBroker.GetProfileByIdAsync(randomProfile.Id);
+
+            //then
+            actualProfile.Should().BeEquivalentTo(expectedProfile);
+            await this.apiBroker.DeleteProfileByIdAsync(actualProfile.Id);
+        }
     }
 }

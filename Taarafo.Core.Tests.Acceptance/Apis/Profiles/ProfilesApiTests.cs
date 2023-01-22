@@ -20,6 +20,14 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
         public ProfilesApiTests(ApiBroker apiBroker) =>
             this.apiBroker = apiBroker;
 
+        private async Task<Profile> PostRandomProfileAsync()
+        {
+            Profile randomProfile = CreateRandomProfile();
+            await this.apiBroker.PostProfilesAsync(randomProfile);
+
+            return randomProfile;
+        }
+
         private static Profile CreateRandomProfile() =>
             CreateRandomProfileFiller().Create();
 
