@@ -15,6 +15,25 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
     public partial class ProfilesApiTests
     {
         [Fact]
+        public async Task ShouldPostProfileAsync()
+        {
+            //given
+            Profile randomProfile = CreateRandomProfile();
+            Profile inputProfile = randomProfile;
+            Profile expectedProfile = inputProfile;
+
+            //when
+            await this.apiBroker.PostProfilesAsync(inputProfile);
+
+            Profile actualProfile =
+                await this.apiBroker.GetProfileByIdAsync(inputProfile.Id);
+
+            //then
+            actualProfile.Should().BeEquivalentTo(expectedProfile);
+            await this.apiBroker.DeleteProfileByIdAsync(actualProfile.Id);
+        }
+
+        [Fact]
         public async Task ShouldGetAllProfileAsync()
         {
             //given

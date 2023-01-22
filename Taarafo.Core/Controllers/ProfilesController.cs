@@ -78,7 +78,7 @@ namespace Taarafo.Core.Controllers
         }
 
         [HttpGet("{profileId}")]
-        public async ValueTask<ActionResult<Profile>> GetPostByIdAsync(Guid profileId)
+        public async ValueTask<ActionResult<Profile>> GetProfileByIdAsync(Guid profileId)
         {
             try
             {

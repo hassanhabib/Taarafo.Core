@@ -18,7 +18,7 @@ namespace Taarafo.Core.Tests.Acceptance.Brokers
             await this.apiFactoryClient.PostContentAsync(ProfilesRelativeUrl, profile);
 
         public async ValueTask<List<Profile>> GetAllProfilesAsync() =>
-            await this.apiFactoryClient.GetContentAsync<List<Profile>>($"{ProfilesRelativeUrl}/");
+          await this.apiFactoryClient.GetContentAsync<List<Profile>>($"{ProfilesRelativeUrl}/");
 
         public async ValueTask<Profile> GetProfileByIdAsync(Guid profileId) =>
             await this.apiFactoryClient.GetContentAsync<Profile>($"{ProfilesRelativeUrl}/{profileId}");
