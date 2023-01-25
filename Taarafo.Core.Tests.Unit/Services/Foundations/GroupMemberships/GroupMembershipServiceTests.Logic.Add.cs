@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
@@ -18,10 +19,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
         public async Task ShouldAddGroupMembershipAsync()
         {
             // given
-            GroupMembership randomGroupMembership = CreateRandomGroupMembership();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            GroupMembership randomGroupMembership = CreateRandomGroupMembership(randomDateTime);
             GroupMembership inputGroupMembership = randomGroupMembership;
             GroupMembership storageGroupMembership = inputGroupMembership;
             GroupMembership expectedGroupMembership = storageGroupMembership.DeepClone();
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertGroupMembershipAsync(inputGroupMembership))
@@ -33,6 +39,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
 
             // then
             actualGroupMembership.Should().BeEquivalentTo(expectedGroupMembership);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertGroupMembershipAsync(inputGroupMembership),

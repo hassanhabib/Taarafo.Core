@@ -43,6 +43,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
         private static GroupMembership CreateRandomGroupMembership() =>
             CreateGroupMembershipFiller(dates: GetRandomDateTimeOffset()).Create();
 
+        private static GroupMembership CreateRandomGroupMembership(DateTimeOffset dates) =>
+            CreateGroupMembershipFiller(dates).Create();
+
         private static SqlException GetSqlException() =>
             (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
