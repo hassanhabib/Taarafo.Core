@@ -166,5 +166,48 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            GroupMembership someGroupMembership = CreateRandomGroupMembership();
+            var serviceException = new Exception();
+
+            var failedGroupMembershipServiceException =
+                new FailedGroupMembershipServiceException(serviceException);
+
+            var expectedGroupMembershipServiceException =
+                new GroupMembershipServiceException(failedGroupMembershipServiceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(serviceException);
+
+            // when
+            ValueTask<GroupMembership> addGroupMembershipTask =
+                this.groupMembershipService.AddGroupMembershipAsync(someGroupMembership);
+
+            // then
+            await Assert.ThrowsAsync<GroupMembershipServiceException>(() =>
+                addGroupMembershipTask.AsTask());
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupMembershipServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupMembershipAsync(It.IsAny<GroupMembership>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
