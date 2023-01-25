@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Taarafo.Core.Models.GroupMemberships;
 using Taarafo.Core.Models.GroupMemberships.Exceptions;
@@ -102,14 +103,64 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupMembershipAsync(It.IsAny<GroupMembership>()),
-                    Times.Never);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupMembershipDependencyValidationException))),
                         Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupMembershipAsync(It.IsAny<GroupMembership>()),
+                    Times.Never);
+
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            //given
+            GroupMembership someGroupMembership = CreateRandomGroupMembership();
+
+            var databaseUpdateException =
+                new DbUpdateException();
+
+            var failedGroupMembershipStorageException =
+                new FailedGroupMembershipStorageException(databaseUpdateException);
+
+            var expectedGroupMembershipDependencyException =
+                new GroupMembershipDependencyException(failedGroupMembershipStorageException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(databaseUpdateException);
+
+            //when
+            ValueTask<GroupMembership> addGroupMembershipTask =
+                this.groupMembershipService.AddGroupMembershipAsync(someGroupMembership);
+
+            GroupMembershipDependencyException actualGroupMembershipDependencyException =
+                await Assert.ThrowsAsync<GroupMembershipDependencyException>(
+                    addGroupMembershipTask.AsTask);
+
+            //then
+            actualGroupMembershipDependencyException.Should().BeEquivalentTo(
+                expectedGroupMembershipDependencyException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedGroupMembershipDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertGroupMembershipAsync(It.IsAny<GroupMembership>()),
+                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
