@@ -7,6 +7,7 @@ using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.GroupMemberships;
 using Taarafo.Core.Models.GroupMemberships.Exceptions;
 using Xeptions;
@@ -45,7 +46,22 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsGroupMembershipException);
             }
+            catch (DbUpdateException databaseUpdateException)
+            {
+                var failedGroupMembershipStorageException =
+                    new FailedGroupMembershipStorageException(databaseUpdateException);
 
+                throw CreateAndLogDependencyException(failedGroupMembershipStorageException);
+            }
+
+        }
+
+        private Exception CreateAndLogDependencyException(Xeption exception)
+        {
+            var groupMembershipDependencyException = new GroupMembershipDependencyException(exception);
+            this.loggingBroker.LogError(groupMembershipDependencyException);
+
+            return groupMembershipDependencyException;
         }
 
         private Exception CreateAndLogDependencyValidationException(Xeption exception)
