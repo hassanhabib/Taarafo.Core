@@ -48,6 +48,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                 broker.InsertGroupMembershipAsync(inputGroupMembership),
                     Times.Once);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }

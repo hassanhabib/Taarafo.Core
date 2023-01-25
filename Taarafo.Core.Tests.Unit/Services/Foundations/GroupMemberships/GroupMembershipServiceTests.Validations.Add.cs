@@ -46,6 +46,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -94,6 +95,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
             actualGroupMembershipValidationException.Should().BeEquivalentTo(
                 expectedGroupMembershipValidationException);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupMembershipValidationException))),
@@ -103,6 +108,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                 broker.InsertGroupMembershipAsync(invalidGroupMembership),
                     Times.Never());
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }

@@ -112,7 +112,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                 broker.InsertGroupMembershipAsync(It.IsAny<GroupMembership>()),
                     Times.Never);
 
-
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -124,8 +123,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
             //given
             GroupMembership someGroupMembership = CreateRandomGroupMembership();
 
-            var databaseUpdateException =
-                new DbUpdateException();
+            var databaseUpdateException = new DbUpdateException();
 
             var failedGroupMembershipStorageException =
                 new FailedGroupMembershipStorageException(databaseUpdateException);

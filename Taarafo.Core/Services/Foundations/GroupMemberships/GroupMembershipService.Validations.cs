@@ -31,17 +31,6 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
             }
         }
 
-        //private bool IsDateNotRecent(DateTimeOffset date)
-        //{
-        //    DateTimeOffset currentDateTime =
-        //        this.dateTimeBroker.GetCurrentDateTimeOffset();
-
-        //    TimeSpan timeDifference = currentDateTime.Subtract(date);
-        //    TimeSpan oneMinute = TimeSpan.FromMinutes(1);
-
-        //    return timeDifference.Duration() > oneMinute;
-        //}
-
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
@@ -70,7 +59,6 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
 
             return timeDifference.Duration() > oneMinute;
         }
-
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
