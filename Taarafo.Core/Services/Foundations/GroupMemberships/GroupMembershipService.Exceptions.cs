@@ -53,7 +53,22 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
 
                 throw CreateAndLogDependencyException(failedGroupMembershipStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedGroupMembershipServiceException =
+                    new FailedGroupMembershipServiceException(exception);
 
+                throw CreateAndLogServiceException(failedGroupMembershipServiceException);
+            }
+
+        }
+
+        private Exception CreateAndLogServiceException(Xeption exception)
+        {
+            var groupMembershipServiceException = new GroupMembershipServiceException(exception);
+            this.loggingBroker.LogError(groupMembershipServiceException);
+
+            return groupMembershipServiceException;
         }
 
         private Exception CreateAndLogDependencyException(Xeption exception)
