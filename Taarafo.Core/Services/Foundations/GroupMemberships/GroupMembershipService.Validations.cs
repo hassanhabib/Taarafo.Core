@@ -19,7 +19,7 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
                 (Rule: IsInvalid(groupMembership.Id), Parameter: nameof(GroupMembership.Id)),
                 (Rule: IsInvalid(groupMembership.GroupId), Parameter: nameof(GroupMembership.GroupId)),
                 (Rule: IsInvalid(groupMembership.ProfileId), Parameter: nameof(GroupMembership.ProfileId)),
-                (Rule: IsInvalid(groupMembership.MembershipDate), Parameter: nameof(GroupMembership.MembershipDate)));
+                (Rule: IsNotRecent(groupMembership.MembershipDate), Parameter: nameof(GroupMembership.MembershipDate)));
         }
 
         private void ValidateGroupMembershipIsNotNull(GroupMembership groupMembership)
@@ -36,7 +36,7 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
             Message = "Id is required"
         };
 
-        private static dynamic IsInvalid(DateTimeOffset date) => new
+        private static dynamic IsNotRecent(DateTimeOffset date) => new
         {
             Condition = date == default,
             Message = "Date is required"
