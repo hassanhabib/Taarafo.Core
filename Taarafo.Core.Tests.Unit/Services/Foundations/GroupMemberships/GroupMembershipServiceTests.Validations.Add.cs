@@ -60,27 +60,27 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                 ProfileId = invalidGuid
             };
 
-            var inalidGroupMembershipException =
+            var invalidGroupMembershipException =
                 new InvalidGroupMembershipException();
 
-            inalidGroupMembershipException.AddData(
+            invalidGroupMembershipException.AddData(
                 key: nameof(GroupMembership.Id),
                 values: "Id is required");
 
-            inalidGroupMembershipException.AddData(
+            invalidGroupMembershipException.AddData(
                 key: nameof(GroupMembership.GroupId),
                 values: "Id is required");
 
-            inalidGroupMembershipException.AddData(
+            invalidGroupMembershipException.AddData(
                 key: nameof(GroupMembership.ProfileId),
                 values: "Id is required");
 
-            inalidGroupMembershipException.AddData(
+            invalidGroupMembershipException.AddData(
                 key: nameof(GroupMembership.MembershipDate),
                 values: "Date is required");
 
             var expectedGroupMembershipValidationException =
-                new GroupMembershipValidationException(inalidGroupMembershipException);
+                new GroupMembershipValidationException(invalidGroupMembershipException);
 
             //when
             ValueTask<GroupMembership> addGroupMembershipTask =

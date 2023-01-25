@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
@@ -19,7 +20,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
         public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
         {
             //given
-            GroupMembership someGroupMembership = CreateRandomGroupMembership();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            GroupMembership someGroupMembership = CreateRandomGroupMembership(randomDateTime);
             SqlException sqlException = GetSqlException();
 
             var failedGroupMembershipStorageException =

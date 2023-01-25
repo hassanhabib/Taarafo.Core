@@ -19,6 +19,7 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
                 (Rule: IsInvalid(groupMembership.Id), Parameter: nameof(GroupMembership.Id)),
                 (Rule: IsInvalid(groupMembership.GroupId), Parameter: nameof(GroupMembership.GroupId)),
                 (Rule: IsInvalid(groupMembership.ProfileId), Parameter: nameof(GroupMembership.ProfileId)),
+                (Rule: IsInvalid(groupMembership.MembershipDate), Parameter: nameof(GroupMembership.MembershipDate)),
                 (Rule: IsNotRecent(groupMembership.MembershipDate), Parameter: nameof(GroupMembership.MembershipDate)));
         }
 
@@ -36,11 +37,28 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
             Message = "Id is required"
         };
 
-        private static dynamic IsNotRecent(DateTimeOffset date) => new
+        private static dynamic IsInvalid(DateTimeOffset date) => new
         {
             Condition = date == default,
             Message = "Date is required"
         };
+
+        private dynamic IsNotRecent(DateTimeOffset date) => new
+        {
+            Condition = IsDateNotRecent(date),
+            Message = "Date is required"
+        };
+
+        private bool IsDateNotRecent(DateTimeOffset date)
+        {
+            DateTimeOffset currentDateTime =
+                this.dateTimeBroker.GetCurrentDateTimeOffset();
+
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+            TimeSpan oneMinute = TimeSpan.FromMinutes(1);
+
+            return timeDifference.Duration() > oneMinute;
+        }
 
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)

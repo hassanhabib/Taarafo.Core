@@ -3,7 +3,9 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.GroupMemberships;
 using Taarafo.Core.Models.GroupMemberships.Exceptions;
 using Xeptions;
@@ -28,6 +30,21 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
             {
                 throw CreateAndLogValidationException(invalidGroupMembershipException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedGroupMembershipStorageException =
+                    new FailedGroupMembershipStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedGroupMembershipStorageException);
+            }
+        }
+
+        private Exception CreateAndLogCriticalDependencyException(Xeption exception)
+        {
+            var groupMembershipDependencyException = new GroupMembershipDependencyException(exception);
+            this.loggingBroker.LogCritical(groupMembershipDependencyException);
+
+            return groupMembershipDependencyException;
         }
 
         private GroupMembershipValidationException CreateAndLogValidationException(

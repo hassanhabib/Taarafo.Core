@@ -42,7 +42,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
-                    Times.Never);
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertGroupMembershipAsync(inputGroupMembership),
