@@ -9,7 +9,6 @@ using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
 using Moq;
-using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.GroupPosts;
@@ -23,19 +22,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
     public partial class GroupPostServiceTests
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
-        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly IGroupPostService groupPostService;
 
         public GroupPostServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
-            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.groupPostService = new GroupPostService(
                 storageBroker: this.storageBrokerMock.Object,
-                dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
@@ -75,7 +71,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         private static GroupPost CreateRandomModifyGroupPost(DateTimeOffset dates)
         {
             int randomDaysInPast = GetRandomNegativeNumber();
-            GroupPost randomGroupPost = CreateRandomGroupPost(dates);           
+            GroupPost randomGroupPost = CreateRandomGroupPost(dates);
             return randomGroupPost;
         }
 

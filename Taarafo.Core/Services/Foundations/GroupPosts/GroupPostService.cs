@@ -6,7 +6,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.GroupPosts;
@@ -16,16 +15,13 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
     public partial class GroupPostService : IGroupPostService
     {
         private readonly IStorageBroker storageBroker;
-        private readonly IDateTimeBroker dateTimeBrokerMock;
         private readonly ILoggingBroker loggingBroker;
 
         public GroupPostService(
             IStorageBroker storageBroker,
-            IDateTimeBroker dateTimeBroker,
             ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
-            this.dateTimeBrokerMock = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
 

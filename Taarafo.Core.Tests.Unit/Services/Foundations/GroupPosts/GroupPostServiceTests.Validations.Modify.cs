@@ -6,7 +6,6 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Force.DeepCloner;
 using Moq;
 using Taarafo.Core.Models.GroupPosts;
 using Taarafo.Core.Models.GroupPosts.Exceptions;
@@ -71,10 +70,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
             var expectedGroupPostValidationException =
                 new GroupPostValidationException(invalidGroupPostException);
-
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Returns(GetRandomDateTimeOffset);
 
             // when
             ValueTask<GroupPost> modifyGroupPostTask =

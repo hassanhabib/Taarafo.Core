@@ -45,7 +45,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
