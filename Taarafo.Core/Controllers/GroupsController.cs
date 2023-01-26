@@ -54,5 +54,39 @@ namespace Taarafo.Core.Controllers
                 return InternalServerError(groupServiceException);
             }
         }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Group>> PutGroupAsync(Group group)
+        {
+            try
+            {
+                Group modifiedGroup =
+                    await this.groupService.ModifyGroupAsync(group);
+
+                return Ok(modifiedGroup);
+            }
+            catch (GroupValidationException groupValidationException)
+                when (groupValidationException.InnerException is NotFoundGroupException)
+            {
+                return NotFound(groupValidationException.InnerException);
+            }
+            catch (GroupValidationException groupValidationException)
+            {
+                return BadRequest(groupValidationException.InnerException);
+            }
+            catch (GroupDependencyValidationException groupDependencyValidationException)
+                when (groupDependencyValidationException.InnerException is AlreadyExistsGroupException)
+            {
+                return Conflict(groupDependencyValidationException.InnerException);
+            }
+            catch (GroupDependencyException groupDependencyException)
+            {
+                return InternalServerError(groupDependencyException.InnerException);
+            }
+            catch (GroupServiceException groupServiceException)
+            {
+                return InternalServerError(groupServiceException.InnerException);
+            }
+        }
     }
 }
