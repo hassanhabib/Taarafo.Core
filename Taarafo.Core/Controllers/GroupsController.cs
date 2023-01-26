@@ -56,6 +56,26 @@ namespace Taarafo.Core.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult<IQueryable<Group>> GetAllGroups()
+        {
+            try
+            {
+                IQueryable<Group> retrievedGroups =
+                    this.groupService.RetrieveAllGroups();
+
+                return Ok(retrievedGroups);
+            }
+            catch (GroupDependencyException groupDependencyException)
+            {
+                return InternalServerError(groupDependencyException.InnerException);
+            }
+            catch (GroupServiceException groupServiceException)
+            {
+                return InternalServerError(groupServiceException.InnerException);
+            }
+        }
+
         [HttpPut]
         public async ValueTask<ActionResult<Group>> PutGroupAsync(Group group)
         {
@@ -79,26 +99,6 @@ namespace Taarafo.Core.Controllers
                 when (groupDependencyValidationException.InnerException is AlreadyExistsGroupException)
             {
                 return Conflict(groupDependencyValidationException.InnerException);
-            }
-            catch (GroupDependencyException groupDependencyException)
-            {
-                return InternalServerError(groupDependencyException.InnerException);
-            }
-            catch (GroupServiceException groupServiceException)
-            {
-                return InternalServerError(groupServiceException.InnerException);
-            }
-        }
-
-        [HttpGet]
-        public ActionResult<IQueryable<Group>> GetAllGroups()
-        {
-            try
-            {
-                IQueryable<Group> retrievedGroups =
-                    this.groupService.RetrieveAllGroups();
-
-                return Ok(retrievedGroups);
             }
             catch (GroupDependencyException groupDependencyException)
             {
