@@ -77,7 +77,7 @@ namespace Taarafo.Core.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{groupId}")]
         public async ValueTask<ActionResult<Group>> GetGroupByIdAsync(Guid groupId)
         {
             try
