@@ -33,6 +33,15 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
             }
         }
 
+        private void ValidateGroupPostOnModify(GroupPost groupPost)
+        {
+            ValidateGroupPostIsNotNull(groupPost);
+
+            Validate(
+                (Rule: IsInvalid(groupPost.GroupId), Parameter: nameof(GroupPost.GroupId)),
+                (Rule: IsInvalid(groupPost.PostId), Parameter: nameof(GroupPost.PostId)));
+        }
+
         private void ValidateStorageGroupPost(GroupPost maybeGroupPost, Guid groupId, Guid postId)
         {
             if (maybeGroupPost is null)
@@ -51,6 +60,11 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
         {
             Condition = @object is null,
             Message = "Object is required"
+        };
+        private static dynamic IsInvalid(DateTimeOffset date) => new
+        {
+            Condition = date == default,
+            Message = "Value is required"
         };
 
         private static void ValidateGroupPostIsNotNull(GroupPost groupPost)

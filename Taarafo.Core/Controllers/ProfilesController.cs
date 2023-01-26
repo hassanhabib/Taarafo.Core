@@ -77,8 +77,8 @@ namespace Taarafo.Core.Controllers
             }
         }
 
-        [HttpGet("profileId")]
-        public async ValueTask<ActionResult<Profile>> GetPostByIdAsync(Guid profileId)
+        [HttpGet("{profileId}")]
+        public async ValueTask<ActionResult<Profile>> GetProfileByIdAsync(Guid profileId)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace Taarafo.Core.Controllers
             }
         }
 
-        [HttpDelete("profileId")]
+        [HttpDelete("{profileId}")]
         public async ValueTask<ActionResult<Profile>> DeleteProfileByIdAsync(Guid profileId)
         {
             try
