@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -73,6 +74,30 @@ namespace Taarafo.Core.Controllers
             catch (GroupServiceException groupServiceException)
             {
                 return InternalServerError(groupServiceException.InnerException);
+            }
+        }
+
+        [HttpGet]
+        public async ValueTask<ActionResult<Group>> GetGroupByIdAsync(Guid groupId)
+        {
+            try
+            {
+                Group retrievedGroupById = 
+                    await this.groupService.RemoveGroupByIdAsync(groupId);
+
+                return Ok(retrievedGroupById);
+            }
+            catch (GroupValidationException groupValidationException)
+            {
+                return BadRequest(groupValidationException.InnerException);
+            }
+            catch (GroupDependencyException groupDependencyException)
+            {
+                return InternalServerError(groupDependencyException);
+            }
+            catch (GroupServiceException groupServiceException)
+            {
+                return InternalServerError(groupServiceException);
             }
         }
     }
