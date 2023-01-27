@@ -88,6 +88,11 @@ namespace Taarafo.Core.Controllers
                 return Ok(retrievedGroupById);
             }
             catch (GroupValidationException groupValidationException)
+                when (groupValidationException.InnerException is NotFoundGroupException) 
+            { 
+                return NotFound(groupValidationException.InnerException); 
+            }
+            catch (GroupValidationException groupValidationException)
             {
                 return BadRequest(groupValidationException.InnerException);
             }
