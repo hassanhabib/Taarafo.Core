@@ -74,6 +74,7 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
                         value: rule.Message);
                 }
             }
+
             invalidGroupMembershipException.ThrowIfContainsErrors();
         }
     }
