@@ -73,7 +73,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
             invalidPostReportException.AddData(
                 key: nameof(PostReport.Post),
-                values: "Value is required");
+                values: "Object is required");
 
             invalidPostReportException.AddData(
                 key: nameof(PostReport.ReporterId),
@@ -81,7 +81,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
             invalidPostReportException.AddData(
                 key: nameof(PostReport.Profile),
-                values: "Value is required");
+                values: "Object is required");
 
             invalidPostReportException.AddData(
                 key: nameof(PostReport.CreatedDate),
