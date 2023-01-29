@@ -3,7 +3,6 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -18,14 +17,17 @@ namespace Taarafo.Core.Services.Foundations.PostReports
         private readonly ILoggingBroker loggingBroker;
         private readonly IDateTimeBroker dateTimeBroker;
 
-        public PostReportService(IStorageBroker storageBroker, ILoggingBroker loggingBroker, IDateTimeBroker dateTimeBroker)
+        public PostReportService(
+            IStorageBroker storageBroker,
+            ILoggingBroker loggingBroker,
+            IDateTimeBroker dateTimeBroker)
         {
             this.storageBroker = storageBroker;
             this.loggingBroker = loggingBroker;
             this.dateTimeBroker = dateTimeBroker;
         }
 
-        public ValueTask<PostReport> AddPostReportAsync(PostReport postReport) =>
-            throw new NotImplementedException();
+        public async ValueTask<PostReport> AddPostReportAsync(PostReport postReport) =>
+            await this.storageBroker.InsertPostReportAsync(postReport);
     }
 }
