@@ -27,9 +27,7 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             this.loggingBroker = loggingBroker;
         }
 
-        public IQueryable<PostReport> RetrieveAllPostReports()
-        {
-            throw new System.NotImplementedException();
-        }
+        public IQueryable<PostReport> RetrieveAllPostReports()=>
+            this.storageBroker.SelectAllPostReports();
     }
 }
