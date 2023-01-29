@@ -11,7 +11,7 @@ using Taarafo.Core.Models.PostReports;
 
 namespace Taarafo.Core.Services.Foundations.PostReports
 {
-    public class PostReportService : IPostReportService
+    public partial class PostReportService : IPostReportService
     {
         private readonly IStorageBroker storageBroker;
         private readonly ILoggingBroker loggingBroker;
@@ -27,7 +27,12 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             this.dateTimeBroker = dateTimeBroker;
         }
 
-        public async ValueTask<PostReport> AddPostReportAsync(PostReport postReport) =>
-            await this.storageBroker.InsertPostReportAsync(postReport);
+        public ValueTask<PostReport> AddPostReportAsync(PostReport postReport) =>
+        TryCatch(async () =>
+        {
+            ValidatePostReportNotNull(postReport);
+
+            return await this.storageBroker.InsertPostReportAsync(postReport);
+        });
     }
 }
