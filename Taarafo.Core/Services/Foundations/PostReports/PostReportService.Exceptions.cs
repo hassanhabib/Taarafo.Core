@@ -24,6 +24,10 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             {
                 throw CreateAndLogValidationException(nullPostReportException);
             }
+            catch (InvalidPostReportException invalidPostReportException)
+            {
+                throw CreateAndLogValidationException(invalidPostReportException);
+            }
         }
 
         private PostReportValidationException CreateAndLogValidationException(Xeption exception)

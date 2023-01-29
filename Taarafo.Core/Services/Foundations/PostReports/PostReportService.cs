@@ -30,7 +30,7 @@ namespace Taarafo.Core.Services.Foundations.PostReports
         public ValueTask<PostReport> AddPostReportAsync(PostReport postReport) =>
         TryCatch(async () =>
         {
-            ValidatePostReportNotNull(postReport);
+            ValidatePostReport(postReport);
 
             return await this.storageBroker.InsertPostReportAsync(postReport);
         });
