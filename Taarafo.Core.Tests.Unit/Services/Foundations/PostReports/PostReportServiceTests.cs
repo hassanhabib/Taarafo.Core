@@ -5,6 +5,9 @@
 
 using System;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.Serialization;
+using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -12,6 +15,7 @@ using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.PostReports;
 using Taarafo.Core.Services.Foundations.PostReports;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 {
@@ -19,19 +23,19 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
-        private readonly Mock<ILoggingBroker> loggingBrokermock;
+        private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly IPostReportService postReportService;
 
         public PostReportServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
-            this.loggingBrokermock = new Mock<ILoggingBroker>();
+            this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.postReportService = new PostReportService(
                 storageBroker: this.storageBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
-                loggingBroker: this.loggingBrokermock.Object);
+                loggingBroker: this.loggingBrokerMock.Object);
         }
 
         private static IQueryable<PostReport> CreateRandomPostReports()
@@ -40,8 +44,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 .Create(count: GetRandomNumber()).AsQueryable();
         }
 
+        private static SqlException CreateSqlException() =>
+           (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+
         private static int GetRandomNumber() =>
            new IntRange(min: 2, max: 10).GetValue();
+
+        private Expression<Func<Xeption,bool>> SameExceptionAs(Xeption expectedException)=>
+            actualException=>actualException.SameExceptionAs(expectedException);
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
