@@ -44,5 +44,78 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnAddIfPostReportIsInvalidAndLogItAsync(string invalidString)
+        {
+            // given
+            PostReport invalidPostReport = new PostReport
+            {
+                Details = invalidString
+            };
+
+            var invalidPostReportException = new InvalidPostReportException();
+
+            invalidPostReportException.AddData(
+                key: nameof(PostReport.Id),
+                values: "Id is required");
+
+            invalidPostReportException.AddData(
+                key: nameof(PostReport.Details),
+                values: "Text is required");
+
+            invalidPostReportException.AddData(
+                key: nameof(PostReport.PostId),
+                values: "Id is required");
+
+            invalidPostReportException.AddData(
+                key: nameof(PostReport.Post),
+                values: "Value is required");
+
+            invalidPostReportException.AddData(
+                key: nameof(PostReport.ReporterId),
+                values: "Id is required");
+
+            invalidPostReportException.AddData(
+                key: nameof(PostReport.Profile),
+                values: "Value is required");
+
+            invalidPostReportException.AddData(
+                key: nameof(PostReport.CreatedDate),
+                values: "Value is required");
+
+            invalidPostReportException.AddData(
+                key: nameof(PostReport.UpdatedDate),
+                values: "Value is required");
+
+            var expectedPostReportValidationException =
+                new PostReportValidationException(invalidPostReportException);
+
+            // when
+            ValueTask<PostReport> addPostReportTask =
+                this.postReportService.AddPostReportAsync(invalidPostReport);
+
+            PostReportValidationException actualPostReportValidationException =
+                await Assert.ThrowsAsync<PostReportValidationException>(
+                    addPostReportTask.AsTask);
+
+            // then
+            actualPostReportValidationException.Should()
+                .BeEquivalentTo(expectedPostReportValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostReportValidationException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertPostReportAsync(It.IsAny<PostReport>()), Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
