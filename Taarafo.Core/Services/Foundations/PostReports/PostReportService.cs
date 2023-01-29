@@ -3,7 +3,6 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -25,7 +24,7 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             this.dateTimeBroker = dateTimeBroker;
         }
 
-        public ValueTask<PostReport> AddPostReportAsync(PostReport postReport) =>
-            throw new NotImplementedException();
+        public async ValueTask<PostReport> AddPostReportAsync(PostReport postReport) =>
+            await this.storageBroker.InsertPostReportAsync(postReport);
     }
 }
