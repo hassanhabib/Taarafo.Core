@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq.Expressions;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -11,6 +12,7 @@ using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Models.PostReports;
 using Taarafo.Core.Services.Foundations.PostReports;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 {
@@ -32,6 +34,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 loggingBroker: this.loggingBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object);
         }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
