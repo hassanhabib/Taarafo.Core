@@ -79,7 +79,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             actualPostReportServiceException.Should().BeEquivalentTo(expectedPostReportServiceException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllGroupPosts(), Times.Once);
+                broker.SelectAllPostReports(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(

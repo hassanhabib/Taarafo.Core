@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.PostReports;
@@ -28,6 +29,21 @@ namespace Taarafo.Core.Services.Foundations.PostReports
 
                 throw CreateAndLogCriticalDependencyException(failedPostPeportStorageException);
             }
+            catch (Exception serviceException)
+            {
+                var failedPostReportServiceException =
+                    new FailedPostReportServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedPostReportServiceException);
+            }
+        }
+
+        private PostReportServiceException CreateAndLogServiceException(Xeption exception)
+        {
+            var postReportServiceException = new PostReportServiceException(exception);
+            this.loggingBroker.LogError(postReportServiceException);
+
+            return postReportServiceException;
         }
 
         private PostReportDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
