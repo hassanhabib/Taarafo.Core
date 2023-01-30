@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.PostReports;
 using Taarafo.Core.Models.PostReports.Exceptions;
@@ -35,6 +36,13 @@ namespace Taarafo.Core.Services.Foundations.PostReports
 
                 throw CreateAndLogCriticalDependencyException(failedPostReportStorageException);
             }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsPostReportException =
+                    new AlreadyExistsPostReportException(duplicateKeyException);
+
+                throw CreateAndDependencyValidationException(alreadyExistsPostReportException);
+            }
         }
 
         private PostReportValidationException CreateAndLogValidationException(Xeption exception)
@@ -53,6 +61,16 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             this.loggingBroker.LogCritical(postReportDependencyException);
 
             return postReportDependencyException;
+        }
+
+        private PostReportDependencyValidationException CreateAndDependencyValidationException(Xeption exception)
+        {
+            var postReportDependencyValidationException =
+                new PostReportDependencyValidationException(exception);
+
+            this.loggingBroker.LogError(postReportDependencyValidationException);
+
+            return postReportDependencyValidationException;
         }
     }
 }
