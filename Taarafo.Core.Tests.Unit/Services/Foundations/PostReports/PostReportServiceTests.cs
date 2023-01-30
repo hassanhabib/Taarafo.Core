@@ -46,6 +46,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
 
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
+
         private static PostReport CreateRandomPostReport() =>
             CreatePostReportFiller().Create();
 
