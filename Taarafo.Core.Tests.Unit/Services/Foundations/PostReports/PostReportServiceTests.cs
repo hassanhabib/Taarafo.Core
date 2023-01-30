@@ -50,6 +50,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
         private static int GetRandomNumber() =>
            new IntRange(min: 2, max: 10).GetValue();
 
+        private static string GetRandomMessage()=>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
+
         private Expression<Func<Xeption,bool>> SameExceptionAs(Xeption expectedException)=>
             actualException=>actualException.SameExceptionAs(expectedException);
 

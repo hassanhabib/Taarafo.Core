@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.PostReports.Exceptions
 {
-    public class FailedPostPeportStorageException : Xeption
+    public class PostReportServiceException : Xeption
     {
-        public FailedPostPeportStorageException(Exception innerException)
-            : base(message: "Failed post report storage error occurred, contact support", innerException)
+        public PostReportServiceException(Exception innerException)
+            : base(message: "Post report service error occurred, contact support.", innerException)
         { }
     }
 }
