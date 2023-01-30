@@ -25,7 +25,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 broker.SelectAllPostReports()).Returns(storagePostReport);
 
             //when
-            IQueryable<PostReport> actualPostReport = this.postReportService.RetrieveAllPostReports();
+            IQueryable<PostReport> actualPostReport = 
+                this.postReportService.RetrieveAllPostReports();
 
             //then
             actualPostReport.Should().BeEquivalentTo(expectedPostReport);
