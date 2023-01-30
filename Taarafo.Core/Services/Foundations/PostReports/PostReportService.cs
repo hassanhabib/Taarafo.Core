@@ -11,7 +11,7 @@ using Taarafo.Core.Models.PostReports;
 
 namespace Taarafo.Core.Services.Foundations.PostReports
 {
-    public class PostReportService:IPostReportService
+    public partial class PostReportService : IPostReportService
     {
         private readonly IStorageBroker storageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
@@ -27,7 +27,7 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             this.loggingBroker = loggingBroker;
         }
 
-        public IQueryable<PostReport> RetrieveAllPostReports()=>
-            this.storageBroker.SelectAllPostReports();
+        public IQueryable<PostReport> RetrieveAllPostReports() =>
+            TryCatch(() => this.storageBroker.SelectAllPostReports());
     }
 }

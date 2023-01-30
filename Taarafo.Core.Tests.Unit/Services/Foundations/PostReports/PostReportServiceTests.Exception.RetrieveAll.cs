@@ -20,11 +20,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             //given
             SqlException sqlException = CreateSqlException();
 
-            var failedPostPeportServiceException =
-                new FailedPostPeportServiceException(sqlException);
+            var failedPostPeportStorageException =
+                new FailedPostPeportStorageException(sqlException);
 
             var expectedPostReportDependencyException =
-                new PostReportDependencyException(failedPostPeportServiceException);
+                new PostReportDependencyException(failedPostPeportStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllPostReports()).Throws(sqlException);
