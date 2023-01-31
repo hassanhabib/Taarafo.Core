@@ -131,7 +131,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
             invalidPostReportException.AddData(
                 key: nameof(PostReport.CreatedDate),
-                values: $"Date is not the same as{nameof(PostReport.UpdatedDate)}");
+                values: $"Date is not the same as {nameof(PostReport.UpdatedDate)}");
 
             var expectedPostReportValidationException =
                 new PostReportValidationException(invalidPostReportException);

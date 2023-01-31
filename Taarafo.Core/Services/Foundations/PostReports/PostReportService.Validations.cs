@@ -23,7 +23,14 @@ namespace Taarafo.Core.Services.Foundations.PostReports
                 (Rule: IsInvalid(postReport.ReporterId), Parameter: nameof(PostReport.ReporterId)),
                 (Rule: IsInvalid(postReport.Profile), Parameter: nameof(PostReport.Profile)),
                 (Rule: IsInvalid(postReport.CreatedDate), Parameter: nameof(PostReport.CreatedDate)),
-                (Rule: IsInvalid(postReport.UpdatedDate), Parameter: nameof(PostReport.UpdatedDate)));
+                (Rule: IsInvalid(postReport.UpdatedDate), Parameter: nameof(PostReport.UpdatedDate)),
+
+                (Rule: IsNotSame(
+                    firstDate: postReport.CreatedDate,
+                    secondDate: postReport.UpdatedDate,
+                    secondDateName: nameof(PostReport.UpdatedDate)),
+
+                Parameter: nameof(PostReport.CreatedDate)));
         }
 
 
@@ -75,5 +82,14 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             Condition = @object is null,
             Message = "Object is required"
         };
+
+        private static dynamic IsNotSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
+            };
     }
 }
