@@ -6,6 +6,7 @@
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.PostReports;
 using Taarafo.Core.Models.PostReports.Exceptions;
 using Xeptions;
@@ -42,6 +43,13 @@ namespace Taarafo.Core.Services.Foundations.PostReports
                     new AlreadyExistsPostReportException(duplicateKeyException);
 
                 throw CreateAndDependencyValidationException(alreadyExistsPostReportException);
+            }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedPostReportException =
+                    new LockedPostReportException(dbUpdateConcurrencyException);
+
+                throw CreateAndDependencyValidationException(lockedPostReportException);
             }
         }
 
