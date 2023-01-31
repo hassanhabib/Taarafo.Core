@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -51,6 +52,13 @@ namespace Taarafo.Core.Services.Foundations.PostReports
 
                 throw CreateAndDependencyValidationException(lockedPostReportException);
             }
+            catch (Exception exception)
+            {
+                var postReportServiceException =
+                    new FailedPostReportServiceException(exception);
+
+                throw CreateAndLogServiceException(postReportServiceException);
+            }
         }
 
         private PostReportValidationException CreateAndLogValidationException(Xeption exception)
@@ -79,6 +87,14 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             this.loggingBroker.LogError(postReportDependencyValidationException);
 
             return postReportDependencyValidationException;
+        }
+
+        private PostReportServiceException CreateAndLogServiceException(Xeption exception)
+        {
+            var postReportServiceException = new PostReportServiceException(exception);
+            this.loggingBroker.LogError(postReportServiceException);
+
+            return postReportServiceException;
         }
     }
 }
