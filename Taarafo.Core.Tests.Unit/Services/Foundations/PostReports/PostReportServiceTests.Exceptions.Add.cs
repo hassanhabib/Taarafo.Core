@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
@@ -133,6 +134,45 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostReportDependencyValidation))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            PostReport somePostReport = CreateRandomPostReport();
+            var serviceException = new Exception();
+
+            var failedPostReportServiceException =
+                new FailedPostReportServiceException(serviceException);
+
+            var expectedPostReportServiceException =
+                new PostReportServiceException(failedPostReportServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertPostReportAsync(It.IsAny<PostReport>()))
+                    .ThrowsAsync(serviceException);
+            // when
+            ValueTask<PostReport> addPostReportTask =
+                this.postReportService.AddPostReportAsync(somePostReport);
+
+            PostReportServiceException actualPostReportServiceException =
+                await Assert.ThrowsAsync<PostReportServiceException>(
+                    addPostReportTask.AsTask);
+
+            // then
+            actualPostReportServiceException.Should()
+                .BeEquivalentTo(expectedPostReportServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertPostReportAsync(It.IsAny<PostReport>()), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostReportServiceException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
