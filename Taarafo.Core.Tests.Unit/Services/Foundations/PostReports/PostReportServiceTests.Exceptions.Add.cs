@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Taarafo.Core.Models.PostReports;
 using Taarafo.Core.Models.PostReports.Exceptions;
@@ -92,6 +93,46 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostReportDependencyValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfDbConcurrencyErrorOccursAndLogItAsync()
+        {
+            // given
+            PostReport somePostReport = CreateRandomPostReport();
+            var dbUpdateConcurrencyException = new DbUpdateConcurrencyException();
+
+            var lockedPostReportException =
+                new LockedPostReportException(dbUpdateConcurrencyException);
+
+            var expectedPostReportDependencyValidation =
+                new PostReportDependencyValidationException(lockedPostReportException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertPostReportAsync(It.IsAny<PostReport>()))
+                    .ThrowsAsync(dbUpdateConcurrencyException);
+
+            // when
+            ValueTask<PostReport> addPostReportTask =
+                this.postReportService.AddPostReportAsync(somePostReport);
+
+            PostReportDependencyValidationException actualPostReportDependencyValidation =
+                await Assert.ThrowsAsync<PostReportDependencyValidationException>(
+                    addPostReportTask.AsTask);
+
+            // then
+            actualPostReportDependencyValidation.Should()
+                .BeEquivalentTo(expectedPostReportDependencyValidation);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertPostReportAsync(It.IsAny<PostReport>()), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostReportDependencyValidation))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
