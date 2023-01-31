@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -116,6 +117,46 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotSameAsUpdatedDateAndLogItAsync()
+        {
+            // given
+            DateTimeOffset anotherRandomDate = GetRandomDateTimeOffset();
+            PostReport randomPostReport = CreateRandomPostReport();
+            PostReport invalidPostReport = randomPostReport;
+            randomPostReport.UpdatedDate = anotherRandomDate;
+            var invalidPostReportException = new InvalidPostReportException();
+
+            invalidPostReportException.AddData(
+                key: nameof(PostReport.CreatedDate),
+                values: $"Date is not the same as{nameof(PostReport.UpdatedDate)}");
+
+            var expectedPostReportValidationException =
+                new PostReportValidationException(invalidPostReportException);
+
+            // when
+            ValueTask<PostReport> addPostReportTask =
+                this.postReportService.AddPostReportAsync(invalidPostReport);
+
+            PostReportValidationException actualPostReportValidationException =
+                await Assert.ThrowsAsync<PostReportValidationException>(
+                    addPostReportTask.AsTask);
+
+            // then
+            actualPostReportValidationException.Should()
+                .BeEquivalentTo(expectedPostReportValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostReportValidationException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertPostReportAsync(It.IsAny<PostReport>()), Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
