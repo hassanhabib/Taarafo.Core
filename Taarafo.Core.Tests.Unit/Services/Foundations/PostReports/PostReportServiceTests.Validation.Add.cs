@@ -158,5 +158,54 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [MemberData(nameof(InvalidSeconds))]
+        public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotRecentAndLogItAsync(int invalidSeconds)
+        {
+            // given
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            DateTimeOffset invalidRandomDateTime = randomDateTime.AddSeconds(invalidSeconds);
+            PostReport randomInvalidPostReport = CreateRandomPostReport(invalidRandomDateTime);
+            PostReport invalidPostReport = randomInvalidPostReport;
+
+            var invalidPostReportException = new InvalidPostReportException();
+
+            invalidPostReportException.AddData(
+                key: nameof(PostReport.CreatedDate),
+                values: $"Date is not recent");
+
+            var expectedPostReportValidationException =
+                new PostReportValidationException(invalidPostReportException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
+
+            // when
+            ValueTask<PostReport> addPostReportTask =
+                this.postReportService.AddPostReportAsync(invalidPostReport);
+
+            PostReportValidationException actualPostReportValidationException =
+                await Assert.ThrowsAsync<PostReportValidationException>(
+                    addPostReportTask.AsTask);
+
+            // then
+            actualPostReportValidationException.Should()
+                .BeEquivalentTo(expectedPostReportValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostReportValidationException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertPostReportAsync(It.IsAny<PostReport>()), Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }

@@ -15,6 +15,7 @@ using Taarafo.Core.Models.PostReports;
 using Taarafo.Core.Services.Foundations.PostReports;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 {
@@ -37,6 +38,23 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 dateTimeBroker: this.dateTimeBrokerMock.Object);
         }
 
+        public static TheoryData<int> InvalidSeconds()
+        {
+            int secondsInPast = -1 * new IntRange(
+                min: 60,
+                max: short.MaxValue).GetValue();
+
+            int secondsInFuture = new IntRange(
+                min: 0,
+                max: short.MaxValue).GetValue();
+
+            return new TheoryData<int>
+            {
+                secondsInPast,
+                secondsInFuture
+            };
+        }
+
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
 
@@ -50,12 +68,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             new MnemonicString().GetValue();
 
         private static PostReport CreateRandomPostReport() =>
-            CreatePostReportFiller().Create();
+            CreatePostReportFiller(GetRandomDateTimeOffset()).Create();
 
-        private static Filler<PostReport> CreatePostReportFiller()
+        private static PostReport CreateRandomPostReport(DateTimeOffset dates) =>
+            CreatePostReportFiller(dates).Create();
+
+        private static Filler<PostReport> CreatePostReportFiller(DateTimeOffset dates)
         {
             var filler = new Filler<PostReport>();
-            DateTimeOffset dates = GetRandomDateTimeOffset();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dates);
