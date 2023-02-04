@@ -11,7 +11,7 @@ namespace Taarafo.Core.Services.Foundations.PostReports
 {
     public partial class PostReportService
     {
-        private static void ValidatePostReport(PostReport postReport)
+        private void ValidatePostReport(PostReport postReport)
         {
             ValidatePostReportNotNull(postReport);
 
@@ -24,7 +24,7 @@ namespace Taarafo.Core.Services.Foundations.PostReports
                 (Rule: IsInvalid(postReport.Profile), Parameter: nameof(PostReport.Profile)),
                 (Rule: IsInvalid(postReport.CreatedDate), Parameter: nameof(PostReport.CreatedDate)),
                 (Rule: IsInvalid(postReport.UpdatedDate), Parameter: nameof(PostReport.UpdatedDate)),
-
+                (Rule: IsNotRecent(postReport.CreatedDate), Parameter: nameof(PostReport.CreatedDate)),
                 (Rule: IsNotSame(
                     firstDate: postReport.CreatedDate,
                     secondDate: postReport.UpdatedDate,
@@ -91,5 +91,18 @@ namespace Taarafo.Core.Services.Foundations.PostReports
                 Condition = firstDate != secondDate,
                 Message = $"Date is not the same as {secondDateName}"
             };
+        private dynamic IsNotRecent(DateTimeOffset date) => new
+        {
+            Condition = IsDateNotRecent(date),
+            Message = "Date is not recent"
+        };
+
+        private bool IsDateNotRecent(DateTimeOffset date)
+        {
+            DateTimeOffset currentDateTime = this.dateTimeBroker.GetCurrentDateTimeOffset();
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+
+            return timeDifference.TotalSeconds is > 60 or < 0;
+        }
     }
 }
