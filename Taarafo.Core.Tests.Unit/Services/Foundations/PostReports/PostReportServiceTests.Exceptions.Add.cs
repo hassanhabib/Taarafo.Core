@@ -71,9 +71,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             var expectedPostReportDependencyValidationException =
                 new PostReportDependencyValidationException(alreadyExistsPostReportException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.InsertPostReportAsync(It.IsAny<PostReport>()))
-                    .ThrowsAsync(duplicateKeyException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset()).Throws(duplicateKeyException);
 
             // when
             ValueTask<PostReport> addPostReportTask =
@@ -87,8 +86,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             actualPostReportDependencyValidationException.Should()
                 .BeEquivalentTo(expectedPostReportDependencyValidationException);
 
-            this.storageBrokerMock.Verify(broker =>
-              broker.InsertPostReportAsync(It.IsAny<PostReport>()), Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
