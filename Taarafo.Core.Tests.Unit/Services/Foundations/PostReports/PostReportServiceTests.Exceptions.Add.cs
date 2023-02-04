@@ -110,9 +110,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             var expectedPostReportDependencyValidation =
                 new PostReportDependencyValidationException(lockedPostReportException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.InsertPostReportAsync(It.IsAny<PostReport>()))
-                    .ThrowsAsync(dbUpdateConcurrencyException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset()).Throws(dbUpdateConcurrencyException);
 
             // when
             ValueTask<PostReport> addPostReportTask =
@@ -126,8 +125,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             actualPostReportDependencyValidation.Should()
                 .BeEquivalentTo(expectedPostReportDependencyValidation);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostReportAsync(It.IsAny<PostReport>()), Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
