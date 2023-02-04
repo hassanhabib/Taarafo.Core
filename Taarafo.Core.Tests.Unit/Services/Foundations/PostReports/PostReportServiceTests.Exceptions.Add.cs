@@ -53,8 +53,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedPostReportDependencyException))), Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -93,8 +94,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostReportDependencyValidationException))), Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -132,8 +134,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostReportDependencyValidation))), Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -151,6 +154,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset()).Throws(serviceException);
+
             // when
             ValueTask<PostReport> addPostReportTask =
                 this.postReportService.AddPostReportAsync(somePostReport);
@@ -170,8 +174,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostReportServiceException))), Times.Once);
 
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
