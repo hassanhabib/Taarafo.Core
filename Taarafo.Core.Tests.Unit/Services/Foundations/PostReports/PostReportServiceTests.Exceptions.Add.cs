@@ -31,9 +31,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             var expectedPostReportDependencyException =
                 new PostReportDependencyException(failedPostReportStorageException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.InsertPostReportAsync(It.IsAny<PostReport>()))
-                    .ThrowsAsync(sqlException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset()).Throws(sqlException);
 
             // when
             ValueTask<PostReport> addPostReportTask =
@@ -47,8 +46,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             actualPostReportDependencyException.Should()
                 .BeEquivalentTo(expectedPostReportDependencyException);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostReportAsync(It.IsAny<PostReport>()), Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
