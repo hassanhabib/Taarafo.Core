@@ -62,7 +62,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
         private static Filler<PostReport> CreateRandomFiller(DateTimeOffset dates)
         {
             var filler = new Filler<PostReport>();
-
             filler.Setup().OnType<DateTimeOffset>().Use(dates);
 
             return filler;
