@@ -60,7 +60,6 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
 
                 throw CreateAndLogServiceException(failedGroupMembershipServiceException);
             }
-
         }
 
         private Exception CreateAndLogServiceException(Xeption exception)
