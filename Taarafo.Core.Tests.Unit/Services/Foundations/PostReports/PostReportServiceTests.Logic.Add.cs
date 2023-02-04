@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
@@ -18,10 +19,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
         public async Task ShouldAddPostReportAsync()
         {
             // given
-            PostReport randomPostReport = CreateRandomPostReport();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            PostReport randomPostReport = CreateRandomPostReport(randomDateTime);
             PostReport inputPostReport = randomPostReport;
             PostReport storagePostReport = inputPostReport;
             PostReport expectedPostReport = storagePostReport.DeepClone();
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertPostReportAsync(inputPostReport))
@@ -33,6 +38,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
             // then
             actualPostReport.Should().BeEquivalentTo(expectedPostReport);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertPostReportAsync(inputPostReport), Times.Once);
