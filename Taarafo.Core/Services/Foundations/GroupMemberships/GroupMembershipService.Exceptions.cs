@@ -16,13 +16,13 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
 {
     public partial class GroupMembershipService
     {
-        private delegate ValueTask<GroupMembership> ReturningGroupMembershipFuntion();
+        private delegate ValueTask<GroupMembership> ReturningGroupMembershipFunction();
 
-        private async ValueTask<GroupMembership> TryCatch(ReturningGroupMembershipFuntion returningGroupMembershipFuntion)
+        private async ValueTask<GroupMembership> TryCatch(ReturningGroupMembershipFunction returningGroupMembershipFunction)
         {
             try
             {
-                return await returningGroupMembershipFuntion();
+                return await returningGroupMembershipFunction();
             }
             catch (NullGroupMembershipException nullGroupMembershipException)
             {

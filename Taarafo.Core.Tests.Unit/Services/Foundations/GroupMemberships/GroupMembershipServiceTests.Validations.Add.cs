@@ -97,16 +97,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
-                    Times.Once());
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupMembershipValidationException))),
-                        Times.Once());
+                        Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertGroupMembershipAsync(invalidGroupMembership),
-                    Times.Never());
+                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
