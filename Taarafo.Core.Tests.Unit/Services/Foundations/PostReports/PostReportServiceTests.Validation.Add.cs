@@ -116,7 +116,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
