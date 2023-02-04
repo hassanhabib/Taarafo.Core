@@ -123,8 +123,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
         public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotSameAsUpdatedDateAndLogItAsync()
         {
             // given
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             DateTimeOffset anotherRandomDate = GetRandomDateTimeOffset();
-            PostReport randomPostReport = CreateRandomPostReport();
+            PostReport randomPostReport = CreateRandomPostReport(randomDateTime);
             PostReport invalidPostReport = randomPostReport;
             randomPostReport.UpdatedDate = anotherRandomDate;
             var invalidPostReportException = new InvalidPostReportException();
@@ -135,6 +136,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
             var expectedPostReportValidationException =
                 new PostReportValidationException(invalidPostReportException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
 
             // when
             ValueTask<PostReport> addPostReportTask =
@@ -148,6 +152,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             actualPostReportValidationException.Should()
                 .BeEquivalentTo(expectedPostReportValidationException);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(), Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostReportValidationException))), Times.Once);
@@ -155,6 +162,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertPostReportAsync(It.IsAny<PostReport>()), Times.Never);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
