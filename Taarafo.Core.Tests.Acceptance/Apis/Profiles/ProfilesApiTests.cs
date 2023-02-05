@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Taarafo.Core.Tests.Acceptance.Brokers;
 using Taarafo.Core.Tests.Acceptance.Models.Profiles;
@@ -45,8 +46,24 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
         private static DateTimeOffset GetRandomDateTime() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
+        private async ValueTask<List<Profile>> CreateRandomProfilesAsync()
+        {
+            int randomNumber = GetRandomNumber();
+            var randomProfiles = new List<Profile>();
+
+            for (int i = 0; i < randomNumber; i++)
+            {
+                randomProfiles.Add(await PostRandomProfileAsync());
+            }
+
+            return randomProfiles;
+        }
+
         private static Profile CreateRandomProfile() =>
             CreateRandomProfileFiller().Create();
+
+        private int GetRandomNumber() =>
+           new IntRange(min: 2, max: 10).GetValue();
 
         private static Filler<Profile> CreateRandomProfileFiller()
         {

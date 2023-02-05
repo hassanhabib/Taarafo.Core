@@ -21,6 +21,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Comments
 
 		public CommentsApiTests(ApiBroker apiBroker) =>
 			this.apiBroker = apiBroker;
+
 		private async ValueTask<List<Comment>> CreateRandomCommentsAsync()
 		{
 			int randomNumber = GetRandomNumber();

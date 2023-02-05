@@ -23,7 +23,7 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
             this.loggingBroker = loggingBroker;
         }
 
-        public IQueryable<PostImpression> RetrieveAllPostImpressionsAsync() =>
+        public IQueryable<PostImpression> RetrieveAllPostImpressions() =>
             TryCatch(() => this.postImpressionService.RetrieveAllPostImpressions());
     }
 }
