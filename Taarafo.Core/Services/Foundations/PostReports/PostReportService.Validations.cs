@@ -19,20 +19,17 @@ namespace Taarafo.Core.Services.Foundations.PostReports
                 (Rule: IsInvalid(postReport.Id), Parameter: nameof(PostReport.Id)),
                 (Rule: IsInvalid(postReport.Details), Parameter: nameof(PostReport.Details)),
                 (Rule: IsInvalid(postReport.PostId), Parameter: nameof(PostReport.PostId)),
-                (Rule: IsInvalid(postReport.Post), Parameter: nameof(PostReport.Post)),
                 (Rule: IsInvalid(postReport.ReporterId), Parameter: nameof(PostReport.ReporterId)),
-                (Rule: IsInvalid(postReport.Profile), Parameter: nameof(PostReport.Profile)),
                 (Rule: IsInvalid(postReport.CreatedDate), Parameter: nameof(PostReport.CreatedDate)),
                 (Rule: IsInvalid(postReport.UpdatedDate), Parameter: nameof(PostReport.UpdatedDate)),
                 (Rule: IsNotRecent(postReport.CreatedDate), Parameter: nameof(PostReport.CreatedDate)),
+
                 (Rule: IsNotSame(
                     firstDate: postReport.CreatedDate,
                     secondDate: postReport.UpdatedDate,
                     secondDateName: nameof(PostReport.UpdatedDate)),
-
                 Parameter: nameof(PostReport.CreatedDate)));
         }
-
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
@@ -77,12 +74,6 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             Message = "Value is required"
         };
 
-        private static dynamic IsInvalid(object @object) => new
-        {
-            Condition = @object is null,
-            Message = "Object is required"
-        };
-
         private static dynamic IsNotSame(
             DateTimeOffset firstDate,
             DateTimeOffset secondDate,
@@ -91,6 +82,7 @@ namespace Taarafo.Core.Services.Foundations.PostReports
                 Condition = firstDate != secondDate,
                 Message = $"Date is not the same as {secondDateName}"
             };
+
         private dynamic IsNotRecent(DateTimeOffset date) => new
         {
             Condition = IsDateNotRecent(date),
