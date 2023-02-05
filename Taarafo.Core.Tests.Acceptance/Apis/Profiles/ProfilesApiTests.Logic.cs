@@ -47,7 +47,9 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
             //then
             foreach (Profile expectedProfile in expectedProfiles)
             {
-                Profile actualProfile = actualProfiles.Single(profile => profile.Id == expectedProfile.Id);
+                Profile actualProfile = actualProfiles.Single(profile =>
+                    profile.Id == expectedProfile.Id);
+
                 actualProfile.Should().BeEquivalentTo(expectedProfile);
                 await this.apiBroker.DeleteProfileByIdAsync(actualProfile.Id);
             }
