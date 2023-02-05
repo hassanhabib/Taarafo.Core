@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Taarafo.Core.Tests.Acceptance.Brokers;
 using Taarafo.Core.Tests.Acceptance.Models.Profiles;
@@ -20,7 +21,20 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
         public ProfilesApiTests(ApiBroker apiBroker) =>
             this.apiBroker = apiBroker;
 
-        public async ValueTask<Profile> PostRandomProfileAync()
+        private async ValueTask<List<Profile>> CreateRandomProfilesAsync()
+        {
+            int randomNumber = GetRandomNumber();
+            var randomProfiles = new List<Profile>();
+
+            for (int i = 0; i < randomNumber; i++)
+            {
+                randomProfiles.Add(await PostRandomProfileAsync());
+            }
+
+            return randomProfiles;
+        }
+
+        private async Task<Profile> PostRandomProfileAsync()
         {
             Profile randomProfile = CreateRandomProfile();
             await this.apiBroker.PostProfilesAsync(randomProfile);
@@ -30,6 +44,9 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
 
         private static Profile CreateRandomProfile() =>
             CreateRandomProfileFiller().Create();
+
+        private int GetRandomNumber() =>
+           new IntRange(min: 2, max: 10).GetValue();
 
         private static Filler<Profile> CreateRandomProfileFiller()
         {
