@@ -31,7 +31,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
 
             //when
             Action retrieveAllPostImpressionAction = () =>
-                this.postImpressionProcessingService.RetrieveAllPostImpressionsAsync();
+                this.postImpressionProcessingService.RetrieveAllPostImpressions();
 
             PostImpressionProcessingDependencyException actualPostImpressionProcessingDependencyException =
                 Assert.Throws<PostImpressionProcessingDependencyException>(retrieveAllPostImpressionAction);
@@ -69,7 +69,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
 
             //when
             Action retrieveAllPostImpressionAction = () =>
-                this.postImpressionProcessingService.RetrieveAllPostImpressionsAsync();
+                this.postImpressionProcessingService.RetrieveAllPostImpressions();
 
             PostImpressionProcessingServiceException actualPostImpressionProcessingDependencyException =
                 Assert.Throws<PostImpressionProcessingServiceException>(retrieveAllPostImpressionAction);

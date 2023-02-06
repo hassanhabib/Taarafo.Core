@@ -3,6 +3,8 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Taarafo.Core.Tests.Acceptance.Models.Profiles;
@@ -29,6 +31,25 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
             //then
             actualProfile.Should().BeEquivalentTo(expectedProfile);
             await this.apiBroker.DeleteProfileByIdAsync(actualProfile.Id);
+        }
+
+        [Fact]
+        public async Task ShouldGetAllProfileAsync()
+        {
+            //given
+            List<Profile> randomProfiles = await CreateRandomProfilesAsync();
+            List<Profile> expectedProfiles = randomProfiles;
+
+            //when
+            List<Profile> actualProfiles = await this.apiBroker.GetAllProfilesAsync();
+
+            //then
+            foreach (Profile expectedProfile in expectedProfiles)
+            {
+                Profile actualProfile = actualProfiles.Single(profile => profile.Id == expectedProfile.Id);
+                actualProfile.Should().BeEquivalentTo(expectedProfile);
+                await this.apiBroker.DeleteProfileByIdAsync(actualProfile.Id);
+            }
         }
     }
 }

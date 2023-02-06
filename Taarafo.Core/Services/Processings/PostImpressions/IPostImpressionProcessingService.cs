@@ -10,6 +10,6 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
 {
     public interface IPostImpressionProcessingService
     {
-        IQueryable<PostImpression> RetrieveAllPostImpressionsAsync();
+        IQueryable<PostImpression> RetrieveAllPostImpressions();
     }
 }

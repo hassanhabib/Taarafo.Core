@@ -10,7 +10,7 @@ using Taarafo.Core.Models.PostReports;
 
 namespace Taarafo.Core.Brokers.Storages
 {
-    public partial interface IStrorageBroker
+    public partial interface IStorageBroker
     {
         ValueTask<PostReport> InsertPostReportAsync(PostReport postReport);
         IQueryable<PostReport> SelectAllPostReports();
