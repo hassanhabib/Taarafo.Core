@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -14,17 +15,17 @@ namespace Taarafo.Core.Services.Foundations.PostReports
     public partial class PostReportService : IPostReportService
     {
         private readonly IStorageBroker storageBroker;
-        private readonly ILoggingBroker loggingBroker;
         private readonly IDateTimeBroker dateTimeBroker;
+        private readonly ILoggingBroker loggingBroker;
 
         public PostReportService(
             IStorageBroker storageBroker,
-            ILoggingBroker loggingBroker,
-            IDateTimeBroker dateTimeBroker)
+            IDateTimeBroker dateTimeBroker,
+            ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
-            this.loggingBroker = loggingBroker;
             this.dateTimeBroker = dateTimeBroker;
+            this.loggingBroker = loggingBroker;
         }
 
         public ValueTask<PostReport> AddPostReportAsync(PostReport postReport) =>
@@ -34,5 +35,8 @@ namespace Taarafo.Core.Services.Foundations.PostReports
 
                 return await this.storageBroker.InsertPostReportAsync(postReport);
             });
+
+        public IQueryable<PostReport> RetrieveAllPostReports() =>
+            TryCatch(() => this.storageBroker.SelectAllPostReports());
     }
 }

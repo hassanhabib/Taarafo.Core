@@ -3,6 +3,8 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Taarafo.Core.Tests.Acceptance.Models.Profiles;
@@ -28,6 +30,55 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
 
             //then
             actualProfile.Should().BeEquivalentTo(expectedProfile);
+            await this.apiBroker.DeleteProfileByIdAsync(actualProfile.Id);
+        }
+
+        [Fact]
+        public async Task ShouldGetProfileByIdAsync()
+        {
+            //given
+            Profile randomProfile = await PostRandomProfileAsync();
+            Profile expectedProfile = randomProfile;
+
+            //when
+            Profile actualProfile = await this.apiBroker.GetProfileByIdAsync(randomProfile.Id);
+
+            //then
+            actualProfile.Should().BeEquivalentTo(expectedProfile);
+            await this.apiBroker.DeleteProfileByIdAsync(actualProfile.Id);
+        }
+
+        public async Task ShouldGetAllProfileAsync()
+        {
+            //given
+            List<Profile> randomProfiles = await CreateRandomProfilesAsync();
+            List<Profile> expectedProfiles = randomProfiles;
+
+            //when
+            List<Profile> actualProfiles = await this.apiBroker.GetAllProfilesAsync();
+
+            //then
+            foreach (Profile expectedProfile in expectedProfiles)
+            {
+                Profile actualProfile = actualProfiles.Single(profile => profile.Id == expectedProfile.Id);
+                actualProfile.Should().BeEquivalentTo(expectedProfile);
+                await this.apiBroker.DeleteProfileByIdAsync(actualProfile.Id);
+            }
+        }
+
+        [Fact]
+        public async Task ShouldPutProfileAsync()
+        {
+            //given
+            Profile randomProfile = await PostRandomProfileAsync();
+            Profile modifiedProfile = UpdateRandomProfile(randomProfile);
+
+            //when
+            await this.apiBroker.PutProfileAsync(modifiedProfile);
+            Profile actualProfile= await this.apiBroker.GetProfileByIdAsync(randomProfile.Id);
+
+            //then
+            actualProfile.Should().BeEquivalentTo(modifiedProfile);
             await this.apiBroker.DeleteProfileByIdAsync(actualProfile.Id);
         }
     }

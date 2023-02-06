@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
@@ -22,20 +23,26 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
     public partial class PostReportServiceTests
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
-        private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
+        private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly IPostReportService postReportService;
 
         public PostReportServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
-            this.loggingBrokerMock = new Mock<ILoggingBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
+            this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
-            postReportService = new PostReportService(
+            this.postReportService = new PostReportService(
                 storageBroker: this.storageBrokerMock.Object,
-                loggingBroker: this.loggingBrokerMock.Object,
-                dateTimeBroker: this.dateTimeBrokerMock.Object);
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
+                loggingBroker: this.loggingBrokerMock.Object);
+        }
+
+        private static IQueryable<PostReport> CreateRandomPostReports()
+        {
+            return CreatePostReportFiller(dates: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber()).AsQueryable();
         }
 
         public static TheoryData<int> InvalidSeconds()
@@ -59,13 +66,19 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             actualException => actualException.SameExceptionAs(expectedException);
 
         private static SqlException CreateSqlException() =>
-            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+           (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
 
+        private static int GetRandomNumber() =>
+           new IntRange(min: 2, max: 10).GetValue();
+
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
+
+        private static string GetRandomMessage() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
         private static PostReport CreateRandomPostReport() =>
             CreatePostReportFiller(GetRandomDateTimeOffset()).Create();

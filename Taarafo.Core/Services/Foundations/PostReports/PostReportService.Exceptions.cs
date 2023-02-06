@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -17,6 +18,7 @@ namespace Taarafo.Core.Services.Foundations.PostReports
     public partial class PostReportService
     {
         private delegate ValueTask<PostReport> ReturningPostReportFunction();
+        private delegate IQueryable<PostReport> ReturningPostReportsFunction();
 
         private async ValueTask<PostReport> TryCatch(ReturningPostReportFunction returningPostReportFunction)
         {
@@ -58,6 +60,28 @@ namespace Taarafo.Core.Services.Foundations.PostReports
                     new FailedPostReportServiceException(exception);
 
                 throw CreateAndLogServiceException(postReportServiceException);
+            }
+        }
+
+        private IQueryable<PostReport> TryCatch(ReturningPostReportsFunction returningPostReportsFunction)
+        {
+            try
+            {
+                return returningPostReportsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedPostPeportStorageException =
+                    new FailedPostPeportStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedPostPeportStorageException);
+            }
+            catch (Exception serviceException)
+            {
+                var failedPostReportServiceException =
+                    new FailedPostReportServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedPostReportServiceException);
             }
         }
 
