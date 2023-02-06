@@ -100,6 +100,11 @@ namespace Taarafo.Core.Controllers
             {
                 return Conflict(groupDependencyValidationException.InnerException);
             }
+            catch (GroupDependencyValidationException groupDependencyValidationException)
+                when (groupDependencyValidationException.InnerException is InvalidGroupReferenceException)
+            {
+                return FailedDependency(groupDependencyValidationException.InnerException);
+            }
             catch (GroupDependencyException groupDependencyException)
             {
                 return InternalServerError(groupDependencyException.InnerException);
