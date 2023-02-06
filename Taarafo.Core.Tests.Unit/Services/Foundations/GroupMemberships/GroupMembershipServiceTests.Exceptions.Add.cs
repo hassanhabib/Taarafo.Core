@@ -186,9 +186,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
             ValueTask<GroupMembership> addGroupMembershipTask =
                 this.groupMembershipService.AddGroupMembershipAsync(someGroupMembership);
 
+            GroupMembershipServiceException actualGroupMembershipServiceException =
+                await Assert.ThrowsAsync<GroupMembershipServiceException>(
+                    addGroupMembershipTask.AsTask);
+
             // then
-            await Assert.ThrowsAsync<GroupMembershipServiceException>(() =>
-                addGroupMembershipTask.AsTask());
+            actualGroupMembershipServiceException.Should().BeEquivalentTo(
+                expectedGroupMembershipServiceException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
