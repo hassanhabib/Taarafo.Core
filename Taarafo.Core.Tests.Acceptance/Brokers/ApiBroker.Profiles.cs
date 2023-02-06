@@ -23,6 +23,9 @@ namespace Taarafo.Core.Tests.Acceptance.Brokers
         public async ValueTask<Profile> GetProfileByIdAsync(Guid profileId) =>
             await this.apiFactoryClient.GetContentAsync<Profile>($"{ProfilesRelativeUrl}/{profileId}");
 
+        public async ValueTask<Profile> PutProfileAsync(Profile profile)=>
+            await this.apiFactoryClient.PutContentAsync(ProfilesRelativeUrl, profile);
+
         public async ValueTask<Profile> DeleteProfileByIdAsync(Guid profileId) =>
             await this.apiFactoryClient.DeleteContentAsync<Profile>($"{ProfilesRelativeUrl}/{profileId}");
     }
