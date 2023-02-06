@@ -4,56 +4,97 @@
 // ---------------------------------------------------------------
 
 using System;
-using System.Linq;
-using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.PostReports;
 using Taarafo.Core.Models.PostReports.Exceptions;
-using Xeptions;
 
 namespace Taarafo.Core.Services.Foundations.PostReports
 {
     public partial class PostReportService
     {
-        private delegate IQueryable<PostReport> ReturningPostReportsFunction();
-
-        private IQueryable<PostReport> TryCatch(ReturningPostReportsFunction returningPostReportsFunction)
+        private void ValidatePostReport(PostReport postReport)
         {
-            try
-            {
-                return returningPostReportsFunction();
-            }
-            catch (SqlException sqlException)
-            {
-                var failedPostPeportStorageException =
-                    new FailedPostPeportStorageException(sqlException);
+            ValidatePostReportNotNull(postReport);
 
-                throw CreateAndLogCriticalDependencyException(failedPostPeportStorageException);
-            }
-            catch (Exception serviceException)
-            {
-                var failedPostReportServiceException =
-                    new FailedPostReportServiceException(serviceException);
+            Validate(
+                (Rule: IsInvalid(postReport.Id), Parameter: nameof(PostReport.Id)),
+                (Rule: IsInvalid(postReport.Details), Parameter: nameof(PostReport.Details)),
+                (Rule: IsInvalid(postReport.PostId), Parameter: nameof(PostReport.PostId)),
+                (Rule: IsInvalid(postReport.ReporterId), Parameter: nameof(PostReport.ReporterId)),
+                (Rule: IsInvalid(postReport.CreatedDate), Parameter: nameof(PostReport.CreatedDate)),
+                (Rule: IsInvalid(postReport.UpdatedDate), Parameter: nameof(PostReport.UpdatedDate)),
+                (Rule: IsNotRecent(postReport.CreatedDate), Parameter: nameof(PostReport.CreatedDate)),
 
-                throw CreateAndLogServiceException(failedPostReportServiceException);
+                (Rule: IsNotSame(
+                    firstDate: postReport.CreatedDate,
+                    secondDate: postReport.UpdatedDate,
+                    secondDateName: nameof(PostReport.UpdatedDate)),
+                Parameter: nameof(PostReport.CreatedDate)));
+        }
+
+        private static void Validate(params (dynamic Rule, string Parameter)[] validations)
+        {
+            InvalidPostReportException invalidPostReportException = new InvalidPostReportException();
+
+            foreach ((dynamic rule, string parameter) in validations)
+            {
+                if (rule.Condition)
+                {
+                    invalidPostReportException.UpsertDataList(
+                        key: parameter,
+                        value: rule.Message);
+                }
+            }
+
+            invalidPostReportException.ThrowIfContainsErrors();
+        }
+
+        private static void ValidatePostReportNotNull(PostReport postReport)
+        {
+            if (postReport is null)
+            {
+                throw new NullPostReportException();
             }
         }
 
-        private PostReportServiceException CreateAndLogServiceException(Xeption exception)
+        private static dynamic IsInvalid(Guid id) => new
         {
-            var postReportServiceException = new PostReportServiceException(exception);
-            this.loggingBroker.LogError(postReportServiceException);
+            Condition = id == default,
+            Message = "Id is required"
+        };
 
-            return postReportServiceException;
-        }
-
-        private PostReportDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
+        private static dynamic IsInvalid(string text) => new
         {
-            var postReportDependencyException =
-                new PostReportDependencyException(exception);
+            Condition = string.IsNullOrWhiteSpace(text),
+            Message = "Text is required"
+        };
 
-            this.loggingBroker.LogCritical(postReportDependencyException);
+        private static dynamic IsInvalid(DateTimeOffset date) => new
+        {
+            Condition = date == default,
+            Message = "Value is required"
+        };
 
-            return postReportDependencyException;
+        private static dynamic IsNotSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
+            };
+
+        private dynamic IsNotRecent(DateTimeOffset date) => new
+        {
+            Condition = IsDateNotRecent(date),
+            Message = "Date is not recent"
+        };
+
+        private bool IsDateNotRecent(DateTimeOffset date)
+        {
+            DateTimeOffset currentDateTime = this.dateTimeBroker.GetCurrentDateTimeOffset();
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+
+            return timeDifference.TotalSeconds is > 60 or < 0;
         }
     }
 }

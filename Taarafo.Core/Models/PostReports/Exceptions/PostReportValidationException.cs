@@ -3,15 +3,15 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
 using Xeptions;
 
 namespace Taarafo.Core.Models.PostReports.Exceptions
 {
-    public class PostReportServiceException : Xeption
+    public class PostReportValidationException : Xeption
     {
-        public PostReportServiceException(Exception innerException)
-            : base(message: "Post report service error occurred, please contact support.", innerException)
+        public PostReportValidationException(Xeption innerException)
+            : base(message: "PostReport validation errors occurred, please try again.",
+                innerException)
         { }
     }
 }

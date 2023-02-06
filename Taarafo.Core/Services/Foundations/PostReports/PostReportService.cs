@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Linq;
+using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Brokers.Storages;
@@ -26,6 +27,14 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             this.dateTimeBroker = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
+
+        public ValueTask<PostReport> AddPostReportAsync(PostReport postReport) =>
+            TryCatch(async () =>
+            {
+                ValidatePostReport(postReport);
+
+                return await this.storageBroker.InsertPostReportAsync(postReport);
+            });
 
         public IQueryable<PostReport> RetrieveAllPostReports() =>
             TryCatch(() => this.storageBroker.SelectAllPostReports());

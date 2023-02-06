@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.PostReports.Exceptions
 {
-    public class PostReportServiceException : Xeption
+    public class AlreadyExistsPostReportException : Xeption
     {
-        public PostReportServiceException(Exception innerException)
-            : base(message: "Post report service error occurred, please contact support.", innerException)
+        public AlreadyExistsPostReportException(Exception innerException)
+            : base(message: "PostReport already exists.", innerException)
         { }
     }
 }

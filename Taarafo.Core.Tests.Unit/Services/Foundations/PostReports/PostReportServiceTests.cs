@@ -16,6 +16,7 @@ using Taarafo.Core.Models.PostReports;
 using Taarafo.Core.Services.Foundations.PostReports;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 {
@@ -40,29 +41,57 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
         private static IQueryable<PostReport> CreateRandomPostReports()
         {
-            return CreateRandomFiller(dates: GetRandomDateTimeOffset())
+            return CreatePostReportFiller(dates: GetRandomDateTimeOffset())
                 .Create(count: GetRandomNumber()).AsQueryable();
         }
+
+        public static TheoryData<int> InvalidSeconds()
+        {
+            int secondsInPast = -1 * new IntRange(
+                min: 60,
+                max: short.MaxValue).GetValue();
+
+            int secondsInFuture = new IntRange(
+                min: 0,
+                max: short.MaxValue).GetValue();
+
+            return new TheoryData<int>
+            {
+                secondsInPast,
+                secondsInFuture
+            };
+        }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
 
         private static SqlException CreateSqlException() =>
            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
 
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+            new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
+
         private static int GetRandomNumber() =>
            new IntRange(min: 2, max: 10).GetValue();
+
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
 
         private static string GetRandomMessage() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
-        private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
-            actualException => actualException.SameExceptionAs(expectedException);
+        private static PostReport CreateRandomPostReport() =>
+            CreatePostReportFiller(GetRandomDateTimeOffset()).Create();
 
-        private static DateTimeOffset GetRandomDateTimeOffset() =>
-            new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
+        private static PostReport CreateRandomPostReport(DateTimeOffset dates) =>
+            CreatePostReportFiller(dates).Create();
 
-        private static Filler<PostReport> CreateRandomFiller(DateTimeOffset dates)
+        private static Filler<PostReport> CreatePostReportFiller(DateTimeOffset dates)
         {
             var filler = new Filler<PostReport>();
-            filler.Setup().OnType<DateTimeOffset>().Use(dates);
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dates);
 
             return filler;
         }

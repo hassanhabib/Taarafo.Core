@@ -8,10 +8,10 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.PostReports.Exceptions
 {
-    public class PostReportServiceException : Xeption
+    public class LockedPostReportException : Xeption
     {
-        public PostReportServiceException(Exception innerException)
-            : base(message: "Post report service error occurred, please contact support.", innerException)
+        public LockedPostReportException(Exception innerException)
+            : base(message: "PostReport is locked, please try again.", innerException)
         { }
     }
 }
