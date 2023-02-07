@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Linq;
+using System.Threading.Tasks;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Services.Foundations.PostImpressions;
@@ -22,6 +23,9 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
             this.postImpressionService = postImpressionService;
             this.loggingBroker = loggingBroker;
         }
+
+        public ValueTask<PostImpression> UpsertPostImpressionAsync(PostImpression postImpression) =>
+            throw new System.NotImplementedException();
 
         public IQueryable<PostImpression> RetrieveAllPostImpressions() =>
             TryCatch(() => this.postImpressionService.RetrieveAllPostImpressions());
