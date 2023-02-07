@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -39,6 +40,55 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
             actualPostImpressionProcessingValidationException.Should().BeEquivalentTo(
                 expectedPostImpressionProcessingValidationException);
 
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostImpressionProcessingValidationException))), Times.Once);
+
+            this.postImpressionServiceMock.Verify(service =>
+                service.RetrieveAllPostImpressions(), Times.Never);
+
+            this.postImpressionServiceMock.Verify(service =>
+                service.AddPostImpressions(It.IsAny<PostImpression>()), Times.Never);
+
+            this.postImpressionServiceMock.Verify(service =>
+                service.ModifyPostImpressionAsync(It.IsAny<PostImpression>()), Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.postImpressionServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnUpsertIfPostImpressionIdIsInvalidAndLogItAsync()
+        {
+            //given
+            var invalidPostImpression = CreateRandomPostImpression();
+            invalidPostImpression.PostId = Guid.NewGuid();
+            invalidPostImpression.ProfileId = Guid.NewGuid();
+
+            var invalidPostImpressionProcessingException =
+                new InvalidPostImpressionProcessingException();
+
+            invalidPostImpressionProcessingException.AddData(
+                key: nameof(PostImpression.PostId),
+                values: "Id is required");
+
+            invalidPostImpressionProcessingException.AddData(
+                key: nameof(PostImpression.ProfileId),
+                values: "Id is required");
+
+            var expectedPostImpressionProcessingValidationException =
+                new PostImpressionProcessingValidationException(
+                    invalidPostImpressionProcessingException);
+
+            //when
+            ValueTask<PostImpression> upsertPostImpressionTask =
+                this.postImpressionProcessingService.UpsertPostImpressionAsync(invalidPostImpression);
+
+            PostImpressionProcessingValidationException actualPostImpressionProcessingValidationException =
+                await Assert.ThrowsAsync<PostImpressionProcessingValidationException>(
+                    upsertPostImpressionTask.AsTask);
+
+            //then
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostImpressionProcessingValidationException))), Times.Once);
