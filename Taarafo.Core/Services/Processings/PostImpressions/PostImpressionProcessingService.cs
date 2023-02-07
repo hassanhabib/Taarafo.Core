@@ -24,8 +24,12 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<PostImpression> UpsertPostImpressionAsync(PostImpression postImpression) =>
-            throw new System.NotImplementedException();
+        public async ValueTask<PostImpression> UpsertPostImpressionAsync(PostImpression postImpression)
+        {
+            this.postImpressionService.RetrieveAllPostImpressions();
+
+            return await this.postImpressionService.AddPostImpressions(postImpression);
+        }
 
         public IQueryable<PostImpression> RetrieveAllPostImpressions() =>
             TryCatch(() => this.postImpressionService.RetrieveAllPostImpressions());
