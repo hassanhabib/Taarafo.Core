@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
 using Taarafo.Core.Models.Processings.PostImpressions.Exceptions;
@@ -14,7 +15,22 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
 {
     public partial class PostImpressionProcessingService
     {
+        private delegate ValueTask<PostImpression> ReturningPostImpressionFunction();
         private delegate IQueryable<PostImpression> ReturningPostImpressionsFunction();
+
+        private async ValueTask<PostImpression> TryCatch(ReturningPostImpressionFunction returningPostImpressionFunction)
+        {
+            try
+            {
+                return await returningPostImpressionFunction();
+            }
+            catch (NullPostImpressionProcessingException nullPostImpressionProcessingException)
+            {
+
+                throw CreateAndLogValidationException(nullPostImpressionProcessingException);
+            }
+        }
+
 
         private IQueryable<PostImpression> TryCatch(ReturningPostImpressionsFunction returningPostImpressionsFunction)
         {
@@ -37,6 +53,15 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
 
                 throw CreateAndLogServiceException(failedPostImpressionProcessingServiceException);
             }
+        }
+        private PostImpressionProcessingValidationException CreateAndLogValidationException(Xeption exception)
+        {
+            var postImpressionProcessingValidationException = 
+                new PostImpressionProcessingValidationException(exception);
+
+            this.loggingBroker.LogError(postImpressionProcessingValidationException);
+
+            return postImpressionProcessingValidationException;
         }
 
         private PostImpressionProcessingDependencyException CreateAndLogDependencyException(Xeption exception)

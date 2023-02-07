@@ -26,8 +26,10 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<PostImpression> UpsertPostImpressionAsync(PostImpression postImpression)
+        public ValueTask<PostImpression> UpsertPostImpressionAsync(PostImpression postImpression) =>
+        TryCatch(async () =>
         {
+            ValidatePostImpression(postImpression);
             PostImpression maybePostImpression = RetrieveMatchingPostImpression(postImpression);
 
             return maybePostImpression switch
@@ -35,7 +37,7 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
                 null => await this.postImpressionService.AddPostImpressions(postImpression),
                 _ => await this.postImpressionService.ModifyPostImpressionAsync(postImpression)
             };
-        }
+        });
 
         private PostImpression RetrieveMatchingPostImpression(PostImpression postImpression)
         {
