@@ -26,7 +26,16 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
 
         public async ValueTask<PostImpression> UpsertPostImpressionAsync(PostImpression postImpression)
         {
-            this.postImpressionService.RetrieveAllPostImpressions();
+            IQueryable<PostImpression> postImpressions= 
+                this.postImpressionService.RetrieveAllPostImpressions();
+
+            PostImpression maybePostImpression = postImpressions.FirstOrDefault(
+                retrievedPostImpression => (retrievedPostImpression.PostId ==postImpression.ProfileId)||(retrievedPostImpression.ProfileId==postImpression.ProfileId));
+
+            if (maybePostImpression != null)
+            {
+                return await this.postImpressionService.ModifyPostImpressionAsync(postImpression);
+            }
 
             return await this.postImpressionService.AddPostImpressions(postImpression);
         }
