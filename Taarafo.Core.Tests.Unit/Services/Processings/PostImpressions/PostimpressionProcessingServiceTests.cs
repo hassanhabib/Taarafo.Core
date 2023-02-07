@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Moq;
@@ -37,7 +38,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
         private static PostImpression CreateRandomPostImpression() =>
             CreatePostImpressionFiller().Create();
 
-        private IQueryable<PostImpression> CreateRandomPostImpressions() =>
+        private static IQueryable<PostImpression> CreateRandomPostImpressions() =>
             CreatePostImpressionFiller().Create(count: GetRandomNumber()).AsQueryable();
 
         public static TheoryData DependencyExceptions()
@@ -51,6 +52,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
                 new PostImpressionDependencyException(innerException),
                 new PostImpressionServiceException(innerException)
             };
+        }
+
+        public static IQueryable<PostImpression> CreateRandomPostImpressions(PostImpression postImpression)
+        {
+            List<PostImpression> randomPostImpressions= CreateRandomPostImpressions().ToList();
+            randomPostImpressions.Add(postImpression);
+
+            return randomPostImpressions.AsQueryable();
         }
 
         private static string GetRandomMessage() =>
