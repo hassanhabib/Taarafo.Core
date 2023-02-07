@@ -10,7 +10,6 @@ using Moq;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
-using Taarafo.Core.Models.Posts.Exceptions;
 using Taarafo.Core.Services.Foundations.PostImpressions;
 using Taarafo.Core.Services.Processings.PostImpressions;
 using Tynamix.ObjectFiller;
@@ -34,6 +33,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
                 postImpressionService: this.postImpressionServiceMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
+
+        private static PostImpression CreateRandomPostImpression() =>
+            CreatePostImpressionFiller().Create();
 
         private IQueryable<PostImpression> CreateRandomPostImpressions() =>
             CreatePostImpressionFiller().Create(count: GetRandomNumber()).AsQueryable();
