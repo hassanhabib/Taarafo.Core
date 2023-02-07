@@ -3,7 +3,9 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Models.PostImpressions;
@@ -26,19 +28,26 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
 
         public async ValueTask<PostImpression> UpsertPostImpressionAsync(PostImpression postImpression)
         {
-            IQueryable<PostImpression> postImpressions= 
+            PostImpression maybePostImpression = RetrieveMatchingPostImpression(postImpression);
+
+            return maybePostImpression switch
+            {
+                null => await this.postImpressionService.AddPostImpressions(postImpression),
+                _ => await this.postImpressionService.ModifyPostImpressionAsync(postImpression)
+            };
+        }
+
+        private PostImpression RetrieveMatchingPostImpression(PostImpression postImpression)
+        {
+            IQueryable<PostImpression> postImpressions =
                 this.postImpressionService.RetrieveAllPostImpressions();
 
-            PostImpression maybePostImpression = postImpressions.FirstOrDefault(
-                retrievedPostImpression => (retrievedPostImpression.PostId ==postImpression.ProfileId)||(retrievedPostImpression.ProfileId==postImpression.ProfileId));
-
-            if (maybePostImpression != null)
-            {
-                return await this.postImpressionService.ModifyPostImpressionAsync(postImpression);
-            }
-
-            return await this.postImpressionService.AddPostImpressions(postImpression);
+            return postImpressions.FirstOrDefault(SamePostImpressionAs(postImpression));
         }
+
+        private static Expression<Func<PostImpression, bool>> SamePostImpressionAs(PostImpression postImpression) =>
+            retrievePostImpression => (retrievePostImpression.PostId == postImpression.PostId)
+                || (retrievePostImpression.ProfileId == postImpression.ProfileId);
 
         public IQueryable<PostImpression> RetrieveAllPostImpressions() =>
             TryCatch(() => this.postImpressionService.RetrieveAllPostImpressions());
