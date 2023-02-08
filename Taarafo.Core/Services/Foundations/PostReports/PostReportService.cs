@@ -45,7 +45,12 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             {
                 ValidatePostReportId(postReportId);
 
-                return await this.storageBroker.SelectPostReportByIdAsync(postReportId);
+                PostReport maybePostReport =
+                    await this.storageBroker.SelectPostReportByIdAsync(postReportId);
+
+                ValidateStoragePostReport(maybePostReport, postReportId);
+
+                return maybePostReport;
             });
     }
 }

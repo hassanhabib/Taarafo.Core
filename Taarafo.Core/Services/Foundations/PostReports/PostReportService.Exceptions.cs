@@ -34,6 +34,10 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             {
                 throw CreateAndLogValidationException(invalidPostReportException);
             }
+            catch (NotFoundPostReportException notFoundPostReportException)
+            {
+                throw CreateAndLogValidationException(notFoundPostReportException);
+            }
             catch (SqlException sqlException)
             {
                 var failedPostReportStorageException = new FailedPostReportStorageException(sqlException);
