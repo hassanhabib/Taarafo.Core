@@ -53,5 +53,46 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfPostReportIsNotFoundAndLogItAsync()
+        {
+            //given
+            Guid somePostReportId = Guid.NewGuid();
+            PostReport nullPostReport = null;
+
+            var notFoundPostReportException =
+                new NotFoundPostReportException(somePostReportId);
+
+            var expectedPostReportValidationException =
+                new PostReportValidationException(notFoundPostReportException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostReportByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(nullPostReport);
+
+            //when
+            ValueTask<PostReport> retrievePostReportByIdTask =
+                this.postReportService.RetrievePostReportByIdAsync(somePostReportId);
+
+            PostReportValidationException actualPostReportValidationException =
+                await Assert.ThrowsAsync<PostReportValidationException>(
+                    retrievePostReportByIdTask.AsTask);
+
+            // then
+            actualPostReportValidationException.Should()
+                .BeEquivalentTo(expectedPostReportValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostReportByIdAsync(It.IsAny<Guid>()), Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostReportValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
