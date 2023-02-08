@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
@@ -35,6 +36,9 @@ namespace Taarafo.Core.Services.Foundations.PostReports
 
                 return await this.storageBroker.InsertPostReportAsync(postReport);
             });
+
+        public ValueTask<PostReport> RetrievePostReportByIdAsync(Guid postReportId) =>
+            throw new NotImplementedException();
 
         public IQueryable<PostReport> RetrieveAllPostReports() =>
             TryCatch(() => this.storageBroker.SelectAllPostReports());
