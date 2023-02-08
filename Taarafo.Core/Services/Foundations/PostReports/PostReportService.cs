@@ -40,7 +40,12 @@ namespace Taarafo.Core.Services.Foundations.PostReports
         public IQueryable<PostReport> RetrieveAllPostReports() =>
             TryCatch(() => this.storageBroker.SelectAllPostReports());
 
-        public async ValueTask<PostReport> RetrievePostReportByIdAsync(Guid postReportId) =>
-            await this.storageBroker.SelectPostReportByIdAsync(postReportId);
+        public ValueTask<PostReport> RetrievePostReportByIdAsync(Guid postReportId) =>
+            TryCatch(async () =>
+            {
+                ValidatePostReportId(postReportId);
+
+                return await this.storageBroker.SelectPostReportByIdAsync(postReportId);
+            });
     }
 }
