@@ -48,6 +48,13 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
             {
                 throw CreateAndLogDependencyException(postImpressionServiceException);
             }
+            catch(Exception serviceException)
+            {
+                var failedPostImpressionProcessingServiceException = 
+                    new FailedPostImpressionProcessingServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedPostImpressionProcessingServiceException);
+            }
         }
 
         private IQueryable<PostImpression> TryCatch(ReturningPostImpressionsFunction returningPostImpressionsFunction)
