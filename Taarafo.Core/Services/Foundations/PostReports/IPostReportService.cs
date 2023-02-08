@@ -13,7 +13,7 @@ namespace Taarafo.Core.Services.Foundations.PostReports
     public interface IPostReportService
     {
         ValueTask<PostReport> AddPostReportAsync(PostReport postReport);
-        ValueTask<PostReport> RetrievePostReportByIdAsync(Guid postReportId);
         IQueryable<PostReport> RetrieveAllPostReports();
+        ValueTask<PostReport> RetrievePostReportByIdAsync(Guid postReportId);
     }
 }

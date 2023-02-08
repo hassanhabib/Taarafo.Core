@@ -37,10 +37,10 @@ namespace Taarafo.Core.Services.Foundations.PostReports
                 return await this.storageBroker.InsertPostReportAsync(postReport);
             });
 
-        public async ValueTask<PostReport> RetrievePostReportByIdAsync(Guid postReportId) =>
-            await this.storageBroker.SelectPostReportByIdAsync(postReportId);
-
         public IQueryable<PostReport> RetrieveAllPostReports() =>
             TryCatch(() => this.storageBroker.SelectAllPostReports());
+
+        public async ValueTask<PostReport> RetrievePostReportByIdAsync(Guid postReportId) =>
+            await this.storageBroker.SelectPostReportByIdAsync(postReportId);
     }
 }
