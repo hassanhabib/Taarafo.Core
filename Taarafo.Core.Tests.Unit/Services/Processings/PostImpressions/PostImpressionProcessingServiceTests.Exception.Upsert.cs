@@ -62,7 +62,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
 
         [Theory]
         [MemberData(nameof(DependencyExceptions))]
-        public async Task ShouldThrowDependencyExceptionOnUpsertIfDependencyValidationErrorOccursAndLogItAsync(
+        public async Task ShouldThrowDependencyExceptionOnUpsertIfDependencyErrorOccursAndLogItAsync(
             Xeption dependencyException)
         {
             //given

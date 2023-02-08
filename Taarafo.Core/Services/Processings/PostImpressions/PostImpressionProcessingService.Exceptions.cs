@@ -40,6 +40,14 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
             {
                 throw CreateAndLogDependencyValidationException(postImpressionDependencyValidationException);
             }
+            catch(PostImpressionDependencyException postImpressionDependencyException)
+            {
+                throw CreateAndLogDependencyException(postImpressionDependencyException);
+            }
+            catch(PostImpressionServiceException postImpressionServiceException)
+            {
+                throw CreateAndLogDependencyException(postImpressionServiceException);
+            }
         }
 
         private IQueryable<PostImpression> TryCatch(ReturningPostImpressionsFunction returningPostImpressionsFunction)
