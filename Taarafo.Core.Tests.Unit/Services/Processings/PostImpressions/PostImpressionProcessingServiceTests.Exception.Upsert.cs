@@ -59,5 +59,48 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
             this.postImpressionServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [MemberData(nameof(DependencyExceptions))]
+        public async Task ShouldThrowDependencyExceptionOnUpsertIfDependencyValidationErrorOccursAndLogItAsync(
+            Xeption dependencyException)
+        {
+            //given
+            var somePostImpression = CreateRandomPostImpression();
+
+            var expectedPostImpressionProcessingDependencyException =
+                new PostImpressionProcessingDependencyException(
+                    dependencyException.InnerException as Xeption);
+
+            this.postImpressionServiceMock.Setup(service =>
+                service.RetrieveAllPostImpressions()).Throws(dependencyException);
+
+            //when
+            ValueTask<PostImpression> upsertPostImpressionTask =
+                this.postImpressionProcessingService.UpsertPostImpressionAsync(somePostImpression);
+
+            PostImpressionProcessingDependencyException actualPostImpressionProcessingDependencyException =
+                await Assert.ThrowsAsync<PostImpressionProcessingDependencyException>(upsertPostImpressionTask.AsTask);
+
+            //then
+            actualPostImpressionProcessingDependencyException.Should().BeEquivalentTo(
+                expectedPostImpressionProcessingDependencyException);
+
+            this.postImpressionServiceMock.Verify(service =>
+                service.RetrieveAllPostImpressions(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostImpressionProcessingDependencyException))), Times.Once);
+
+            this.postImpressionServiceMock.Verify(service =>
+                service.AddPostImpressions(It.IsAny<PostImpression>()), Times.Never);
+
+            this.postImpressionServiceMock.Verify(service =>
+                service.ModifyPostImpressionAsync(It.IsAny<PostImpression>()), Times.Never);
+
+            this.postImpressionServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
