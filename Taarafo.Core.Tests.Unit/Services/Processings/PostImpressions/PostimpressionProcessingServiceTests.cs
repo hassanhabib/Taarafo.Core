@@ -54,6 +54,19 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
             };
         }
 
+        public static TheoryData DependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PostImpressionValidationException(innerException),
+                new PostImpressionDependencyValidationException(innerException)
+            };
+        }
+
         public static IQueryable<PostImpression> CreateRandomPostImpressions(PostImpression postImpression)
         {
             List<PostImpression> randomPostImpressions= CreateRandomPostImpressions().ToList();
