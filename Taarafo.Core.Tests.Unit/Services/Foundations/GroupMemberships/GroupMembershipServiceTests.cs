@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
@@ -40,6 +41,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
+
+        private static IQueryable<GroupMembership> CreateRandomGroupMemberships()
+        {
+            return CreateGroupMembershipFiller(dates: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber()).AsQueryable();
+        }
 
         private static GroupMembership CreateRandomGroupMembership() =>
             CreateGroupMembershipFiller(dates: GetRandomDateTimeOffset()).Create();
