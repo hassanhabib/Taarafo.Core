@@ -32,6 +32,14 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
             {
                 throw CreateAndLogValidationException(invalidPostImpressionProcessingException);
             }
+            catch (PostImpressionValidationException postImpressionValidationException)
+            {
+                throw CreateAndLogDependencyValidationException(postImpressionValidationException);
+            }
+            catch (PostImpressionDependencyValidationException postImpressionDependencyValidationException)
+            {
+                throw CreateAndLogDependencyValidationException(postImpressionDependencyValidationException);
+            }
         }
 
         private IQueryable<PostImpression> TryCatch(ReturningPostImpressionsFunction returningPostImpressionsFunction)
@@ -65,6 +73,17 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
             this.loggingBroker.LogError(postImpressionProcessingValidationException);
 
             return postImpressionProcessingValidationException;
+        }
+
+        private PostImpressionProcessingDependencyValidationException CreateAndLogDependencyValidationException(Xeption exception)
+        {
+            var postImpressionProcessingDependencyValidationException =
+                new PostImpressionProcessingDependencyValidationException(
+                    exception.InnerException as Xeption);
+
+            this.loggingBroker.LogError(postImpressionProcessingDependencyValidationException);
+
+            return postImpressionProcessingDependencyValidationException;
         }
 
         private PostImpressionProcessingDependencyException CreateAndLogDependencyException(Xeption exception)
