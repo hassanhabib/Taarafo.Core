@@ -26,11 +26,13 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
             }
             catch (NullPostImpressionProcessingException nullPostImpressionProcessingException)
             {
-
                 throw CreateAndLogValidationException(nullPostImpressionProcessingException);
             }
+            catch (InvalidPostImpressionProcessingException invalidPostImpressionProcessingException)
+            {
+                throw CreateAndLogValidationException(invalidPostImpressionProcessingException);
+            }
         }
-
 
         private IQueryable<PostImpression> TryCatch(ReturningPostImpressionsFunction returningPostImpressionsFunction)
         {
@@ -54,6 +56,7 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
                 throw CreateAndLogServiceException(failedPostImpressionProcessingServiceException);
             }
         }
+
         private PostImpressionProcessingValidationException CreateAndLogValidationException(Xeption exception)
         {
             var postImpressionProcessingValidationException = 

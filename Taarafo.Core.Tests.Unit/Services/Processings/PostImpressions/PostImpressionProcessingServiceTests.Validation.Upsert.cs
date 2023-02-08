@@ -89,6 +89,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
                     upsertPostImpressionTask.AsTask);
 
             //then
+            actualPostImpressionProcessingValidationException.Should().BeEquivalentTo(
+                expectedPostImpressionProcessingValidationException);
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostImpressionProcessingValidationException))), Times.Once);
