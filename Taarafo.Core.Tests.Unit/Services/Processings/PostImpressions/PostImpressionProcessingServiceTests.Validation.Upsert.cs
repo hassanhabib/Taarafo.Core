@@ -58,12 +58,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnUpsertIfPostImpressionIdIsInvalidAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnUpsertIfPostImpressionIdsIsInvalidAndLogItAsync()
         {
             //given
             var invalidPostImpression = CreateRandomPostImpression();
-            invalidPostImpression.PostId = Guid.NewGuid();
-            invalidPostImpression.ProfileId = Guid.NewGuid();
+            invalidPostImpression.PostId = Guid.Empty;
+            invalidPostImpression.ProfileId = Guid.Empty;
 
             var invalidPostImpressionProcessingException =
                 new InvalidPostImpressionProcessingException();
