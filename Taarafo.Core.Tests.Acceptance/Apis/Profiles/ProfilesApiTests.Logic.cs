@@ -49,6 +49,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
             await this.apiBroker.DeleteProfileByIdAsync(actualProfile.Id);
         }
 
+        [Fact]
         public async Task ShouldGetAllProfileAsync()
         {
             //given
