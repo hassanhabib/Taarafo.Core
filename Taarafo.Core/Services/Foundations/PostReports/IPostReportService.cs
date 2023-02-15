@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Models.PostReports;
@@ -13,5 +14,6 @@ namespace Taarafo.Core.Services.Foundations.PostReports
     {
         ValueTask<PostReport> AddPostReportAsync(PostReport postReport);
         IQueryable<PostReport> RetrieveAllPostReports();
+        ValueTask<PostReport> RetrievePostReportByIdAsync(Guid postReportId);
     }
 }

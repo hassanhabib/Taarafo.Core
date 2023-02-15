@@ -56,6 +56,17 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             }
         }
 
+        private static void ValidateStoragePostReport(PostReport maybePostReport, Guid postReportId)
+        {
+            if (maybePostReport is null)
+            {
+                throw new NotFoundPostReportException(postReportId);
+            }
+        }
+
+        private void ValidatePostReportId(Guid postReportId) =>
+            Validate((Rule: IsInvalid(postReportId), Parameter: nameof(PostReport.Id)));
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == default,

@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
@@ -38,5 +39,18 @@ namespace Taarafo.Core.Services.Foundations.PostReports
 
         public IQueryable<PostReport> RetrieveAllPostReports() =>
             TryCatch(() => this.storageBroker.SelectAllPostReports());
+
+        public ValueTask<PostReport> RetrievePostReportByIdAsync(Guid postReportId) =>
+            TryCatch(async () =>
+            {
+                ValidatePostReportId(postReportId);
+
+                PostReport maybePostReport =
+                    await this.storageBroker.SelectPostReportByIdAsync(postReportId);
+
+                ValidateStoragePostReport(maybePostReport, postReportId);
+
+                return maybePostReport;
+            });
     }
 }
