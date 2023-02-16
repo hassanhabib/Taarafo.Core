@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -17,6 +18,7 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
     public partial class GroupMembershipService
     {
         private delegate ValueTask<GroupMembership> ReturningGroupMembershipFunction();
+        private delegate IQueryable<GroupMembership> ReturningGroupMembershipsFunction();
 
         private async ValueTask<GroupMembership> TryCatch(ReturningGroupMembershipFunction returningGroupMembershipFunction)
         {
@@ -62,6 +64,17 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
             }
         }
 
+        private IQueryable<GroupMembership> TryCatch(ReturningGroupMembershipsFunction returningGroupMembershipsFunction)
+        {
+            try
+            {
+                return returningGroupMembershipsFunction();
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
+        }
         private Exception CreateAndLogServiceException(Xeption exception)
         {
             var groupMembershipServiceException = new GroupMembershipServiceException(exception);

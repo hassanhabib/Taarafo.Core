@@ -37,7 +37,7 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
             });
 
         public IQueryable<GroupMembership> RetrieveAllGroupMemberships() =>
-            throw new System.NotImplementedException();
+            TryCatch(() => this.storageBroker.SelectAllGroupMemberships());
 
     }
 }
