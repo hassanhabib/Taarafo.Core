@@ -27,17 +27,17 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
         }
 
         public ValueTask<PostImpression> UpsertPostImpressionAsync(PostImpression postImpression) =>
-        TryCatch(async () =>
-        {
-            ValidatePostImpression(postImpression);
-            PostImpression maybePostImpression = RetrieveMatchingPostImpression(postImpression);
-
-            return maybePostImpression switch
+            TryCatch(async () =>
             {
-                null => await this.postImpressionService.AddPostImpressions(postImpression),
-                _ => await this.postImpressionService.ModifyPostImpressionAsync(postImpression)
-            };
-        });
+                ValidatePostImpression(postImpression);
+                PostImpression maybePostImpression = RetrieveMatchingPostImpression(postImpression);
+
+                return maybePostImpression switch
+                {
+                    null => await this.postImpressionService.AddPostImpressions(postImpression),
+                    _ => await this.postImpressionService.ModifyPostImpressionAsync(postImpression)
+                };
+            });
 
         private PostImpression RetrieveMatchingPostImpression(PostImpression postImpression)
         {
@@ -49,7 +49,7 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
 
         private static Expression<Func<PostImpression, bool>> SamePostImpressionAs(PostImpression postImpression) =>
             retrievePostImpression => (retrievePostImpression.PostId == postImpression.PostId)
-                || (retrievePostImpression.ProfileId == postImpression.ProfileId);
+                && (retrievePostImpression.ProfileId == postImpression.ProfileId);
 
         public IQueryable<PostImpression> RetrieveAllPostImpressions() =>
             TryCatch(() => this.postImpressionService.RetrieveAllPostImpressions());

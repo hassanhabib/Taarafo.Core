@@ -10,7 +10,7 @@ namespace Taarafo.Core.Models.Processings.PostImpressions.Exceptions
     public class NullPostImpressionProcessingException : Xeption
     {
         public NullPostImpressionProcessingException()
-            : base(message: "PostImpression is null.") { }
-
+            : base(message: "PostImpression is null.")
+        { }
     }
 }
