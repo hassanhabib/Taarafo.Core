@@ -20,14 +20,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
             // given
             SqlException sqlException = GetSqlException();
 
-            var failedStorageException =
+            var failedGroupMembershipStorageException =
                 new FailedGroupMembershipStorageException(sqlException);
 
             var expectedGroupMembershipDependencyException =
-                new GroupMembershipDependencyException(failedStorageException);
+                new GroupMembershipDependencyException(failedGroupMembershipStorageException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllComments())
+                broker.SelectAllGroupMemberships())
                     .Throws(sqlException);
 
             // when
@@ -53,7 +53,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

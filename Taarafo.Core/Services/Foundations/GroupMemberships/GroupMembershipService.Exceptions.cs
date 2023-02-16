@@ -70,11 +70,15 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
             {
                 return returningGroupMembershipsFunction();
             }
-            catch (Exception exception)
+            catch (SqlException sqlException)
             {
-                throw exception;
+                var failedGroupMembershipStorageException =
+                    new FailedGroupMembershipStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedGroupMembershipStorageException);
             }
         }
+
         private Exception CreateAndLogServiceException(Xeption exception)
         {
             var groupMembershipServiceException = new GroupMembershipServiceException(exception);
