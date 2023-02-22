@@ -4,13 +4,13 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Moq;
 using Taarafo.Core.Brokers.Loggings;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
-using Taarafo.Core.Models.Posts.Exceptions;
 using Taarafo.Core.Services.Foundations.PostImpressions;
 using Taarafo.Core.Services.Processings.PostImpressions;
 using Tynamix.ObjectFiller;
@@ -35,7 +35,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
-        private IQueryable<PostImpression> CreateRandomPostImpressions() =>
+        private static PostImpression CreateRandomPostImpression() =>
+            CreatePostImpressionFiller().Create();
+
+        private static IQueryable<PostImpression> CreateRandomPostImpressions() =>
             CreatePostImpressionFiller().Create(count: GetRandomNumber()).AsQueryable();
 
         public static TheoryData DependencyExceptions()
@@ -49,6 +52,27 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
                 new PostImpressionDependencyException(innerException),
                 new PostImpressionServiceException(innerException)
             };
+        }
+
+        public static TheoryData DependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PostImpressionValidationException(innerException),
+                new PostImpressionDependencyValidationException(innerException)
+            };
+        }
+
+        public static IQueryable<PostImpression> CreateRandomPostImpressions(PostImpression postImpression)
+        {
+            List<PostImpression> randomPostImpressions= CreateRandomPostImpressions().ToList();
+            randomPostImpressions.Add(postImpression);
+
+            return randomPostImpressions.AsQueryable();
         }
 
         private static string GetRandomMessage() =>
