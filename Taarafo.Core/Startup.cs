@@ -15,6 +15,7 @@ using Taarafo.Core.Brokers.Storages;
 using Taarafo.Core.Services.Foundations.Comments;
 using Taarafo.Core.Services.Foundations.GroupPosts;
 using Taarafo.Core.Services.Foundations.Groups;
+using Taarafo.Core.Services.Foundations.PostImpressions;
 using Taarafo.Core.Services.Foundations.Posts;
 using Taarafo.Core.Services.Foundations.Profiles;
 
@@ -77,6 +78,7 @@ namespace Taarafo.Core
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IGroupService, GroupService>();
             services.AddTransient<IGroupPostService, GroupPostService>();
+            services.AddTransient<IPostImpressionService,PostImpressionService>();
         }
 
         private static void AddBrokers(IServiceCollection services)
