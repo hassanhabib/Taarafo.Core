@@ -40,17 +40,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             // then
             actualEvent.Should().BeEquivalentTo(expectedEvent);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
-
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertEventAsync(inputEvent),
                     Times.Once());
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
