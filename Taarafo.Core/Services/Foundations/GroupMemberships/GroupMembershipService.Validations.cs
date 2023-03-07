@@ -23,6 +23,9 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
                 (Rule: IsNotRecent(groupMembership.MembershipDate), Parameter: nameof(GroupMembership.MembershipDate)));
         }
 
+        public void ValidateGroupMembershipId(Guid groupMembershipId) =>
+            Validate((Rule: IsInvalid(groupMembershipId), Parameter: nameof(GroupMembership.Id)));
+
         private void ValidateGroupMembershipIsNotNull(GroupMembership groupMembership)
         {
             if (groupMembership is null)

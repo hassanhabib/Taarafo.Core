@@ -39,6 +39,8 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
         public ValueTask<GroupMembership> RetrieveGroupMembershipByIdAsync(Guid groupMembershipId) =>
         TryCatch(async () =>
         {
+            ValidateGroupMembershipId(groupMembershipId);
+
             GroupMembership maybeGroupMembership =
                 await this.storageBroker.SelectGroupMembershipByIdAsync(groupMembershipId);
 
