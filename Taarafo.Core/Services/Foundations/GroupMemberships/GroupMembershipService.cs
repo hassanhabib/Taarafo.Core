@@ -36,9 +36,13 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
                 return await this.storageBroker.InsertGroupMembershipAsync(groupMembership);
             });
 
-        public ValueTask<GroupMembership> RetrieveGroupMembershipByIdAsync(Guid groupMembershipId)
+        public ValueTask<GroupMembership> RetrieveGroupMembershipByIdAsync(Guid groupMembershipId) =>
+        TryCatch(async () =>
         {
-            throw new NotImplementedException();
-        }
+            GroupMembership maybeGroupMembership =
+                await this.storageBroker.SelectGroupMembershipByIdAsync(groupMembershipId);
+
+            return maybeGroupMembership;
+        });
     }
 }
