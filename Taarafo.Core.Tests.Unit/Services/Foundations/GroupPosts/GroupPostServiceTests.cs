@@ -57,27 +57,27 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             new MnemonicString().GetValue();
 
         private static GroupPost CreateRandomGroupPost(DateTimeOffset dates) =>
-            CreateGroupPostFiller(dates).Create();
+            CreateGroupPostFiller().Create();
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
 
         private static GroupPost CreateRandomGroupPost() =>
-            CreateGroupPostFiller(GetRandomDateTimeOffset()).Create();
+            CreateGroupPostFiller().Create();
 
         private static int GetRandomNegativeNumber() =>
             -1 * new IntRange(min: 2, max: 10).GetValue();
 
-        private static GroupPost CreateRandomModifyGroupPost(DateTimeOffset dates)
+        private static GroupPost CreateRandomModifyGroupPost()
         {
             int randomDaysInPast = GetRandomNegativeNumber();
-            GroupPost randomGroupPost = CreateRandomGroupPost(dates);
+            GroupPost randomGroupPost = CreateRandomGroupPost();
             return randomGroupPost;
         }
 
         private static IQueryable<GroupPost> CreateRandomGroupPosts()
         {
-            return CreateGroupPostFiller(GetRandomDateTimeOffset())
+            return CreateGroupPostFiller()
                 .Create(count: GetRandomNumber()).AsQueryable();
         }
 
@@ -90,12 +90,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
 
-        private static Filler<GroupPost> CreateGroupPostFiller(DateTimeOffset dates)
+        private static Filler<GroupPost> CreateGroupPostFiller()
         {
             var filler = new Filler<GroupPost>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(dates);
+                .OnProperty(groupPost => groupPost.Group).IgnoreIt()
+                .OnProperty(groupPost => groupPost.Post).IgnoreIt();
 
             return filler;
         }
