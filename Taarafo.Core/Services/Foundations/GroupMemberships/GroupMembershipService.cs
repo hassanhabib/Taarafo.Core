@@ -44,6 +44,8 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
             GroupMembership maybeGroupMembership =
                 await this.storageBroker.SelectGroupMembershipByIdAsync(groupMembershipId);
 
+            ValidateStorageGroupMembership(maybeGroupMembership, groupMembershipId);
+
             return maybeGroupMembership;
         });
     }

@@ -34,6 +34,14 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
             }
         }
 
+        private static void ValidateStorageGroupMembership(GroupMembership maybeGroupMembership, Guid groupMembershipId)
+        {
+            if (maybeGroupMembership is null)
+            {
+                throw new NotFoundGroupMembershipException(groupMembershipId);
+            }
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
