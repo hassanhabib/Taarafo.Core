@@ -34,5 +34,10 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
 
                 return await this.storageBroker.InsertGroupMembershipAsync(groupMembership);
             });
+
+        public ValueTask<GroupMembership> ModifyGroupMembershipAsync(GroupMembership groupMembership)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

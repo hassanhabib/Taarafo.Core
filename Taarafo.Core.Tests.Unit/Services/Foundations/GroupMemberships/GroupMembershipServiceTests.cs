@@ -74,6 +74,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
             };
         }
 
+        private static GroupMembership CreateRandomModifyGroupMembership(DateTimeOffset dates)
+        {
+            int randomDaysInPast = GetRandomNegativeNumber();
+            GroupMembership randomGroupMembership = CreateRandomGroupMembership(dates);
+            return randomGroupMembership;
+        }
+
         private static Filler<GroupMembership> CreateGroupMembershipFiller(DateTimeOffset dates)
         {
             var filler = new Filler<GroupMembership>();

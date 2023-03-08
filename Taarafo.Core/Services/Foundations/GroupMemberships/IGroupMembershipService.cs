@@ -11,5 +11,6 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
     public interface IGroupMembershipService
     {
         ValueTask<GroupMembership> AddGroupMembershipAsync(GroupMembership groupMembership);
+        ValueTask<GroupMembership> ModifyGroupMembershipAsync(GroupMembership groupMembership);
     }
 }
