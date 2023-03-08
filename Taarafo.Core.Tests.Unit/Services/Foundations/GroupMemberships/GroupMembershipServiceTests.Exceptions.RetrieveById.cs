@@ -58,5 +58,48 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedGroupMembershipServiceException =
+                new FailedGroupMembershipServiceException(serviceException);
+
+            var expectedGroupMembershipServiceException =
+                new GroupMembershipServiceException(failedGroupMembershipServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectGroupMembershipByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<GroupMembership> retrieveGroupMembershipByIdTask =
+                this.groupMembershipService.RetrieveGroupMembershipByIdAsync(someId);
+
+            GroupMembershipServiceException actualGroupMembershipServiceException =
+                await Assert.ThrowsAsync<GroupMembershipServiceException>(
+                    retrieveGroupMembershipByIdTask.AsTask);
+
+            // then
+            actualGroupMembershipServiceException.Should().BeEquivalentTo(
+                expectedGroupMembershipServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+               broker.SelectGroupMembershipByIdAsync(It.IsAny<Guid>()),
+                        Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogError(It.Is(SameExceptionAs(
+                   expectedGroupMembershipServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
