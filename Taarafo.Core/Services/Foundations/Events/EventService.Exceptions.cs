@@ -62,6 +62,15 @@ namespace Taarafo.Core.Services.Foundations.Events
                 throw CreateAndLogCriticalDependencyException(
                     failedEventStorageExcpetion);
             }
+            catch (ForeignKeyConstraintConflictException foreignKeyConforeignKeyConstraintConflictException)
+            {
+                var invalidEventReferenceException =
+                    new InvalidEventReferenceException(
+                        foreignKeyConforeignKeyConstraintConflictException);
+
+                throw CreateAndLogDependencyValidationException(
+                    invalidEventReferenceException);
+            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsEventException =
@@ -94,7 +103,7 @@ namespace Taarafo.Core.Services.Foundations.Events
 
         private Exception CreateAndLogDependencyValidationException(Xeption exception)
         {
-            var eventDependencyValidationException = 
+            var eventDependencyValidationException =
                 new EventDependencyValidationException(exception);
 
             this.loggingBroker.LogError(eventDependencyValidationException);
