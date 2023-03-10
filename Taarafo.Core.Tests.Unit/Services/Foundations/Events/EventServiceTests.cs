@@ -16,6 +16,7 @@ using Taarafo.Core.Models.Events;
 using Taarafo.Core.Services.Foundations.Events;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
 {
@@ -51,12 +52,27 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
 
         private static int GetRandomNumber() =>
-           new IntRange(min: 2, max: 99).GetValue();
+           new IntRange(min: 2, max: 10).GetValue();
+
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
 
         private static IQueryable<Event> CreateRandomEvents()
         {
             return CreateEventFiller(dates: GetRandomDateTimeOffset())
                 .Create(count: GetRandomNumber()).AsQueryable();
+        }
+
+        public static TheoryData MinutesBeforeOrAfter()
+        {
+            int randomNumber = GetRandomNumber();
+            int randomNegativeNumber = GetRandomNegativeNumber();
+
+            return new TheoryData<int>
+            {
+                randomNumber,
+                randomNegativeNumber
+            };
         }
 
         private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedExceptoin) =>

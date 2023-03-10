@@ -20,7 +20,9 @@ namespace Taarafo.Core.Services.Foundations.Events
                 (Rule: IsInvalid(@event.Location), Parameter: nameof(Event.Location)),
                 (Rule: IsInvalid(@event.Date), Parameter: nameof(Event.Date)),
                 (Rule: IsInvalid(@event.CreatedDate), Parameter: nameof(Event.CreatedDate)),
-                (Rule: IsInvalid(@event.CreatedBy), Parameter: nameof(Event.CreatedBy)));
+                (Rule: IsNotRecent(@event.CreatedDate), Parameter: nameof(Event.CreatedDate)),
+                (Rule: IsInvalid(@event.CreatedBy), Parameter: nameof(Event.CreatedBy))
+            );
 
         }
 
@@ -49,6 +51,23 @@ namespace Taarafo.Core.Services.Foundations.Events
             Condition = date == default,
             Message = "Date is required"
         };
+
+        private dynamic IsNotRecent(DateTimeOffset date) => new
+        {
+            Condition = IsDateNotRecent(date),
+            Message = "Date is not recent"
+        };
+
+        private bool IsDateNotRecent(DateTimeOffset date)
+        {
+            DateTimeOffset currentDateTime =
+                this.dateTimeBroker.GetCurrentDateTimeOffset();
+
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+            TimeSpan oneMinute = TimeSpan.FromMinutes(1);
+
+            return timeDifference.Duration() > oneMinute;
+        }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
