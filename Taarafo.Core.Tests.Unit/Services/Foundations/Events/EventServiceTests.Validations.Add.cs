@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -46,6 +47,65 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfEventIsInvalidAndLogItAsync()
+        {
+            // given
+            Guid invalidGuid = Guid.Empty;
+
+            var invalidEvent = new Event
+            {
+                Id = invalidGuid
+            };
+
+            var invalidEventException =
+                new InvalidEventException();
+
+            invalidEventException.AddData(
+                key: nameof(Event.Id),
+                values: "Id is required");
+
+            invalidEventException.AddData(
+                key: nameof(Event.Location),
+                values: "Text is required");
+
+            invalidEventException.AddData(
+                key: nameof(Event.CreatedDate),
+                values: "Date is required");
+
+            var expectedEventValidationException =
+                new EventValidationException(invalidEventException);
+
+            //when
+            ValueTask<Event> addEventTask =
+                this.eventService.AddEventAsync(invalidEvent);
+
+            EventValidationException actualEventValidationException =
+                await Assert.ThrowsAsync<EventValidationException>(
+                    addEventTask.AsTask);
+
+            //then
+            actualEventValidationException.Should().BeEquivalentTo(
+                expectedEventValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedEventValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertEventAsync(invalidEvent),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
