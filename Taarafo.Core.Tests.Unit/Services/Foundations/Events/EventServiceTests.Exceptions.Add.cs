@@ -66,7 +66,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnCreateIfEventAlreadyExsitsAndLogItAsync()
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfEventAlreadyExsitsAndLogItAsync()
         {
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
@@ -115,6 +115,57 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async void ShouldThrowDependencyValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+        {
+            // given
+            Event someEvent = CreateRandomEvent();
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(exceptionMessage);
+
+            var invalidEventReferenceException =
+                new InvalidEventReferenceException(foreignKeyConstraintConflictException);
+
+            var expectedEventDependencyValidationException =
+                new EventDependencyValidationException(invalidEventReferenceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(foreignKeyConstraintConflictException);
+
+            // when
+            ValueTask<Event> addEventTask =
+                this.eventService.AddEventAsync(someEvent);
+
+            EventDependencyValidationException actualEventDependencyValidationException =
+                 await Assert.ThrowsAsync<EventDependencyValidationException>(
+                     addEventTask.AsTask);
+
+            // then
+            actualEventDependencyValidationException.Should().BeEquivalentTo(
+                expectedEventDependencyValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedEventDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertEventAsync(It.IsAny<Event>()),
+                        Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
