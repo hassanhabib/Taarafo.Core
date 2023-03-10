@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.Events;
 using Taarafo.Core.Models.Events.Exceptions;
@@ -15,6 +16,7 @@ namespace Taarafo.Core.Services.Foundations.Events
     public partial class EventService
     {
         private delegate IQueryable<Event> ReturningEventsFunction();
+        private delegate ValueTask<Event> ReturningEventFunction();
 
         private IQueryable<Event> TryCatch(ReturningEventsFunction returningEventsFunction)
         {
@@ -35,6 +37,29 @@ namespace Taarafo.Core.Services.Foundations.Events
 
                 throw CreateAndLogServiceException(failedEventServiceException);
             }
+        }
+
+        private async ValueTask<Event> TryCatch(ReturningEventFunction returningEventFunction)
+        {
+            try
+            {
+                return await returningEventFunction();
+            }
+            catch (NullEventException nullEventException)
+            {
+                throw CreateAndLogValidationException(nullEventException);
+            }
+        }
+
+       private EventValidationException CreateAndLogValidationException(
+            Xeption exception)
+        {
+            var eventValidationException =
+                new EventValidationException(exception);
+
+            this.loggingBroker.LogError(eventValidationException);
+
+            return eventValidationException;
         }
 
         private EventDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
