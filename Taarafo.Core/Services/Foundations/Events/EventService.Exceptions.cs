@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Taarafo.Core.Models.Events;
 using Taarafo.Core.Models.Events.Exceptions;
@@ -55,16 +56,25 @@ namespace Taarafo.Core.Services.Foundations.Events
             }
             catch (SqlException sqlException)
             {
-                var failedEventStorageExcpetion = 
+                var failedEventStorageExcpetion =
                     new FailedEventStorageException(sqlException);
 
                 throw CreateAndLogCriticalDependencyException(
                     failedEventStorageExcpetion);
             }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsEventException =
+                    new AlreadyExistsEventException(
+                        duplicateKeyException);
+
+                throw CreateAndLogDependencyValidationException(
+                    alreadyExistsEventException);
+            }
         }
 
-       private EventValidationException CreateAndLogValidationException(
-            Xeption exception)
+        private EventValidationException CreateAndLogValidationException(
+             Xeption exception)
         {
             var eventValidationException =
                 new EventValidationException(exception);
@@ -80,6 +90,16 @@ namespace Taarafo.Core.Services.Foundations.Events
             this.loggingBroker.LogCritical(eventDependencyException);
 
             return eventDependencyException;
+        }
+
+        private Exception CreateAndLogDependencyValidationException(Xeption exception)
+        {
+            var eventDependencyValidationException = 
+                new EventDependencyValidationException(exception);
+
+            this.loggingBroker.LogError(eventDependencyValidationException);
+
+            return eventDependencyValidationException;
         }
 
         private EventServiceException CreateAndLogServiceException(Xeption exception)
