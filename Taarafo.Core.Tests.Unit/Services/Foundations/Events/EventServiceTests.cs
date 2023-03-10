@@ -57,6 +57,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
         private static int GetRandomNegativeNumber() =>
             -1 * new IntRange(min: 2, max: 10).GetValue();
 
+		private static SqlException GetSqlException() =>
+			(SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+            
         private static IQueryable<Event> CreateRandomEvents()
         {
             return CreateEventFiller(dates: GetRandomDateTimeOffset())
