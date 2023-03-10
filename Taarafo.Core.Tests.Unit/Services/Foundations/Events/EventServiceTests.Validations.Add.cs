@@ -18,7 +18,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
         [Fact]
         public async Task ShouldThrowValidationExceptionOnAddIfEventIsNullAndLogitAsync()
         {
-             // given
+            // given
             Event nullEvent = null;
 
             var nullEventException =
@@ -101,7 +101,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+                    Times.Exactly(2));
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -138,64 +138,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                 key: nameof(Event.CreatedDate),
                 values: "Date is not recent");
 
-            var expectedEventValidationException =
-                new EventValidationException(invalidEventException);
-
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDateTime);
-
-            // when
-            ValueTask<Event> addEventTask =
-                this.eventService.AddEventAsync(invalidEvent);
-
-            EventValidationException actualEventValidationException =
-               await Assert.ThrowsAsync<EventValidationException>(
-                   addEventTask.AsTask);
-
-            // then
-            actualEventValidationException.Should().BeEquivalentTo(
-                expectedEventValidationException);
-
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
-
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedEventValidationException))),
-                        Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertEventAsync(It.IsAny<Event>()),
-                    Times.Never);
-
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async Task ShouldThrowValidationExceptionOnAddIfEventDateHasAlreadyPassedAndLogItAsync()
-        {
-            // given
-            int randomMinutesBefore = GetRandomNegativeNumber();
-            int inputMinutesBefore = randomMinutesBefore;
-
-            DateTimeOffset randomDateTime =
-                GetRandomDateTimeOffset();
-
-            DateTimeOffset invalidDateTime =
-                randomDateTime.AddMinutes(inputMinutesBefore);
-
-            Event randomEvent = CreateRandomEvent(invalidDateTime);
-            Event invalidEvent = randomEvent;
-            var invalidEventException =
-                new InvalidEventException();
-
             invalidEventException.AddData(
                 key: nameof(Event.Date),
-                values: "Date has already passed");
+                values: "Date is not recent");
 
             var expectedEventValidationException =
                 new EventValidationException(invalidEventException);
@@ -218,7 +163,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+                    Times.Exactly(2));
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(

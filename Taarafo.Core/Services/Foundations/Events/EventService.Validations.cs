@@ -20,8 +20,10 @@ namespace Taarafo.Core.Services.Foundations.Events
                 (Rule: IsInvalid(@event.Location), Parameter: nameof(Event.Location)),
                 (Rule: IsInvalid(@event.Date), Parameter: nameof(Event.Date)),
                 (Rule: IsInvalid(@event.CreatedDate), Parameter: nameof(Event.CreatedDate)),
+                (Rule: IsInvalid(@event.CreatedBy), Parameter: nameof(Event.CreatedBy)),
                 (Rule: IsNotRecent(@event.CreatedDate), Parameter: nameof(Event.CreatedDate)),
-                (Rule: IsInvalid(@event.CreatedBy), Parameter: nameof(Event.CreatedBy))
+                (Rule: IsNotRecent(@event.Date), Parameter: nameof(Event.Date))
+
             );
 
         }
