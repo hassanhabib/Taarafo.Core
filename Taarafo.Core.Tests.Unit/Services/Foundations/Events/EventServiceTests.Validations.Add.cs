@@ -57,7 +57,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
 
             var invalidEvent = new Event
             {
-                Id = invalidGuid
+                Id = invalidGuid,
+                CreatedBy = invalidGuid
             };
 
             var invalidEventException =
@@ -72,8 +73,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                 values: "Text is required");
 
             invalidEventException.AddData(
+                key: nameof(Event.Date),
+                values: "Date is required");
+
+            invalidEventException.AddData(
                 key: nameof(Event.CreatedDate),
                 values: "Date is required");
+
+            invalidEventException.AddData(
+                key: nameof(Event.CreatedBy),
+                values: "Id is required");
 
             var expectedEventValidationException =
                 new EventValidationException(invalidEventException);
@@ -92,7 +101,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+                    Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
