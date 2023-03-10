@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Taarafo.Core.Models.Events;
 using Taarafo.Core.Models.Events.Exceptions;
@@ -166,6 +167,55 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            Event someEvent = CreateRandomEvent();
+
+            var databaseUpdateException =
+                new DbUpdateException();
+
+            var failedEventStorageException =
+                new FailedEventStorageException(databaseUpdateException);
+
+            var expectedEventDependencyException =
+                new EventDependencyException(failedEventStorageException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(databaseUpdateException);
+
+            // when
+            ValueTask<Event> addEventTask =
+                this.eventService.AddEventAsync(someEvent);
+
+            EventDependencyException actualEventDependencyException =
+                 await Assert.ThrowsAsync<EventDependencyException>(
+                     addEventTask.AsTask);
+
+            // then
+            actualEventDependencyException.Should().BeEquivalentTo(
+                expectedEventDependencyException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertEventAsync(It.IsAny<Event>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedEventDependencyException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
