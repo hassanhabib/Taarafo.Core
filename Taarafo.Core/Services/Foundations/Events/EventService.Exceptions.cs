@@ -53,6 +53,14 @@ namespace Taarafo.Core.Services.Foundations.Events
             {
                 throw CreateAndLogValidationException(invalidEventException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedEventStorageExcpetion = 
+                    new FailedEventStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(
+                    failedEventStorageExcpetion);
+            }
         }
 
        private EventValidationException CreateAndLogValidationException(
