@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.Events;
 using Taarafo.Core.Models.Events.Exceptions;
 using Xeptions;
@@ -62,6 +63,15 @@ namespace Taarafo.Core.Services.Foundations.Events
                 throw CreateAndLogCriticalDependencyException(
                     failedEventStorageExcpetion);
             }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsEventException =
+                    new AlreadyExistsEventException(
+                        duplicateKeyException);
+
+                throw CreateAndLogDependencyValidationException(
+                    alreadyExistsEventException);
+            }
             catch (ForeignKeyConstraintConflictException foreignKeyConforeignKeyConstraintConflictException)
             {
                 var invalidEventReferenceException =
@@ -71,14 +81,14 @@ namespace Taarafo.Core.Services.Foundations.Events
                 throw CreateAndLogDependencyValidationException(
                     invalidEventReferenceException);
             }
-            catch (DuplicateKeyException duplicateKeyException)
+            catch (DbUpdateException dbUpdateException)
             {
-                var alreadyExistsEventException =
-                    new AlreadyExistsEventException(
-                        duplicateKeyException);
+                var failedEventStorageException =
+                    new FailedEventStorageException(
+                        dbUpdateException);
 
-                throw CreateAndLogDependencyValidationException(
-                    alreadyExistsEventException);
+                throw CreateAndLogDependencyException(
+                    failedEventStorageException);
             }
         }
 
@@ -97,6 +107,14 @@ namespace Taarafo.Core.Services.Foundations.Events
         {
             var eventDependencyException = new EventDependencyException(exception);
             this.loggingBroker.LogCritical(eventDependencyException);
+
+            return eventDependencyException;
+        }
+
+        private EventDependencyException CreateAndLogDependencyException(Xeption exception)
+        {
+            var eventDependencyException = new EventDependencyException(exception);
+            this.loggingBroker.LogError(eventDependencyException);
 
             return eventDependencyException;
         }
