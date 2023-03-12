@@ -217,5 +217,52 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Event someEvent = CreateRandomEvent();
+            var serviceException = new Exception();
+
+            var failedEventServiceException =
+                new FailedEventServiceException(serviceException);
+
+            var expectedEventServiceException =
+                new EventServiceException(failedEventServiceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(serviceException);
+
+            // when
+            ValueTask<Event> addEventTask =
+                this.eventService.AddEventAsync(someEvent);
+
+            EventServiceException actualEventServiceException =
+                 await Assert.ThrowsAsync<EventServiceException>(
+                     addEventTask.AsTask);
+
+            // then
+            actualEventServiceException.Should().BeEquivalentTo(
+                expectedEventServiceException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertEventAsync(It.IsAny<Event>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedEventServiceException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
