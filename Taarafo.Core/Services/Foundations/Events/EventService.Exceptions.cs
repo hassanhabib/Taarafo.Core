@@ -90,6 +90,13 @@ namespace Taarafo.Core.Services.Foundations.Events
                 throw CreateAndLogDependencyException(
                     failedEventStorageException);
             }
+           catch (Exception exception)
+            {
+                var failedEventServiceException =
+                    new FailedEventServiceException(exception);
+
+                throw CreateAndLogServiceException(failedEventServiceException);
+            }
         }
 
         private EventValidationException CreateAndLogValidationException(
