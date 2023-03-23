@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -134,6 +135,44 @@ namespace Taarafo.Core.Controllers
                 when (groupDependencyValidationException.InnerException is InvalidGroupReferenceException)
             {
                 return FailedDependency(groupDependencyValidationException.InnerException);
+            }
+            catch (GroupDependencyException groupDependencyException)
+            {
+                return InternalServerError(groupDependencyException.InnerException);
+            }
+            catch (GroupServiceException groupServiceException)
+            {
+                return InternalServerError(groupServiceException.InnerException);
+            }
+        }
+
+        [HttpDelete("{groupId}")]
+        public async ValueTask<ActionResult<Group>> DeleteGroupByIdAsync(Guid groupId)
+        {
+            try
+            {
+                Group deletedGroup =
+                    await this.groupService.RemoveGroupByIdAsync(groupId);
+
+                return Ok(deletedGroup);
+            }
+            catch (GroupValidationException groupValidationException)
+                when (groupValidationException.InnerException is NotFoundGroupException)
+            {
+                return NotFound(groupValidationException.InnerException);
+            }
+            catch (GroupValidationException groupValidationException)
+            {
+                return BadRequest(groupValidationException.InnerException);
+            }
+            catch (GroupDependencyValidationException groupDependencyValidationException)
+                when (groupDependencyValidationException.InnerException is LockedGroupException)
+            {
+                return Locked(groupDependencyValidationException.InnerException);
+            }
+            catch (GroupDependencyValidationException groupDependencyValidationException)
+            {
+                return BadRequest(groupDependencyValidationException.InnerException);
             }
             catch (GroupDependencyException groupDependencyException)
             {
