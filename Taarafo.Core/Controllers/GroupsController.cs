@@ -5,7 +5,6 @@
 
 using System;
 using System.Linq;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -83,15 +82,15 @@ namespace Taarafo.Core.Controllers
         {
             try
             {
-                Group retrievedGroupById = 
+                Group retrievedGroupById =
                     await this.groupService.RemoveGroupByIdAsync(groupId);
 
                 return Ok(retrievedGroupById);
             }
             catch (GroupValidationException groupValidationException)
-                when (groupValidationException.InnerException is NotFoundGroupException) 
-            { 
-                return NotFound(groupValidationException.InnerException); 
+                when (groupValidationException.InnerException is NotFoundGroupException)
+            {
+                return NotFound(groupValidationException.InnerException);
             }
             catch (GroupValidationException groupValidationException)
             {
@@ -127,14 +126,13 @@ namespace Taarafo.Core.Controllers
                 return BadRequest(groupValidationException.InnerException);
             }
             catch (GroupDependencyValidationException groupDependencyValidationException)
-                when (groupDependencyValidationException.InnerException is AlreadyExistsGroupException)
-            {
-                return Conflict(groupDependencyValidationException.InnerException);
-            }
-            catch (GroupDependencyValidationException groupDependencyValidationException)
                 when (groupDependencyValidationException.InnerException is InvalidGroupReferenceException)
             {
                 return FailedDependency(groupDependencyValidationException.InnerException);
+            }
+            catch (GroupDependencyValidationException groupDependencyValidationException)
+            {
+                return BadRequest(groupDependencyValidationException.InnerException);
             }
             catch (GroupDependencyException groupDependencyException)
             {
