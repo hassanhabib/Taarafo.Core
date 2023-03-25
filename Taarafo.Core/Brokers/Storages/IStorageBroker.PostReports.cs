@@ -14,7 +14,7 @@ namespace Taarafo.Core.Brokers.Storages
     {
         ValueTask<PostReport> InsertPostReportAsync(PostReport postReport);
         IQueryable<PostReport> SelectAllPostReports();
-        ValueTask<PostReport> SelectPostReportByIdAsync(Guid Id);
+        ValueTask<PostReport> SelectPostReportByIdAsync(Guid postReportId);
         ValueTask<PostReport> UpdatePostReportAsync(PostReport postReport);
         ValueTask<PostReport> DeletePostReportAsync(PostReport postReport);
     }

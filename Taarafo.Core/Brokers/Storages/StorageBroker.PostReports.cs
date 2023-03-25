@@ -21,8 +21,8 @@ namespace Taarafo.Core.Brokers.Storages
         public IQueryable<PostReport> SelectAllPostReports() =>
             SelectAll<PostReport>();
 
-        public async ValueTask<PostReport> SelectPostReportByIdAsync(Guid id) =>
-            await SelectAsync<PostReport>(id);
+        public async ValueTask<PostReport> SelectPostReportByIdAsync(Guid postReportId) =>
+            await SelectAsync<PostReport>(postReportId);
 
         public async ValueTask<PostReport> UpdatePostReportAsync(PostReport postReport) =>
             await UpdateAsync(postReport);
