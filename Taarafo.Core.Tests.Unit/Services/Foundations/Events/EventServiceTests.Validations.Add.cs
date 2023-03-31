@@ -42,7 +42,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedEventValidationException))),
-                    Times.Once);
+                        Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -113,8 +113,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Theory]

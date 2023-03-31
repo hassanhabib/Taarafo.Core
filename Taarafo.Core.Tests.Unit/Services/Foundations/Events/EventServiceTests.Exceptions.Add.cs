@@ -85,8 +85,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                 new EventDependencyValidationException(alreadyExistsEventException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-              broker.GetCurrentDateTimeOffset())
-                  .Throws(duplicateKeyException);
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(duplicateKeyException);
 
             // when
             ValueTask<Event> addEventTask =
@@ -162,7 +162,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertEventAsync(It.IsAny<Event>()),
-                        Times.Never);
+                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

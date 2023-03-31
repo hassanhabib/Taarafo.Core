@@ -17,29 +17,8 @@ namespace Taarafo.Core.Services.Foundations.Events
 {
     public partial class EventService
     {
-        private delegate IQueryable<Event> ReturningEventsFunction();
         private delegate ValueTask<Event> ReturningEventFunction();
-
-        private IQueryable<Event> TryCatch(ReturningEventsFunction returningEventsFunction)
-        {
-            try
-            {
-                return returningEventsFunction();
-            }
-            catch (SqlException sqlException)
-            {
-                var failedEventStorageException = new FailedEventStorageException(sqlException);
-
-                throw CreateAndLogCriticalDependencyException(failedEventStorageException);
-            }
-            catch (Exception exception)
-            {
-                var failedEventServiceException =
-                    new FailedEventServiceException(exception);
-
-                throw CreateAndLogServiceException(failedEventServiceException);
-            }
-        }
+        private delegate IQueryable<Event> ReturningEventsFunction();
 
         private async ValueTask<Event> TryCatch(ReturningEventFunction returningEventFunction)
         {
@@ -90,7 +69,28 @@ namespace Taarafo.Core.Services.Foundations.Events
                 throw CreateAndLogDependencyException(
                     failedEventStorageException);
             }
-           catch (Exception exception)
+            catch (Exception exception)
+            {
+                var failedEventServiceException =
+                    new FailedEventServiceException(exception);
+
+                throw CreateAndLogServiceException(failedEventServiceException);
+            }
+        }
+
+        private IQueryable<Event> TryCatch(ReturningEventsFunction returningEventsFunction)
+        {
+            try
+            {
+                return returningEventsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedEventStorageException = new FailedEventStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedEventStorageException);
+            }
+            catch (Exception exception)
             {
                 var failedEventServiceException =
                     new FailedEventServiceException(exception);
