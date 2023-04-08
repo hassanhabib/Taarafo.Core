@@ -23,9 +23,7 @@ namespace Taarafo.Core.Services.Foundations.Events
                 (Rule: IsInvalid(@event.CreatedBy), Parameter: nameof(Event.CreatedBy)),
                 (Rule: IsNotRecent(@event.CreatedDate), Parameter: nameof(Event.CreatedDate)),
                 (Rule: IsNotRecent(@event.Date), Parameter: nameof(Event.Date))
-
             );
-
         }
 
         private void ValidateEventIsNotNull(Event @event)
