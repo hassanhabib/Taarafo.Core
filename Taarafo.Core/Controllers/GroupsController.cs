@@ -84,7 +84,7 @@ namespace Taarafo.Core.Controllers
             try
             {
                 Group retrievedGroupById = 
-                    await this.groupService.RemoveGroupByIdAsync(groupId);
+                    await this.groupService.RetrieveGroupByIdAsync(groupId);
 
                 return Ok(retrievedGroupById);
             }
