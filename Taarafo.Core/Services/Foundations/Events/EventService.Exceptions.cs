@@ -5,7 +5,10 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Taarafo.Core.Models.Events;
 using Taarafo.Core.Models.Events.Exceptions;
 using Xeptions;
@@ -14,7 +17,66 @@ namespace Taarafo.Core.Services.Foundations.Events
 {
     public partial class EventService
     {
+        private delegate ValueTask<Event> ReturningEventFunction();
         private delegate IQueryable<Event> ReturningEventsFunction();
+
+        private async ValueTask<Event> TryCatch(ReturningEventFunction returningEventFunction)
+        {
+            try
+            {
+                return await returningEventFunction();
+            }
+            catch (NullEventException nullEventException)
+            {
+                throw CreateAndLogValidationException(nullEventException);
+            }
+            catch (InvalidEventException invalidEventException)
+            {
+                throw CreateAndLogValidationException(invalidEventException);
+            }
+            catch (SqlException sqlException)
+            {
+                var failedEventStorageExcpetion =
+                    new FailedEventStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(
+                    failedEventStorageExcpetion);
+            }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsEventException =
+                    new AlreadyExistsEventException(
+                        duplicateKeyException);
+
+                throw CreateAndLogDependencyValidationException(
+                    alreadyExistsEventException);
+            }
+            catch (ForeignKeyConstraintConflictException foreignKeyConforeignKeyConstraintConflictException)
+            {
+                var invalidEventReferenceException =
+                    new InvalidEventReferenceException(
+                        foreignKeyConforeignKeyConstraintConflictException);
+
+                throw CreateAndLogDependencyValidationException(
+                    invalidEventReferenceException);
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                var failedEventStorageException =
+                    new FailedEventStorageException(
+                        dbUpdateException);
+
+                throw CreateAndLogDependencyException(
+                    failedEventStorageException);
+            }
+            catch (Exception exception)
+            {
+                var failedEventServiceException =
+                    new FailedEventServiceException(exception);
+
+                throw CreateAndLogServiceException(failedEventServiceException);
+            }
+        }
 
         private IQueryable<Event> TryCatch(ReturningEventsFunction returningEventsFunction)
         {
@@ -37,12 +99,41 @@ namespace Taarafo.Core.Services.Foundations.Events
             }
         }
 
+        private EventValidationException CreateAndLogValidationException(
+             Xeption exception)
+        {
+            var eventValidationException =
+                new EventValidationException(exception);
+
+            this.loggingBroker.LogError(eventValidationException);
+
+            return eventValidationException;
+        }
+
         private EventDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
         {
             var eventDependencyException = new EventDependencyException(exception);
             this.loggingBroker.LogCritical(eventDependencyException);
 
             return eventDependencyException;
+        }
+
+        private EventDependencyException CreateAndLogDependencyException(Xeption exception)
+        {
+            var eventDependencyException = new EventDependencyException(exception);
+            this.loggingBroker.LogError(eventDependencyException);
+
+            return eventDependencyException;
+        }
+
+        private Exception CreateAndLogDependencyValidationException(Xeption exception)
+        {
+            var eventDependencyValidationException =
+                new EventDependencyValidationException(exception);
+
+            this.loggingBroker.LogError(eventDependencyValidationException);
+
+            return eventDependencyValidationException;
         }
 
         private EventServiceException CreateAndLogServiceException(Xeption exception)
