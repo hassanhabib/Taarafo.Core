@@ -10,7 +10,11 @@ namespace Taarafo.Core.Models.Comments.Exceptions
 	public class CommentDependencyValidationException : Xeption
 	{
 		public CommentDependencyValidationException(Xeption innerException)
-			: base(message: "Comment dependency validation occurred, please try again.", innerException)
-		{ }
+			: base(
+				message: "Comment dependency validation occurred, please try again.",
+					innerException: innerException) { }
+
+		public CommentDependencyValidationException(string message, Xeption innerException)
+			: base(message, innerException) { }
 	}
 }

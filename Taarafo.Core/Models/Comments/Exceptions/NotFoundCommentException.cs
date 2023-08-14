@@ -8,10 +8,14 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Comments.Exceptions
 {
-	public class NotFoundCommentException : Xeption
-	{
-		public NotFoundCommentException(Guid commentId)
-			: base(message: $"Couldn't find comment with id: {commentId}.")
-		{ }
-	}
+    public class NotFoundCommentException : Xeption
+    {
+        public NotFoundCommentException(Guid commentId)
+            : base(
+                message: $"Comment with id: {commentId} not found, please contact support.")
+        { }
+
+        public NotFoundCommentException(string message, Exception innerException)
+            : base(message, innerException) { }
+    }
 }

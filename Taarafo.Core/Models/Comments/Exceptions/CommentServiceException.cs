@@ -11,6 +11,11 @@ namespace Taarafo.Core.Models.Comments.Exceptions
 	public class CommentServiceException : Xeption
 	{
 		public CommentServiceException(Exception innerException)
-			: base(message: "Comment service error occurred, contact support.", innerException) { }
-	}
+			: base(
+				message: "Comment service error occurred, contact support.",
+					innerException: innerException) { }
+
+        public CommentServiceException(string message, Exception innerException)
+			: base(message, innerException) { }
+    }
 }

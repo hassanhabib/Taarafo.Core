@@ -16,247 +16,267 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 {
-	public partial class CommentServiceTests
-	{
-		[Fact]
-		public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
-		{
-			// given
-			Comment someComment = CreateRandomComment();
-			SqlException sqlException = GetSqlException();
+    public partial class CommentServiceTests
+    {
+        [Fact]
+        private async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
+        {
+            // given
+            Comment someComment = CreateRandomComment();
+            SqlException sqlException = GetSqlException();
 
-			var failedCommentStorageException =
-				new FailedCommentStorageException(sqlException);
+            var failedCommentStorageException =
+                new FailedCommentStorageException(
+                    message: "Failed comment storage error occurred, contact support.",
+                        innerException: sqlException);
 
-			var expectedCommentDependencyException =
-				new CommentDependencyException(failedCommentStorageException);
+            var expectedCommentDependencyException =
+                new CommentDependencyException(
+                    message: "Comment dependency error occurred, contact support.",
+                        innerException: failedCommentStorageException);
 
-			this.dateTimeBrokerMock.Setup(broker =>
-				broker.GetCurrentDateTimeOffset())
-					.Throws(sqlException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(sqlException);
 
-			// when
-			ValueTask<Comment> addCommentTask =
-				this.commentService.AddCommentAsync(someComment);
+            // when
+            ValueTask<Comment> addCommentTask =
+                this.commentService.AddCommentAsync(someComment);
 
-			CommentDependencyException actualCommentDependencyException =
-				await Assert.ThrowsAsync<CommentDependencyException>(
-					addCommentTask.AsTask);
+            CommentDependencyException actualCommentDependencyException =
+                await Assert.ThrowsAsync<CommentDependencyException>(
+                    addCommentTask.AsTask);
 
-			// then
-			actualCommentDependencyException.Should().BeEquivalentTo(
-				expectedCommentDependencyException);
+            // then
+            actualCommentDependencyException.Should().BeEquivalentTo(
+                expectedCommentDependencyException);
 
-			this.dateTimeBrokerMock.Verify(broker =>
-				broker.GetCurrentDateTimeOffset(),
-					Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertCommentAsync(It.IsAny<Comment>()),
-					Times.Never);
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertCommentAsync(It.IsAny<Comment>()),
+                    Times.Never);
 
-			this.loggingBrokerMock.Verify(broker =>
-				broker.LogCritical(It.Is(SameExceptionAs(
-					expectedCommentDependencyException))),
-						Times.Once);
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedCommentDependencyException))),
+                        Times.Once);
 
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
 
-		[Fact]
-		public async Task ShouldThrowDependencyValidationExceptionOnAddIfCommentAlreadyExsitsAndLogItAsync()
-		{
-			// given
-			Comment randomComment = CreateRandomComment();
-			Comment alreadyExistsComment = randomComment;
-			string randomMessage = GetRandomMessage();
+        [Fact]
+        private async Task ShouldThrowDependencyValidationExceptionOnAddIfCommentAlreadyExsitsAndLogItAsync()
+        {
+            // given
+            Comment randomComment = CreateRandomComment();
+            Comment alreadyExistsComment = randomComment;
+            string randomMessage = GetRandomMessage();
 
-			var duplicateKeyException =
-				new DuplicateKeyException(randomMessage);
+            var duplicateKeyException =
+                new DuplicateKeyException(randomMessage);
 
-			var alreadyExistsCommentException =
-				new AlreadyExistsCommentException(duplicateKeyException);
+            var alreadyExistsCommentException =
+                new AlreadyExistsCommentException(
+                    message: "Comment with the same id already exists, please correct.",
+                        innerException: duplicateKeyException);
 
-			var expectedCommentDependencyValidationException =
-				new CommentDependencyValidationException(alreadyExistsCommentException);
+            var expectedCommentDependencyValidationException =
+                new CommentDependencyValidationException(
+                    message: "Comment dependency validation occurred, please try again.",
+                        innerException: alreadyExistsCommentException);
 
-			this.dateTimeBrokerMock.Setup(broker =>
-				broker.GetCurrentDateTimeOffset())
-					.Throws(duplicateKeyException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(duplicateKeyException);
 
-			// when
-			ValueTask<Comment> addCommentTask =
-				this.commentService.AddCommentAsync(alreadyExistsComment);
+            // when
+            ValueTask<Comment> addCommentTask =
+                this.commentService.AddCommentAsync(alreadyExistsComment);
 
-			CommentDependencyValidationException actualCommentDependencyValidationException =
-				await Assert.ThrowsAsync<CommentDependencyValidationException>(
-					addCommentTask.AsTask);
+            CommentDependencyValidationException actualCommentDependencyValidationException =
+                await Assert.ThrowsAsync<CommentDependencyValidationException>(
+                    addCommentTask.AsTask);
 
-			// then
-			actualCommentDependencyValidationException.Should().BeEquivalentTo(
-				expectedCommentDependencyValidationException);
+            // then
+            actualCommentDependencyValidationException.Should().BeEquivalentTo(
+                expectedCommentDependencyValidationException);
 
-			this.dateTimeBrokerMock.Verify(broker =>
-				broker.GetCurrentDateTimeOffset(),
-					Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertCommentAsync(It.IsAny<Comment>()),
-					Times.Never);
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertCommentAsync(It.IsAny<Comment>()),
+                    Times.Never);
 
-			this.loggingBrokerMock.Verify(broker =>
-				broker.LogError(It.Is(SameExceptionAs(
-					expectedCommentDependencyValidationException))),
-						Times.Once);
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedCommentDependencyValidationException))),
+                        Times.Once);
 
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
 
-		[Fact]
-		public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
-		{
-			// given
-			Comment someComment = CreateRandomComment();
+        [Fact]
+        private async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            Comment someComment = CreateRandomComment();
 
-			var databaseUpdateException =
-				new DbUpdateException();
+            var databaseUpdateException =
+                new DbUpdateException();
 
-			var failedCommentStorageException =
-				new FailedCommentStorageException(databaseUpdateException);
+            var failedCommentStorageException =
+                new FailedCommentStorageException(
+                    message: "Failed comment storage error occurred, contact support.",
+                        innerException: databaseUpdateException);
 
-			var expectedCommentDependencyException =
-				new CommentDependencyException(failedCommentStorageException);
+            var expectedCommentDependencyException =
+                new CommentDependencyException(
+                    message: "Comment dependency error occurred, contact support.",
+                        innerException: failedCommentStorageException);
 
-			this.dateTimeBrokerMock.Setup(broker =>
-				broker.GetCurrentDateTimeOffset())
-					.Throws(databaseUpdateException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(databaseUpdateException);
 
-			// when
-			ValueTask<Comment> addCommentTask =
-				this.commentService.AddCommentAsync(someComment);
+            // when
+            ValueTask<Comment> addCommentTask =
+                this.commentService.AddCommentAsync(someComment);
 
-			CommentDependencyException actualCommentDependencyException =
-				await Assert.ThrowsAsync<CommentDependencyException>(
-					addCommentTask.AsTask);
+            CommentDependencyException actualCommentDependencyException =
+                await Assert.ThrowsAsync<CommentDependencyException>(
+                    addCommentTask.AsTask);
 
-			// then
-			actualCommentDependencyException.Should().BeEquivalentTo(
-				expectedCommentDependencyException);
+            // then
+            actualCommentDependencyException.Should().BeEquivalentTo(
+                expectedCommentDependencyException);
 
-			this.dateTimeBrokerMock.Verify(broker =>
-				broker.GetCurrentDateTimeOffset(),
-					Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertCommentAsync(It.IsAny<Comment>()),
-					Times.Never);
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertCommentAsync(It.IsAny<Comment>()),
+                    Times.Never);
 
-			this.loggingBrokerMock.Verify(broker =>
-				broker.LogError(It.Is(SameExceptionAs(
-					expectedCommentDependencyException))),
-						Times.Once);
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedCommentDependencyException))),
+                        Times.Once);
 
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
 
-		[Fact]
-		public async Task ShouldThrowServiceExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
-		{
-			// given
-			Comment someComment = CreateRandomComment();
-			var serviceException = new Exception();
+        [Fact]
+        private async Task ShouldThrowServiceExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            Comment someComment = CreateRandomComment();
+            var serviceException = new Exception();
 
-			var failedCommentServiceException =
-				new FailedCommentServiceException(serviceException);
+            var failedCommentServiceException =
+                new FailedCommentServiceException(
+                    message: "Failed comment service occurred, please contact support",
+                        innerException: serviceException);
 
-			var expectedCommentServiceException =
-				new CommentServiceException(failedCommentServiceException);
+            var expectedCommentServiceException =
+                new CommentServiceException(
+                    message: "Comment service error occurred, contact support.",
+                        innerException: failedCommentServiceException);
 
-			this.dateTimeBrokerMock.Setup(broker =>
-				broker.GetCurrentDateTimeOffset())
-					.Throws(serviceException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(serviceException);
 
-			// when
-			ValueTask<Comment> addCommentTask =
-				this.commentService.AddCommentAsync(someComment);
+            // when
+            ValueTask<Comment> addCommentTask =
+                this.commentService.AddCommentAsync(someComment);
 
-			CommentServiceException actualCommentServiceException =
-				await Assert.ThrowsAsync<CommentServiceException>(
-					addCommentTask.AsTask);
+            CommentServiceException actualCommentServiceException =
+                await Assert.ThrowsAsync<CommentServiceException>(
+                    addCommentTask.AsTask);
 
-			//then
-			actualCommentServiceException.Should().BeEquivalentTo(
-				expectedCommentServiceException);
+            //then
+            actualCommentServiceException.Should().BeEquivalentTo(
+                expectedCommentServiceException);
 
-			this.dateTimeBrokerMock.Verify(broker =>
-				broker.GetCurrentDateTimeOffset(),
-					Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertCommentAsync(It.IsAny<Comment>()),
-					Times.Never);
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertCommentAsync(It.IsAny<Comment>()),
+                    Times.Never);
 
-			this.loggingBrokerMock.Verify(broker =>
-				broker.LogError(It.Is(SameExceptionAs(
-					expectedCommentServiceException))),
-						Times.Once);
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedCommentServiceException))),
+                        Times.Once);
 
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
 
-		[Fact]
-		public async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
-		{
-			// given
-			Comment someComment = CreateRandomComment();
-			string randomMessage = GetRandomMessage();
-			string exceptionMessage = randomMessage;
+        [Fact]
+        private async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+        {
+            // given
+            Comment someComment = CreateRandomComment();
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
 
-			var foreignKeyConstraintConflictException =
-				new ForeignKeyConstraintConflictException(exceptionMessage);
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(exceptionMessage);
 
-			var invalidCommentReferenceException =
-				new InvalidCommentReferenceException(foreignKeyConstraintConflictException);
+            var invalidCommentReferenceException =
+                new InvalidCommentReferenceException(
+                    message: "Invalid comment reference error occurred.",
+                        innerException: foreignKeyConstraintConflictException);
 
-			var expectedCommentValidationException =
-				new CommentDependencyValidationException(invalidCommentReferenceException);
+            var expectedCommentValidationException =
+                new CommentDependencyValidationException(
+                    message: "Comment dependency validation occurred, please try again.",
+                        innerException: invalidCommentReferenceException);
 
-			this.dateTimeBrokerMock.Setup(broker =>
-				broker.GetCurrentDateTimeOffset())
-					.Throws(foreignKeyConstraintConflictException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(foreignKeyConstraintConflictException);
 
-			// when
-			ValueTask<Comment> addCommentTask =
-				this.commentService.AddCommentAsync(someComment);
+            // when
+            ValueTask<Comment> addCommentTask =
+                this.commentService.AddCommentAsync(someComment);
 
-			CommentDependencyValidationException actualCommentDependencyValidationException =
-				await Assert.ThrowsAsync<CommentDependencyValidationException>(
-					addCommentTask.AsTask);
+            CommentDependencyValidationException actualCommentDependencyValidationException =
+                await Assert.ThrowsAsync<CommentDependencyValidationException>(
+                    addCommentTask.AsTask);
 
-			// then
-			actualCommentDependencyValidationException.Should().BeEquivalentTo(
-				expectedCommentValidationException);
+            // then
+            actualCommentDependencyValidationException.Should().BeEquivalentTo(
+                expectedCommentValidationException);
 
-			this.dateTimeBrokerMock.Verify(broker =>
-				broker.GetCurrentDateTimeOffset(),
-					Times.Once());
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
 
-			this.loggingBrokerMock.Verify(broker =>
-				broker.LogError(It.Is(SameExceptionAs(
-					expectedCommentValidationException))),
-						Times.Once);
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedCommentValidationException))),
+                        Times.Once);
 
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-		}
-	}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+    }
 }
