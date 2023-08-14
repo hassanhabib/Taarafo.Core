@@ -39,6 +39,10 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
 
                 throw CreateAndLogCriticalDependencyException(failedGroupMembershipStorageException);
             }
+            catch (NotFoundGroupMembershipException notFoundGroupMembershipException)
+            {
+                throw CreateAndLogValidationException(notFoundGroupMembershipException);
+            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsGroupMembershipException =

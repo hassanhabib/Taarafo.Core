@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using Taarafo.Core.Brokers.DateTimes;
 using Taarafo.Core.Brokers.Loggings;
@@ -34,5 +35,18 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
 
                 return await this.storageBroker.InsertGroupMembershipAsync(groupMembership);
             });
+
+        public ValueTask<GroupMembership> RetrieveGroupMembershipByIdAsync(Guid groupMembershipId) =>
+        TryCatch(async () =>
+        {
+            ValidateGroupMembershipId(groupMembershipId);
+
+            GroupMembership maybeGroupMembership =
+                await this.storageBroker.SelectGroupMembershipByIdAsync(groupMembershipId);
+
+            ValidateStorageGroupMembership(maybeGroupMembership, groupMembershipId);
+
+            return maybeGroupMembership;
+        });
     }
 }
