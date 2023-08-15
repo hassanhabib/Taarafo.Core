@@ -10,12 +10,12 @@ using Taarafo.Core.Models.Posts;
 
 namespace Taarafo.Core.Services.Foundations.Posts
 {
-	public interface IPostService
-	{
-		ValueTask<Post> AddPostAsync(Post post);
-		ValueTask<Post> RetrievePostByIdAsync(Guid postId);
-		IQueryable<Post> RetrieveAllPosts();
-		ValueTask<Post> ModifyPostAsync(Post post);
-		ValueTask<Post> RemovePostByIdAsync(Guid postId);
-	}
+    public interface IPostService
+    {
+        ValueTask<Post> AddPostAsync(Post post);
+        ValueTask<Post> RetrievePostByIdAsync(Guid postId);
+        IQueryable<Post> RetrieveAllPosts();
+        ValueTask<Post> ModifyPostAsync(Post post);
+        ValueTask<Post> RemovePostByIdAsync(Guid postId);
+    }
 }

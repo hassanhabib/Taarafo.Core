@@ -8,10 +8,14 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Posts.Exceptions
 {
-	public class FailedPostStorageException : Xeption
-	{
-		public FailedPostStorageException(Exception innerException)
-			: base(message: "Failed post storage error occurred, contact support.", innerException)
-		{ }
-	}
+    public class FailedPostStorageException : Xeption
+    {
+        public FailedPostStorageException(Exception innerException)
+            : base(message: "Failed post storage error occurred, contact support.", innerException)
+        { }
+
+        public FailedPostStorageException(string message, Exception innerException)
+            : base(message, innerException)
+        { }
+    }
 }
