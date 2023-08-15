@@ -233,11 +233,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         {
             // given
             Comment someComment = CreateRandomComment();
-            string randomMessage = GetRandomMessage();
-            string exceptionMessage = randomMessage;
+            ForeignKeyConstraintConflictException foreignKeyException = GetForeignKeyException();
 
             var foreignKeyConstraintConflictException =
-                new ForeignKeyConstraintConflictException(exceptionMessage);
+               new ForeignKeyCommentReferenceException(foreignKeyException);
 
             var invalidCommentReferenceException =
                 new InvalidCommentReferenceException(

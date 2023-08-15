@@ -427,9 +427,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             ForeignKeyConstraintConflictException foreignKeyException = GetForeignKeyException();
 
             var foreignKeyConstraintConflictException =
-                new ForeignKeyCommentReferenceException(
-                    message: "ForeignKey exception has occurred, contact support.",
-                    innerException: foreignKeyException);
+                new ForeignKeyCommentReferenceException(foreignKeyException);
 
             var invalidCommentReferenceException =
                 new InvalidCommentReferenceException(
