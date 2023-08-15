@@ -8,15 +8,14 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Comments.Exceptions
 {
-    public class CommentServiceException : Xeption
+    public class ForeignKeyCommentReferenceException : Xeption
     {
-        public CommentServiceException(Exception innerException)
+        public ForeignKeyCommentReferenceException(Exception innerException)
             : base(
-                message: "Comment service error occurred, contact support.",
-                    innerException: innerException)
-        { }
+                  message: "ForeignKey exception has occurred, contact support.",
+                    innerException: innerException) { }
 
-        public CommentServiceException(string message, Exception innerException)
+        public ForeignKeyCommentReferenceException(string message, Exception innerException)
             : base(message, innerException) { }
+        }
     }
-}

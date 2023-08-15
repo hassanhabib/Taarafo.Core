@@ -11,33 +11,33 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 {
-	public partial class CommentServiceTests
-	{
-		[Fact]
-		public void ShouldReturnComments()
-		{
-			// given
-			IQueryable<Comment> randomComments = CreateRandomComments();
-			IQueryable<Comment> storageComments = randomComments;
-			IQueryable<Comment> expectedComments = storageComments;
+    public partial class CommentServiceTests
+    {
+        [Fact]
+        private void ShouldReturnComments()
+        {
+            // given
+            IQueryable<Comment> randomComments = CreateRandomComments();
+            IQueryable<Comment> storageComments = randomComments;
+            IQueryable<Comment> expectedComments = storageComments;
 
-			this.storageBrokerMock.Setup(broker =>
-				broker.SelectAllComments())
-					.Returns(storageComments);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAllComments())
+                    .Returns(storageComments);
 
-			// when
-			IQueryable<Comment> actualComments =
-				this.commentService.RetrieveAllComments();
+            // when
+            IQueryable<Comment> actualComments =
+                this.commentService.RetrieveAllComments();
 
-			// then
-			actualComments.Should().BeEquivalentTo(expectedComments);
+            // then
+            actualComments.Should().BeEquivalentTo(expectedComments);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectAllComments(),
-					Times.Once);
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllComments(),
+                    Times.Once);
 
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
-	}
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+    }
 }

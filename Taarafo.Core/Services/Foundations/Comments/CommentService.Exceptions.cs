@@ -52,10 +52,10 @@ namespace Taarafo.Core.Services.Foundations.Comments
 
 				throw CreateAndLogDependencyValidationException(alreadyExistsCommentException);
 			}
-			catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+			catch (ForeignKeyCommentReferenceException foreignKeyCommentReferenceException)
 			{
 				var invalidCommentReferenceException =
-					new InvalidCommentReferenceException(foreignKeyConstraintConflictException);
+					new InvalidCommentReferenceException(foreignKeyCommentReferenceException);
 
 				throw CreateAndLogDependencyValidationException(invalidCommentReferenceException);
 			}

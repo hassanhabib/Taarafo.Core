@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Taarafo.Core.Brokers.DateTimes;
@@ -66,6 +67,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 
 		private static SqlException GetSqlException() =>
 			(SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+
+		private static ForeignKeyConstraintConflictException GetForeignKeyException() =>
+			(ForeignKeyConstraintConflictException)FormatterServices
+				.GetUninitializedObject(typeof(ForeignKeyConstraintConflictException));
 
 		private static int GetRandomNumber() =>
 			new IntRange(min: 2, max: 10).GetValue();

@@ -14,7 +14,6 @@ namespace Taarafo.Core.Models.Comments
 		public string Content { get; set; }
 		public DateTimeOffset CreatedDate { get; set; }
 		public DateTimeOffset UpdatedDate { get; set; }
-
 		public Guid PostId { get; set; }
 		public Post Post { get; set; }
 	}

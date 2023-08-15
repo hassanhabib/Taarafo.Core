@@ -13,9 +13,10 @@ namespace Taarafo.Core.Models.Comments.Exceptions
 		public CommentDependencyException(Exception innerException)
 			: base(
 				message: "Comment dependency error occurred, contact support.",
-					innerException: innerException) { }
+					innerException: innerException)
+		{ }
 
-        public CommentDependencyException(string message, Exception innerException)
+	   public CommentDependencyException(string message, Exception innerException)
 			: base(message, innerException) { }
-    }
+	}
 }

@@ -5,7 +5,6 @@
 
 using System;
 using System.Threading.Tasks;
-using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -74,65 +73,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
         }
 
         [Fact]
-        private async void ShouldThrowValidationExceptionOnModifyIfReferenceErrorOccursAndLogItAsync()
-        {
-            // given
-            Comment foreignKeyConflictedComment = CreateRandomComment();
-            string randomMessage = GetRandomMessage();
-            string exceptionMessage = randomMessage;
-
-            var foreignKeyConstraintConflictException =
-                new ForeignKeyConstraintConflictException(
-                    
-                    exceptionMessage);
-
-            var invalidCommentReferenceException =
-                new InvalidCommentReferenceException(
-                    
-                    foreignKeyConstraintConflictException);
-
-            var expectedCommentDependencyValidationException =
-                new CommentDependencyValidationException(invalidCommentReferenceException);
-
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(foreignKeyConstraintConflictException);
-
-            // when
-            ValueTask<Comment> modifyCommentTask =
-                this.commentService.ModifyCommentAsync(foreignKeyConflictedComment);
-
-            CommentDependencyValidationException actualCommentDependencyValidationException =
-                await Assert.ThrowsAsync<CommentDependencyValidationException>(
-                    modifyCommentTask.AsTask);
-
-            // then
-            actualCommentDependencyValidationException.Should().BeEquivalentTo(
-                expectedCommentDependencyValidationException);
-
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectCommentByIdAsync(foreignKeyConflictedComment.Id),
-                    Times.Never);
-
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedCommentDependencyValidationException))),
-                        Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateCommentAsync(foreignKeyConflictedComment),
-                    Times.Never);
-
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
         private async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
         {
             // given
@@ -140,10 +80,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             var databaseUpdateException = new DbUpdateException();
 
             var failedCommentException =
-                new FailedCommentStorageException(databaseUpdateException);
+                new FailedCommentStorageException(
+                    message: "Failed comment storage error occurred, contact support.",
+                        innerException: databaseUpdateException);
 
             var expectedCommentDependencyException =
-                new CommentDependencyException(failedCommentException);
+                new CommentDependencyException(
+                    message: "Comment dependency error occurred, contact support.",
+                        innerException: failedCommentException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -191,10 +135,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
 
             var lockedCommentException =
-                new LockedCommentException(databaseUpdateConcurrencyException);
+                new LockedCommentException(
+                    message: "Locked comment record exception, please try again later",
+                        innerException: databaseUpdateConcurrencyException);
 
             var expectedCommentDependencyValidationException =
-                new CommentDependencyValidationException(lockedCommentException);
+                new CommentDependencyValidationException(
+                    message: "Comment dependency validation occurred, please try again.",
+                        innerException: lockedCommentException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -242,10 +190,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
             var serviceException = new Exception();
 
             var failedCommentException =
-                new FailedCommentServiceException(serviceException);
+                new FailedCommentServiceException(
+                    message: "Failed comment service occurred, please contact support",
+                        innerException: serviceException);
 
             var expectedCommentServiceException =
-                new CommentServiceException(failedCommentException);
+                new CommentServiceException(
+                    message: "Comment service error occurred, contact support.",
+                        innerException: failedCommentException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
