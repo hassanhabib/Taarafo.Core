@@ -85,6 +85,7 @@ namespace Taarafo.Core.Services.Foundations.Comments
 		private static dynamic IsNotSame(
 			DateTimeOffset firstDate,
 			DateTimeOffset secondDate,
+
 			string secondDateName) => new
 			{
 				Condition = firstDate != secondDate,
@@ -94,6 +95,7 @@ namespace Taarafo.Core.Services.Foundations.Comments
 		private static dynamic IsSame(
 			DateTimeOffset firstDate,
 			DateTimeOffset secondDate,
+
 			string secondDateName) => new
 			{
 				Condition = firstDate == secondDate,

@@ -12,34 +12,34 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 {
-	public partial class CommentServiceTests
-	{
-		[Fact]
-		public async Task ShouldRetrieveCommentByIdAsync()
-		{
-			// given
-			Comment randomComment = CreateRandomComment();
-			Comment storageComment = randomComment;
-			Comment expectedComment = storageComment.DeepClone();
+    public partial class CommentServiceTests
+    {
+        [Fact]
+        private async Task ShouldRetrieveCommentByIdAsync()
+        {
+            // given
+            Comment randomComment = CreateRandomComment();
+            Comment storageComment = randomComment;
+            Comment expectedComment = storageComment.DeepClone();
 
-			this.storageBrokerMock.Setup(broker =>
-				broker.SelectCommentByIdAsync(randomComment.Id))
-					.ReturnsAsync(storageComment);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectCommentByIdAsync(randomComment.Id))
+                    .ReturnsAsync(storageComment);
 
-			// when
-			Comment actualComment =
-				await this.commentService.RetrieveCommentByIdAsync(randomComment.Id);
+            // when
+            Comment actualComment =
+                await this.commentService.RetrieveCommentByIdAsync(randomComment.Id);
 
-			// then
-			actualComment.Should().BeEquivalentTo(expectedComment);
+            // then
+            actualComment.Should().BeEquivalentTo(expectedComment);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectCommentByIdAsync(randomComment.Id),
-					Times.Once);
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectCommentByIdAsync(randomComment.Id),
+                    Times.Once);
 
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
-	}
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+    }
 }

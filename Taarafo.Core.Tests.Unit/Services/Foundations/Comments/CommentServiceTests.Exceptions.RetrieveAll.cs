@@ -15,16 +15,20 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 	public partial class CommentServiceTests
 	{
 		[Fact]
-		public void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
+		private void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
 		{
 			// given
 			SqlException sqlException = GetSqlException();
 
 			var failedStorageException =
-				new FailedCommentStorageException(sqlException);
+				new FailedCommentStorageException(
+					message: "Failed comment storage error occurred, contact support.",
+						innerException: sqlException);
 
 			var expectedCommentDependencyException =
-				new CommentDependencyException(failedStorageException);
+				new CommentDependencyException(
+					message: "Comment dependency error occurred, contact support.",
+						innerException: failedStorageException);
 
 			this.storageBrokerMock.Setup(broker =>
 				broker.SelectAllComments())
@@ -57,17 +61,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 		}
 
 		[Fact]
-		public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+		private void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
 		{
 			// given
 			string exceptionMessage = GetRandomMessage();
 			var serviceException = new Exception(exceptionMessage);
 
 			var failedCommentServiceException =
-				new FailedCommentServiceException(serviceException);
+				new FailedCommentServiceException(
+					message: "Failed comment service occurred, please contact support",
+						innerException: serviceException);
 
 			var expectedCommentServiceException =
-				new CommentServiceException(failedCommentServiceException);
+				new CommentServiceException(
+					message: "Comment service error occurred, contact support.",
+						innerException: failedCommentServiceException);
 
 			this.storageBrokerMock.Setup(broker =>
 				broker.SelectAllComments())
