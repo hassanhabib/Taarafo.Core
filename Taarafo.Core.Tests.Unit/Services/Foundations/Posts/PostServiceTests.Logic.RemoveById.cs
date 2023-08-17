@@ -13,10 +13,10 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
-    private partial class PostServiceTests
+    public partial class PostServiceTests
     {
         [Fact]
-        public async Task ShouldRemovePostByIdAsync()
+        private async Task ShouldRemovePostByIdAsync()
         {
             // given
             Guid randomId = Guid.NewGuid();
