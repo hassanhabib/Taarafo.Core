@@ -12,88 +12,96 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
-	public partial class PostServiceTests
-	{
-		[Fact]
-		public void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
-		{
-			// given
-			SqlException sqlException = GetSqlException();
+    public partial class PostServiceTests
+    {
+        [Fact]
+        private void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
+        {
+            // given
+            SqlException sqlException = GetSqlException();
 
-			var failedStorageException =
-				new FailedPostStorageException(sqlException);
+            var failedStorageException =
+                new FailedPostStorageException(
+                    message: "Failed post storage error occurred, contact support.",
+                        innerException: sqlException);
 
-			var expectedPostDependencyException =
-				new PostDependencyException(failedStorageException);
+            var expectedPostDependencyException =
+                new PostDependencyException(
+                    message: "Post dependency error occurred, contact support.",
+                        innerException: failedStorageException);
 
-			this.storageBrokerMock.Setup(broker =>
-				broker.SelectAllPosts())
-					.Throws(sqlException);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAllPosts())
+                    .Throws(sqlException);
 
-			// when
-			Action retrieveAllPostsAction = () =>
-				this.postService.RetrieveAllPosts();
+            // when
+            Action retrieveAllPostsAction = () =>
+                this.postService.RetrieveAllPosts();
 
-			PostDependencyException actualPostDependencyException =
-				Assert.Throws<PostDependencyException>(
-					retrieveAllPostsAction);
+            PostDependencyException actualPostDependencyException =
+                Assert.Throws<PostDependencyException>(
+                    retrieveAllPostsAction);
 
-			// then
-			actualPostDependencyException.Should().BeEquivalentTo(
-				expectedPostDependencyException);
+            // then
+            actualPostDependencyException.Should().BeEquivalentTo(
+                expectedPostDependencyException);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectAllPosts(),
-					Times.Once);
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllPosts(),
+                    Times.Once);
 
-			this.loggingBrokerMock.Verify(broker =>
-				broker.LogCritical(It.Is(SameExceptionAs(
-					expectedPostDependencyException))),
-						Times.Once);
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedPostDependencyException))),
+                        Times.Once);
 
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
 
-		[Fact]
-		public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
-		{
-			// given
-			string exceptionMessage = GetRandomMessage();
-			var serviceException = new Exception(exceptionMessage);
+        [Fact]
+        private void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            string exceptionMessage = GetRandomMessage();
+            var serviceException = new Exception(exceptionMessage);
 
-			var failedPostServiceException =
-				new FailedPostServiceException(serviceException);
+            var failedPostServiceException =
+                new FailedPostServiceException(
+                    message: "Failed post service occurred, please contact support",
+                        innerException: serviceException);
 
-			var expectedPostServiceException =
-				new PostServiceException(failedPostServiceException);
+            var expectedPostServiceException =
+                new PostServiceException(
+                    message: "Post service error occurred, contact support.",
+                        innerException: failedPostServiceException);
 
-			this.storageBrokerMock.Setup(broker =>
-				broker.SelectAllPosts())
-					.Throws(serviceException);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAllPosts())
+                    .Throws(serviceException);
 
-			// when
-			Action retrieveAllPostsAction = () =>
-				this.postService.RetrieveAllPosts();
+            // when
+            Action retrieveAllPostsAction = () =>
+                this.postService.RetrieveAllPosts();
 
-			PostServiceException actualPostServiceException =
-				Assert.Throws<PostServiceException>(
-					retrieveAllPostsAction);
+            PostServiceException actualPostServiceException =
+                Assert.Throws<PostServiceException>(
+                    retrieveAllPostsAction);
 
-			// then
-			actualPostServiceException.Should().BeEquivalentTo(expectedPostServiceException);
+            // then
+            actualPostServiceException.Should().BeEquivalentTo(expectedPostServiceException);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectAllPosts(),
-					Times.Once);
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllPosts(),
+                    Times.Once);
 
-			this.loggingBrokerMock.Verify(broker =>
-				broker.LogError(It.Is(SameExceptionAs(
-					expectedPostServiceException))),
-						Times.Once);
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostServiceException))),
+                        Times.Once);
 
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
-	}
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+    }
 }

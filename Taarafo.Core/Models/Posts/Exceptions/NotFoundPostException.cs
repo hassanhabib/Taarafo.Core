@@ -8,10 +8,14 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Posts.Exceptions
 {
-	public class NotFoundPostException : Xeption
-	{
-		public NotFoundPostException(Guid postId)
-			: base(message: $"Couldn't find post with id: {postId}.")
-		{ }
-	}
+    public class NotFoundPostException : Xeption
+    {
+        public NotFoundPostException(Guid postId)
+            : base(
+                message: $"Couldn't find post with id: {postId}.")
+        { }
+
+        public NotFoundPostException(string message, Exception innerException)
+            : base(message, innerException) { }
+    }
 }
