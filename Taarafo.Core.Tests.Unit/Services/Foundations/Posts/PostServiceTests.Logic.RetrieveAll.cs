@@ -14,7 +14,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 	public partial class PostServiceTests
 	{
 		[Fact]
-		public void ShouldReturnPosts()
+		private void ShouldReturnPosts()
 		{
 			// given
 			IQueryable<Post> randomPosts = CreateRandomPosts();

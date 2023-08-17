@@ -15,227 +15,249 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
-	public partial class PostServiceTests
-	{
-		[Fact]
-		public async Task ShouldThrowCriticalDependencyExceptionOnModifyIfSqlErrorOccursAndLogItAsync()
-		{
-			// given
-			DateTimeOffset someDateTime = GetRandomDateTimeOffset();
-			Post randomPost = CreateRandomPost(someDateTime);
-			Post somePost = randomPost;
-			Guid postId = somePost.Id;
-			SqlException sqlException = GetSqlException();
+    public partial class PostServiceTests
+    {
+        [Fact]
+        private async Task ShouldThrowCriticalDependencyExceptionOnModifyIfSqlErrorOccursAndLogItAsync()
+        {
+            // given
+            DateTimeOffset someDateTime = GetRandomDateTimeOffset();
+            Post randomPost = CreateRandomPost(someDateTime);
+            Post somePost = randomPost;
+            Guid postId = somePost.Id;
+            SqlException sqlException = GetSqlException();
 
-			var failedPostStorageException =
-				new FailedPostStorageException(sqlException);
+            var failedPostStorageException =
+                new FailedPostStorageException(
+                    message: "Failed post storage error occurred, contact support.",
+                        innerException: sqlException);
 
-			var expectedPostDependencyException =
-				new PostDependencyException(failedPostStorageException);
+            var expectedPostDependencyException =
+                new PostDependencyException(
+                    message: "Post dependency error occurred, contact support.",
+                    innerException: failedPostStorageException);
 
-			this.dateTimeBrokerMock.Setup(broker =>
-				broker.GetCurrentDateTimeOffset())
-					.Throws(sqlException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(sqlException);
 
-			// when
-			ValueTask<Post> modifyPostTask =
-				this.postService.ModifyPostAsync(somePost);
+            // when
+            ValueTask<Post> modifyPostTask =
+                this.postService.ModifyPostAsync(somePost);
 
-			PostDependencyException actualPostDependencyException =
-			  await Assert.ThrowsAsync<PostDependencyException>(
-				  modifyPostTask.AsTask);
+            PostDependencyException actualPostDependencyException =
+              await Assert.ThrowsAsync<PostDependencyException>(
+                  modifyPostTask.AsTask);
 
-			// then
-			actualPostDependencyException.Should().BeEquivalentTo(
-				expectedPostDependencyException);
+            // then
+            actualPostDependencyException.Should().BeEquivalentTo(
+                expectedPostDependencyException);
 
-			this.dateTimeBrokerMock.Verify(broker =>
-				broker.GetCurrentDateTimeOffset(),
-					Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectPostByIdAsync(postId),
-					Times.Never);
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(postId),
+                    Times.Never);
 
-			this.loggingBrokerMock.Verify(broker =>
-				broker.LogCritical(It.Is(SameExceptionAs(
-					expectedPostDependencyException))),
-						Times.Once);
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedPostDependencyException))),
+                        Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdatePostAsync(somePost),
-					Times.Never);
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdatePostAsync(somePost),
+                    Times.Never);
 
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
 
-		[Fact]
-		public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
-		{
-			// given
-			int minutesInPast = GetRandomNegativeNumber();
-			DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-			Post randomPost = CreateRandomPost(randomDateTime);
-			Post SomePost = randomPost;
-			Guid postId = SomePost.Id;
-			SomePost.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
-			var databaseUpdateException = new DbUpdateException();
+        [Fact]
+        private async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
+        {
+            // given
+            int minutesInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Post randomPost = CreateRandomPost(randomDateTime);
+            Post SomePost = randomPost;
+            Guid postId = SomePost.Id;
 
-			var failedPostException =
-				new FailedPostStorageException(databaseUpdateException);
+            SomePost.CreatedDate =
+                randomDateTime.AddMinutes(minutesInPast);
 
-			var expectedPostDependencyException =
-				new PostDependencyException(failedPostException);
+            var databaseUpdateException =
+                new DbUpdateException();
 
-			this.storageBrokerMock.Setup(broker =>
-				broker.SelectPostByIdAsync(postId))
-					.ThrowsAsync(databaseUpdateException);
+            var failedPostException =
+                new FailedPostStorageException(
+                    message: "Failed post storage error occurred, contact support.",
+                        innerException: databaseUpdateException);
 
-			this.dateTimeBrokerMock.Setup(broker =>
-				broker.GetCurrentDateTimeOffset())
-					.Returns(randomDateTime);
+            var expectedPostDependencyException =
+                new PostDependencyException(
+                    message: "Post dependency error occurred, contact support.",
+                        innerException: failedPostException);
 
-			// when
-			ValueTask<Post> modifyPostTask =
-				this.postService.ModifyPostAsync(SomePost);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostByIdAsync(postId))
+                    .ThrowsAsync(databaseUpdateException);
 
-			PostDependencyException actualPostDependencyException =
-			  await Assert.ThrowsAsync<PostDependencyException>(
-				  modifyPostTask.AsTask);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
 
-			// then
-			actualPostDependencyException.Should().BeEquivalentTo(
-				expectedPostDependencyException);
+            // when
+            ValueTask<Post> modifyPostTask =
+                this.postService.ModifyPostAsync(SomePost);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectPostByIdAsync(postId),
-					Times.Once);
+            PostDependencyException actualPostDependencyException =
+              await Assert.ThrowsAsync<PostDependencyException>(
+                  modifyPostTask.AsTask);
 
-			this.dateTimeBrokerMock.Verify(broker =>
-				broker.GetCurrentDateTimeOffset(),
-					Times.Once);
+            // then
+            actualPostDependencyException.Should().BeEquivalentTo(
+                expectedPostDependencyException);
 
-			this.loggingBrokerMock.Verify(broker =>
-				broker.LogError(It.Is(SameExceptionAs(
-					expectedPostDependencyException))),
-						Times.Once);
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(postId),
+                    Times.Once);
 
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
 
-		[Fact]
-		public async Task ShouldThrowDependencyValidationExceptionOnModifyIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
-		{
-			// given
-			int minutesInPast = GetRandomNegativeNumber();
-			DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-			Post randomPost = CreateRandomPost(randomDateTime);
-			Post somePost = randomPost;
-			somePost.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
-			Guid postId = somePost.Id;
-			var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostDependencyException))),
+                        Times.Once);
 
-			var lockedPostException =
-				new LockedPostException(databaseUpdateConcurrencyException);
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
 
-			var expectedPostDependencyValidationException =
-				new PostDependencyValidationException(lockedPostException);
+        [Fact]
+        private async Task ShouldThrowDependencyValidationExceptionOnModifyIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        {
+            // given
+            int minutesInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Post randomPost = CreateRandomPost(randomDateTime);
+            Post somePost = randomPost;
+            somePost.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
+            Guid postId = somePost.Id;
 
-			this.storageBrokerMock.Setup(broker =>
-				broker.SelectPostByIdAsync(postId))
-					.ThrowsAsync(databaseUpdateConcurrencyException);
+            var databaseUpdateConcurrencyException =
+                new DbUpdateConcurrencyException();
 
-			this.dateTimeBrokerMock.Setup(broker =>
-				broker.GetCurrentDateTimeOffset())
-					.Returns(randomDateTime);
+            var lockedPostException =
+                new LockedPostException(
+                    message: "Locked post record exception, please try again later",
+                        innerException: databaseUpdateConcurrencyException);
 
-			// when
-			ValueTask<Post> modifyPostTask =
-				this.postService.ModifyPostAsync(somePost);
+            var expectedPostDependencyValidationException =
+                new PostDependencyValidationException(
+                    message: "Post dependency validation occurred, please try again.",
+                        innerException: lockedPostException);
 
-			PostDependencyValidationException actualPostDependencyValidationException =
-				await Assert.ThrowsAsync<PostDependencyValidationException>(
-					modifyPostTask.AsTask);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostByIdAsync(postId))
+                    .ThrowsAsync(databaseUpdateConcurrencyException);
 
-			// then
-			actualPostDependencyValidationException.Should().BeEquivalentTo(
-				expectedPostDependencyValidationException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
 
-			this.dateTimeBrokerMock.Verify(broker =>
-				broker.GetCurrentDateTimeOffset(),
-					Times.Once);
+            // when
+            ValueTask<Post> modifyPostTask =
+                this.postService.ModifyPostAsync(somePost);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectPostByIdAsync(postId),
-					Times.Once);
+            PostDependencyValidationException actualPostDependencyValidationException =
+                await Assert.ThrowsAsync<PostDependencyValidationException>(
+                    modifyPostTask.AsTask);
 
-			this.loggingBrokerMock.Verify(broker =>
-				broker.LogError(It.Is(SameExceptionAs(
-					expectedPostDependencyValidationException))),
-						Times.Once);
+            // then
+            actualPostDependencyValidationException.Should().BeEquivalentTo(
+                expectedPostDependencyValidationException);
 
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
 
-		[Fact]
-		public async Task ShouldThrowServiceExceptionOnModifyIfDatabaseUpdateErrorOccursAndLogItAsync()
-		{
-			// given
-			int minuteInPast = GetRandomNegativeNumber();
-			DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-			Post randomPost = CreateRandomPost(randomDateTime);
-			Post somePost = randomPost;
-			somePost.CreatedDate = randomDateTime.AddMinutes(minuteInPast);
-			var serviceException = new Exception();
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(postId),
+                    Times.Once);
 
-			var failedPostException =
-				new FailedPostServiceException(serviceException);
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostDependencyValidationException))),
+                        Times.Once);
 
-			var expectedPostServiceException =
-				new PostServiceException(failedPostException);
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
 
-			this.storageBrokerMock.Setup(broker =>
-				broker.SelectPostByIdAsync(somePost.Id))
-					.ThrowsAsync(serviceException);
+        [Fact]
+        private async Task ShouldThrowServiceExceptionOnModifyIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            int minuteInPast = GetRandomNegativeNumber();
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Post randomPost = CreateRandomPost(randomDateTime);
+            Post somePost = randomPost;
+            somePost.CreatedDate = randomDateTime.AddMinutes(minuteInPast);
+            var serviceException = new Exception();
 
-			this.dateTimeBrokerMock.Setup(broker =>
-				broker.GetCurrentDateTimeOffset())
-					.Returns(randomDateTime);
+            var failedPostException =
+                new FailedPostServiceException(
+                    message: "Failed post service occurred, please contact support",
+                        innerException: serviceException);
 
-			// when
-			ValueTask<Post> modifyPostTask =
-				this.postService.ModifyPostAsync(somePost);
+            var expectedPostServiceException =
+                new PostServiceException(
+                    message: "Post service error occurred, contact support.",
+                        innerException: failedPostException);
 
-			PostServiceException actualPostServiceException =
-				await Assert.ThrowsAsync<PostServiceException>(
-					modifyPostTask.AsTask);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostByIdAsync(somePost.Id))
+                    .ThrowsAsync(serviceException);
 
-			// then
-			actualPostServiceException.Should().BeEquivalentTo(
-				expectedPostServiceException);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(randomDateTime);
 
-			this.dateTimeBrokerMock.Verify(broker =>
-				broker.GetCurrentDateTimeOffset(),
-					Times.Once);
+            // when
+            ValueTask<Post> modifyPostTask =
+                this.postService.ModifyPostAsync(somePost);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectPostByIdAsync(somePost.Id),
-					Times.Once);
+            PostServiceException actualPostServiceException =
+                await Assert.ThrowsAsync<PostServiceException>(
+                    modifyPostTask.AsTask);
 
-			this.loggingBrokerMock.Verify(broker =>
-				broker.LogError(It.Is(SameExceptionAs(
-					expectedPostServiceException))),
-						Times.Once);
+            // then
+            actualPostServiceException.Should().BeEquivalentTo(
+                expectedPostServiceException);
 
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
-	}
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(somePost.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPostServiceException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+    }
 }

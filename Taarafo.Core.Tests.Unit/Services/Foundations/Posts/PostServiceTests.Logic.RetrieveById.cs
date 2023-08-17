@@ -13,36 +13,36 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
-	public partial class PostServiceTests
-	{
-		[Fact]
-		public async Task ShouldRetrievePostByIdAsync()
-		{
-			// given
-			Guid randomPostId = Guid.NewGuid();
-			Guid inputPostId = randomPostId;
-			Post randomPost = CreateRandomPost();
-			Post storagePost = randomPost;
-			Post expectedPost = storagePost.DeepClone();
+    public partial class PostServiceTests
+    {
+        [Fact]
+        private async Task ShouldRetrievePostByIdAsync()
+        {
+            // given
+            Guid randomPostId = Guid.NewGuid();
+            Guid inputPostId = randomPostId;
+            Post randomPost = CreateRandomPost();
+            Post storagePost = randomPost;
+            Post expectedPost = storagePost.DeepClone();
 
-			this.storageBrokerMock.Setup(broker =>
-				broker.SelectPostByIdAsync(inputPostId))
-					.ReturnsAsync(storagePost);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostByIdAsync(inputPostId))
+                    .ReturnsAsync(storagePost);
 
-			// when
-			Post actualPost =
-				await this.postService.RetrievePostByIdAsync(inputPostId);
+            // when
+            Post actualPost =
+                await this.postService.RetrievePostByIdAsync(inputPostId);
 
-			// then
-			actualPost.Should().BeEquivalentTo(expectedPost);
+            // then
+            actualPost.Should().BeEquivalentTo(expectedPost);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectPostByIdAsync(inputPostId),
-					Times.Once);
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPostByIdAsync(inputPostId),
+                    Times.Once);
 
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-		}
-	}
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+    }
 }

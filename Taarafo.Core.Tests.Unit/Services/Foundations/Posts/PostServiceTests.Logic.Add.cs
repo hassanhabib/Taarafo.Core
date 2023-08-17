@@ -13,44 +13,44 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 {
-	public partial class PostServiceTests
-	{
-		[Fact]
-		public async Task ShouldAddPostAsync()
-		{
-			// given
-			DateTimeOffset dateTime = GetRandomDateTimeOffset();
-			Post randomPost = CreateRandomPost(dateTime);
-			Post inputPost = randomPost;
-			Post storagePost = inputPost;
-			Post expectedPost = storagePost.DeepClone();
+    public partial class PostServiceTests
+    {
+        [Fact]
+        private async Task ShouldAddPostAsync()
+        {
+            // given
+            DateTimeOffset dateTime = GetRandomDateTimeOffset();
+            Post randomPost = CreateRandomPost(dateTime);
+            Post inputPost = randomPost;
+            Post storagePost = inputPost;
+            Post expectedPost = storagePost.DeepClone();
 
-			this.dateTimeBrokerMock.Setup(broker =>
-				broker.GetCurrentDateTimeOffset())
-					.Returns(dateTime);
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Returns(dateTime);
 
-			this.storageBrokerMock.Setup(broker =>
-				broker.InsertPostAsync(inputPost))
-					.ReturnsAsync(storagePost);
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertPostAsync(inputPost))
+                    .ReturnsAsync(storagePost);
 
-			// when
-			Post actualPost = await this.postService
-				.AddPostAsync(inputPost);
+            // when
+            Post actualPost = await this.postService
+                .AddPostAsync(inputPost);
 
-			// then
-			actualPost.Should().BeEquivalentTo(expectedPost);
+            // then
+            actualPost.Should().BeEquivalentTo(expectedPost);
 
-			this.dateTimeBrokerMock.Verify(broker =>
-				broker.GetCurrentDateTimeOffset(),
-					Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertPostAsync(inputPost),
-					Times.Once);
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertPostAsync(inputPost),
+                    Times.Once);
 
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
-	}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+    }
 }

@@ -11,7 +11,9 @@ namespace Taarafo.Core.Models.Posts.Exceptions
     public class AlreadyExistsPostException : Xeption
     {
         public AlreadyExistsPostException(Exception innerException)
-            : base(message: "Post with the same id already exists.", innerException)
+            : base(
+                message: "Post with the same id already exists.",
+                    innerException: innerException)
         { }
 
         public AlreadyExistsPostException(string message, Exception innerException)
