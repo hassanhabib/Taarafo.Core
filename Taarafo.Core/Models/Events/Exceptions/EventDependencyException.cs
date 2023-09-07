@@ -10,7 +10,13 @@ namespace Taarafo.Core.Models.Events.Exceptions
     public class EventDependencyException : Xeption
     {
         public EventDependencyException(Xeption innerException)
-            : base(message: "Event dependency validation occurred, please try again.", innerException)
+            : base(
+                message: "Event dependency validation occurred, please try again.",
+                innerException: innerException)
+        { }
+
+        public EventDependencyException(string message, Xeption innerException)
+            : base(message, innerException)
         { }
     }
 }

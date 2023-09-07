@@ -8,10 +8,16 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Events.Exceptions
 {
-	public class AlreadyExistsEventException : Xeption
-	{
-		public AlreadyExistsEventException(Exception innerException)
-			: base(message: "Event with the same id already exists.", innerException)
-		{ }
-	}
+    public class AlreadyExistsEventException : Xeption
+    {
+        public AlreadyExistsEventException(Exception innerException)
+            : base(
+                message: "Event with the same id already exists.",
+                innerException: innerException)
+        { }
+
+        public AlreadyExistsEventException(string message, Exception innerException)
+            : base(message, innerException)
+        { }
+    }
 }

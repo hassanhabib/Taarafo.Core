@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.Events.Exceptions
     public class EventException : Xeption
     {
         public EventException(Exception innerException)
-            : base(message: "Event service error occurred, please contact support.", innerException)
+            : base(
+                message: "Event service error occurred, please contact support.",
+                innerException)
+        { }
+
+        public EventException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

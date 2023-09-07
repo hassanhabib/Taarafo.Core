@@ -14,7 +14,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
     public partial class EventServiceTests
     {
         [Fact]
-        public void ShouldRetrieveAllEvents()
+        private void ShouldRetrieveAllEvents()
         {
             // given
             IQueryable<Event> randomEvents = CreateRandomEvents();

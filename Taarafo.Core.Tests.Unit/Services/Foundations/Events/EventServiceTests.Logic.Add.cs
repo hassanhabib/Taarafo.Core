@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
     public partial class EventServiceTests
     {
         [Fact]
-        public async Task ShouldAddEventAsync()
+        private async Task ShouldAddEventAsync()
         {
             // given
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();

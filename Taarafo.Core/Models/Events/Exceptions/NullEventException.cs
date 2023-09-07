@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using Xeptions;
 
 namespace Taarafo.Core.Models.Events.Exceptions
@@ -11,6 +12,10 @@ namespace Taarafo.Core.Models.Events.Exceptions
     {
         public NullEventException()
             : base(message: "Event is null.")
+        { }
+
+        public NullEventException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

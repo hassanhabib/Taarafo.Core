@@ -29,9 +29,10 @@ namespace Taarafo.Core.Services.Foundations.Events
         }
 
         public ValueTask<Event> AddEventAsync(Event @event) =>
-            TryCatch(async () =>
+        TryCatch(async () =>
             {
                 ValidateEventOnAdd(@event);
+
                 return await this.storageBroker.InsertEventAsync(@event);
 
             });
