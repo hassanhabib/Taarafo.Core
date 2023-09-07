@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using Xeptions;
 
 namespace Taarafo.Core.Models.Events.Exceptions
@@ -11,6 +12,10 @@ namespace Taarafo.Core.Models.Events.Exceptions
     {
         public InvalidEventException()
             : base(message: "Invalid event. Please correct the errors and try again.")
+        { }
+
+        public InvalidEventException(string message, Exception innerException)
+            :base(message, innerException)
         { }
     }
 }

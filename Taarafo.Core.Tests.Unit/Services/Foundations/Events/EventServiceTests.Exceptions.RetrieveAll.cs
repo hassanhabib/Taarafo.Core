@@ -15,15 +15,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
     public partial class EventServiceTests
     {
         [Fact]
-        public void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
+        private void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
         {
             // given
             SqlException sqlException = CreateSqlException();
+
             var failedEventStorageException =
                 new FailedEventStorageException(sqlException);
 
             var expectedEventDependencyException =
-                new EventDependencyException(failedEventStorageException);
+                new EventDependencyException(
+                    message: "Event dependency validation occurred, please try again.",
+                    innerException: failedEventStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllEvents()).Throws(sqlException);
@@ -36,13 +39,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                 Assert.Throws<EventDependencyException>(retrieveAllEventAction);
 
             // then
-            actualEventDependencyException.Should().BeEquivalentTo(expectedEventDependencyException);
+            actualEventDependencyException.Should().BeEquivalentTo(
+                expectedEventDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllEvents(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(expectedEventDependencyException))),
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedEventDependencyException))),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -50,16 +55,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
         }
 
         [Fact]
-        public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        private void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
         {
             // given
             string exceptionMessage = GetRandomMessage();
-            var serviceException = new Exception(exceptionMessage);
+            
+            var serviceException = 
+                new Exception(exceptionMessage);
 
-            var failedEventServiceException = new FailedEventServiceException(serviceException);
+            var failedEventServiceException = 
+                new FailedEventServiceException(serviceException);
 
             var expectedEventServiceException = new
-                EventServiceException(failedEventServiceException);
+                EventServiceException(
+                    message: "Event service error occurred, contact support.",
+                    innerException: failedEventServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllEvents()).Throws(serviceException);
@@ -73,12 +83,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                     retrieveAllEventsAction);
 
             // then
-            actualEventServiceException.Should().BeEquivalentTo(expectedEventServiceException);
+            actualEventServiceException.Should().BeEquivalentTo(
+                expectedEventServiceException);
 
-            this.storageBrokerMock.Verify(broker => broker.SelectAllEvents(), Times.Once);
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllEvents(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(expectedEventServiceException))),
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedEventServiceException))),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();

@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.Events.Exceptions
     public class InvalidEventReferenceException : Xeption
     {
         public InvalidEventReferenceException(Exception innerException)
-            : base(message: "Invalid eventt reference error occurred.", innerException)
+            : base(
+                message: "Invalid eventt reference error occurred.",
+                innerException: innerException)
+        { }
+
+        public InvalidEventReferenceException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

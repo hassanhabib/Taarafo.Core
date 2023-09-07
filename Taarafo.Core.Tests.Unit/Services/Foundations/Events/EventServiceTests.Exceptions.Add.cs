@@ -19,18 +19,24 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
     public partial class EventServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnCreateIfSqlErrorOccursAndLogItAsync()
+        private async Task ShouldThrowCriticalDependencyExceptionOnCreateIfSqlErrorOccursAndLogItAsync()
         {
             // given
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             Event someEvent = CreateRandomEvent(randomDateTime);
-            SqlException sqlException = GetSqlException();
+            
+            SqlException sqlException = 
+                GetSqlException();
 
             var failedEventStorageException =
-                new FailedEventStorageException(sqlException);
+                new FailedEventStorageException(
+                    message: "Failed event storage error occured, contact support.",
+                    innerException: sqlException);
 
             var expectedEventDependencyException =
-                new EventDependencyException(failedEventStorageException);
+                new EventDependencyException(
+                    message: "Event dependency validation occurred, please try again.",
+                    innerException: failedEventStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -67,7 +73,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnAddIfEventAlreadyExsitsAndLogItAsync()
+        private async Task ShouldThrowDependencyValidationExceptionOnAddIfEventAlreadyExsitsAndLogItAsync()
         {
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
@@ -79,10 +85,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                 new DuplicateKeyException(randomMessage);
 
             var alreadyExistsEventException =
-                new AlreadyExistsEventException(duplicateKeyException);
+                new AlreadyExistsEventException(
+                    message: "Event with the same id already exists.",
+                    innerException: duplicateKeyException);
 
             var expectedEventDependencyValidationException =
-                new EventDependencyValidationException(alreadyExistsEventException);
+                new EventDependencyValidationException(
+                    message: "Event dependency validation occurred, please try again.",
+                    innerException: alreadyExistsEventException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -119,7 +129,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
         }
 
         [Fact]
-        public async void ShouldThrowDependencyValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+        private async void ShouldThrowDependencyValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
         {
             // given
             Event someEvent = CreateRandomEvent();
@@ -130,10 +140,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                 new ForeignKeyConstraintConflictException(exceptionMessage);
 
             var invalidEventReferenceException =
-                new InvalidEventReferenceException(foreignKeyConstraintConflictException);
+                new InvalidEventReferenceException(
+                    message: "Invalid eventt reference error occurred.",
+                    innerException: foreignKeyConstraintConflictException);
 
             var expectedEventDependencyValidationException =
-                new EventDependencyValidationException(invalidEventReferenceException);
+                new EventDependencyValidationException(
+                    message: "Event dependency validation occurred, please try again.",
+                    innerException: invalidEventReferenceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -170,7 +184,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        private async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
         {
             // given
             Event someEvent = CreateRandomEvent();
@@ -179,10 +193,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                 new DbUpdateException();
 
             var failedEventStorageException =
-                new FailedEventStorageException(databaseUpdateException);
+                new FailedEventStorageException(
+                    message: "Failed event storage error occured, contact support.",
+                    innerException: databaseUpdateException);
 
             var expectedEventDependencyException =
-                new EventDependencyException(failedEventStorageException);
+                new EventDependencyException(
+                    message: "Event dependency validation occurred, please try again.",
+                    innerException: failedEventStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -219,17 +237,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+        private async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
         {
             // given
             Event someEvent = CreateRandomEvent();
             var serviceException = new Exception();
 
             var failedEventServiceException =
-                new FailedEventServiceException(serviceException);
+                new FailedEventServiceException(
+                    message: "Failed event service occurred, please contact support.",
+                    innerException: serviceException);
 
             var expectedEventServiceException =
-                new EventServiceException(failedEventServiceException);
+                new EventServiceException(
+                    message: "Event service error occurred, contact support.",
+                    innerException: failedEventServiceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())

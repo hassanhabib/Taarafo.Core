@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
     public partial class EventServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnAddIfEventIsNullAndLogitAsync()
+        private async Task ShouldThrowValidationExceptionOnAddIfEventIsNullAndLogitAsync()
         {
             // given
             Event nullEvent = null;
@@ -25,7 +25,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                 new NullEventException();
 
             var expectedEventValidationException =
-                new EventValidationException(nullEventException);
+                new EventValidationException(
+                    message: "Event validation error occurred, please try again.",
+                    innerException: nullEventException);
 
             // when
             ValueTask<Event> addEventTask =
@@ -50,7 +52,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnAddIfEventIsInvalidAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnAddIfEventIsInvalidAndLogItAsync()
         {
             // given
             Guid invalidGuid = Guid.Empty;
@@ -85,7 +87,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                 values: "Id is required");
 
             var expectedEventValidationException =
-                new EventValidationException(invalidEventException);
+                new EventValidationException(
+                    message: "Event validation error occurred, please try again.",
+                    innerException: invalidEventException);
 
             //when
             ValueTask<Event> addEventTask =
@@ -119,7 +123,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
 
         [Theory]
         [MemberData(nameof(MinutesBeforeOrAfter))]
-        public async Task ShouldThrowValidationExceptionOnAddIfEventDateIsNotRecentAndLogItAsync(
+        private async Task ShouldThrowValidationExceptionOnAddIfEventDateIsNotRecentAndLogItAsync(
             int minutesBeforeOrAfter)
         {
             // given
@@ -131,6 +135,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
 
             Event randomEvent = CreateRandomEvent(invalidDateTime);
             Event invalidEvent = randomEvent;
+            
             var invalidEventException =
                 new InvalidEventException();
 
@@ -143,7 +148,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                 values: "Date is not recent");
 
             var expectedEventValidationException =
-                new EventValidationException(invalidEventException);
+                new EventValidationException(
+                    message: "Event validation error occurred, please try again.",
+                    innerException: invalidEventException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())

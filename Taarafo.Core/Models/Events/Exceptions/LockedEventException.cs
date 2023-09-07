@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.Events.Exceptions
     public class LockedEventException : Xeption
     {
         public LockedEventException(Exception innerException)
-            : base(message: "Event is locked, please try again.", innerException)
+            : base(
+                message: "Event is locked, please try again.",
+                innerException: innerException)
+        { }
+
+        public LockedEventException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

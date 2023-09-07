@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.Events.Exceptions
     public class FailedEventStorageException : Xeption
     {
         public FailedEventStorageException(Exception innerException)
-            : base(message: "Failed event storage error occured, contact support.", innerException)
+            : base(
+                message: "Failed event storage error occured, contact support.",
+                innerException: innerException)
+        { }
+
+        public FailedEventStorageException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }
