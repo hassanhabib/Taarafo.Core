@@ -16,14 +16,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
     public partial class GroupServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnUpdateIfGroupIsNullAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnUpdateIfGroupIsNullAndLogItAsync()
         {
             // given
             Group nullGroup = null;
             var nullGroupException = new NullGroupException();
 
             var expectedGroupValidationException =
-                new GroupValidationException(nullGroupException);
+                new GroupValidationException(
+                    message: "Group validation errors occurred, please try again.",
+                    innerException: nullGroupException);
 
             // when
             ValueTask<Group> modifyGroupTask =
@@ -59,7 +61,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task ShouldThrowValidationExceptionOnUpdateIfGroupIsInvalidAndLogItAsync(
+        private async Task ShouldThrowValidationExceptionOnUpdateIfGroupIsInvalidAndLogItAsync(
             string invalidText)
         {
             // given
@@ -98,7 +100,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                     });
 
             var expectedGroupValidationException =
-                new GroupValidationException(invalidGroupException);
+                new GroupValidationException(
+                    message: "Group validation errors occurred, please try again.",
+                    innerException: invalidGroupException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -134,7 +138,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnUpdateIfCreateAndUpdateDatesIsSameAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnUpdateIfCreateAndUpdateDatesIsSameAndLogItAsync()
         {
             // given
             DateTimeOffset randomDateTime = GetRandomDateTime();
@@ -147,7 +151,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 values: $"Date is the same as {nameof(Group.CreatedDate)}");
 
             var expectedGroupValidationException =
-                new GroupValidationException(invalidGroupException);
+                new GroupValidationException(
+                    message: "Group validation errors occurred, please try again.",
+                    innerException: invalidGroupException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -185,7 +191,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 
         [Theory]
         [MemberData(nameof(MinutesBeforeOrAfter))]
-        public async Task ShouldThrowValidationExceptionOnUpdateIfUpdatedDateIsNotRecentAndLogItAsync(int minutesBeforeOrAfter)
+        private async Task ShouldThrowValidationExceptionOnUpdateIfUpdatedDateIsNotRecentAndLogItAsync(int minutesBeforeOrAfter)
         {
             // given
             DateTimeOffset dateTime = GetRandomDateTimeOffset();
@@ -201,7 +207,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 values: "Date is not recent");
 
             var expectedGroupValidatonException =
-                new GroupValidationException(invalidGroupException);
+                new GroupValidationException(
+                    message: "Group validation errors occurred, please try again.",
+                    innerException: invalidGroupException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -242,7 +250,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnModifyIfGroupDoesNotExistAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnModifyIfGroupDoesNotExistAndLogItAsync()
         {
             // given
             int randomNegativeMinutes = GetRandomNegativeNumber();
@@ -256,7 +264,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 new NotFoundGroupException(nonExistGroup.Id);
 
             var expectedGroupValidationException =
-                new GroupValidationException(notFoundGroupException);
+                new GroupValidationException(
+                    message: "Group validation errors occurred, please try again.",
+                    innerException: notFoundGroupException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())

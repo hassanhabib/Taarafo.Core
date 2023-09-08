@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
     public partial class GroupServiceTests
     {
         [Fact]
-        public async Task ShouldUpdateGroupAsync()
+        private async Task ShouldUpdateGroupAsync()
         {
             // given
             DateTimeOffset randomDate = GetRandomDateTimeOffset();

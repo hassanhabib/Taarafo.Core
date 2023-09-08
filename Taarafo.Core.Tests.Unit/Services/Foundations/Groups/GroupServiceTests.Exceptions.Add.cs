@@ -19,7 +19,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
     public partial class GroupServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnCreateIfSqlErrorOccursAndLogItAsync()
+        private async Task ShouldThrowCriticalDependencyExceptionOnCreateIfSqlErrorOccursAndLogItAsync()
         {
             // given
             DateTimeOffset randomDateTime = GetRandomDateTime();
@@ -27,10 +27,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
             SqlException sqlException = GetSqlException();
 
             var failedGroupStorageException =
-                new FailedGroupStorageException(sqlException);
+                new FailedGroupStorageException(
+                    message: "Failed group storage error occurred, contact support.",
+                    innerException: sqlException);
 
             var expectedGroupDependencyException =
-                new GroupDependencyException(failedGroupStorageException);
+                new GroupDependencyException(
+                    message: "Group dependency error occurred, contact support.",
+                    innerException: failedGroupStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -67,7 +71,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnCreateIfGroupAlreadyExsitsAndLogItAsync()
+        private async Task ShouldThrowDependencyValidationExceptionOnCreateIfGroupAlreadyExsitsAndLogItAsync()
         {
             // given
             Group randomGroup = CreateRandomGroup();
@@ -78,10 +82,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 new DuplicateKeyException(randomMessage);
 
             var alreadyExistsGroupException =
-                new AlreadyExistsGroupException(duplicateKeyException);
+                new AlreadyExistsGroupException(
+                    message: "Group with the same id already exists.",
+                    innerException: duplicateKeyException);
 
             var expectedGroupDependencyValidationException =
-                new GroupDependencyValidationException(alreadyExistsGroupException);
+                new GroupDependencyValidationException(
+                    message: "Group dependency validation occurred, please try again.",
+                    innerException: alreadyExistsGroupException);
 
             this.dateTimeBrokerMock.Setup(broker =>
               broker.GetCurrentDateTimeOffset())
@@ -118,7 +126,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         }
 
         [Fact]
-        public async void ShouldThrowValidationExceptionOnCreateIfReferenceErrorOccursAndLogItAsync()
+        private async void ShouldThrowValidationExceptionOnCreateIfReferenceErrorOccursAndLogItAsync()
         {
             // given
             Group someGroup = CreateRandomGroup();
@@ -129,10 +137,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 new ForeignKeyConstraintConflictException(exceptionMessage);
 
             var invalidGroupReferenceException =
-                new InvalidGroupReferenceException(foreignKeyConstraintConflictException);
+                new InvalidGroupReferenceException(
+                    message: "Invalid group reference error occurred.",
+                    innerException: foreignKeyConstraintConflictException);
 
             var expectedGroupDependencyValidationException =
-                new GroupDependencyValidationException(invalidGroupReferenceException);
+                new GroupDependencyValidationException(
+                    message: "Group dependency validation occurred, please try again.",
+                    innerException: invalidGroupReferenceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -169,7 +181,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyExceptionOnCreateIfDatabaseUpdateErrorOccursAndLogItAsync()
+        private async Task ShouldThrowDependencyExceptionOnCreateIfDatabaseUpdateErrorOccursAndLogItAsync()
         {
             // given
             Group someGroup = CreateRandomGroup();
@@ -178,10 +190,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 new DbUpdateException();
 
             var failedGroupStorageException =
-                new FailedGroupStorageException(databaseUpdateException);
+                new FailedGroupStorageException(
+                    message: "Failed group storage error occurred, contact support.",
+                    innerException: databaseUpdateException);
 
             var expectedGroupDependencyException =
-                new GroupDependencyException(failedGroupStorageException);
+                new GroupDependencyException(
+                    message: "Group dependency error occurred, contact support.",
+                    innerException: failedGroupStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -218,17 +234,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnCreateIfServiceErrorOccursAndLogItAsync()
+        private async Task ShouldThrowServiceExceptionOnCreateIfServiceErrorOccursAndLogItAsync()
         {
             // given
             Group someGroup = CreateRandomGroup();
             var serviceException = new Exception();
 
             var failedGroupServiceException =
-                new FailedGroupServiceException(serviceException);
+                new FailedGroupServiceException(
+                    message: "Failed group service error occurred, please contact support.",
+                    innerException: serviceException);
 
             var expectedGroupServiceException =
-                new GroupServiceException(failedGroupServiceException);
+                new GroupServiceException(
+                    message: "Group service error occurred, contact support.",
+                    innerException: failedGroupServiceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())

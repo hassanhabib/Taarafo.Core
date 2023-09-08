@@ -7,11 +7,15 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.Groups.Exceptions
 {
-	public class GroupValidationException : Xeption
-	{
-		public GroupValidationException(Xeption innerException)
-			: base(message: "Group validation errors occurred, please try again.",
-				  innerException)
-		{ }
-	}
+    public class GroupValidationException : Xeption
+    {
+        public GroupValidationException(Xeption innerException)
+            : base(message: "Group validation errors occurred, please try again.",
+                  innerException)
+        { }
+
+        public GroupValidationException(string message, Xeption innerException)
+            : base(message, innerException)
+        { }
+    }
 }

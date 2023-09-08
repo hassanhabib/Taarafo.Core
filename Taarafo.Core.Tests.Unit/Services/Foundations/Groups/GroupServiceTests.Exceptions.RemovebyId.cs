@@ -9,10 +9,8 @@ using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using Taarafo.Core.Models.GroupPosts.Exceptions;
 using Taarafo.Core.Models.Groups;
 using Taarafo.Core.Models.Groups.Exceptions;
-using Taarafo.Core.Models.PostImpressions.Exceptions;
 using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
@@ -20,17 +18,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
     public partial class GroupServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnRemoveWhenSqlExceptionOccursAndLogItAsync()
+        private async Task ShouldThrowCriticalDependencyExceptionOnRemoveWhenSqlExceptionOccursAndLogItAsync()
         {
             // given
             Guid someGroupId = Guid.NewGuid();
             SqlException sqlException = GetSqlException();
 
             var failedGroupStorageException =
-                new FailedGroupStorageException(sqlException);
+                new FailedGroupStorageException(
+                    message: "Failed group storage error occurred, contact support.",
+                    innerException: sqlException);
 
             var expectedGroupDependencyException =
-                new GroupDependencyException(failedGroupStorageException);
+                new GroupDependencyException(
+                    message: "Group dependency error occurred, contact support.",
+                    innerException: failedGroupStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupByIdAsync(It.IsAny<Guid>()))
@@ -67,7 +69,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyValidationOnRemoveIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        private async Task ShouldThrowDependencyValidationOnRemoveIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
         {
             // given
             Guid someGroupId = Guid.NewGuid();
@@ -76,10 +78,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 new DbUpdateConcurrencyException();
 
             var lockedGroupException =
-                new LockedGroupException(databaseUpdateConcurrencyException);
+                new LockedGroupException(
+                    message: "Locked group record exception, please try again later",
+                    innerException: databaseUpdateConcurrencyException);
 
             var expectedGroupDependencyValidationException =
-                new GroupDependencyValidationException(lockedGroupException);
+                new GroupDependencyValidationException(
+                    message: "Group dependency validation occurred, please try again.",
+                    innerException: lockedGroupException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupByIdAsync(It.IsAny<Guid>()))
@@ -116,17 +122,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
+        private async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
         {
             // given
             Guid someGroupId = Guid.NewGuid();
             var serviceException = new Exception();
 
             var failedGroupServiceException =
-                new FailedGroupServiceException(serviceException);
+                new FailedGroupServiceException(
+                    message: "Failed group service error occurred, please contact support.",
+                    innerException: serviceException);
 
             var expectedGroupServiceException =
-                new GroupServiceException(failedGroupServiceException);
+                new GroupServiceException(
+                    message: "Group service error occurred, contact support.",
+                    innerException: failedGroupServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupByIdAsync(It.IsAny<Guid>()))

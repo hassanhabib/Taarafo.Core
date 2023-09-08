@@ -15,7 +15,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
     public partial class GroupServiceTests
     {
         [Fact]
-        public async void ShouldRemoveGroupByIdAsync()
+        private async void ShouldRemoveGroupByIdAsync()
         {
             // given
             Guid randomId = Guid.NewGuid();

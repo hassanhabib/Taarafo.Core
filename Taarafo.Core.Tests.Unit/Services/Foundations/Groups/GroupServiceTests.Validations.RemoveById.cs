@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
     public partial class GroupServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnRemoveIfIdIsInvalidAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnRemoveIfIdIsInvalidAndLogItAsync()
         {
             // given
             Guid invalidGroupId = Guid.Empty;
@@ -29,7 +29,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 values: "Id is required");
 
             var expectedGroupValidationException =
-                new GroupValidationException(invalidGroupException);
+                new GroupValidationException(
+                    message: "Group validation errors occurred, please try again.",
+                    innerException: invalidGroupException);
 
             // when
             ValueTask<Group> removeGroupByIdTask =
@@ -62,7 +64,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
         }
 
         [Fact]
-        public async Task ShouldThrowNotFoundExceptionOnRemoveGroupByIdIsNotFoundAndLogItAsync()
+        private async Task ShouldThrowNotFoundExceptionOnRemoveGroupByIdIsNotFoundAndLogItAsync()
         {
             // given
             Guid inputGroupId = Guid.NewGuid();
@@ -72,7 +74,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 new NotFoundGroupException(inputGroupId);
 
             var expectedGroupValidationException =
-                new GroupValidationException(notFoundGroupException);
+                new GroupValidationException(
+                    message: "Group validation errors occurred, please try again.",
+                    innerException: notFoundGroupException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupByIdAsync(It.IsAny<Guid>()))
