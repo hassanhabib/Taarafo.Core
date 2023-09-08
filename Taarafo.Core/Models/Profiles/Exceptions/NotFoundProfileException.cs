@@ -13,5 +13,9 @@ namespace Taarafo.Core.Models.Profiles.Exceptions
 		public NotFoundProfileException(Guid profileId)
 				: base(message: $"Couldn't find profile with id: {profileId}.")
 		{ }
+		
+		public NotFoundProfileException(string message, Exception innerException)
+				: base(message, innerException)
+		{ }
 	}
 }
