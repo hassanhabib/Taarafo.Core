@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.Profiles.Exceptions
 	public class AlreadyExistsProfileException : Xeption
 	{
 		public AlreadyExistsProfileException(Exception innerException)
-			: base(message: "Profile with the same id already exists.", innerException)
+			: base(
+				message: "Profile with the same id already exists.",
+				innerException: innerException)
+		{ }
+		
+		public AlreadyExistsProfileException(string message, Exception innerException)
+			: base(message, innerException)
 		{ }
 	}
 }

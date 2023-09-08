@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.Profiles.Exceptions
 	public class ProfileServiceException : Xeption
 	{
 		public ProfileServiceException(Exception innerException)
-			: base(message: "Profile service error occurred, contact support.", innerException)
+			: base(
+				message: "Profile service error occurred, contact support.",
+				innerException: innerException)
+		{ }
+		
+		public ProfileServiceException(string message, Exception innerException)
+			: base(message, innerException)
 		{ }
 	}
 }

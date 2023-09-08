@@ -11,40 +11,39 @@ using Xunit;
 
 namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 {
-	public partial class ProfileServiceTests
-	{
-		[Fact]
-		public async void ShouldRetrieveProfileByIdAsync()
-		{
-			// given
-			Profile someProfile =
-				CreateRandomProfile();
+    public partial class ProfileServiceTests
+    {
+        [Fact]
+        private async void ShouldRetrieveProfileByIdAsync()
+        {
+            // given
+            Profile someProfile =
+                CreateRandomProfile();
 
-			Profile storageProfile =
-				someProfile;
+            Profile storageProfile = someProfile;
 
-			Profile expectedProfile =
-				storageProfile.DeepClone();
+            Profile expectedProfile =
+                storageProfile.DeepClone();
 
-			this.storageBrokerMock.Setup(broker =>
-				broker.SelectProfileByIdAsync(someProfile.Id))
-					.ReturnsAsync(storageProfile);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectProfileByIdAsync(someProfile.Id))
+                    .ReturnsAsync(storageProfile);
 
-			// when
-			Profile actualProfile =
-				await this.profileService.
-					RetrieveProfileByIdAsync(someProfile.Id);
+            // when
+            Profile actualProfile =
+                await this.profileService.
+                    RetrieveProfileByIdAsync(someProfile.Id);
 
-			// then
-			actualProfile.Should().BeEquivalentTo(expectedProfile);
+            // then
+            actualProfile.Should().BeEquivalentTo(expectedProfile);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectProfileByIdAsync(someProfile.Id),
-					Times.Once);
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectProfileByIdAsync(someProfile.Id),
+                    Times.Once);
 
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
-	}
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+    }
 }

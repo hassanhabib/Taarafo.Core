@@ -19,7 +19,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 	public partial class ProfileServiceTests
 	{
 		[Fact]
-		public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
+		private async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
 		{
 			// given
 			DateTimeOffset randomDateTime = GetRandomDateTime();
@@ -27,10 +27,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 			SqlException sqlException = GetSqlException();
 
 			var failedProfileStorageException =
-				new FailedProfileStorageException(sqlException);
+				new FailedProfileStorageException(
+                    message: "Failed profile storage error occurred, contact support.",
+					innerException: sqlException);
 
 			var expectedProfileDependencyException =
-				new ProfileDependencyException(failedProfileStorageException);
+				new ProfileDependencyException(
+                    message: "Profile dependency error occurred, contact support.",
+					innerException: failedProfileStorageException);
 
 			this.dateTimeBrokerMock.Setup(broker =>
 				broker.GetCurrentDateTimeOffset())
@@ -67,7 +71,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 		}
 
 		[Fact]
-		public async Task ShouldThrowDependencyValidationExceptionOnAddIfProfileAlreadyExsitsAndLogItAsync()
+		private async Task ShouldThrowDependencyValidationExceptionOnAddIfProfileAlreadyExsitsAndLogItAsync()
 		{
 			// given
 			Profile randomProfile = CreateRandomProfile();
@@ -78,10 +82,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				new DuplicateKeyException(randomMessage);
 
 			var alreadyExistsProfileException =
-				new AlreadyExistsProfileException(duplicateKeyException);
+				new AlreadyExistsProfileException(
+                    message: "Profile with the same id already exists.",
+					innerException: duplicateKeyException);
 
 			var expectedProfileDependencyValidationException =
-				new ProfileDependencyValidationException(alreadyExistsProfileException);
+				new ProfileDependencyValidationException(
+                    message: "Profile dependency validation occurred, please try again.",
+					innerException: alreadyExistsProfileException);
 
 			this.dateTimeBrokerMock.Setup(broker =>
 			  broker.GetCurrentDateTimeOffset())
@@ -118,7 +126,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 		}
 
 		[Fact]
-		public async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+		private async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
 		{
 			// given
 			Profile someProfile = CreateRandomProfile();
@@ -129,10 +137,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				new ForeignKeyConstraintConflictException(exceptionMessage);
 
 			var invalidProfileReferenceException =
-				new InvalidProfileReferenceException(foreignKeyConstraintConflictException);
+				new InvalidProfileReferenceException(
+                    message: "Invalid profile reference error occurred.",
+					innerException: foreignKeyConstraintConflictException);
 
 			var expectedProfileDependencyValidationException =
-				new ProfileDependencyValidationException(invalidProfileReferenceException);
+				new ProfileDependencyValidationException(
+                    message: "Profile dependency validation occurred, please try again.",
+					innerException: invalidProfileReferenceException);
 
 			this.dateTimeBrokerMock.Setup(broker =>
 				broker.GetCurrentDateTimeOffset())
@@ -169,7 +181,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 		}
 
 		[Fact]
-		public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+		private async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
 		{
 			// given
 			Profile someProfile = CreateRandomProfile();
@@ -178,10 +190,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				new DbUpdateException();
 
 			var failedProfileStorageException =
-				new FailedProfileStorageException(databaseUpdateException);
+				new FailedProfileStorageException(
+                    message: "Failed profile storage error occurred, contact support.",
+					innerException: databaseUpdateException);
 
 			var expectedProfileDependencyException =
-				new ProfileDependencyException(failedProfileStorageException);
+				new ProfileDependencyException(
+                    message: "Profile dependency error occurred, contact support.",
+                innerException: failedProfileStorageException);
 
 			this.dateTimeBrokerMock.Setup(broker =>
 				broker.GetCurrentDateTimeOffset())
@@ -218,17 +234,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 		}
 
 		[Fact]
-		public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+		private async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
 		{
 			// given
 			Profile someProfile = CreateRandomProfile();
 			var serviceException = new Exception();
 
 			var failedProfileServiceException =
-				new FailedProfileServiceException(serviceException);
+				new FailedProfileServiceException(
+                    message: "Failed profile service occurred, please contact support",
+					innerException: serviceException);
 
 			var expectedProfileServiceException =
-				new ProfileServiceException(failedProfileServiceException);
+				new ProfileServiceException(
+                    message: "Profile service error occurred, contact support.",
+					innerException: failedProfileServiceException);
 
 			this.dateTimeBrokerMock.Setup(broker =>
 				broker.GetCurrentDateTimeOffset())
