@@ -14,7 +14,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
     public partial class GroupServiceTests
     {
         [Fact]
-        public async void ShouldRetrieveGroupByIdAsync()
+        private async void ShouldRetrieveGroupByIdAsync()
         {
             //given
             Group someGroup = CreateRandomGroup();

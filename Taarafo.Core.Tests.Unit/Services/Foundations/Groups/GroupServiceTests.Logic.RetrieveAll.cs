@@ -14,7 +14,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
     public partial class GroupServiceTests
     {
         [Fact]
-        public void ShouldRetrieveAllGroups()
+        private void ShouldRetrieveAllGroups()
         {
             // given
             IQueryable<Group> randomGroups = CreateRandomGroups();
