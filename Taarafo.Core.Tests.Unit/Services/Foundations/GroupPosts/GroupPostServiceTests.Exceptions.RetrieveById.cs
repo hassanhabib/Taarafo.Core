@@ -17,7 +17,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
     public partial class GroupPostServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
+        private async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
         {
             //given
             Guid someGroupId = Guid.NewGuid();
@@ -25,10 +25,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             SqlException sqlException = GetSqlException();
 
             var failedGroupPostStorageException =
-                new FailedGroupPostStorageException(sqlException);
+                new FailedGroupPostStorageException(
+                    message: "Failed group post storage error occured, contact support.",
+                    innerException: sqlException);
 
             var expectedGroupPostDependencyException =
-                new GroupPostDependencyException(failedGroupPostStorageException);
+                new GroupPostDependencyException(
+                    message: "Group post dependency validation occurred, please try again.",
+                    innerException: failedGroupPostStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupPostByIdAsync(someGroupId, somePostId))
@@ -61,7 +65,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        private async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
         {
             //given
             Guid someGroupId = Guid.NewGuid();
@@ -69,10 +73,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             var serviceException = new Exception();
 
             var failedGroupPostServiceException =
-                new FailedGroupPostServiceException(serviceException);
+                new FailedGroupPostServiceException(
+                    message: "Failed group post service occurred, please contact support.",
+                    innerException: serviceException);
 
             var expectedGroupPostServiceException =
-                new GroupPostServiceException(failedGroupPostServiceException);
+                new GroupPostServiceException(
+                     message: "Group post service error occurred, please contact support.",
+                    innerException: failedGroupPostServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupPostByIdAsync(someGroupId, somePostId))
@@ -80,16 +88,20 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
             //when
             ValueTask<GroupPost> retrieveGroupPostByIdTask =
-                this.groupPostService.RetrieveGroupPostByIdAsync(someGroupId, somePostId);
+                this.groupPostService.RetrieveGroupPostByIdAsync(
+                    someGroupId, somePostId);
 
             GroupPostServiceException actualGroupPostServiceException =
-                 await Assert.ThrowsAsync<GroupPostServiceException>(retrieveGroupPostByIdTask.AsTask);
+                 await Assert.ThrowsAsync<GroupPostServiceException>(
+                     retrieveGroupPostByIdTask.AsTask);
 
             //then
-            actualGroupPostServiceException.Should().BeEquivalentTo(expectedGroupPostServiceException);
+            actualGroupPostServiceException.Should().BeEquivalentTo(
+                expectedGroupPostServiceException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), (It.IsAny<Guid>())),
+                broker.SelectGroupPostByIdAsync(
+                    It.IsAny<Guid>(), (It.IsAny<Guid>())),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>

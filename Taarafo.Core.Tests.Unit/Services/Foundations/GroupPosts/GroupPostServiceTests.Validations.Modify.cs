@@ -17,14 +17,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
     public partial class GroupPostServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnModifyIfGroupPostIsNullAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnModifyIfGroupPostIsNullAndLogItAsync()
         {
             // given
             GroupPost nullGroupPost = null;
             var nullGroupPostException = new NullGroupPostException();
 
             var expectedGroupPostValidationException =
-                new GroupPostValidationException(nullGroupPostException);
+                new GroupPostValidationException(
+                    message: "Group post validation error occurred, please try again.",
+                    innerException: nullGroupPostException);
 
             // when
             ValueTask<GroupPost> modifyGroupPostTask =
@@ -50,7 +52,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
         [Theory]
         [InlineData(null, null)]
-        public async Task ShouldThrowValidationExceptionOnModifyIfGroupPostIsInvalidAndLogItAsync(Guid invalidGroupId, Guid invalidPostId)
+        private async Task ShouldThrowValidationExceptionOnModifyIfGroupPostIsInvalidAndLogItAsync(Guid invalidGroupId, Guid invalidPostId)
         {
             // given 
             var invalidGroupPost = new GroupPost
@@ -70,7 +72,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 values: "Id is required");
 
             var expectedGroupPostValidationException =
-                new GroupPostValidationException(invalidGroupPostException);
+                new GroupPostValidationException(
+                    message: "Group post validation error occurred, please try again.",
+                    innerException: invalidGroupPostException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -100,7 +104,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnModifyIfGroupPostDoesNotExistAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnModifyIfGroupPostDoesNotExistAndLogItAsync()
         {
             // given
             int randomNegativeMinutes = GetRandomNegativeNumber();
@@ -113,7 +117,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                     nonExistGroupPost.PostId);
 
             var expectedGroupPostValidationException =
-                new GroupPostValidationException(notFoundGroupPostException);
+                new GroupPostValidationException(
+                    message: "Group post validation error occurred, please try again.",
+                    innerException: notFoundGroupPostException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupPostByIdAsync(nonExistGroupPost.GroupId,

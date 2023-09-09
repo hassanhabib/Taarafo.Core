@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.GroupPosts.Exceptions
     public class InvalidGroupPostReferenceException : Xeption
     {
         public InvalidGroupPostReferenceException(Exception innerException)
-            : base(message: "Invalid group post reference error occurred.", innerException)
+            : base(
+                message: "Invalid group post reference error occurred.",
+                innerException: innerException)
+        { }
+
+        public InvalidGroupPostReferenceException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

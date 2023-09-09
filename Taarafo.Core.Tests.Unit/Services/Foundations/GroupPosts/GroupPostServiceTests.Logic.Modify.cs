@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
     public partial class GroupPostServiceTests
     {
         [Fact]
-        public async Task ShouldModifyGroupPostAsync()
+        private async Task ShouldModifyGroupPostAsync()
         {
             //given
             DateTimeOffset randomDate = GetRandomDateTimeOffset();
@@ -48,7 +48,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateGroupPostAsync(inputGroupPost), Times.Once);
-            
+
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectGroupPostByIdAsync(groupId, postId), Times.Once);
 

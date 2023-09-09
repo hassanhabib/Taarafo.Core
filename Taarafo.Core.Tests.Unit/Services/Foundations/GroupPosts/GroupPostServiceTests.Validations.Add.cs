@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
     public partial class GroupPostServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnAddIfGroupPostIsNullAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnAddIfGroupPostIsNullAndLogItAsync()
         {
             // given
             GroupPost nullGroupPost = null;
@@ -25,7 +25,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 new NullGroupPostException();
 
             var expectedGroupPostValidationException =
-                new GroupPostValidationException(nullGroupPostException);
+                new GroupPostValidationException(
+                    message: "Group post validation error occurred, please try again.",
+                    innerException: nullGroupPostException);
 
             // when
             ValueTask<GroupPost> addGrouPostTask =
@@ -49,7 +51,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnAddIfGroupPostIsInvalidAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnAddIfGroupPostIsInvalidAndLogItAsync()
         {
             // given
             Guid invalidGuid = Guid.Empty;
@@ -72,7 +74,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 values: "Id is required");
 
             var expectedGroupPostValidationException =
-                new GroupPostValidationException(invalidGrouPostException);
+                new GroupPostValidationException(
+                    message: "Group post validation error occurred, please try again.",
+                    innerException: invalidGrouPostException);
 
             // when
             ValueTask<GroupPost> addGroupPostTask =

@@ -75,7 +75,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         private static GroupPost CreateRandomModifyGroupPost(DateTimeOffset dates)
         {
             int randomDaysInPast = GetRandomNegativeNumber();
-            GroupPost randomGroupPost = CreateRandomGroupPost(dates);           
+            GroupPost randomGroupPost = CreateRandomGroupPost(dates);
             return randomGroupPost;
         }
 

@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.GroupPosts.Exceptions
     public class GroupPostServiceException : Xeption
     {
         public GroupPostServiceException(Exception innerException)
-            : base(message: "Group post service error occurred, please contact support.", innerException)
+            : base(
+                message: "Group post service error occurred, please contact support.",
+                innerException: innerException)
+        { }
+
+        public GroupPostServiceException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

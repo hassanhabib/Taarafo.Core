@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
     public partial class GroupPostServiceTests
     {
         [Fact]
-        public async Task ShouldRemoveGroupPostByIdAsync()
+        private async Task ShouldRemoveGroupPostByIdAsync()
         {
             // given
             Guid randomGroupId = Guid.NewGuid();
