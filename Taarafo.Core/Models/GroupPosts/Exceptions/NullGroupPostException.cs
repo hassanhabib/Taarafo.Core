@@ -12,5 +12,9 @@ namespace Taarafo.Core.Models.GroupPosts.Exceptions
         public NullGroupPostException()
             : base(message: "Group post is null.")
         { }
+
+        public NullGroupPostException(string message)
+            : base(message)
+        { }
     }
 }

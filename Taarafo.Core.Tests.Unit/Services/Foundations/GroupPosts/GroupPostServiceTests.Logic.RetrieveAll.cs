@@ -14,21 +14,29 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
     public partial class GroupPostServiceTests
     {
         [Fact]
-        public void ShouldRetrieveAllGroupPosts()
+        private void ShouldRetrieveAllGroupPosts()
         {
             //given
-            IQueryable<GroupPost> randomGroupPosts = CreateRandomGroupPosts();
-            IQueryable<GroupPost> storageGroupPosts = randomGroupPosts;
-            IQueryable<GroupPost> expectedGroupPosts = storageGroupPosts;
+            IQueryable<GroupPost> randomGroupPosts =
+                CreateRandomGroupPosts();
+
+            IQueryable<GroupPost> storageGroupPosts =
+                randomGroupPosts;
+
+            IQueryable<GroupPost> expectedGroupPosts =
+                storageGroupPosts;
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllGroupPosts()).Returns(storageGroupPosts);
+                broker.SelectAllGroupPosts())
+                .Returns(storageGroupPosts);
 
             //when
-            IQueryable<GroupPost> actualGroupPosts = this.groupPostService.RetrieveAllGroupPosts();
+            IQueryable<GroupPost> actualGroupPosts =
+                this.groupPostService.RetrieveAllGroupPosts();
 
             //then
-            actualGroupPosts.Should().BeEquivalentTo(expectedGroupPosts);
+            actualGroupPosts.Should().BeEquivalentTo(
+                expectedGroupPosts);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllGroupPosts(), Times.Once());

@@ -11,8 +11,13 @@ namespace Taarafo.Core.Models.GroupPosts.Exceptions
     public class AlreadyExistsGroupPostException : Xeption
     {
         public AlreadyExistsGroupPostException(Exception innerException)
-            : base(message: "Group post with the same id already exists.",
-                  innerException)
+            : base(
+                message: "Group post with the same id already exists.",
+                innerException: innerException)
+        { }
+        
+        public AlreadyExistsGroupPostException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

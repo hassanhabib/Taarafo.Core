@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
     public partial class GroupPostServiceTests
     {
         [Fact]
-        public async Task ShouldRetrieveGroupPostByIdAsync()
+        private async Task ShouldRetrieveGroupPostByIdAsync()
         {
             // given
             Guid randomGroupId = Guid.NewGuid();

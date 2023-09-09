@@ -18,7 +18,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
     public partial class GroupPostServiceTests
     {
         [Fact]
-        public async Task ShouldThrowDependencyValidationOnRemoveIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        private async Task ShouldThrowDependencyValidationOnRemoveIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
         {
             // given
             Guid groupId = Guid.NewGuid();
@@ -27,10 +27,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
 
             var lockedGroupPostException =
-                new LockedGroupPostException(databaseUpdateConcurrencyException);
+                new LockedGroupPostException(
+                    message: "GroupPost is locked, please try again.",
+                    innerException: databaseUpdateConcurrencyException);
 
             var expectedGroupPostDependencyValidationException =
-                new GroupPostDependencyValidationException(lockedGroupPostException);
+                new GroupPostDependencyValidationException(
+                     message: "Group post dependency validation occurred, please try again.",
+                    innerException: lockedGroupPostException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>()))
@@ -66,7 +70,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyExceptionOnDeleteWhenSqlExceptionOccursAndLogItAsync()
+        private async Task ShouldThrowDependencyExceptionOnDeleteWhenSqlExceptionOccursAndLogItAsync()
         {
             // given
             Guid groupId = Guid.NewGuid();
@@ -74,10 +78,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             SqlException sqlException = GetSqlException();
 
             var failedGroupPostStorageException =
-                new FailedGroupPostStorageException(sqlException);
+                new FailedGroupPostStorageException(
+                    message: "Failed group post storage error occured, contact support.",
+                    innerException: sqlException);
 
             var expectedGroupPostDependencyException =
-                new GroupPostDependencyException(failedGroupPostStorageException);
+                new GroupPostDependencyException(
+                    message: "Group post dependency validation occurred, please try again.",
+                    innerException: failedGroupPostStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>()))
@@ -109,7 +117,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
+        private async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
         {
             // given
             Guid groupId = Guid.NewGuid();
@@ -117,10 +125,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             var serviceException = new Exception();
 
             var failedGroupPostServiceException =
-                new FailedGroupPostServiceException(serviceException);
+                new FailedGroupPostServiceException(
+                    message: "Failed group post service occurred, please contact support.",
+                    innerException: serviceException);
 
             var expectedGroupPostServiceException =
-                new GroupPostServiceException(failedGroupPostServiceException);
+                new GroupPostServiceException(
+                     message: "Group post service error occurred, please contact support.",
+                    innerException: failedGroupPostServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupPostByIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>()))

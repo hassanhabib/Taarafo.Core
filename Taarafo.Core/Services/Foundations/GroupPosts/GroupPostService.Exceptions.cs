@@ -17,10 +17,10 @@ namespace Taarafo.Core.Services.Foundations.GroupPosts
 {
     public partial class GroupPostService
     {
-        private delegate ValueTask<GroupPost> ReturningPostFuntion();
+        private delegate ValueTask<GroupPost> ReturningGroupPostFuntion();
         private delegate IQueryable<GroupPost> ReturningGroupPostsFunction();
 
-        private async ValueTask<GroupPost> TryCatch(ReturningPostFuntion returningPostFuntion)
+        private async ValueTask<GroupPost> TryCatch(ReturningGroupPostFuntion returningPostFuntion)
         {
             try
             {

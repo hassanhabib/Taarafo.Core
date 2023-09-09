@@ -12,5 +12,9 @@ namespace Taarafo.Core.Models.GroupPosts.Exceptions
         public InvalidGroupPostException()
             : base(message: "Invalid group post. Please correct the errors and try again.")
         { }
+        
+        public InvalidGroupPostException(string message)
+            : base(message)
+        { }
     }
 }
