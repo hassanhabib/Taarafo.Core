@@ -16,11 +16,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
     public partial class PostImpressionServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidatonExceptionOnRemoveIfIdIsInvalidAndLogItAsync()
+        private async Task ShouldThrowValidatonExceptionOnRemoveIfIdIsInvalidAndLogItAsync()
         {
-            //given
+            // given
             var postImpression = new PostImpression();
-            var invalidPostImpressionException = new InvalidPostImpressionException();
+
+            var invalidPostImpressionException =
+                new InvalidPostImpressionException();
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.PostId),
@@ -31,9 +33,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 values: "Id is required");
 
             var expectedPostImpressionValidationException =
-                new PostImpressionValidationException(invalidPostImpressionException);
+                new PostImpressionValidationException(
+                    message: "Post impression validation errors occurred, please try again.",
+                    innerException: invalidPostImpressionException);
 
-            //when
+            // when
             ValueTask<PostImpression> removePostImpressionTask =
                 this.postImpressionService.RemovePostImpressionAsync(postImpression);
 
@@ -41,7 +45,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 await Assert.ThrowsAsync<PostImpressionValidationException>(
                     removePostImpressionTask.AsTask);
 
-            //then
+            // then
             actualPostImpressionValidationException.Should().BeEquivalentTo(
                 expectedPostImpressionValidationException);
 
@@ -50,12 +54,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                     expectedPostImpressionValidationException))), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(postImpression.PostId, postImpression.ProfileId),
-                        Times.Never);
+                broker.SelectPostImpressionByIdAsync(
+                    postImpression.PostId, postImpression.ProfileId),
+                    Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.DeletePostImpressionAsync(
-                    It.IsAny<PostImpression>()), Times.Never);
+                    It.IsAny<PostImpression>()),
+                    Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -63,11 +69,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         }
 
         [Fact]
-        public async Task ShouldThrowNotFoundExceptionOnRemoveIdsPostImpressionIsNotFoundAndLogItAsync()
+        private async Task ShouldThrowNotFoundExceptionOnRemoveIdsPostImpressionIsNotFoundAndLogItAsync()
         {
-            //given
+            // given
             DateTimeOffset randomDateTime = GetRandomDateTime();
-            PostImpression randomPostImpression = CreateRandomPostImpression(randomDateTime);
+
+            PostImpression randomPostImpression =
+                CreateRandomPostImpression(randomDateTime);
+
             Guid inputPostId = randomPostImpression.PostId;
             Guid inputProfile = randomPostImpression.ProfileId;
             PostImpression nullStoragePostImpression = null;
@@ -76,34 +85,41 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 new NotFoundPostImpressionException(inputPostId, inputProfile);
 
             var expectedPostImpressionValidationException =
-                new PostImpressionValidationException(notFoundPostImpressionException);
+                new PostImpressionValidationException(
+                    message: "Post impression validation errors occurred, please try again.",
+                    innerException: notFoundPostImpressionException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostImpressionByIdAsync(inputPostId, inputProfile))
                     .ReturnsAsync(nullStoragePostImpression);
 
-            //when
+            // when
             ValueTask<PostImpression> removePostImpressionTask =
-                this.postImpressionService.RemovePostImpressionAsync(randomPostImpression);
+                this.postImpressionService.RemovePostImpressionAsync(
+                    randomPostImpression);
 
             PostImpressionValidationException actualPostImpressionValidationException =
                 await Assert.ThrowsAsync<PostImpressionValidationException>(
                     removePostImpressionTask.AsTask);
 
-            //then
+            // then
             actualPostImpressionValidationException.Should().BeEquivalentTo(
                 expectedPostImpressionValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(It.IsAny<Guid>(), It.IsAny<Guid>()),
+                broker.SelectPostImpressionByIdAsync(
+                    It.IsAny<Guid>(), It.IsAny<Guid>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionValidationException))), Times.Once);
+                    expectedPostImpressionValidationException))),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.DeletePostImpressionAsync(It.IsAny<PostImpression>()), Times.Never);
+                broker.DeletePostImpressionAsync(
+                    It.IsAny<PostImpression>()),
+                    Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

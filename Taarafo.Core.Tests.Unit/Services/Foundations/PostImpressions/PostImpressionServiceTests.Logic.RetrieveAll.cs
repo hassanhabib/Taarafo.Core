@@ -14,26 +14,33 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
     public partial class PostImpressionServiceTests
     {
         [Fact]
-        public void ShouldReturnPostImpressions()
+        private void ShouldReturnPostImpressions()
         {
-            //given
-            IQueryable<PostImpression> randomPostImpressions = CreateRandomPostImpressions();
-            IQueryable<PostImpression> storagePostImpressions = randomPostImpressions;
-            IQueryable<PostImpression> expectedPostImpressions = storagePostImpressions;
+            // given
+            IQueryable<PostImpression> randomPostImpressions =
+                CreateRandomPostImpressions();
+
+            IQueryable<PostImpression> storagePostImpressions =
+                randomPostImpressions;
+
+            IQueryable<PostImpression> expectedPostImpressions =
+                storagePostImpressions;
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllPostImpressions())
                    .Returns(storagePostImpressions);
 
-            //when
+            // when
             IQueryable<PostImpression> actualPostImpressions =
                 this.postImpressionService.RetrieveAllPostImpressions();
 
-            //then
-            actualPostImpressions.Should().BeEquivalentTo(expectedPostImpressions);
+            // then
+            actualPostImpressions.Should().BeEquivalentTo(
+                expectedPostImpressions);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllPostImpressions(), Times.Once);
+                broker.SelectAllPostImpressions(),
+                Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

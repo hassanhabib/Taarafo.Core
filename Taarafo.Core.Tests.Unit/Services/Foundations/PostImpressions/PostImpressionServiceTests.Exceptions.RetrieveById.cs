@@ -17,24 +17,28 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
     public partial class PostImpressionServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
+        private async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
         {
-            //given
+            // given
             Guid somePostId = Guid.NewGuid();
             Guid someProfileId = Guid.NewGuid();
             SqlException sqlException = GetSqlException();
 
             var failedPostImpressionStorageException =
-                new FailedPostImpressionStorageException(sqlException);
+                new FailedPostImpressionStorageException(
+                    message: "Failed post impression storage error has occurred, contact support.",
+                    innerException: sqlException);
 
             var expectedPostImpressionDependencyException =
-                new PostImpressionDependencyException(failedPostImpressionStorageException);
+                new PostImpressionDependencyException(
+                    message: "Post impression dependency error has occurred, please contact support.",
+                    innerException: failedPostImpressionStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostImpressionByIdAsync(somePostId, someProfileId))
                     .ThrowsAsync(sqlException);
 
-            //when
+            // when
             ValueTask<PostImpression> retrievePostImpressionByIdTask =
                 this.postImpressionService.RetrievePostImpressionByIdAsync(somePostId, someProfileId);
 
@@ -42,13 +46,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 await Assert.ThrowsAsync<PostImpressionDependencyException>(
                     retrievePostImpressionByIdTask.AsTask);
 
-            //then
+            // then
             actualPostImpressionDependencyException.Should().BeEquivalentTo(
                    expectedPostImpressionDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(It.IsAny<Guid>(), (It.IsAny<Guid>())),
-                    Times.Once);
+                broker.SelectPostImpressionByIdAsync(
+                    It.IsAny<Guid>(), (It.IsAny<Guid>())),
+                        Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
@@ -61,37 +66,43 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        private async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
         {
-            //given
+            // given
             Guid somePostId = Guid.NewGuid();
             Guid someProfileId = Guid.NewGuid();
             var serviceException = new Exception();
 
             var failedPostImpressionServiceException =
-                new FailedPostImpressionServiceException(serviceException);
+                new FailedPostImpressionServiceException(
+                    message: "Failed post impression service occurred, please contact support.",
+                    innerException: serviceException);
 
             var expectedPostImpressionServiceException =
-                new PostImpressionServiceException(failedPostImpressionServiceException);
+                new PostImpressionServiceException(
+                    message: "Post impression service error occurred, please contact support.",
+                    innerException: failedPostImpressionServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostImpressionByIdAsync(somePostId, someProfileId))
                     .ThrowsAsync(serviceException);
 
-            //when
+            // when
             ValueTask<PostImpression> retrievePostImpressionByIdTask =
-                this.postImpressionService.RetrievePostImpressionByIdAsync(somePostId, someProfileId);
+                this.postImpressionService.RetrievePostImpressionByIdAsync(
+                    somePostId, someProfileId);
 
             PostImpressionServiceException actualPostImpressionServiceException =
                  await Assert.ThrowsAsync<PostImpressionServiceException>(
                      retrievePostImpressionByIdTask.AsTask);
 
-            //then
+            // then
             actualPostImpressionServiceException.Should().BeEquivalentTo(
                 expectedPostImpressionServiceException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(It.IsAny<Guid>(), (It.IsAny<Guid>())),
+                broker.SelectPostImpressionByIdAsync(
+                    It.IsAny<Guid>(), (It.IsAny<Guid>())),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>

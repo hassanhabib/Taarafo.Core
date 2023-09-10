@@ -4,8 +4,6 @@
 // ---------------------------------------------------------------
 
 using System;
-using System.Data;
-using System.Reflection.Metadata;
 using Taarafo.Core.Models.PostImpressions;
 using Taarafo.Core.Models.PostImpressions.Exceptions;
 
@@ -44,7 +42,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                 (Rule: IsInvalid(postImpression.ProfileId), Parameter: nameof(PostImpression.ProfileId)),
                 (Rule: IsInvalid(postImpression.CreatedDate), Parameter: nameof(PostImpression.CreatedDate)),
                 (Rule: IsInvalid(postImpression.UpdatedDate), Parameter: nameof(PostImpression.UpdatedDate)),
-                (Rule:IsNotRecent(postImpression.UpdatedDate),Parameter:nameof(PostImpression.UpdatedDate)),
+                (Rule: IsNotRecent(postImpression.UpdatedDate), Parameter: nameof(PostImpression.UpdatedDate)),
 
                 (Rule: IsSame(
                 firstDate: postImpression.UpdatedDate,
@@ -54,9 +52,13 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                 Parameter: nameof(PostImpression.UpdatedDate)));
         }
 
-        private static void ValidateAginstStoragePostImpressionOnModify(PostImpression inputPostImpression,PostImpression storagePostImpression)
+        private static void ValidateAginstStoragePostImpressionOnModify(
+            PostImpression inputPostImpression, PostImpression storagePostImpression)
         {
-            ValidateStoragePostImpression(storagePostImpression, inputPostImpression.PostId, inputPostImpression.ProfileId);
+            ValidateStoragePostImpression(
+                storagePostImpression,
+                inputPostImpression.PostId,
+                inputPostImpression.ProfileId);
 
             Validate(
                 (Rule: IsNotSame(
@@ -71,7 +73,7 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                     secondDate: storagePostImpression.UpdatedDate,
                     secondDateName: nameof(PostImpression.UpdatedDate)),
 
-                 Parameter: nameof(PostImpression.UpdatedDate)));   
+                 Parameter: nameof(PostImpression.UpdatedDate)));
         }
 
         private void ValidatePostImpressionId(Guid postId, Guid profileId) =>
@@ -96,7 +98,8 @@ namespace Taarafo.Core.Services.Foundations.PostImpressions
                 (Rule: IsInvalid(postImpression.ProfileId), Parameter: nameof(PostImpression.ProfileId)));
         }
 
-        private static void ValidateStoragePostImpression(PostImpression maybePostImpression, Guid postId, Guid profileId)
+        private static void ValidateStoragePostImpression(
+            PostImpression maybePostImpression, Guid postId, Guid profileId)
         {
             if (maybePostImpression is null)
             {

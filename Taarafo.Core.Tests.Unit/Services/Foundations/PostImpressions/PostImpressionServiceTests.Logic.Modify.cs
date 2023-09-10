@@ -16,21 +16,36 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
     public partial class PostImpressionServiceTests
     {
         [Fact]
-        public async Task ShouldModifyPostImpressionAsync()
+        private async Task ShouldModifyPostImpressionAsync()
         {
-            //given
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            PostImpression randomPostImpression = CreateRandomModifyPostImpression(randomDateTime);
-            PostImpression inputPostImpression = randomPostImpression;
-            PostImpression storagePostImpression = inputPostImpression.DeepClone();
-            storagePostImpression.UpdatedDate = randomPostImpression.CreatedDate;
-            PostImpression updatePostImpression = inputPostImpression;
-            PostImpression expectedPostImpression = updatePostImpression.DeepClone();
+            // given
+            DateTimeOffset randomDateTime =
+                GetRandomDateTimeOffset();
+
+            PostImpression randomPostImpression =
+                CreateRandomModifyPostImpression(randomDateTime);
+
+            PostImpression inputPostImpression =
+                randomPostImpression;
+
+            PostImpression storagePostImpression =
+                inputPostImpression.DeepClone();
+
+            storagePostImpression.UpdatedDate =
+                randomPostImpression.CreatedDate;
+
+            PostImpression updatePostImpression =
+                inputPostImpression;
+
+            PostImpression expectedPostImpression =
+                updatePostImpression.DeepClone();
+
             Guid postId = inputPostImpression.PostId;
             Guid profileId = inputPostImpression.ProfileId;
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
+                broker.GetCurrentDateTimeOffset()).Returns(
+                randomDateTime);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostImpressionByIdAsync(postId, profileId))
@@ -40,21 +55,26 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.UpdatePostImpressionAsync(inputPostImpression))
                     .ReturnsAsync(updatePostImpression);
 
-            //when
+            // when
             PostImpression actualPostImpression =
-                await this.postImpressionService.ModifyPostImpressionAsync(inputPostImpression);
+                await this.postImpressionService.ModifyPostImpressionAsync(
+                    inputPostImpression);
 
-            //then
-            actualPostImpression.Should().BeEquivalentTo(expectedPostImpression);
+            // then
+            actualPostImpression.Should().BeEquivalentTo(
+                expectedPostImpression);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(),
+                Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(postId, profileId), Times.Once);
+                broker.SelectPostImpressionByIdAsync(postId, profileId),
+                Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.UpdatePostImpressionAsync(inputPostImpression), Times.Once);
+                broker.UpdatePostImpressionAsync(inputPostImpression),
+                Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();

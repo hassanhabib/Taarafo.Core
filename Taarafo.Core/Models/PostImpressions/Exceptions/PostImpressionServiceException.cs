@@ -8,10 +8,16 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.PostImpressions.Exceptions
 {
-	public class PostImpressionServiceException : Xeption
-	{
-		public PostImpressionServiceException(Exception innerException)
-			: base(message: "Post impression service error occurred, please contact support.", innerException)
-		{ }
-	}
+    public class PostImpressionServiceException : Xeption
+    {
+        public PostImpressionServiceException(Exception innerException)
+            : base(
+                message: "Post impression service error occurred, please contact support.",
+                innerException: innerException)
+        { }
+
+        public PostImpressionServiceException(string message, Exception innerException)
+            : base(message, innerException)
+        { }
+    }
 }

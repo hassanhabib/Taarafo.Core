@@ -18,49 +18,64 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
     public partial class PostImpressionServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnModifyIfSqlErrorOccursAndLogItAsync()
+        private async Task ShouldThrowCriticalDependencyExceptionOnModifyIfSqlErrorOccursAndLogItAsync()
         {
-            //given
+            // given
             DateTimeOffset randomDateTime = GetRandomDateTime();
-            PostImpression randomPostImpression = CreateRandomModifyPostImpression(randomDateTime);
+
+            PostImpression randomPostImpression =
+                CreateRandomModifyPostImpression(randomDateTime);
+
             PostImpression somePostImpression = randomPostImpression;
             Guid postId = somePostImpression.PostId;
             Guid profileId = somePostImpression.ProfileId;
             SqlException sqlException = GetSqlException();
 
             var failedPostImpressionStorageException =
-                new FailedPostImpressionStorageException(sqlException);
+                new FailedPostImpressionStorageException(
+                    message: "Failed post impression storage error has occurred, contact support.",
+                    innerException: sqlException);
 
             var expectedPostImpressionDependencyException =
-                new PostImpressionDependencyException(failedPostImpressionStorageException);
+                new PostImpressionDependencyException(
+                    message: "Post impression dependency error has occurred, please contact support.",
+                    innerException: failedPostImpressionStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset()).Throws(sqlException);
+                broker.GetCurrentDateTimeOffset())
+                .Throws(sqlException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdAsync(postId, profileId)).Throws(sqlException);
+                broker.SelectPostImpressionByIdAsync(postId, profileId))
+                .Throws(sqlException);
 
-            //when
+            // when
             ValueTask<PostImpression> modifyPostImpression =
                 this.postImpressionService.ModifyPostImpressionAsync(somePostImpression);
 
             PostImpressionDependencyException actualPostImpressionDependencyException =
-                await Assert.ThrowsAsync<PostImpressionDependencyException>(modifyPostImpression.AsTask);
+                await Assert.ThrowsAsync<PostImpressionDependencyException>(
+                    modifyPostImpression.AsTask);
 
-            //then
-            actualPostImpressionDependencyException.Should().BeEquivalentTo(expectedPostImpressionDependencyException);
+            // then
+            actualPostImpressionDependencyException.Should().BeEquivalentTo(
+                expectedPostImpressionDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(expectedPostImpressionDependencyException))), Times.Once);
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedPostImpressionDependencyException))),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(postId, profileId), Times.Never);
+                broker.SelectPostImpressionByIdAsync(postId, profileId),
+                Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.UpdatePostImpressionAsync(somePostImpression), Times.Never);
+                broker.UpdatePostImpressionAsync(somePostImpression),
+                Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -68,50 +83,65 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
+        private async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
         {
-            //given
+            // given
             int minutesInPast = GetRandomNegativeNumber();
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            PostImpression randomPostImpression = CreateRandomPostImpression(randomDateTime);
+
+            PostImpression randomPostImpression =
+                CreateRandomPostImpression(randomDateTime);
+
             PostImpression somePostIpression = randomPostImpression;
             Guid postId = somePostIpression.PostId;
             Guid profileId = somePostIpression.ProfileId;
-            somePostIpression.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
+
+            somePostIpression.CreatedDate =
+                randomDateTime.AddMinutes(minutesInPast);
+
             var databaseUpdateException = new DbUpdateException();
 
             var failedPostImpressionStorageException =
-                new FailedPostImpressionStorageException(databaseUpdateException);
+                new FailedPostImpressionStorageException(
+                    message: "Failed post impression storage error has occurred, contact support.",
+                    innerException: databaseUpdateException);
 
             var expectedPostImpressionDependencyException =
-                new PostImpressionDependencyException(failedPostImpressionStorageException);
+                new PostImpressionDependencyException(
+                    message: "Post impression dependency error has occurred, please contact support.",
+                    innerException: failedPostImpressionStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectPostImpressionByIdAsync(postId, profileId)).ThrowsAsync(databaseUpdateException);
+                broker.SelectPostImpressionByIdAsync(postId, profileId))
+                .ThrowsAsync(databaseUpdateException);
 
-            //when
+            // when
             ValueTask<PostImpression> modifyPostImpression =
                 this.postImpressionService.ModifyPostImpressionAsync(somePostIpression);
 
             PostImpressionDependencyException actualPostImpressionDependencyException =
-                await Assert.ThrowsAsync<PostImpressionDependencyException>(modifyPostImpression.AsTask);
+                await Assert.ThrowsAsync<PostImpressionDependencyException>(
+                    modifyPostImpression.AsTask);
 
-            //then
+            // then
             actualPostImpressionDependencyException.Should().BeEquivalentTo(
                 expectedPostImpressionDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(postId, profileId), Times.Once);
-                
+                broker.SelectPostImpressionByIdAsync(postId, profileId),
+                Times.Once);
+
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionDependencyException))), Times.Once);
+                    expectedPostImpressionDependencyException))),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -119,23 +149,35 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnModifyIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        private async Task ShouldThrowDependencyValidationExceptionOnModifyIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
         {
-            //given
+            // given
             int minutesInPast = GetRandomNegativeNumber();
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            PostImpression randomPostImpression = CreateRandomPostImpression(randomDateTime);
+
+            PostImpression randomPostImpression =
+                CreateRandomPostImpression(randomDateTime);
+
             PostImpression somePostImpression = randomPostImpression;
-            randomPostImpression.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
+
+            randomPostImpression.CreatedDate =
+                randomDateTime.AddMinutes(minutesInPast);
+
             Guid postId = somePostImpression.PostId;
             Guid profileId = somePostImpression.ProfileId;
-            var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
+
+            var databaseUpdateConcurrencyException =
+                new DbUpdateConcurrencyException();
 
             var lockedPostImpressionException =
-                new LockedPostImpressionException(databaseUpdateConcurrencyException);
+                new LockedPostImpressionException(
+                    message: "Locked post impression record exception, please try again later",
+                    innerException: databaseUpdateConcurrencyException);
 
             var expectedPostImpressionDependencyValidationException =
-                new PostImpressionDependencyValidationException(lockedPostImpressionException);
+                new PostImpressionDependencyValidationException(
+                    message: "Post impression dependency validation occurred, please try again.",
+                    innerException: lockedPostImpressionException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostImpressionByIdAsync(postId, profileId))
@@ -144,26 +186,29 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
 
-            //when
+            //  when
             ValueTask<PostImpression> modifyPostImpression =
                 this.postImpressionService.ModifyPostImpressionAsync(somePostImpression);
 
             PostImpressionDependencyValidationException actualPostImpressionDependencyValidationException =
                 await Assert.ThrowsAsync<PostImpressionDependencyValidationException>(modifyPostImpression.AsTask);
 
-            //then
+            // then
             actualPostImpressionDependencyValidationException.Should().BeEquivalentTo(
                 expectedPostImpressionDependencyValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(postId, profileId), Times.Once);
+                broker.SelectPostImpressionByIdAsync(postId, profileId),
+                Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionDependencyValidationException))), Times.Once);
+                    expectedPostImpressionDependencyValidationException))),
+                    Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -171,50 +216,65 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnModifyIfDatabaseUpdateErrorOccursAndLogItAsync()
+        private async Task ShouldThrowServiceExceptionOnModifyIfDatabaseUpdateErrorOccursAndLogItAsync()
         {
-            //given
+            // given
             int minutesInPast = GetRandomNegativeNumber();
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            PostImpression randomPostImpression = CreateRandomPostImpression(randomDateTime);
+
+            PostImpression randomPostImpression =
+                CreateRandomPostImpression(randomDateTime);
+
             PostImpression somePostImpression = randomPostImpression;
             Guid postId = somePostImpression.PostId;
             Guid profileId = somePostImpression.ProfileId;
-            somePostImpression.CreatedDate = randomDateTime.AddMinutes(minutesInPast);
+
+            somePostImpression.CreatedDate =
+                randomDateTime.AddMinutes(minutesInPast);
+
             var serviceException = new Exception();
 
             var failedPostImpressionService =
-                new FailedPostImpressionServiceException(serviceException);
+                new FailedPostImpressionServiceException(
+                    message: "Failed post impression service occurred, please contact support.",
+                    innerException: serviceException);
 
             var expectedPostImpressionServiceException =
-                new PostImpressionServiceException(failedPostImpressionService);
+                new PostImpressionServiceException(
+                    message: "Post impression service error occurred, please contact support.",
+                    innerException: failedPostImpressionService);
 
-            this.storageBrokerMock.Setup(broker =>  
-                broker.SelectPostImpressionByIdAsync(postId, profileId)).ThrowsAsync(serviceException);
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPostImpressionByIdAsync(postId, profileId))
+                .ThrowsAsync(serviceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
 
-            //when
+            // when
             ValueTask<PostImpression> modifyPostImpression =
                 this.postImpressionService.ModifyPostImpressionAsync(somePostImpression);
 
             PostImpressionServiceException actualPostImpressionServiceException =
-                await Assert.ThrowsAsync<PostImpressionServiceException>(modifyPostImpression.AsTask);
+                await Assert.ThrowsAsync<PostImpressionServiceException>(
+                    modifyPostImpression.AsTask);
 
-            //then
+            // then
             actualPostImpressionServiceException.Should().BeEquivalentTo(
                 expectedPostImpressionServiceException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(),
+                Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(postId, profileId), Times.Once);
+                broker.SelectPostImpressionByIdAsync(postId, profileId),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionServiceException))), Times.Once);
+                    expectedPostImpressionServiceException))),
+                    Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
