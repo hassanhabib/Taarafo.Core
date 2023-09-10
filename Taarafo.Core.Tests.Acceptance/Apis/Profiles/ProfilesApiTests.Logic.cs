@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
     public partial class ProfilesApiTests
     {
         [Fact]
-        public async Task ShouldPostProfileAsync()
+        private async Task ShouldPostProfileAsync()
         {
             //given
             Profile randomProfile = CreateRandomProfile();
@@ -35,7 +35,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
         }
 
         [Fact]
-        public async Task ShouldGetProfileByIdAsync()
+        private async Task ShouldGetProfileByIdAsync()
         {
             //given
             Profile randomProfile = await PostRandomProfileAsync();
@@ -50,7 +50,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
         }
 
         [Fact]
-        public async Task ShouldGetAllProfileAsync()
+        private async Task ShouldGetAllProfileAsync()
         {
             //given
             List<Profile> randomProfiles = await CreateRandomProfilesAsync();
@@ -71,7 +71,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
         }
 
         [Fact]
-        public async Task ShouldPutProfileAsync()
+        private async Task ShouldPutProfileAsync()
         {
             //given
             Profile randomProfile = await PostRandomProfileAsync();
@@ -87,7 +87,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
         }
 
         [Fact]
-        public async Task ShouldDeleteByIdProfileAsync()
+        private async Task ShouldDeleteByIdProfileAsync()
         {
             //given
             Profile randomProfile = await PostRandomProfileAsync();
