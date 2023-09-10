@@ -19,17 +19,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
     public partial class PostReportServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
+        private async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
         {
             // given
             PostReport somePostReport = CreateRandomPostReport();
             SqlException sqlException = CreateSqlException();
 
             var failedPostReportStorageException =
-                new FailedPostReportStorageException(sqlException);
+                new FailedPostReportStorageException(
+                    message: "Failed post report storage error occurred, contact support",
+                    innerException: sqlException);
 
             var expectedPostReportDependencyException =
-                new PostReportDependencyException(failedPostReportStorageException);
+                new PostReportDependencyException(
+                    message: "Post report dependency validation occurred, please try again.",
+                    innerException: failedPostReportStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset()).Throws(sqlException);
@@ -47,11 +51,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 .BeEquivalentTo(expectedPostReportDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedPostReportDependencyException))), Times.Once);
+                    expectedPostReportDependencyException))),
+                    Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -59,7 +65,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnAddIfDuplicateKeyErrorOccursAndLogItAsync()
+        private async Task ShouldThrowDependencyValidationExceptionOnAddIfDuplicateKeyErrorOccursAndLogItAsync()
         {
             // given
             PostReport somePostReport = CreateRandomPostReport();
@@ -67,10 +73,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             var duplicateKeyException = new DuplicateKeyException(someMessage);
 
             var alreadyExistsPostReportException =
-                new AlreadyExistsPostReportException(duplicateKeyException);
+                new AlreadyExistsPostReportException(
+                    message: "PostReport already exists.",
+                    innerException: duplicateKeyException);
 
             var expectedPostReportDependencyValidationException =
-                new PostReportDependencyValidationException(alreadyExistsPostReportException);
+                new PostReportDependencyValidationException(
+                    message: "PostReport dependency validation error occurred, fix the errors and try again.",
+                    innerException: alreadyExistsPostReportException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset()).Throws(duplicateKeyException);
@@ -88,11 +98,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 .BeEquivalentTo(expectedPostReportDependencyValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportDependencyValidationException))), Times.Once);
+                    expectedPostReportDependencyValidationException))),
+                    Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -100,17 +112,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnAddIfDbConcurrencyErrorOccursAndLogItAsync()
+        private async Task ShouldThrowDependencyValidationExceptionOnAddIfDbConcurrencyErrorOccursAndLogItAsync()
         {
             // given
             PostReport somePostReport = CreateRandomPostReport();
             var dbUpdateConcurrencyException = new DbUpdateConcurrencyException();
 
             var lockedPostReportException =
-                new LockedPostReportException(dbUpdateConcurrencyException);
+                new LockedPostReportException(
+                    message: "PostReport is locked, please try again.",
+                    innerException: dbUpdateConcurrencyException);
 
             var expectedPostReportDependencyValidation =
-                new PostReportDependencyValidationException(lockedPostReportException);
+                new PostReportDependencyValidationException(
+                    message: "PostReport dependency validation error occurred, fix the errors and try again.",
+                    innerException: lockedPostReportException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset()).Throws(dbUpdateConcurrencyException);
@@ -128,11 +144,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 .BeEquivalentTo(expectedPostReportDependencyValidation);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportDependencyValidation))), Times.Once);
+                    expectedPostReportDependencyValidation))),
+                    Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -140,17 +158,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+        private async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
         {
             // given
             PostReport somePostReport = CreateRandomPostReport();
             var serviceException = new Exception();
 
             var failedPostReportServiceException =
-                new FailedPostReportServiceException(serviceException);
+                new FailedPostReportServiceException(
+                    message: "Failed post report service occurred, please contact support.",
+                    innerException: serviceException);
 
             var expectedPostReportServiceException =
-                new PostReportServiceException(failedPostReportServiceException);
+                new PostReportServiceException(
+                    message: "Post report service error occurred, please contact support.",
+                    innerException: failedPostReportServiceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset()).Throws(serviceException);

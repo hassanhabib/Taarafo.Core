@@ -15,16 +15,20 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
     public partial class PostReportServiceTests
     {
         [Fact]
-        public void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
+        private void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
         {
             //given
             SqlException sqlException = CreateSqlException();
 
             var failedPostPeportStorageException =
-                new FailedPostPeportStorageException(sqlException);
+                new FailedPostReportStorageException(
+                    message: "Failed post report storage error occurred, contact support",
+                innerException: sqlException);
 
             var expectedPostReportDependencyException =
-                new PostReportDependencyException(failedPostPeportStorageException);
+                new PostReportDependencyException(
+                    message: "Post report dependency validation occurred, please try again.",
+                    innerException: failedPostPeportStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllPostReports()).Throws(sqlException);
@@ -34,18 +38,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 this.postReportService.RetrieveAllPostReports();
 
             PostReportDependencyException actualPostReportDependencyException =
-                Assert.Throws<PostReportDependencyException>(retrieveAllPostReportAction);
+                Assert.Throws<PostReportDependencyException>(
+                    retrieveAllPostReportAction);
 
             //then
             actualPostReportDependencyException.Should().BeEquivalentTo(
                 expectedPostReportDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllPostReports(), Times.Once);
+                broker.SelectAllPostReports(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedPostReportDependencyException))), Times.Once);
+                    expectedPostReportDependencyException))),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -53,17 +60,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
         }
 
         [Fact]
-        public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        private void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
         {
             //given
             string expectedMessage = GetRandomMessage();
             var serviceException = new Exception(expectedMessage);
 
             var failedPostReportServiceException =
-                new FailedPostReportServiceException(serviceException);
+                new FailedPostReportServiceException(
+                    message: "Failed post report service occurred, please contact support.",
+                    innerException: serviceException);
 
             var expectedPostReportServiceException =
-                new PostReportServiceException(failedPostReportServiceException);
+                new PostReportServiceException(
+                    message: "Post report service error occurred, please contact support.",
+                    innerException: failedPostReportServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllPostReports()).Throws(serviceException);
@@ -73,17 +84,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 this.postReportService.RetrieveAllPostReports();
 
             PostReportServiceException actualPostReportServiceException =
-                Assert.Throws<PostReportServiceException>(retieveAllPostReportAction);
+                Assert.Throws<PostReportServiceException>(
+                    retieveAllPostReportAction);
 
             //then
-            actualPostReportServiceException.Should().BeEquivalentTo(expectedPostReportServiceException);
+            actualPostReportServiceException.Should().BeEquivalentTo(
+                expectedPostReportServiceException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllPostReports(), Times.Once);
+                broker.SelectAllPostReports(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportServiceException))), Times.Once);
+                    expectedPostReportServiceException))),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

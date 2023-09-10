@@ -16,14 +16,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
     public partial class PostReportServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnAddIfInputIsNullAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnAddIfInputIsNullAndLogItAsync()
         {
             // given
             PostReport nullPostReport = null;
-            var nullPostReportException = new NullPostReportException();
+
+            var nullPostReportException =
+                new NullPostReportException();
 
             var expectedPostReportValidationException =
-                new PostReportValidationException(nullPostReportException);
+                new PostReportValidationException(
+                    message: "PostReport validation errors occurred, please try again.",
+                    innerException: nullPostReportException);
 
             // when
             ValueTask<PostReport> addPostReportTask =
@@ -39,7 +43,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportValidationException))), Times.Once);
+                    expectedPostReportValidationException))),
+                    Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -50,7 +55,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task ShouldThrowValidationExceptionOnAddIfPostReportIsInvalidAndLogItAsync(string invalidString)
+        private async Task ShouldThrowValidationExceptionOnAddIfPostReportIsInvalidAndLogItAsync(string invalidString)
         {
             // given
             PostReport invalidPostReport = new PostReport
@@ -58,7 +63,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 Details = invalidString
             };
 
-            var invalidPostReportException = new InvalidPostReportException();
+            var invalidPostReportException =
+                new InvalidPostReportException();
 
             invalidPostReportException.AddData(
                 key: nameof(PostReport.Id),
@@ -85,7 +91,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 values: "Value is required");
 
             var expectedPostReportValidationException =
-                new PostReportValidationException(invalidPostReportException);
+                new PostReportValidationException(
+                    message: "PostReport validation errors occurred, please try again.",
+                    innerException: invalidPostReportException);
 
             // when
             ValueTask<PostReport> addPostReportTask =
@@ -101,32 +109,42 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportValidationException))), Times.Once);
+                    expectedPostReportValidationException))),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostReportAsync(It.IsAny<PostReport>()), Times.Never);
+                broker.InsertPostReportAsync(
+                    It.IsAny<PostReport>()),
+                    Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotSameAsUpdatedDateAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotSameAsUpdatedDateAndLogItAsync()
         {
             // given
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             DateTimeOffset anotherRandomDate = GetRandomDateTimeOffset();
-            PostReport randomPostReport = CreateRandomPostReport(randomDateTime);
+
+            PostReport randomPostReport =
+                CreateRandomPostReport(randomDateTime);
+
             PostReport invalidPostReport = randomPostReport;
             randomPostReport.UpdatedDate = anotherRandomDate;
-            var invalidPostReportException = new InvalidPostReportException();
+
+            var invalidPostReportException =
+                new InvalidPostReportException();
 
             invalidPostReportException.AddData(
                 key: nameof(PostReport.CreatedDate),
                 values: $"Date is not the same as {nameof(PostReport.UpdatedDate)}");
 
             var expectedPostReportValidationException =
-                new PostReportValidationException(invalidPostReportException);
+                new PostReportValidationException(
+                    message: "PostReport validation errors occurred, please try again.",
+                    innerException: invalidPostReportException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
@@ -144,14 +162,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 .BeEquivalentTo(expectedPostReportValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportValidationException))), Times.Once);
+                    expectedPostReportValidationException))),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostReportAsync(It.IsAny<PostReport>()), Times.Never);
+                broker.InsertPostReportAsync(
+                    It.IsAny<PostReport>()),
+                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -160,12 +182,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
         [Theory]
         [MemberData(nameof(InvalidSeconds))]
-        public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotRecentAndLogItAsync(int invalidSeconds)
+        private async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotRecentAndLogItAsync(int invalidSeconds)
         {
             // given
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            DateTimeOffset invalidRandomDateTime = randomDateTime.AddSeconds(invalidSeconds);
-            PostReport randomInvalidPostReport = CreateRandomPostReport(invalidRandomDateTime);
+            DateTimeOffset randomDateTime =
+                GetRandomDateTimeOffset();
+
+            DateTimeOffset invalidRandomDateTime =
+                randomDateTime.AddSeconds(invalidSeconds);
+
+            PostReport randomInvalidPostReport =
+                CreateRandomPostReport(invalidRandomDateTime);
+
             PostReport invalidPostReport = randomInvalidPostReport;
 
             var invalidPostReportException = new InvalidPostReportException();
@@ -175,7 +203,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 values: $"Date is not recent");
 
             var expectedPostReportValidationException =
-                new PostReportValidationException(invalidPostReportException);
+                new PostReportValidationException(
+                    message: "PostReport validation errors occurred, please try again.",
+                    innerException: invalidPostReportException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset()).Returns(randomDateTime);
@@ -193,14 +223,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 .BeEquivalentTo(expectedPostReportValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportValidationException))), Times.Once);
+                    expectedPostReportValidationException))),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostReportAsync(It.IsAny<PostReport>()), Times.Never);
+                broker.InsertPostReportAsync(
+                    It.IsAny<PostReport>()),
+                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

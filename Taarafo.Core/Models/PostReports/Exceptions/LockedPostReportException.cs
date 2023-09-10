@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.PostReports.Exceptions
     public class LockedPostReportException : Xeption
     {
         public LockedPostReportException(Exception innerException)
-            : base(message: "PostReport is locked, please try again.", innerException)
+            : base(
+                message: "PostReport is locked, please try again.",
+                innerException: innerException)
+        { }
+        
+        public LockedPostReportException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }
