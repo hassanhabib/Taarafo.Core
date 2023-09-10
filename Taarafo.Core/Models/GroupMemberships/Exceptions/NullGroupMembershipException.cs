@@ -12,5 +12,9 @@ namespace Taarafo.Core.Models.GroupMemberships.Exceptions
         public NullGroupMembershipException()
             : base(message: "GroupMembership is null.")
         { }
+        
+        public NullGroupMembershipException(string message)
+            : base(message)
+        { }
     }
 }

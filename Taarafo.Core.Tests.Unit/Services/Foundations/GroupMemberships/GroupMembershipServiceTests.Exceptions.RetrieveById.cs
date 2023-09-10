@@ -17,17 +17,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
     public partial class GroupMembershipServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
+        private async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
         {
             // given
             Guid someId = Guid.NewGuid();
             SqlException sqlException = GetSqlException();
 
             var failedGroupMembershipStorageException =
-                new FailedGroupMembershipStorageException(sqlException);
+                new FailedGroupMembershipStorageException(
+                    message: "Failed GroupMembership storage error occured, contact support.",
+                    innerException: sqlException);
 
             var expectedGroupMembershipDependencyException =
-                new GroupMembershipDependencyException(failedGroupMembershipStorageException);
+                new GroupMembershipDependencyException(
+                    message: "GroupMembership dependency validation occurred, please try again.",
+                    innerException: failedGroupMembershipStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupMembershipByIdAsync(It.IsAny<Guid>()))
@@ -60,17 +64,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        private async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
         {
             // given
             Guid someId = Guid.NewGuid();
             var serviceException = new Exception();
 
             var failedGroupMembershipServiceException =
-                new FailedGroupMembershipServiceException(serviceException);
+                new FailedGroupMembershipServiceException(
+                    message: "Failed GroupMembership service occurred, please contact support.",
+                    innerException: serviceException);
 
             var expectedGroupMembershipServiceException =
-                new GroupMembershipServiceException(failedGroupMembershipServiceException);
+                new GroupMembershipServiceException(
+                    message: "GroupMembership service error occurred, please contact support.",
+                innerException: failedGroupMembershipServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupMembershipByIdAsync(It.IsAny<Guid>()))

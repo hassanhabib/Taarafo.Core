@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.GroupMemberships.Exceptions
     public class FailedGroupMembershipStorageException : Xeption
     {
         public FailedGroupMembershipStorageException(Exception innerException)
-            : base(message: "Failed GroupMembership storage error occured, contact support.", innerException)
+            : base(
+                message: "Failed GroupMembership storage error occured, contact support.",
+                innerException: innerException)
+        { }
+        
+        public FailedGroupMembershipStorageException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

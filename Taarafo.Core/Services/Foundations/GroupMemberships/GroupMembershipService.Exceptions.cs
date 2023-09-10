@@ -18,7 +18,8 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
     {
         private delegate ValueTask<GroupMembership> ReturningGroupMembershipFunction();
 
-        private async ValueTask<GroupMembership> TryCatch(ReturningGroupMembershipFunction returningGroupMembershipFunction)
+        private async ValueTask<GroupMembership> TryCatch(
+            ReturningGroupMembershipFunction returningGroupMembershipFunction)
         {
             try
             {
@@ -37,7 +38,8 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
                 var failedGroupMembershipStorageException =
                     new FailedGroupMembershipStorageException(sqlException);
 
-                throw CreateAndLogCriticalDependencyException(failedGroupMembershipStorageException);
+                throw CreateAndLogCriticalDependencyException(
+                    failedGroupMembershipStorageException);
             }
             catch (NotFoundGroupMembershipException notFoundGroupMembershipException)
             {
@@ -48,14 +50,16 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
                 var alreadyExistsGroupMembershipException =
                     new AlreadyExistsGroupMembershipException(duplicateKeyException);
 
-                throw CreateAndLogDependencyValidationException(alreadyExistsGroupMembershipException);
+                throw CreateAndLogDependencyValidationException(
+                    alreadyExistsGroupMembershipException);
             }
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedGroupMembershipStorageException =
                     new FailedGroupMembershipStorageException(databaseUpdateException);
 
-                throw CreateAndLogDependencyException(failedGroupMembershipStorageException);
+                throw CreateAndLogDependencyException(
+                    failedGroupMembershipStorageException);
             }
             catch (Exception exception)
             {
@@ -68,7 +72,9 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
 
         private Exception CreateAndLogServiceException(Xeption exception)
         {
-            var groupMembershipServiceException = new GroupMembershipServiceException(exception);
+            var groupMembershipServiceException =
+                new GroupMembershipServiceException(exception);
+
             this.loggingBroker.LogError(groupMembershipServiceException);
 
             return groupMembershipServiceException;
@@ -76,7 +82,9 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
 
         private Exception CreateAndLogDependencyException(Xeption exception)
         {
-            var groupMembershipDependencyException = new GroupMembershipDependencyException(exception);
+            var groupMembershipDependencyException =
+                new GroupMembershipDependencyException(exception);
+
             this.loggingBroker.LogError(groupMembershipDependencyException);
 
             return groupMembershipDependencyException;
@@ -84,7 +92,9 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
 
         private Exception CreateAndLogDependencyValidationException(Xeption exception)
         {
-            var groupMembershipDependencyValidationException = new GroupMembershipDependencyValidationException(exception);
+            var groupMembershipDependencyValidationException =
+                new GroupMembershipDependencyValidationException(exception);
+
             this.loggingBroker.LogError(groupMembershipDependencyValidationException);
 
             return groupMembershipDependencyValidationException;
@@ -92,7 +102,9 @@ namespace Taarafo.Core.Services.Foundations.GroupMemberships
 
         private Exception CreateAndLogCriticalDependencyException(Xeption exception)
         {
-            var groupMembershipDependencyException = new GroupMembershipDependencyException(exception);
+            var groupMembershipDependencyException =
+                new GroupMembershipDependencyException(exception);
+
             this.loggingBroker.LogCritical(groupMembershipDependencyException);
 
             return groupMembershipDependencyException;

@@ -19,7 +19,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
     public partial class GroupMembershipServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
+        private async Task ShouldThrowCriticalDependencyExceptionOnAddIfSqlErrorOccursAndLogItAsync()
         {
             //given
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
@@ -27,10 +27,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
             SqlException sqlException = GetSqlException();
 
             var failedGroupMembershipStorageException =
-                new FailedGroupMembershipStorageException(sqlException);
+                new FailedGroupMembershipStorageException(
+                    message: "Failed GroupMembership storage error occured, contact support.",
+                    innerException: sqlException);
 
             var expectedGroupMembershipDependencyException =
-                new GroupMembershipDependencyException(failedGroupMembershipStorageException);
+                new GroupMembershipDependencyException(
+                    message: "GroupMembership dependency validation occurred, please try again.",
+                    innerException: failedGroupMembershipStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -67,7 +71,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnAddIfGroupMembershipAlreadyExistsAndLogItAsync()
+        private async Task ShouldThrowDependencyValidationExceptionOnAddIfGroupMembershipAlreadyExistsAndLogItAsync()
         {
             //given
             GroupMembership randomGroupMembership = CreateRandomGroupMembership();
@@ -78,10 +82,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                 new DuplicateKeyException(randomMessage);
 
             var alreadyExistsGroupMembershipException =
-                new AlreadyExistsGroupMembershipException(duplicateKeyException);
+                new AlreadyExistsGroupMembershipException(
+                    message: "GroupMembership with the same id already exists.",
+                    innerException: duplicateKeyException);
 
             var expectedGroupMembershipDependencyValidationException =
-                new GroupMembershipDependencyValidationException(alreadyExistsGroupMembershipException);
+                new GroupMembershipDependencyValidationException(
+                    message: "GroupMembership dependency validation occurred, please try again.",
+                    innerException: alreadyExistsGroupMembershipException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -118,7 +126,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        private async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
         {
             //given
             GroupMembership someGroupMembership = CreateRandomGroupMembership();
@@ -126,10 +134,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
             var databaseUpdateException = new DbUpdateException();
 
             var failedGroupMembershipStorageException =
-                new FailedGroupMembershipStorageException(databaseUpdateException);
+                new FailedGroupMembershipStorageException(
+                    message: "Failed GroupMembership storage error occured, contact support.",
+                    innerException: databaseUpdateException);
 
             var expectedGroupMembershipDependencyException =
-                new GroupMembershipDependencyException(failedGroupMembershipStorageException);
+                new GroupMembershipDependencyException(
+                    message: "GroupMembership dependency validation occurred, please try again.",
+                    innerException: failedGroupMembershipStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -166,17 +178,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        private async Task ShouldThrowServiceExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
         {
             // given
             GroupMembership someGroupMembership = CreateRandomGroupMembership();
             var serviceException = new Exception();
 
             var failedGroupMembershipServiceException =
-                new FailedGroupMembershipServiceException(serviceException);
+                new FailedGroupMembershipServiceException(
+                    message: "Failed GroupMembership service occurred, please contact support.",
+                    innerException: serviceException);
 
             var expectedGroupMembershipServiceException =
-                new GroupMembershipServiceException(failedGroupMembershipServiceException);
+                new GroupMembershipServiceException(
+                    message: "GroupMembership service error occurred, please contact support.",
+                    innerException: failedGroupMembershipServiceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -184,7 +200,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
 
             // when
             ValueTask<GroupMembership> addGroupMembershipTask =
-                this.groupMembershipService.AddGroupMembershipAsync(someGroupMembership);
+                this.groupMembershipService.AddGroupMembershipAsync(
+                    someGroupMembership);
 
             GroupMembershipServiceException actualGroupMembershipServiceException =
                 await Assert.ThrowsAsync<GroupMembershipServiceException>(
