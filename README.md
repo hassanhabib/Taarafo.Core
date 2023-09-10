@@ -1,9 +1,11 @@
-[![.NET](https://github.com/hassanhabib/Taarafo.Core/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hassanhabib/Taarafo.Core/actions/workflows/dotnet.yml)
-[![The Standard - COMPLIANT](https://img.shields.io/badge/COMPLIANT-0D1117?style=plastic&label=The%20Standard&labelColor=8FD7C7)](https://github.com/hassanhabib/The-Standard)
-[![The Standard](https://img.shields.io/github/v/release/hassanhabib/The-Standard?filter=2.0.1&style=plastic&label=Standard%20Version&labelColor=8FD7C7&color=0D1117)](https://github.com/hassanhabib/The-Standard/tree/2.0.1)
-[![The Standard Community](https://img.shields.io/discord/934130100008538142?color=%237289da&label=The%20Standard%20Community&logo=Discord)](https://discord.gg/vdPZ7hS52X)
-
 # Taarafo.Core
+
+[![.Net](https://github.com/hassanhabib/Taarafo.Core/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hassanhabib/Taarafo.Core/actions/workflows/dotnet.yml)
+[![The Standard - COMPLIANT](https://img.shields.io/badge/The_Standard-COMPLIANT-2ea44f?style=default)](https://github.com/hassanhabib/The-Standard)
+[![The Standard](https://img.shields.io/github/v/release/hassanhabib/The-Standard?filter=v2.10.0&style=default&label=Standard%20Version&color=2ea44f)](https://github.com/hassanhabib/The-Standard)
+[![The Standard Community](https://img.shields.io/discord/934130100008538142?style=default&color=%237289da&label=The%20Standard%20Community&logo=Discord)](https://discord.gg/vdPZ7hS52X)
+
+## Introduction
 This API attempts to De-productize humanity by decentralizing social networks.
 
 This is Taarafo - an open source social media platform to allow people to clone, host and create their own social media communities, while being able to connect to other individuals and other communities around the world without fearing being censored, banned or blocked out.
@@ -12,36 +14,31 @@ The way Taarafo works, is that it decenteralizes the ownership and governance of
 
 I believe everyone in the world should be able to express their opinions, it's a basic human right to be able to share your thoughts with the world fearlessly without fearing to be cancelled and completely eliminated from your cyber existence.
 
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS000: Engineering Free Speech](https://www.youtube.com/watch?v=UahyWHh5F3U)
-<br />
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS001: Introduction to Taarafo](https://www.youtube.com/watch?v=8JBJQqoJTe0)
-<br />
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS002: Initializing ASP.NET Core API](https://www.youtube.com/watch?v=ZGov4vuGj8A)
-<br />
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS003: Initializing ASP.NET Core Unit Tests](https://www.youtube.com/watch?v=jWIPkpl6Yr0)
-<br>
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS004: Initializing ASP.NET End-to-End Tests](https://www.youtube.com/watch?v=NcGybsFRLO8)
-<br>
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS005: Handling SQL Exceptions](https://www.youtube.com/watch?v=bqKRak3x7Xs)
-<br>
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS006: Exceptions Localization & Categorization](https://www.youtube.com/watch?v=PhOdcYnutoA)
-<br>
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS007: Handling Dependency & Service Exceptions](https://www.youtube.com/watch?v=tOB9KE34zoQ)
-<br>
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS008: Date Validations in ASP.NET Core](https://www.youtube.com/watch?v=0vEIY1kzduw)
-<br>
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS009: Implementing RESTFul API Controllers in ASP.NET Core](https://www.youtube.com/watch?v=FsML8WgJTKU)
-<br>
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS010: Deep Cloning in TDD in C#](https://www.youtube.com/watch?v=5vq5eHt8dkw)
-<br>
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS011: Implementing Storage Brokers (Select & Delete)](https://www.youtube.com/watch?v=7oyxEZfMnwg)
-<br>
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS012: Implementing API Brokers](https://www.youtube.com/watch?v=68Uv8Vx0cX8)
-<br>
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS013: Test Driving Happy Path for Post Remove Scenario](https://www.youtube.com/watch?v=XveZj091O1Q)
-<br>
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS014: Quick Guide to Structural Validations in ASP.NET Core](https://www.youtube.com/watch?v=nKuCVEtDf7U)
-<br>
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS016: Detecting and Handling Not Found Entity Exceptions in ASP.NET Core](https://www.youtube.com/watch?v=9wZmOpg15Lg)
-<br>
-<img width=20 src="https://www.searchmarketingaustralia.com.au/wp-content/uploads/2017/10/original_images_YouTube.png" /> [EFS018: Developing a DELETE API Endpoint](https://www.youtube.com/watch?v=7W7xdUvnzcQ)
+## Standard-Compliance
+This library was built according to The Standard. The library follows engineering principles, patterns and tooling as recommended by The Standard.
+
+This library is also a community effort which involved many nights of pair-programming, test-driven development and in-depth exploration research and design discussions.
+
+## Standard-Promise
+The most important fulfillment aspect in a Standard complaint system is aimed towards contributing to people, its evolution, and principles.
+An organization that systematically honors an environment of learning, training, and sharing knowledge is an organization that learns from the past, makes calculated risks for the future, 
+and brings everyone within it up to speed on the current state of things as honestly, rapidly, and efficiently as possible. 
+ 
+We believe that everyone has the right to privacy, and will never do anything that could violate that right.
+We are committed to writing ethical and responsible software, and will always strive to use our skills, coding, and systems for the good.
+We believe that these beliefs will help to ensure that our software(s) are safe and secure and that it will never be used to harm or collect personal data for malicious purposes.
+ 
+The Standard Community as a promise to you is in upholding these values.
+
+## How to Contribute
+If you want to contribute to this project please review the following documents:
+- [The Standard](https://github.com/hassanhabib/The-Standard)
+- [C# Coding Standard](https://github.com/hassanhabib/CSharpCodingStandard)
+- [The Team Standard](https://github.com/hassanhabib/The-Standard-Team)
+
+If you have a question make sure you either open an issue or join our [The Standard Community](https://discord.com/invite/vdPZ7hS52X) discord server.
+
+### Past-Sessions
+Here's our sessions to show you how this library was developed from scratch:
+
+[Taarafo.Core YouTube Playlist](https://www.youtube.com/watch?v=8JBJQqoJTe0&list=PLan3SCnsISTQNkgtVMqJu896TghXjGYzt&pp=iAQB)
