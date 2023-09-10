@@ -15,7 +15,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
     public partial class GroupMembershipServiceTests
     {
         [Fact]
-        public async Task ShouldRetrieveGroupMembershipByIdAsync()
+        private async Task ShouldRetrieveGroupMembershipByIdAsync()
         {
             // given
             GroupMembership randomGroupMembership = CreateRandomGroupMembership();
@@ -28,7 +28,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
 
             // when
             GroupMembership actualGroupMembership =
-                await this.groupMembershipService.RetrieveGroupMembershipByIdAsync(randomGroupMembership.Id);
+                await this.groupMembershipService.RetrieveGroupMembershipByIdAsync(
+                    randomGroupMembership.Id);
 
             // then
             actualGroupMembership.Should().BeEquivalentTo(expectedGroupMembership);

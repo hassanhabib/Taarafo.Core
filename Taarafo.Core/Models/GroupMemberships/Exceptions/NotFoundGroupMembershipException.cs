@@ -11,7 +11,12 @@ namespace Taarafo.Core.Models.GroupMemberships.Exceptions
     public class NotFoundGroupMembershipException : Xeption
     {
         public NotFoundGroupMembershipException(Guid groupMembershipId)
-            : base(message: $"Couldn't find GroupMembership with id: {groupMembershipId}.")
+            : base(
+                message: $"Couldn't find GroupMembership with id: {groupMembershipId}.")
+        { }
+        
+        public NotFoundGroupMembershipException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

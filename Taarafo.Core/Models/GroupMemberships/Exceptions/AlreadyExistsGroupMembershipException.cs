@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.GroupMemberships.Exceptions
     public class AlreadyExistsGroupMembershipException : Xeption
     {
         public AlreadyExistsGroupMembershipException(Exception innerException)
-            : base(message: "GroupMembership with the same id already exists.", innerException)
+            : base(
+                message: "GroupMembership with the same id already exists.",
+                innerException: innerException)
+        { }
+
+        public AlreadyExistsGroupMembershipException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

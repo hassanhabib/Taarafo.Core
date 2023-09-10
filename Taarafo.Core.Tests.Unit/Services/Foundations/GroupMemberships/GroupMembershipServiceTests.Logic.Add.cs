@@ -16,14 +16,19 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
     public partial class GroupMembershipServiceTests
     {
         [Fact]
-        public async Task ShouldAddGroupMembershipAsync()
+        private async Task ShouldAddGroupMembershipAsync()
         {
             // given
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            GroupMembership randomGroupMembership = CreateRandomGroupMembership(randomDateTime);
+
+            GroupMembership randomGroupMembership =
+                CreateRandomGroupMembership(randomDateTime);
+
             GroupMembership inputGroupMembership = randomGroupMembership;
             GroupMembership storageGroupMembership = inputGroupMembership;
-            GroupMembership expectedGroupMembership = storageGroupMembership.DeepClone();
+
+            GroupMembership expectedGroupMembership =
+                storageGroupMembership.DeepClone();
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())
@@ -35,10 +40,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
 
             // when
             GroupMembership actualGroupMembership =
-                await this.groupMembershipService.AddGroupMembershipAsync(inputGroupMembership);
+                await this.groupMembershipService.AddGroupMembershipAsync(
+                    inputGroupMembership);
 
             // then
-            actualGroupMembership.Should().BeEquivalentTo(expectedGroupMembership);
+            actualGroupMembership.Should().BeEquivalentTo(
+                expectedGroupMembership);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),

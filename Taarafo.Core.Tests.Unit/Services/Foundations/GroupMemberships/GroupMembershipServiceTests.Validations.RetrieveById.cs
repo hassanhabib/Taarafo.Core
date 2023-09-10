@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
     public partial class GroupMembershipServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
         {
             // given
             var invalidGroupMembershipId = Guid.Empty;
@@ -28,11 +28,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                 values: "Id is required");
 
             var expectedGroupMembershipValidationException =
-                new GroupMembershipValidationException(invalidGroupMembershipException);
+                new GroupMembershipValidationException(
+                    message: "GroupMembership validation error occurred, please try again.",
+                    innerException: invalidGroupMembershipException);
 
             // when
             ValueTask<GroupMembership> retrieveGroupMembershipByIdTask =
-                this.groupMembershipService.RetrieveGroupMembershipByIdAsync(invalidGroupMembershipId);
+                this.groupMembershipService.RetrieveGroupMembershipByIdAsync(
+                    invalidGroupMembershipId);
 
             GroupMembershipValidationException actualGroupMembershipValidationException =
                 await Assert.ThrowsAsync<GroupMembershipValidationException>(
@@ -57,9 +60,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
         }
 
         [Fact]
-        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfGroupMembershipIsNotFoundAndLogItAsync()
+        private async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfGroupMembershipIsNotFoundAndLogItAsync()
         {
-            //given
+            // given
             Guid someGroupMembershipId = Guid.NewGuid();
             GroupMembership noGroupMembership = null;
 
@@ -67,15 +70,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                 new NotFoundGroupMembershipException(someGroupMembershipId);
 
             var expectedGroupMembershipValidationException =
-                new GroupMembershipValidationException(notFoundGroupMembershipException);
+                new GroupMembershipValidationException(
+                    message: "GroupMembership validation error occurred, please try again.",
+                    innerException: notFoundGroupMembershipException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectGroupMembershipByIdAsync(It.IsAny<Guid>()))
                     .ReturnsAsync(noGroupMembership);
 
-            //when
+            // when
             ValueTask<GroupMembership> retrieveGroupMembershipByIdTask =
-                this.groupMembershipService.RetrieveGroupMembershipByIdAsync(someGroupMembershipId);
+                this.groupMembershipService.RetrieveGroupMembershipByIdAsync(
+                    someGroupMembershipId);
 
             GroupMembershipValidationException actualGroupMembershipValidationException =
                 await Assert.ThrowsAsync<GroupMembershipValidationException>(

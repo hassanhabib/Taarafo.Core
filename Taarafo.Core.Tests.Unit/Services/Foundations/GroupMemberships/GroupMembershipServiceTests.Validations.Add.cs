@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
     public partial class GroupMembershipServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnAddIfGroupMembershipIsNullAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnAddIfGroupMembershipIsNullAndLogItAsync()
         {
             // given
             GroupMembership nullGroupMembership = null;
@@ -25,7 +25,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                 new NullGroupMembershipException();
 
             var expectedGroupMembershipValidationException =
-                new GroupMembershipValidationException(nullGroupMembershipException);
+                new GroupMembershipValidationException(
+                    message: "GroupMembership validation error occurred, please try again.",
+                    innerException: nullGroupMembershipException);
 
             // when
             ValueTask<GroupMembership> addGroupMembershipTask =
@@ -50,7 +52,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnAddIfGroupMembershipIsInvalidAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnAddIfGroupMembershipIsInvalidAndLogItAsync()
         {
             // given
             Guid invalidGuid = Guid.Empty;
@@ -81,9 +83,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                 values: "Date is required");
 
             var expectedGroupMembershipValidationException =
-                new GroupMembershipValidationException(invalidGroupMembershipException);
+                new GroupMembershipValidationException(
+                    message: "GroupMembership validation error occurred, please try again.",
+                    innerException: invalidGroupMembershipException);
 
-            //when
+            // when
             ValueTask<GroupMembership> addGroupMembershipTask =
                 this.groupMembershipService.AddGroupMembershipAsync(invalidGroupMembership);
 
@@ -91,7 +95,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                 await Assert.ThrowsAsync<GroupMembershipValidationException>(
                     addGroupMembershipTask.AsTask);
 
-            //then
+            // then
             actualGroupMembershipValidationException.Should().BeEquivalentTo(
                 expectedGroupMembershipValidationException);
 
@@ -115,7 +119,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
 
         [Theory]
         [MemberData(nameof(MinutesBeforeOrAfter))]
-        public async Task ShouldThrowValidationExceptionOnAddIfGroupMembershipDateIsNotRecentAndLogItAsync(
+        private async Task ShouldThrowValidationExceptionOnAddIfGroupMembershipDateIsNotRecentAndLogItAsync(
             int minutesBeforeOrAfter)
         {
             // given
@@ -125,8 +129,11 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
             DateTimeOffset invalidDateTime =
                 randomDateTime.AddMinutes(minutesBeforeOrAfter);
 
-            GroupMembership randomGroupMembership = CreateRandomGroupMembership(invalidDateTime);
+            GroupMembership randomGroupMembership =
+                CreateRandomGroupMembership(invalidDateTime);
+
             GroupMembership invalidGroupMembership = randomGroupMembership;
+
             var invalidGroupMembershipException =
                 new InvalidGroupMembershipException();
 
@@ -135,7 +142,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                 values: "Date is not recent");
 
             var expectedGroupMembershipValidationException =
-                new GroupMembershipValidationException(invalidGroupMembershipException);
+                new GroupMembershipValidationException(
+                    message: "GroupMembership validation error occurred, please try again.",
+                    innerException: invalidGroupMembershipException);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffset())

@@ -10,8 +10,13 @@ namespace Taarafo.Core.Models.GroupMemberships.Exceptions
     public class GroupMembershipDependencyException : Xeption
     {
         public GroupMembershipDependencyException(Xeption innerException)
-           : base(message: "GroupMembership dependency validation occurred, please try again.",
-                 innerException)
+           : base(
+                message: "GroupMembership dependency validation occurred, please try again.",
+                innerException: innerException)
+        { }
+        
+        public GroupMembershipDependencyException(string message, Xeption innerException)
+           : base(message, innerException)
         { }
     }
 }

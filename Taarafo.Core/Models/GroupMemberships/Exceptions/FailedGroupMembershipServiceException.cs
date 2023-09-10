@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.GroupMemberships.Exceptions
     public class FailedGroupMembershipServiceException : Xeption
     {
         public FailedGroupMembershipServiceException(Exception innerException)
-            : base(message: "Failed GroupMembership service occurred, please contact support.", innerException)
+            : base(
+                message: "Failed GroupMembership service occurred, please contact support.",
+                innerException: innerException)
+        { }
+        
+        public FailedGroupMembershipServiceException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }
