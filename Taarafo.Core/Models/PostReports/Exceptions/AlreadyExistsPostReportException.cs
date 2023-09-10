@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.PostReports.Exceptions
     public class AlreadyExistsPostReportException : Xeption
     {
         public AlreadyExistsPostReportException(Exception innerException)
-            : base(message: "PostReport already exists.", innerException)
+            : base(
+                message: "PostReport already exists.",
+                innerException: innerException)
+        { }
+        
+        public AlreadyExistsPostReportException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

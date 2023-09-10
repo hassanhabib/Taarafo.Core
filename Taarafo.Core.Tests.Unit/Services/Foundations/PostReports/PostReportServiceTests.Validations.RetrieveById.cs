@@ -16,23 +16,27 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
     public partial class PostReportServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
         {
             // given
             var invalidPostReportId = Guid.Empty;
 
-            var invalidPostReportException = new InvalidPostReportException();
+            var invalidPostReportException =
+                new InvalidPostReportException();
 
             invalidPostReportException.AddData(
                 key: nameof(PostReport.Id),
                 values: "Id is required");
 
             var expectedPostReportValidationException = new
-                PostReportValidationException(invalidPostReportException);
+                PostReportValidationException(
+                message: "PostReport validation errors occurred, please try again.",
+                    innerException: invalidPostReportException);
 
             // when
             ValueTask<PostReport> retrievePostReportByIdTask =
-                this.postReportService.RetrievePostReportByIdAsync(invalidPostReportId);
+                this.postReportService.RetrievePostReportByIdAsync(
+                    invalidPostReportId);
 
             PostReportValidationException actualPostReportValidationException =
                 await Assert.ThrowsAsync<PostReportValidationException>(
@@ -44,10 +48,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportValidationException))), Times.Once);
+                    expectedPostReportValidationException))),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostReportByIdAsync(It.IsAny<Guid>()), Times.Never);
+                broker.SelectPostReportByIdAsync(
+                    It.IsAny<Guid>()),
+                    Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -55,7 +62,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
         }
 
         [Fact]
-        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfPostReportIsNotFoundAndLogItAsync()
+        private async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfPostReportIsNotFoundAndLogItAsync()
         {
             //given
             Guid somePostReportId = Guid.NewGuid();
@@ -65,7 +72,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 new NotFoundPostReportException(somePostReportId);
 
             var expectedPostReportValidationException =
-                new PostReportValidationException(notFoundPostReportException);
+                new PostReportValidationException(
+                    message: "PostReport validation errors occurred, please try again.",
+                    innerException: notFoundPostReportException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostReportByIdAsync(It.IsAny<Guid>()))
@@ -84,11 +93,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 .BeEquivalentTo(expectedPostReportValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostReportByIdAsync(It.IsAny<Guid>()), Times.Once());
+                broker.SelectPostReportByIdAsync(
+                    It.IsAny<Guid>()),
+                    Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportValidationException))), Times.Once);
+                    expectedPostReportValidationException))),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

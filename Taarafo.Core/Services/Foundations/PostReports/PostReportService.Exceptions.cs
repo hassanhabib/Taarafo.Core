@@ -76,7 +76,7 @@ namespace Taarafo.Core.Services.Foundations.PostReports
             catch (SqlException sqlException)
             {
                 var failedPostPeportStorageException =
-                    new FailedPostPeportStorageException(sqlException);
+                    new FailedPostReportStorageException(sqlException);
 
                 throw CreateAndLogCriticalDependencyException(failedPostPeportStorageException);
             }

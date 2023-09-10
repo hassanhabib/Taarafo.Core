@@ -17,17 +17,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
     public partial class PostReportServiceTests
     {
         [Fact]
-        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
+        private async Task ShouldThrowCriticalDependencyExceptionOnRetrieveByIdIfSqlErrorOccursAndLogItAsync()
         {
             //given
             Guid somePostReportId = Guid.NewGuid();
             SqlException sqlException = CreateSqlException();
 
             var failedPostReportStorageException =
-                new FailedPostReportStorageException(sqlException);
+                new FailedPostReportStorageException(
+                    message: "Failed post report storage error occurred, contact support",
+                    innerException: sqlException);
 
             var expectedPostReportDependencyException =
-                new PostReportDependencyException(failedPostReportStorageException);
+                new PostReportDependencyException(
+                    message: "Post report dependency validation occurred, please try again.",
+                    innerException: failedPostReportStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostReportByIdAsync(somePostReportId))
@@ -46,11 +50,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                    expectedPostReportDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostReportByIdAsync(It.IsAny<Guid>()), Times.Once);
+                broker.SelectPostReportByIdAsync(It.IsAny<Guid>()),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedPostReportDependencyException))), Times.Once);
+                    expectedPostReportDependencyException))),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -58,17 +64,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        private async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
         {
             //given
             Guid somePostReportId = Guid.NewGuid();
             var serviceException = new Exception();
 
             var failedPostReportServiceException =
-                new FailedPostReportServiceException(serviceException);
+                new FailedPostReportServiceException(
+                    message: "Failed post report service occurred, please contact support.",
+                    innerException: serviceException);
 
             var expectedPostReportServiceException =
-                new PostReportServiceException(failedPostReportServiceException);
+                new PostReportServiceException(
+                    message: "Post report service error occurred, please contact support.",
+                    innerException: failedPostReportServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostReportByIdAsync(somePostReportId))
@@ -76,7 +86,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
             //when
             ValueTask<PostReport> retrievePostReportByIdTask =
-                this.postReportService.RetrievePostReportByIdAsync(somePostReportId);
+                this.postReportService.RetrievePostReportByIdAsync(
+                    somePostReportId);
 
             PostReportServiceException actualPostReportServiceException =
                  await Assert.ThrowsAsync<PostReportServiceException>(
@@ -87,11 +98,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 .BeEquivalentTo(expectedPostReportServiceException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostReportByIdAsync(It.IsAny<Guid>()), Times.Once);
+                broker.SelectPostReportByIdAsync(It.IsAny<Guid>()),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportServiceException))), Times.Once);
+                    expectedPostReportServiceException))),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

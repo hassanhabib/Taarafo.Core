@@ -10,7 +10,13 @@ namespace Taarafo.Core.Models.PostReports.Exceptions
     public class PostReportDependencyException : Xeption
     {
         public PostReportDependencyException(Xeption innerException)
-            : base(message: "Post report dependency validation occurred, please try again.", innerException)
+            : base(
+                message: "Post report dependency validation occurred, please try again.",
+                innerException: innerException)
+        { }
+        
+        public PostReportDependencyException(string message, Xeption innerException)
+            : base(message, innerException)
         { }
     }
 }
