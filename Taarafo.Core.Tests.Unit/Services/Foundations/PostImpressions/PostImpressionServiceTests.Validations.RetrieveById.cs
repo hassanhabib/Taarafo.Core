@@ -22,7 +22,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             Guid invalidPostId = Guid.Empty;
             Guid invalidProfileId = Guid.Empty;
 
-            var invalidPostImpressionException = new InvalidPostImpressionException();
+            var invalidPostImpressionException =
+                new InvalidPostImpressionException();
 
             invalidPostImpressionException.AddData(
                 key: nameof(PostImpression.PostId),
@@ -33,11 +34,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 values: "Id is required");
 
             var expectedPostImpressionValidationException = new
-                PostImpressionValidationException(invalidPostImpressionException);
+                PostImpressionValidationException(
+                message: "Post impression validation errors occurred, please try again.",
+                innerException: invalidPostImpressionException);
 
             // when
             ValueTask<PostImpression> retrievePostImpressionByIdTask =
-                this.postImpressionService.RetrievePostImpressionByIdAsync(invalidPostId, invalidProfileId);
+                this.postImpressionService.RetrievePostImpressionByIdAsync(
+                    invalidPostId, invalidProfileId);
 
             PostImpressionValidationException actualPostImpressionValidationException =
                 await Assert.ThrowsAsync<PostImpressionValidationException>(
@@ -53,7 +57,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(invalidPostId, invalidProfileId),
+                broker.SelectPostImpressionByIdAsync(
+                    invalidPostId, invalidProfileId),
                         Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();

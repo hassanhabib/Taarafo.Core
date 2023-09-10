@@ -15,28 +15,32 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
     public partial class PostImpressionServiceTests
     {
         [Fact]
-        public void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
+        private void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
         {
-            //given
+            // given
             SqlException sqlException = GetSqlException();
 
             var failedPostImpressionStorageException =
-                new FailedPostImpressionStorageException(sqlException);
+                new FailedPostImpressionStorageException(
+                    message: "Failed post impression storage error has occurred, contact support.",
+                    innerException: sqlException);
 
             var expectedPostImpressionDependencyException = new
-                PostImpressionDependencyException(failedPostImpressionStorageException);
+                PostImpressionDependencyException(
+                message: "Post impression dependency error has occurred, please contact support.",
+                innerException: failedPostImpressionStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllPostImpressions()).Throws(sqlException);
 
-            //when
+            // when
             Action retrieveAllPostImpressions = () =>
                 this.postImpressionService.RetrieveAllPostImpressions();
 
             PostImpressionDependencyException actualPostImpressionDependencyException =
                 Assert.Throws<PostImpressionDependencyException>(retrieveAllPostImpressions);
-           
-            //then
+
+            // then
             actualPostImpressionDependencyException.Should().BeEquivalentTo(
                 expectedPostImpressionDependencyException);
 
@@ -53,38 +57,45 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         }
 
         [Fact]
-        public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        private void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
         {
-            //given 
+            // given 
             string exceptionMessage = GetRandomMessage();
             var serviceException = new Exception(exceptionMessage);
 
             var failedPostImpressionServiceException =
-                new FailedPostImpressionServiceException(serviceException);
+                new FailedPostImpressionServiceException(
+                    message: "Failed post impression service occurred, please contact support.",
+                    innerException: serviceException);
 
             var expectedPostImpressionServiceException =
-                new PostImpressionServiceException(failedPostImpressionServiceException);
+                new PostImpressionServiceException(
+                    message: "Post impression service error occurred, please contact support.",
+                    innerException: failedPostImpressionServiceException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAllPostImpressions()).Throws(serviceException);
 
-            //when
+            // when
             Action retrieveAllPostImpressionsAction = () =>
                 this.postImpressionService.RetrieveAllPostImpressions();
 
-            PostImpressionServiceException actualPostImpressionServiceException = 
-                Assert.Throws<PostImpressionServiceException>(retrieveAllPostImpressionsAction);
+            PostImpressionServiceException actualPostImpressionServiceException =
+                Assert.Throws<PostImpressionServiceException>(
+                    retrieveAllPostImpressionsAction);
 
-            //then
+            // then
             actualPostImpressionServiceException.Should().BeEquivalentTo(
                 expectedPostImpressionServiceException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllPostImpressions(), Times.Once);
+                broker.SelectAllPostImpressions(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                   expectedPostImpressionServiceException))), Times.Once);
+                   expectedPostImpressionServiceException))),
+                   Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

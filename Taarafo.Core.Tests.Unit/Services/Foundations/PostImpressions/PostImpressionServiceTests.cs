@@ -42,7 +42,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         public static TheoryData MinutesBeforeOrAfter()
         {
             int randomNumber = GetRandomNumber();
-            int randomNegativeNumber = GetRandomNegativeNumber();
+
+            int randomNegativeNumber =
+                GetRandomNegativeNumber();
 
             return new TheoryData<int>
             {
@@ -95,9 +97,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
         private static PostImpression CreateRandomModifyPostImpression(DateTimeOffset dates)
         {
             int randomDaysInPast = GetRandomNegativeNumber();
-            PostImpression randomPostImpression = CreateRandomPostImpression(dates);
 
-            randomPostImpression.CreatedDate = randomPostImpression.CreatedDate
+            PostImpression randomPostImpression =
+                CreateRandomPostImpression(dates);
+
+            randomPostImpression.CreatedDate =
+                randomPostImpression.CreatedDate
                 .AddDays(randomDaysInPast);
 
             return randomPostImpression;

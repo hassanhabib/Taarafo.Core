@@ -15,16 +15,20 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
     public partial class PostImpressionServiceTests
     {
         [Fact]
-        public async Task ShouldRemovePostImpressionByIdAsync()
+        private async Task ShouldRemovePostImpressionByIdAsync()
         {
-            //given
+            // given
             Guid randomPostId = Guid.NewGuid();
             Guid randomProfileId = Guid.NewGuid();
             Guid inputPostId = randomPostId;
             Guid inputProfileId = randomProfileId;
-            PostImpression randomPostImpression = CreateRandomPostImpression();
+
+            PostImpression randomPostImpression =
+                CreateRandomPostImpression();
+
             randomPostImpression.PostId = inputPostId;
             randomPostImpression.ProfileId = inputProfileId;
+
             PostImpression storagePostImpression = randomPostImpression;
             PostImpression expectedPostImpression = storagePostImpression;
 
@@ -36,18 +40,20 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.DeletePostImpressionAsync(storagePostImpression))
                     .ReturnsAsync(expectedPostImpression);
 
-            //when
+            // when
             PostImpression actualPostImpression = await this.postImpressionService
                 .RemovePostImpressionAsync(randomPostImpression);
 
-            //then
+            // then
             actualPostImpression.Should().BeEquivalentTo(expectedPostImpression);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(inputPostId, inputProfileId), Times.Once());
+                broker.SelectPostImpressionByIdAsync(inputPostId, inputProfileId),
+                Times.Once());
 
             this.storageBrokerMock.Verify(broker =>
-                broker.DeletePostImpressionAsync(storagePostImpression), Times.Once());
+                broker.DeletePostImpressionAsync(storagePostImpression),
+                Times.Once());
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

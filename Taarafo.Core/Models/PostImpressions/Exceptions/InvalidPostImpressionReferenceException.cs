@@ -8,11 +8,16 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.PostImpressions.Exceptions
 {
-	public class InvalidPostImpressionReferenceException : Xeption
-	{
-		public InvalidPostImpressionReferenceException(Exception innerException)
-			: base(message: "Invalid post impression reference error occurred.", innerException)
-		{ }
-	}
-}
+    public class InvalidPostImpressionReferenceException : Xeption
+    {
+        public InvalidPostImpressionReferenceException(Exception innerException)
+            : base(
+                message: "Invalid post impression reference error occurred.",
+                innerException: innerException)
+        { }
 
+        public InvalidPostImpressionReferenceException(string message, Exception innerException)
+            : base(message, innerException)
+        { }
+    }
+}

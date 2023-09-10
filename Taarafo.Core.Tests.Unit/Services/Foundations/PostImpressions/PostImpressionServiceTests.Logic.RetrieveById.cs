@@ -16,16 +16,22 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
     public partial class PostImpressionServiceTests
     {
         [Fact]
-        public async Task ShouldRetrieveGroupPostByIdAsync()
+        private async Task ShouldRetrieveGroupPostByIdAsync()
         {
             // given
             Guid randomPostId = Guid.NewGuid();
             Guid randomProfileId = Guid.NewGuid();
             Guid inputPostId = randomPostId;
             Guid inputProfileId = randomProfileId;
-            PostImpression randomPostImpression = CreateRandomPostImpression();
-            PostImpression storagePostImpression = randomPostImpression;
-            PostImpression expectedPostImpression = storagePostImpression.DeepClone();
+
+            PostImpression randomPostImpression =
+                CreateRandomPostImpression();
+
+            PostImpression storagePostImpression =
+                randomPostImpression;
+
+            PostImpression expectedPostImpression =
+                storagePostImpression.DeepClone();
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectPostImpressionByIdAsync(inputPostId, inputProfileId))
@@ -33,10 +39,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             // when
             PostImpression actualPostImpression =
-                await this.postImpressionService.RetrievePostImpressionByIdAsync(inputPostId, inputProfileId);
+                await this.postImpressionService.RetrievePostImpressionByIdAsync(
+                    inputPostId, inputProfileId);
 
             // then
-            actualPostImpression.Should().BeEquivalentTo(expectedPostImpression);
+            actualPostImpression.Should().BeEquivalentTo(
+                expectedPostImpression);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPostImpressionByIdAsync(inputPostId, inputProfileId),

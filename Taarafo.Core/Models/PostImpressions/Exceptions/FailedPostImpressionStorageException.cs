@@ -8,10 +8,16 @@ using Xeptions;
 
 namespace Taarafo.Core.Models.PostImpressions.Exceptions
 {
-	public class FailedPostImpressionStorageException : Xeption
-	{
-		public FailedPostImpressionStorageException(Exception innerException)
-			: base(message: "Failed post impression storage error has occurred, contact support.", innerException)
-		{ }
-	}
+    public class FailedPostImpressionStorageException : Xeption
+    {
+        public FailedPostImpressionStorageException(Exception innerException)
+            : base(
+                message: "Failed post impression storage error has occurred, contact support.",
+                innerException: innerException)
+        { }
+
+        public FailedPostImpressionStorageException(string message, Exception innerException)
+            : base(message, innerException)
+        { }
+    }
 }
