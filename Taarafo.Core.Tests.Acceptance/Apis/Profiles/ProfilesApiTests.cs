@@ -35,7 +35,7 @@ namespace Taarafo.Core.Tests.Acceptance.Apis.Profiles
             var filler = new Filler<Profile>();
 
             filler.Setup()
-                .OnProperty(profile=>profile.Id).Use(inputProfile.Id)
+                .OnProperty(profile => profile.Id).Use(inputProfile.Id)
                 .OnProperty(profile => profile.CreatedDate).Use(inputProfile.CreatedDate)
                 .OnProperty(profile => profile.UpdatedDate).Use(now)
                 .OnType<DateTimeOffset>().Use(GetRandomDateTime());
