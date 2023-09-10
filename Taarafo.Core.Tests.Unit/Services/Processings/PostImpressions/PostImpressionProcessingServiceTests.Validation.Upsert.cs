@@ -16,7 +16,7 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
     public partial class PostImpressionProcessingServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnUpsertIfPostImpressionIsNullAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnUpsertIfPostImpressionIsNullAndLogItAsync()
         {
             //given
             PostImpression nullPostImpression = null;
@@ -26,13 +26,16 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
 
             var expectedPostImpressionProcessingValidationException =
                 new PostImpressionProcessingValidationException(
-                    nullPostImpressionProcessingException);
+                    message: "Post Impression validation error occurred, please try again.",
+                    innerException: nullPostImpressionProcessingException);
 
             //when
             ValueTask<PostImpression> upsertPostImpressionTask =
-                this.postImpressionProcessingService.UpsertPostImpressionAsync(nullPostImpression);
+                this.postImpressionProcessingService.UpsertPostImpressionAsync(
+                    nullPostImpression);
 
-            PostImpressionProcessingValidationException actualPostImpressionProcessingValidationException =
+            PostImpressionProcessingValidationException
+                actualPostImpressionProcessingValidationException =
                 await Assert.ThrowsAsync<PostImpressionProcessingValidationException>(
                     upsertPostImpressionTask.AsTask);
 
@@ -42,25 +45,29 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionProcessingValidationException))), Times.Once);
+                    expectedPostImpressionProcessingValidationException))),
+                    Times.Once);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.RetrieveAllPostImpressions(), Times.Never);
+                service.RetrieveAllPostImpressions(),
+                Times.Never);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.AddPostImpressions(It.IsAny<PostImpression>()), Times.Never);
+                service.AddPostImpressions(It.IsAny<PostImpression>()),
+                Times.Never);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.ModifyPostImpressionAsync(It.IsAny<PostImpression>()), Times.Never);
+                service.ModifyPostImpressionAsync(It.IsAny<PostImpression>()),
+                Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.postImpressionServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnUpsertIfPostImpressionIdsIsInvalidAndLogItAsync()
+        private async Task ShouldThrowValidationExceptionOnUpsertIfPostImpressionIdsIsInvalidAndLogItAsync()
         {
-            //given
+            // given
             var invalidPostImpression = CreateRandomPostImpression();
             invalidPostImpression.PostId = Guid.Empty;
             invalidPostImpression.ProfileId = Guid.Empty;
@@ -78,32 +85,38 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
 
             var expectedPostImpressionProcessingValidationException =
                 new PostImpressionProcessingValidationException(
-                    invalidPostImpressionProcessingException);
+                    message: "Post Impression validation error occurred, please try again.",
+                    innerException: invalidPostImpressionProcessingException);
 
-            //when
+            // when
             ValueTask<PostImpression> upsertPostImpressionTask =
-                this.postImpressionProcessingService.UpsertPostImpressionAsync(invalidPostImpression);
+                this.postImpressionProcessingService.UpsertPostImpressionAsync(
+                    invalidPostImpression);
 
-            PostImpressionProcessingValidationException actualPostImpressionProcessingValidationException =
+            PostImpressionProcessingValidationException
+                actualPostImpressionProcessingValidationException =
                 await Assert.ThrowsAsync<PostImpressionProcessingValidationException>(
                     upsertPostImpressionTask.AsTask);
 
-            //then
+            // then
             actualPostImpressionProcessingValidationException.Should().BeEquivalentTo(
                 expectedPostImpressionProcessingValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionProcessingValidationException))), Times.Once);
+                    expectedPostImpressionProcessingValidationException))),
+                    Times.Once);
 
             this.postImpressionServiceMock.Verify(service =>
                 service.RetrieveAllPostImpressions(), Times.Never);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.AddPostImpressions(It.IsAny<PostImpression>()), Times.Never);
+                service.AddPostImpressions(It.IsAny<PostImpression>()),
+                Times.Never);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.ModifyPostImpressionAsync(It.IsAny<PostImpression>()), Times.Never);
+                service.ModifyPostImpressionAsync(It.IsAny<PostImpression>()),
+                Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.postImpressionServiceMock.VerifyNoOtherCalls();

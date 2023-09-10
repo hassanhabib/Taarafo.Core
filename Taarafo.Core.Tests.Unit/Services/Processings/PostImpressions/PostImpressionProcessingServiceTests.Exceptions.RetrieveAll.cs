@@ -16,74 +16,83 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
     {
         [Theory]
         [MemberData(nameof(DependencyExceptions))]
-        public void ShouldThrowDependencyExceptionOnRetrieveAllIfDependencyErrorOccursAndLogItAsync(
+        private void ShouldThrowDependencyExceptionOnRetrieveAllIfDependencyErrorOccursAndLogItAsync(
             Xeption dependencyException)
         {
-            //given
+            // given
             var somePostImpressions = CreateRandomPostImpressions();
 
             var expectedPostImpressionProcessingDependencyException =
                 new PostImpressionProcessingDependencyException(
-                    dependencyException.InnerException as Xeption);
+                    message: "Post Impression dependency error occurred, please contact support",
+                    innerException: dependencyException.InnerException as Xeption);
 
             this.postImpressionServiceMock.Setup(service =>
                 service.RetrieveAllPostImpressions()).Throws(dependencyException);
 
-            //when
+            // when
             Action retrieveAllPostImpressionAction = () =>
                 this.postImpressionProcessingService.RetrieveAllPostImpressions();
 
             PostImpressionProcessingDependencyException actualPostImpressionProcessingDependencyException =
                 Assert.Throws<PostImpressionProcessingDependencyException>(retrieveAllPostImpressionAction);
 
-            //then
+            // then
             actualPostImpressionProcessingDependencyException.Should().BeEquivalentTo(
                 expectedPostImpressionProcessingDependencyException);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.RetrieveAllPostImpressions(), Times.Once);
+                service.RetrieveAllPostImpressions(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionProcessingDependencyException))), Times.Once);
+                    expectedPostImpressionProcessingDependencyException))),
+                    Times.Once);
 
             this.postImpressionServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        private void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
         {
-            //given
+            // given
             var somePostImpression = CreateRandomPostImpressions();
             var serviceException = new Exception();
 
             var failedPostImpressionProcessingServiceException =
-                new FailedPostImpressionProcessingServiceException(serviceException);
+                new FailedPostImpressionProcessingServiceException(
+                    message: "Failed Post Impression service occurred, please contact support",
+                    innerException: serviceException);
 
             var expectedPostImpressionProcessingServiceException =
-                new PostImpressionProcessingServiceException(failedPostImpressionProcessingServiceException);
+                new PostImpressionProcessingServiceException(
+                    message: "Failed Post Impression external service occurred, please contact support",
+                    innerException: failedPostImpressionProcessingServiceException);
 
             this.postImpressionServiceMock.Setup(service =>
                 service.RetrieveAllPostImpressions()).Throws(serviceException);
 
-            //when
+            // when
             Action retrieveAllPostImpressionAction = () =>
                 this.postImpressionProcessingService.RetrieveAllPostImpressions();
 
             PostImpressionProcessingServiceException actualPostImpressionProcessingDependencyException =
                 Assert.Throws<PostImpressionProcessingServiceException>(retrieveAllPostImpressionAction);
 
-            //then
+            // then
             actualPostImpressionProcessingDependencyException.Should().BeEquivalentTo(
                 expectedPostImpressionProcessingServiceException);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.RetrieveAllPostImpressions(), Times.Once);
+                service.RetrieveAllPostImpressions(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionProcessingServiceException))), Times.Once);
+                    expectedPostImpressionProcessingServiceException))),
+                    Times.Once);
 
             this.postImpressionServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

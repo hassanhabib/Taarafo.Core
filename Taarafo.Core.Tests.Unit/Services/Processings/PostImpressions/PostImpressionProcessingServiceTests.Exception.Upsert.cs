@@ -18,20 +18,21 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
     {
         [Theory]
         [MemberData(nameof(DependencyValidationExceptions))]
-        public async Task ShouldThrowDependencyValidationOnUpsertIfDependencyValidationErrorOccursAndLogItAsync(
+        private async Task ShouldThrowDependencyValidationOnUpsertIfDependencyValidationErrorOccursAndLogItAsync(
             Xeption dependencyValidationExceptions)
         {
-            //given
+            // given
             var somePostImpression = CreateRandomPostImpression();
 
             var expectedPostImpressionProcessingDependencyValidationException =
                 new PostImpressionProcessingDependencyValidationException(
-                    dependencyValidationExceptions.InnerException as Xeption);
+                    message: "Post Impression dependency validation error occurred, please try again.",
+                    innerException: dependencyValidationExceptions.InnerException as Xeption);
 
             this.postImpressionServiceMock.Setup(service =>
                 service.RetrieveAllPostImpressions()).Throws(dependencyValidationExceptions);
 
-            //when
+            // when
             ValueTask<PostImpression> upsertPostImpressionTask =
                 this.postImpressionProcessingService.UpsertPostImpressionAsync(somePostImpression);
 
@@ -40,22 +41,28 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
                     await Assert.ThrowsAsync<PostImpressionProcessingDependencyValidationException>(
                         upsertPostImpressionTask.AsTask);
 
-            //then
+            // then
             actualPostImpressionProcessingDependencyValidationException.Should().BeEquivalentTo(
                 expectedPostImpressionProcessingDependencyValidationException);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.RetrieveAllPostImpressions(), Times.Once);
+                service.RetrieveAllPostImpressions(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionProcessingDependencyValidationException))), Times.Once);
+                    expectedPostImpressionProcessingDependencyValidationException))),
+                    Times.Once);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.AddPostImpressions(It.IsAny<PostImpression>()), Times.Never);
+                service.AddPostImpressions(
+                    It.IsAny<PostImpression>()),
+                    Times.Never);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.ModifyPostImpressionAsync(It.IsAny<PostImpression>()), Times.Never);
+                service.ModifyPostImpressionAsync(
+                    It.IsAny<PostImpression>()),
+                    Times.Never);
 
             this.postImpressionServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -63,72 +70,88 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
 
         [Theory]
         [MemberData(nameof(DependencyExceptions))]
-        public async Task ShouldThrowDependencyExceptionOnUpsertIfDependencyErrorOccursAndLogItAsync(
+        private async Task ShouldThrowDependencyExceptionOnUpsertIfDependencyErrorOccursAndLogItAsync(
             Xeption dependencyException)
         {
-            //given
+            // given
             var somePostImpression = CreateRandomPostImpression();
 
             var expectedPostImpressionProcessingDependencyException =
                 new PostImpressionProcessingDependencyException(
-                    dependencyException.InnerException as Xeption);
+                    message: "Post Impression dependency error occurred, please contact support",
+                    innerException: dependencyException.InnerException as Xeption);
 
             this.postImpressionServiceMock.Setup(service =>
                 service.RetrieveAllPostImpressions()).Throws(dependencyException);
 
-            //when
+            // when
             ValueTask<PostImpression> upsertPostImpressionTask =
-                this.postImpressionProcessingService.UpsertPostImpressionAsync(somePostImpression);
+                this.postImpressionProcessingService.UpsertPostImpressionAsync(
+                    somePostImpression);
 
-            PostImpressionProcessingDependencyException actualPostImpressionProcessingDependencyException =
-                await Assert.ThrowsAsync<PostImpressionProcessingDependencyException>(upsertPostImpressionTask.AsTask);
+            PostImpressionProcessingDependencyException
+                actualPostImpressionProcessingDependencyException =
+                await Assert.ThrowsAsync<PostImpressionProcessingDependencyException>(
+                    upsertPostImpressionTask.AsTask);
 
-            //then
+            // then
             actualPostImpressionProcessingDependencyException.Should().BeEquivalentTo(
                 expectedPostImpressionProcessingDependencyException);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.RetrieveAllPostImpressions(), Times.Once);
+                service.RetrieveAllPostImpressions(),
+                Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionProcessingDependencyException))), Times.Once);
+                    expectedPostImpressionProcessingDependencyException))),
+                    Times.Once);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.AddPostImpressions(It.IsAny<PostImpression>()), Times.Never);
+                service.AddPostImpressions(
+                    It.IsAny<PostImpression>()),
+                    Times.Never);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.ModifyPostImpressionAsync(It.IsAny<PostImpression>()), Times.Never);
+                service.ModifyPostImpressionAsync(
+                    It.IsAny<PostImpression>()),
+                    Times.Never);
 
             this.postImpressionServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnUpsertIfServiceErrorOccursAndLogItAsync()
+        private async Task ShouldThrowServiceExceptionOnUpsertIfServiceErrorOccursAndLogItAsync()
         {
-            //given
+            // given
             var somePostImpression = CreateRandomPostImpression();
             var serviceException = new Exception();
 
             var failedPostImpressionProcessingServiceException =
-                new FailedPostImpressionProcessingServiceException(serviceException);
+                new FailedPostImpressionProcessingServiceException(
+                    message: "Failed Post Impression service occurred, please contact support",
+                    innerException: serviceException);
 
             var expectedPostImpressionProcessingServiceException =
-                new PostImpressionProcessingServiceException(failedPostImpressionProcessingServiceException);
+                new PostImpressionProcessingServiceException(
+                    message: "Failed Post Impression external service occurred, please contact support",
+                    innerException: failedPostImpressionProcessingServiceException);
 
             this.postImpressionServiceMock.Setup(service =>
                 service.RetrieveAllPostImpressions()).Throws(serviceException);
 
-            //when
+            // when
             ValueTask<PostImpression> upsertPostImpressionTask =
-                this.postImpressionProcessingService.UpsertPostImpressionAsync(somePostImpression);
+                this.postImpressionProcessingService.UpsertPostImpressionAsync(
+                    somePostImpression);
 
-            PostImpressionProcessingServiceException actualPostImpressionProcessingServiceException =
+            PostImpressionProcessingServiceException
+                actualPostImpressionProcessingServiceException =
                 await Assert.ThrowsAsync<PostImpressionProcessingServiceException>(
                     upsertPostImpressionTask.AsTask);
 
-            //then
+            // then
             actualPostImpressionProcessingServiceException.Should().BeEquivalentTo(
                 expectedPostImpressionProcessingServiceException);
 
@@ -137,13 +160,18 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionProcessingServiceException))), Times.Once);
+                    expectedPostImpressionProcessingServiceException))),
+                    Times.Once);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.AddPostImpressions(It.IsAny<PostImpression>()), Times.Never);
+                service.AddPostImpressions(
+                    It.IsAny<PostImpression>()),
+                    Times.Never);
 
             this.postImpressionServiceMock.Verify(service =>
-                service.ModifyPostImpressionAsync(It.IsAny<PostImpression>()), Times.Never);
+                service.ModifyPostImpressionAsync(
+                    It.IsAny<PostImpression>()),
+                    Times.Never);
 
             this.postImpressionServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

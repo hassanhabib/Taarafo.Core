@@ -27,17 +27,17 @@ namespace Taarafo.Core.Services.Processings.PostImpressions
         }
 
         public ValueTask<PostImpression> UpsertPostImpressionAsync(PostImpression postImpression) =>
-            TryCatch(async () =>
-            {
-                ValidatePostImpression(postImpression);
-                PostImpression maybePostImpression = RetrieveMatchingPostImpression(postImpression);
+        TryCatch(async () =>
+        {
+            ValidatePostImpression(postImpression);
+            PostImpression maybePostImpression = RetrieveMatchingPostImpression(postImpression);
 
-                return maybePostImpression switch
-                {
-                    null => await this.postImpressionService.AddPostImpressions(postImpression),
-                    _ => await this.postImpressionService.ModifyPostImpressionAsync(postImpression)
-                };
-            });
+            return maybePostImpression switch
+            {
+                null => await this.postImpressionService.AddPostImpressions(postImpression),
+                _ => await this.postImpressionService.ModifyPostImpressionAsync(postImpression)
+            };
+        });
 
         private PostImpression RetrieveMatchingPostImpression(PostImpression postImpression)
         {

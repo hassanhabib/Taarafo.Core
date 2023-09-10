@@ -10,7 +10,11 @@ namespace Taarafo.Core.Models.Processings.PostImpressions.Exceptions
     public class InvalidPostImpressionProcessingException : Xeption
     {
         public InvalidPostImpressionProcessingException()
-            : base(message: "Invalid post impression, Please correct the errors and try again.") 
+            : base(message: "Invalid Post Impression, Please correct the errors and try again.")
+        { }
+
+        public InvalidPostImpressionProcessingException(string message)
+            : base(message)
         { }
     }
 }

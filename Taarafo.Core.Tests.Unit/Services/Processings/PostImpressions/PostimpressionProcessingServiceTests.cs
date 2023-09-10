@@ -69,7 +69,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
 
         public static IQueryable<PostImpression> CreateRandomPostImpressions(PostImpression postImpression)
         {
-            List<PostImpression> randomPostImpressions= CreateRandomPostImpressions().ToList();
+            List<PostImpression> randomPostImpressions =
+                CreateRandomPostImpressions().ToList();
+
             randomPostImpressions.Add(postImpression);
 
             return randomPostImpressions.AsQueryable();
@@ -90,7 +92,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Processings.PostImpressions
         private static Filler<PostImpression> CreatePostImpressionFiller()
         {
             var filler = new Filler<PostImpression>();
-            filler.Setup().OnType<DateTimeOffset>().Use(GetRandomDateTimeOffset());
+
+            filler.Setup().OnType<DateTimeOffset>()
+                .Use(GetRandomDateTimeOffset());
 
             return filler;
         }
