@@ -11,7 +11,13 @@ namespace Taarafo.Core.Models.Processings.PostImpressions.Exceptions
     public class FailedPostImpressionProcessingServiceException : Xeption
     {
         public FailedPostImpressionProcessingServiceException(Exception innerException)
-            : base(message: "Failed post impression service occurred, please contact support", innerException)
+            : base(
+                message: "Failed Post Impression service occurred, please contact support",
+                innerException: innerException)
+        { }
+
+        public FailedPostImpressionProcessingServiceException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }
