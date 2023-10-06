@@ -42,10 +42,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 					expectedPostValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdatePostAsync(It.IsAny<Post>()),
-					Times.Never);
-
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.storageBrokerMock.VerifyNoOtherCalls();
@@ -108,10 +104,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 					expectedPostValidationException))),
 						Times.Once());
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdatePostAsync(It.IsAny<Post>()),
-					Times.Never);
-
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.storageBrokerMock.VerifyNoOtherCalls();
@@ -156,10 +148,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedPostValidationException))),
 						Times.Once);
-
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectPostByIdAsync(invalidPost.Id),
-					Times.Never);
 
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -208,10 +196,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedPostValidatonException))),
 						Times.Once);
-
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectPostByIdAsync(It.IsAny<Guid>()),
-					Times.Never);
 
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();

@@ -48,10 +48,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 					expectedCommentValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectCommentByIdAsync(It.IsAny<Guid>()),
-					Times.Never);
-
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.storageBrokerMock.VerifyNoOtherCalls();
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();

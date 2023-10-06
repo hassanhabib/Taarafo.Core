@@ -47,10 +47,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                     expectedGroupMembershipValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupMembershipByIdAsync(It.IsAny<Guid>()),
-                    Times.Never);
-
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

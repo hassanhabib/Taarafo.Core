@@ -33,7 +33,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             actualPostImpressions.Should().BeEquivalentTo(expectedPostImpressions);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllPostImpressions(), Times.Once);
+                broker.SelectAllPostImpressions(), 
+                  Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

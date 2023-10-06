@@ -52,13 +52,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedGroupPostDependencyException))), Times.Once);
+                    expectedGroupPostDependencyException))), 
+                      Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(groupId, postId), Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupPostAsync(someGroupPost), Times.Never);
+                broker.SelectGroupPostByIdAsync(groupId, postId), 
+                  Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -99,11 +98,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 expectedGroupPostDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(groupId, postId), Times.Once);
+                broker.SelectGroupPostByIdAsync(groupId, postId), 
+                  Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedGroupPostDependencyException))), Times.Once);
+                    expectedGroupPostDependencyException))), 
+                      Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -143,11 +144,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 expectedGroupPostDependencyValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(groupId, postId), Times.Once);
+                broker.SelectGroupPostByIdAsync(groupId, postId), 
+                  Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedGroupPostDependencyValidationException))), Times.Once);
+                    expectedGroupPostDependencyValidationException))), 
+                      Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -186,11 +189,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                 expectedGroupPostServiceException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(someGroupPost.GroupId, someGroupPost.PostId), Times.Once);
+                broker.SelectGroupPostByIdAsync(someGroupPost.GroupId, someGroupPost.PostId), 
+                  Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedGroupPostServiceException))), Times.Once);
+                    expectedGroupPostServiceException))), 
+                      Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

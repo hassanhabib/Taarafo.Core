@@ -44,10 +44,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportValidationException))), Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostReportByIdAsync(It.IsAny<Guid>()), Times.Never);
+                    expectedPostReportValidationException))), 
+                      Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -84,11 +82,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 .BeEquivalentTo(expectedPostReportValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostReportByIdAsync(It.IsAny<Guid>()), Times.Once());
+                broker.SelectPostReportByIdAsync(It.IsAny<Guid>()), 
+                  Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportValidationException))), Times.Once);
+                    expectedPostReportValidationException))), 
+                      Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

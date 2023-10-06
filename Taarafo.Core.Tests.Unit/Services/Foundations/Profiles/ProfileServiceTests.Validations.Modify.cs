@@ -42,14 +42,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					expectedProfileValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
-					Times.Never);
-
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateProfileAsync(It.IsAny<Profile>()),
-					Times.Never);
-
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.storageBrokerMock.VerifyNoOtherCalls();
@@ -128,10 +120,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					expectedProfileValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateProfileAsync(It.IsAny<Profile>()),
-					Times.Never);
-
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.storageBrokerMock.VerifyNoOtherCalls();
@@ -177,10 +165,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedProfileValidationException))),
 						Times.Once);
-
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectProfileByIdAsync(invalidProfile.Id),
-					Times.Never);
 
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -231,14 +215,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedProfileValidatonException))),
 						Times.Once);
-
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
-					Times.Never);
-
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateProfileAsync(It.IsAny<Profile>()),
-					Times.Never);
 
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();

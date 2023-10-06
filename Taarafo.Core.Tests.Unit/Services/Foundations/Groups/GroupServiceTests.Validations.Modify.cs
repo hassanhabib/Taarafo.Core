@@ -42,17 +42,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                     expectedGroupValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
-                    Times.Never);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(It.IsAny<Group>()),
-                    Times.Never);
-
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -124,10 +116,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                     expectedGroupValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(invalidGroup),
-                    Times.Never);
-
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -173,10 +161,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupValidationException))),
                         Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupAsync(It.IsAny<Group>()),
-                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -227,14 +211,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupValidatonException))),
                         Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
-                    Times.Never);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(It.IsAny<Group>()),
-                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

@@ -51,23 +51,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectProfileByIdAsync(randomProfile.Id),
-					Times.Never);
-
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateProfileAsync(randomProfile),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogCritical(It.Is(SameExceptionAs(
 					expectedProfileDependencyException))),
 						Times.Once);
 
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 
 		[Fact]
 		public async void ShouldThrowValidationExceptionOnModifyIfReferenceErrorOccursAndLogItAsync()
@@ -114,22 +106,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectProfileByIdAsync(foreignKeyConflictedProfile.Id),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(profileDependencyValidationException))),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateProfileAsync(foreignKeyConflictedProfile),
-					Times.Never);
-
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 
 		[Fact]
 		public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
@@ -164,23 +148,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectProfileByIdAsync(randomProfile.Id),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedProfileDependencyException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateProfileAsync(randomProfile),
-					Times.Never);
-
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 
 		[Fact]
 		public async Task ShouldThrowDependencyValidationExceptionOnModifyIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
@@ -215,23 +191,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectProfileByIdAsync(randomProfile.Id),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedProfileDependencyValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateProfileAsync(randomProfile),
-					Times.Never);
-
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 
 		[Fact]
 		public async Task ShouldThrowServiceExceptionOnModifyIfServiceErrorOccursAndLogItAsync()
@@ -266,22 +234,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectProfileByIdAsync(randomProfile.Id),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedProfileServiceException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateProfileAsync(randomProfile),
-					Times.Never);
-
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 	}
 }

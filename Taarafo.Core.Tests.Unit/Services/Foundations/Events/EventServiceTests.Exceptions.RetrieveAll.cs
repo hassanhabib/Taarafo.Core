@@ -75,7 +75,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
             // then
             actualEventServiceException.Should().BeEquivalentTo(expectedEventServiceException);
 
-            this.storageBrokerMock.Verify(broker => broker.SelectAllEvents(), Times.Once);
+            this.storageBrokerMock.Verify(broker => 
+                broker.SelectAllEvents(), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(expectedEventServiceException))),

@@ -112,10 +112,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                     expectedPostImpressionValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostImpressionAsync(invalidPostImpression),
-                    Times.Never);
-
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -167,10 +163,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedPostImpressionValidationException))),
                         Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
-                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -227,10 +219,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                     expectedPostImpressionValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
-                    Times.Never);
-
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -268,14 +256,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 expectedPostImpressionValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once());
+                broker.GetCurrentDateTimeOffset(), 
+                  Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionValidationException))), Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()), Times.Never);
+                    expectedPostImpressionValidationException))), 
+                      Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

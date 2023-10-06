@@ -40,10 +40,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             actualPostReport.Should().BeEquivalentTo(expectedPostReport);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(), 
+                  Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.InsertPostReportAsync(inputPostReport), Times.Once);
+                broker.InsertPostReportAsync(inputPostReport), 
+                  Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

@@ -57,10 +57,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 					expectedCommentDependencyValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.DeleteCommentAsync(It.IsAny<Comment>()),
-					Times.Never);
-
 			this.storageBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();

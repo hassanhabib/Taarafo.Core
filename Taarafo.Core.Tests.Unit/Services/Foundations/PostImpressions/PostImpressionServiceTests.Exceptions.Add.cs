@@ -57,10 +57,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 					expectedPostImpressionDependencyException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
-					Times.Never);
-
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.storageBrokerMock.VerifyNoOtherCalls();
@@ -103,19 +99,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedPostImpressionDependencyValidationException))),
 						Times.Once);
 
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 
 		[Fact]
 		public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
@@ -152,19 +144,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedPostImpressionDependencyException))),
 						Times.Once);
 
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 
 		[Fact]
 		public async void ShouldThrowDependencyValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
@@ -208,10 +196,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 					expectedPostImpressionDependencyValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
-					Times.Never);
-
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.storageBrokerMock.VerifyNoOtherCalls();
@@ -250,18 +234,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertPostImpressionAsync(It.IsAny<PostImpression>()),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedPostImpressionServiceException))),
 						Times.Once);
 
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 	}
 }

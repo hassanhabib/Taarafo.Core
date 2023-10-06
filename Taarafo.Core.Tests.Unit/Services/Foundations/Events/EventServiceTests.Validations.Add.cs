@@ -108,10 +108,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                     expectedEventValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertEventAsync(invalidEvent),
-                    Times.Never);
-
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -169,10 +165,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Events
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedEventValidationException))),
                         Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertEventAsync(It.IsAny<Event>()),
-                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

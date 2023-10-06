@@ -32,7 +32,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             actualPostReport.Should().BeEquivalentTo(expectedPostReport);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllPostReports(), Times.Once);
+                broker.SelectAllPostReports(), 
+                  Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

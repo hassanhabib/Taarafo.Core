@@ -51,10 +51,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
                     expectedGroupPostValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(invalidGroupId, invalidPostId),
-                    Times.Never);
-
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

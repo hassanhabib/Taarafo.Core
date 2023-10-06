@@ -41,11 +41,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 expectedPostReportDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllPostReports(), Times.Once);
+                broker.SelectAllPostReports(), 
+                  Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedPostReportDependencyException))), Times.Once);
+                    expectedPostReportDependencyException))), 
+                      Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -79,11 +81,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
             actualPostReportServiceException.Should().BeEquivalentTo(expectedPostReportServiceException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllPostReports(), Times.Once);
+                broker.SelectAllPostReports(), 
+                  Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportServiceException))), Times.Once);
+                    expectedPostReportServiceException))), 
+                      Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

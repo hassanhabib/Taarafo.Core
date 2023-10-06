@@ -58,10 +58,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 					expectedPostDependencyValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.DeletePostAsync(It.IsAny<Post>()),
-					Times.Never);
-
 			this.storageBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
