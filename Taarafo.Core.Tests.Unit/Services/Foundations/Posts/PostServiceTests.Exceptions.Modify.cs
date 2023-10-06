@@ -53,23 +53,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectPostByIdAsync(postId),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogCritical(It.Is(SameExceptionAs(
 					expectedPostDependencyException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdatePostAsync(somePost),
-					Times.Never);
-
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 
 		[Fact]
 		public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()

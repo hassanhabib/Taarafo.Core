@@ -47,15 +47,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionValidationException))), Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(postImpression.PostId, postImpression.ProfileId),
-                        Times.Never);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.DeletePostImpressionAsync(
-                    It.IsAny<PostImpression>()), Times.Never);
+                    expectedPostImpressionValidationException))), 
+                      Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -100,10 +93,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostImpressionValidationException))), Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.DeletePostImpressionAsync(It.IsAny<PostImpression>()), Times.Never);
+                    expectedPostImpressionValidationException))), 
+                      Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

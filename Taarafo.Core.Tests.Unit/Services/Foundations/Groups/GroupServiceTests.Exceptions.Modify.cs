@@ -51,22 +51,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupByIdAsync(randomGroup.Id),
-                    Times.Never);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(randomGroup),
-                    Times.Never);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedGroupDependencyException))),
                         Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -114,21 +106,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupByIdAsync(foreignKeyConflictedGroup.Id),
-                    Times.Never);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(expectedGroupDependencyValidationException))),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(foreignKeyConflictedGroup),
-                    Times.Never);
-
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -164,18 +148,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupByIdAsync(randomGroup.Id),
-                    Times.Never);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupDependencyException))),
                         Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(randomGroup),
-                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -215,22 +191,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupByIdAsync(randomGroup.Id),
-                    Times.Never);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupDependencyValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(randomGroup),
-                    Times.Never);
-
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -266,18 +234,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 broker.GetCurrentDateTimeOffset(),
                     Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupByIdAsync(randomGroup.Id),
-                    Times.Never);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupServiceException))),
                         Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateGroupAsync(randomGroup),
-                    Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();

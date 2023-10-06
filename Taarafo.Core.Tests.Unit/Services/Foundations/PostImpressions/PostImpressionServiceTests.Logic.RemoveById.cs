@@ -44,10 +44,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
             actualPostImpression.Should().BeEquivalentTo(expectedPostImpression);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(inputPostId, inputProfileId), Times.Once());
+                broker.SelectPostImpressionByIdAsync(inputPostId, inputProfileId), 
+                  Times.Once());
 
             this.storageBrokerMock.Verify(broker =>
-                broker.DeletePostImpressionAsync(storagePostImpression), Times.Once());
+                broker.DeletePostImpressionAsync(storagePostImpression), 
+                  Times.Once());
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

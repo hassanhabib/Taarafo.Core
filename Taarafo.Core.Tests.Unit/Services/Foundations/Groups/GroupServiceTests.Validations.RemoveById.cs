@@ -48,16 +48,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                     expectedGroupValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
-                    Times.Never);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.DeleteGroupAsync(It.IsAny<Group>()),
-                    Times.Never);
-
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
@@ -98,10 +90,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedGroupValidationException))),
                         Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.DeleteGroupAsync(It.IsAny<Group>()),
-                    Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

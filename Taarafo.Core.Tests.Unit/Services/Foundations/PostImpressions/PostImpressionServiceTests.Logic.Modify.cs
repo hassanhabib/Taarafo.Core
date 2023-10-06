@@ -51,10 +51,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostImpressions
                 broker.GetCurrentDateTimeOffset(), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPostImpressionByIdAsync(postId, profileId), Times.Once);
+                broker.SelectPostImpressionByIdAsync(postId, profileId), 
+                  Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.UpdatePostImpressionAsync(inputPostImpression), Times.Once);
+                broker.UpdatePostImpressionAsync(inputPostImpression), 
+                  Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();

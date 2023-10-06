@@ -57,10 +57,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                     expectedGroupMembershipDependencyException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupMembershipAsync(It.IsAny<GroupMembership>()),
-                    Times.Never);
-
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -108,10 +104,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                     expectedGroupMembershipDependencyValidationException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupMembershipAsync(It.IsAny<GroupMembership>()),
-                    Times.Never);
-
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -156,13 +148,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                     expectedGroupMembershipDependencyException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupMembershipAsync(It.IsAny<GroupMembership>()),
-                    Times.Never);
-
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -203,13 +191,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupMemberships
                     expectedGroupMembershipServiceException))),
                         Times.Once);
 
-            this.storageBrokerMock.Verify(broker =>
-                broker.InsertGroupMembershipAsync(It.IsAny<GroupMembership>()),
-                    Times.Never);
-
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

@@ -57,10 +57,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					expectedProfileDependencyException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertProfileAsync(It.IsAny<Profile>()),
-					Times.Never);
-
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.storageBrokerMock.VerifyNoOtherCalls();
@@ -107,10 +103,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedProfileDependencyValidationException))),
 						Times.Once);
-
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertProfileAsync(It.IsAny<Profile>()),
-					Times.Never);
 
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -159,10 +151,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					expectedProfileDependencyValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertProfileAsync(It.IsAny<Profile>()),
-						Times.Never);
-
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.storageBrokerMock.VerifyNoOtherCalls();
@@ -208,10 +196,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					expectedProfileDependencyException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertProfileAsync(It.IsAny<Profile>()),
-					Times.Never);
-
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.storageBrokerMock.VerifyNoOtherCalls();
@@ -254,10 +238,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedProfileServiceException))),
 						Times.Once);
-
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertProfileAsync(It.IsAny<Profile>()),
-					Times.Never);
 
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.storageBrokerMock.VerifyNoOtherCalls();

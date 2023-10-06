@@ -48,14 +48,10 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					expectedProfileValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectProfileByIdAsync(It.IsAny<Guid>()),
-					Times.Never);
-
-			this.storageBrokerMock.Verify(broker =>
-				broker.DeleteProfileAsync(It.IsAny<Profile>()),
-					Times.Never);
-		}
+			this.loggingBrokerMock.VerifyNoOtherCalls();
+			this.storageBrokerMock.VerifyNoOtherCalls();
+			this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
 
 		[Fact]
 		public async Task ShouldThrowNotFoundExceptionOnRemoveProfileByIdIsNotFounfAndLogItAsync()
@@ -94,10 +90,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedProfileValidationException))),
 						Times.Once);
-
-			this.storageBrokerMock.Verify(broker =>
-				broker.DeleteProfileAsync(It.IsAny<Profile>()),
-					Times.Never);
 
 			this.storageBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();

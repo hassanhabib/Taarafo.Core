@@ -48,10 +48,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Groups
 					expectedGroupValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectGroupByIdAsync(It.IsAny<Guid>()),
-					Times.Never);
-
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.storageBrokerMock.VerifyNoOtherCalls();
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();

@@ -55,10 +55,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					expectedProfileDependencyException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.DeleteProfileAsync(It.IsAny<Profile>()),
-					Times.Never);
-
 			this.storageBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -104,10 +100,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					expectedProfileDependencyValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.DeleteProfileAsync(It.IsAny<Profile>()),
-					Times.Never);
-
 			this.storageBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -151,13 +143,9 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 					expectedProfileServiceException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.DeleteProfileAsync(It.IsAny<Profile>()),
-						Times.Never());
-
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 	}
 }

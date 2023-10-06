@@ -47,11 +47,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 .BeEquivalentTo(expectedPostReportDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(), 
+                  Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedPostReportDependencyException))), Times.Once);
+                    expectedPostReportDependencyException))), 
+                      Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -88,11 +90,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 .BeEquivalentTo(expectedPostReportDependencyValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(), 
+                  Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportDependencyValidationException))), Times.Once);
+                    expectedPostReportDependencyValidationException))), 
+                      Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -128,11 +132,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 .BeEquivalentTo(expectedPostReportDependencyValidation);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(), 
+                  Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportDependencyValidation))), Times.Once);
+                    expectedPostReportDependencyValidation))), 
+                      Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -168,11 +174,13 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.PostReports
                 .BeEquivalentTo(expectedPostReportServiceException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(), Times.Once);
+                broker.GetCurrentDateTimeOffset(), 
+                  Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedPostReportServiceException))), Times.Once);
+                    expectedPostReportServiceException))), 
+                      Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

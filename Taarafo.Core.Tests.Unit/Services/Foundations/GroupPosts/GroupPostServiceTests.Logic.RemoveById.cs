@@ -45,10 +45,12 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.GroupPosts
             actualGroupPost.Should().BeEquivalentTo(expectedGroupPost);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectGroupPostByIdAsync(inputGroupId, inputPostId), Times.Once);
+                broker.SelectGroupPostByIdAsync(inputGroupId, inputPostId), 
+                  Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.DeleteGroupPostAsync(expectedInputGroupPost), Times.Once);
+                broker.DeleteGroupPostAsync(expectedInputGroupPost), 
+                  Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

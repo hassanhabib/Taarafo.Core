@@ -51,23 +51,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectCommentByIdAsync(randomComment.Id),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogCritical(It.Is(SameExceptionAs(
 					expectedCommentDependencyException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateCommentAsync(randomComment),
-					Times.Never);
-
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 
 		[Fact]
 		public async void ShouldThrowValidationExceptionOnModifyIfReferenceErrorOccursAndLogItAsync()
@@ -106,23 +98,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectCommentByIdAsync(foreignKeyConflictedComment.Id),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedCommentDependencyValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateCommentAsync(foreignKeyConflictedComment),
-					Times.Never);
-
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 
 		[Fact]
 		public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
@@ -157,23 +141,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectCommentByIdAsync(randomComment.Id),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedCommentDependencyException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateCommentAsync(randomComment),
-					Times.Never);
-
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 
 		[Fact]
 		public async Task ShouldThrowDependencyValidationExceptionOnModifyIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
@@ -208,23 +184,15 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectCommentByIdAsync(randomComment.Id),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedCommentDependencyValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateCommentAsync(randomComment),
-					Times.Never);
-
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 
 		[Fact]
 		public async Task ShouldThrowServiceExceptionOnModifyIfServiceErrorOccursAndLogItAsync()
@@ -259,22 +227,14 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Comments
 				broker.GetCurrentDateTimeOffset(),
 					Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.SelectCommentByIdAsync(randomComment.Id),
-					Times.Never);
-
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedCommentServiceException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.UpdateCommentAsync(randomComment),
-					Times.Never);
-
-			this.dateTimeBrokerMock.VerifyNoOtherCalls();
-			this.storageBrokerMock.VerifyNoOtherCalls();
-			this.loggingBrokerMock.VerifyNoOtherCalls();
-		}
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
 	}
 }

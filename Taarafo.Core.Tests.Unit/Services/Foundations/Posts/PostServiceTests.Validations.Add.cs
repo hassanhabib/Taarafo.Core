@@ -104,10 +104,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 					expectedPostValidationException))),
 						Times.Once);
 
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertPostAsync(It.IsAny<Post>()),
-					Times.Never);
-
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.storageBrokerMock.VerifyNoOtherCalls();
 		}
@@ -158,10 +154,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 			this.dateTimeBrokerMock.Verify(broker =>
 				broker.GetCurrentDateTimeOffset(),
 						Times.Once);
-
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertPostAsync(It.IsAny<Post>()),
-					Times.Never);
 
 			this.loggingBrokerMock.VerifyNoOtherCalls();
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -217,10 +209,6 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Posts
 				broker.LogError(It.Is(SameExceptionAs(
 					expectedPostValidationException))),
 						Times.Once);
-
-			this.storageBrokerMock.Verify(broker =>
-				broker.InsertPostAsync(It.IsAny<Post>()),
-					Times.Never);
 
 			this.dateTimeBrokerMock.VerifyNoOtherCalls();
 			this.loggingBrokerMock.VerifyNoOtherCalls();

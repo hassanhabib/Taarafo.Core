@@ -43,7 +43,8 @@ namespace Taarafo.Core.Tests.Unit.Services.Foundations.Profiles
 				.BeEquivalentTo(expectedProfileDependencyException);
 
 			this.storageBrokerMock.Verify(broker =>
-				broker.SelectAllProfiles());
+				broker.SelectAllProfiles(), 
+				  Times.Once);
 
 			this.loggingBrokerMock.Verify(broker =>
 				broker.LogCritical(It.Is(SameExceptionAs(
